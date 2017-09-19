@@ -1,0 +1,51 @@
+# - Config file for the @PKG_NAME@ package.
+#
+# For finding and loading @PKG_NAME@ from your project, type:
+#
+# find_package(@PROJECT_NAME_LOWER@@PROJECT_VERSION_MAJOR@)
+#
+# It defines the following variables:
+#
+#  @PROJECT_NAME_LOWER@@PROJECT_VERSION_MAJOR@_FOUND       - System has @PKG_NAME@.
+#  @PKG_NAME@_INCLUDE_DIRS - include directories for @PKG_NAME@ and its dependencies.
+#  @PKG_NAME@_LIBRARY_DIRS - Paths in which the linker should search for libraries.
+#  @PKG_NAME@_LIBRARIES    - Libraries to link against.
+#  @PKG_NAME@_CXX_FLAGS    - Compiler flags for compiling C++ sources.
+#  @PKG_NAME@_LDFLAGS      - Linker flags.
+#
+# Additionally, it will create an imported target named @PROJECT_EXPORT_NAME@::@PROJECT_EXPORT_NAME@.
+# You can link your library against that target using target_link_library(~),
+# and all the variables mentioned above will automatically be pulled into your
+# target.
+
+
+
+find_package(PkgConfig REQUIRED)
+
+if(@PKG_NAME@_CONFIG_INCLUDED)
+  return()
+endif()
+set(@PKG_NAME@_CONFIG_INCLUDED TRUE)
+
+@PACKAGE_INIT@
+
+if(NOT TARGET @PROJECT_LIBRARY_TARGET_NAME@)
+  include("${CMAKE_CURRENT_LIST_DIR}/@ign_targets_output@")
+endif()
+
+# On windows we produce .dll libraries with no prefix
+if(WIN32)
+ set(CMAKE_FIND_LIBRARY_PREFIXES "")
+ set(CMAKE_FIND_LIBRARY_SUFFIXES ".lib" ".dll")
+endif()
+
+# Compatibility
+set(@PKG_NAME@_LIBRARIES @PROJECT_LIBRARY_TARGET_NAME@)
+set(@PKG_NAME@_INCLUDE_DIRS "@PACKAGE_IGN_INCLUDE_INSTALL_DIR_FULL@")
+set(@PKG_NAME@_LIBRARY_DIRS "@PACKAGE_IGN_LIB_INSTALL_DIR@")
+set(@PKG_NAME@_LDFLAGS      "-L@PACKAGE_IGN_LIB_INSTALL_DIR@")
+
+include(CMakeFindDependencyMacro)
+foreach(dependency @PROJECT_CMAKE_DEPENDENCIES@)
+  find_dependency(${dependency})
+endforeach()
