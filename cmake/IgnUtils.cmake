@@ -394,9 +394,9 @@ function(ign_install_all_headers)
     endforeach()
 
     if("." STREQUAL ${dir})
-      set(destination "${IGN_INCLUDE_INSTALL_DIR_FULL}/ignition/${IGN_DESINATION}")
+      set(destination "${IGN_INCLUDE_INSTALL_DIR_FULL}/ignition/${IGN_DESIGNATION}")
     else()
-      set(destination "${IGN_INCLUDE_INSTALL_DIR_FULL}/ignition/${IGN_DESINATION}/${dir}")
+      set(destination "${IGN_INCLUDE_INSTALL_DIR_FULL}/ignition/${IGN_DESIGNATION}/${dir}")
     endif()
 
     install(
@@ -425,6 +425,13 @@ function(ign_install_all_headers)
   # Define the input/output of the configuration for the "config" header
   set(config_header_in ${CMAKE_CURRENT_SOURCE_DIR}/config.hh.in)
   set(config_header_out ${CMAKE_CURRENT_BINARY_DIR}/config.hh)
+
+  if(NOT EXISTS ${config_header_in})
+    message(FATAL_ERROR
+      "Developer error: You are missing the file [${config_header_in}]! "
+      "Did you forget to move it from your project's cmake directory while "
+      "migrating to the use of ignition-cmake?")
+  endif()
 
   # Generate the "config" header that describes our project configuration
   configure_file(${config_header_in} ${config_header_out})
@@ -462,6 +469,16 @@ macro(ign_add_library _name)
   set(LIBS_DESTINATION ${PROJECT_BINARY_DIR}/src)
   set_source_files_properties(${ARGN} PROPERTIES COMPILE_DEFINITIONS "BUILDING_DLL")
   add_library(${_name} SHARED ${ARGN})
+
+  # This generator expression is necessary for multi-configuration generators,
+  # such as MSVC on Windows, and also to ensure that our target exports the
+  # headers correctly
+  target_include_directories(${_name}
+    # This is the public ignition/math headers directory
+    PUBLIC $<INSTALL_INTERFACE:${IGN_INCLUDE_INSTALL_DIR_FULL}>
+    # This is the build directory version of the headers
+    PRIVATE $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>)
+
 
 endmacro()
 

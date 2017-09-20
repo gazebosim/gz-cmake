@@ -21,7 +21,6 @@ include(IgnCMake)
 # Set up the project
 ign_configure_project(cmake 0 1 0)
 
-
 #============================================================================
 # Configure the package to be installed
 #============================================================================

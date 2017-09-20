@@ -1,21 +1,22 @@
 #################################################
-# ign_build_tests([TYPE <test_type>]
-#                 [SOURCES <sources>]
+# ign_build_tests(TYPE <test_type>
+#                 SOURCES <sources>
 #                 [LIB_DEPS <library_dependencies>]
 #                 [INCLUDE_DIRS <include_dependencies>]
 #
 # Build tests for an ignition project. Arguments are as follows:
 #
-# TYPE: Preferably UNIT, INTEGRATION, PERFORMANCE, or REGRESSION.
+# TYPE: Required. Preferably UNIT, INTEGRATION, PERFORMANCE, or REGRESSION.
 #
-# SOURCES: The names (without the path) of the source files for your tests. Each
-#          file will turn into a test.
+# SOURCES: Required. The names (without the path) of the source files for your
+#          tests. Each file will turn into a test.
 #
-# LIB_DEPS: Additional library dependencies that every test should link to, not
-#           including the library built by this project (it will be linked
-#           automatically). gtest and gtest_main will also be linked.
+# LIB_DEPS: Optional. Additional library dependencies that every test should
+#           link to, not including the library built by this project (it will be
+#           linked automatically). gtest and gtest_main will also be linked.
 #
-# INCLUDE_DIRS: Additional include directories that all tests should be aware of
+# INCLUDE_DIRS: Optional. Additional include directories that should be visible
+#               to all the tests of this type.
 #
 macro(ign_build_tests)
 
