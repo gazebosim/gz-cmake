@@ -464,21 +464,68 @@ macro(ign_build_warning)
 endmacro(ign_build_warning)
 
 #################################################
-macro(ign_add_library _name)
+macro(ign_add_library lib_name)
 
   set(LIBS_DESTINATION ${PROJECT_BINARY_DIR}/src)
   set_source_files_properties(${ARGN} PROPERTIES COMPILE_DEFINITIONS "BUILDING_DLL")
-  add_library(${_name} SHARED ${ARGN})
+  add_library(${lib_name} SHARED ${ARGN})
 
   # This generator expression is necessary for multi-configuration generators,
   # such as MSVC on Windows, and also to ensure that our target exports the
   # headers correctly
-  target_include_directories(${_name}
-    # This is the public ignition/math headers directory
+  target_include_directories(${lib_name}
+    # This is the publicly installed ignition/math headers directory
     PUBLIC $<INSTALL_INTERFACE:${IGN_INCLUDE_INSTALL_DIR_FULL}>
     # This is the build directory version of the headers
     PRIVATE $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>)
 
+  include(GenerateExportHeader)
+  generate_export_header(${lib_name}
+    # This will create a file named ${PROJECT_NAME_NO_VERSION_LOWER}_export.h
+    # (even though we specify upper; cmake automatically lower cases it),
+    # but that is not the filename that we want. CMake does not allow us to
+    # specify an exact filename, so we will create it as ign_export and the
+    # rename it afterwards.
+    BASE_NAME ${PROJECT_NAME_NO_VERSION_UPPER}
+    EXPORT_MACRO_NAME DETAIL_IGNITION_${IGN_DESIGNATION_UPPER}_VISIBLE
+    NO_EXPORT_MACRO_NAME DETAIL_IGNITION_${IGN_DESIGNATION_UPPER}_HIDDEN
+    DEPRECATED_MACRO_NAME IGN_DEPRECATED_ALL_VERSIONS)
+
+  # Make sure we have a detail subdirectory in our include directory
+  file(MAKE_DIRECTORY
+    "${CMAKE_BINARY_DIR}/include/ignition/${IGN_DESIGNATION_LOWER}/detail")
+
+  set(binary_include_dir
+    "${CMAKE_BINARY_DIR}/include/ignition/${IGN_DESIGNATION_LOWER}")
+
+  set(install_include_dir
+    "${IGN_INCLUDE_INSTALL_DIR_FULL}/ignition/${IGN_DESIGNATION}")
+
+  # Rename the automatically generated file to match our desired style, and
+  # place it in the detail include directory, because we will be configuring
+  # another header to wrap this one.
+  file(RENAME
+    "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME_NO_VERSION_LOWER}_export.h"
+    "${binary_include_dir}/detail/Export.h")
+
+  # Configure the installation of the automatically generated file.
+  install(
+    FILES "${binary_include_dir}/detail/Export.h"
+    DESTINATION "${install_include_dir}/detail"
+    COMPONENT headers)
+
+  # Configure the public-facing header for exporting and deprecating. This
+  # header provides commentary for the macros so that developers can know their
+  # purpose.
+  configure_file(
+    "${IGNITION_CMAKE_DIR}/Export.h.in"
+    "${binary_include_dir}/Export.h")
+
+  # Configure the installation of the public-facing header.
+  install(
+    FILES "${binary_include_dir}/Export.h"
+    DESTINATION "${install_include_dir}"
+    COMPONENT headers)
 
 endmacro()
 
