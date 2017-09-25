@@ -77,6 +77,14 @@ macro(ign_build_tests)
           ${PROJECT_BINARY_DIR}
           ${ign_build_tests_INCLUDE_DIRS})
 
+      if(UNIX)
+
+        # gtest requies pthread when compiled on a Unix machine
+        target_link_libraries(${BINARY_NAME}
+          pthread)
+
+      endif()
+
       if(WIN32)
         # If we have not installed our project's library yet, then it will not be visible
         # to the test when we attempt to run it. Therefore, we place a copy of our project's

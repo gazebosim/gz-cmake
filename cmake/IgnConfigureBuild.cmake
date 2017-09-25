@@ -97,6 +97,7 @@ macro(ign_configure_build)
     # Set up the compiler flags
     ign_set_compiler_flags()
 
+
     #--------------------------------------
     # We want to include both the include directory from the source tree and
     # also the include directory that's generated in the build folder,
@@ -105,12 +106,6 @@ macro(ign_configure_build)
     include_directories(
       ${PROJECT_SOURCE_DIR}/include
       ${PROJECT_BINARY_DIR}/include)
-
-
-    #--------------------------------------
-    # Tell the user what their settings are
-    message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
-    message(STATUS "Install prefix: ${CMAKE_INSTALL_PREFIX}")
 
 
     #--------------------------------------

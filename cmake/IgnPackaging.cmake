@@ -158,6 +158,11 @@ macro(ign_create_packages)
   # Load platform-specific build hooks if present.
   ign_load_build_hooks()
 
+  #============================================================================
+  # Tell the user what their settings are
+  message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
+  message(STATUS "Install prefix: ${CMAKE_INSTALL_PREFIX}")
+
 endmacro()
 
 
