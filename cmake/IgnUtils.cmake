@@ -542,7 +542,7 @@ macro(ign_add_executable _name)
 endmacro()
 
 #################################################
-# ign_target_public_include_directories(<target> [include_targets])
+# ign_target_interface_include_directories(<target> [include_targets])
 #
 # Add the INTERFACE_INCLUDE_DIRECTORIES of [include_targets] to the public
 # INCLUDE_DIRECTORIES of <target>. This allows us to propagate the include

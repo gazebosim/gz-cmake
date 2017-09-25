@@ -60,10 +60,6 @@ macro(ign_build_tests)
         add_definitions(-DUSE_LOW_MEMORY_TESTS=1)
       endif(USE_LOW_MEMORY_TESTS)
 
-#      if(BINARY_NAME STREQUAL "UNIT_ColladaExporter_TEST")
-#        list (APPEND GTEST_SOURCE_file ${CMAKE_SOURCE_DIR}/src/tinyxml2/tinyxml2.cpp)
-#      endif()
-
       add_executable(${BINARY_NAME} ${GTEST_SOURCE_file})
 
       add_test(${BINARY_NAME} ${CMAKE_CURRENT_BINARY_DIR}/${BINARY_NAME}
@@ -80,10 +76,6 @@ macro(ign_build_tests)
           ${PROJECT_SOURCE_DIR}
           ${PROJECT_BINARY_DIR}
           ${ign_build_tests_INCLUDE_DIRS})
-
-      if(UNIX)
-        target_link_libraries(${BINARY_NAME} pthread)
-      endif(UNIX)
 
       if(WIN32)
         # If we have not installed our project's library yet, then it will not be visible

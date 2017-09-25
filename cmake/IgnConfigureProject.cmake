@@ -2,11 +2,11 @@
 # IgnConfigureProject
 # -------------------
 #
-# ign_configure_project(ign_designation major_version minor_version patch_number)
+# ign_configure_project(designation major_version[.minor[.patch[.tweak]]])
 #
 # Sets up an ignition library project. Note that ign_designation should only be
-# the second part of the library name (i.e. it should exclude the "ignition-"
-# prefix).
+# the second part of the library name (i.e. it should NOT include the
+# "ignition-" prefix).
 #
 #===============================================================================
 # Copyright (C) 2017 Open Source Robotics Foundation
@@ -25,18 +25,24 @@
 
 #################################################
 # Initialize the ignition project
-macro(ign_configure_project designation major_version minor_version patch_number)
+macro(ign_configure_project designation full_version)
+
+  #============================================================================
+  # Extract the major version
+  #============================================================================
+  string(REGEX REPLACE "^([0-9]+).*" "\\1" major_version "${full_version}")
 
   #============================================================================
   # Initiate project
   #============================================================================
-  project(ignition-${designation}${major_version}
-    VERSION ${major_version}.${minor_version}.${patch_number})
+  project(ignition-${designation}${major_version} VERSION ${full_version})
 
   # Note: The following are automatically defined by project(~) in cmake v3:
   # PROJECT_VERSION_MAJOR
   # PROJECT_VERSION_MINOR
   # PROJECT_VERSION_PATCH
+
+
 
   #============================================================================
   # Set project variables
