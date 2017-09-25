@@ -175,7 +175,7 @@ macro(ign_find_package PACKAGE_NAME)
       ign_string_append(${PACKAGE_NAME}_dependency_args EXACT)
     endif()
 
-    list(APPEND PROJECT_CMAKE_DEPENDENCIES "${${PACKAGE_NAME}_dependency_args}")
+    ign_string_append(PROJECT_CMAKE_DEPENDENCIES "find_dependency(${${PACKAGE_NAME}_dependency_args})" DELIM "\n")
 
     #------------------------------------
     # Add this library or project to its relevant pkgconfig entry, unless we
@@ -241,10 +241,35 @@ macro(ign_list_to_string _string _list)
 endmacro()
 
 #################################################
+# ign_string_append(<output_var> <value_to_append> [DELIM <delimiter>])
+#
+# <output_var>: The name of the string variable that should be appended to
+#
+# <value_to_append>: The value that should be appended to the string
+#
+# [DELIM]: Specify a delimiter to separate the contents with. Default value is a
+#          space
+#
 # Macro to append a value to a string
 macro(ign_string_append output_var val)
 
-  set(${output_var} "${${output_var}} ${val}")
+  #------------------------------------
+  # Define the expected arguments
+  set(options) # We are not using options yet
+  set(oneValueArgs DELIM)
+  set(multiValueArgs ADDITIONAL_DIRS EXCLUDE) # We are not using multiValueArgs yet
+
+  #------------------------------------
+  # Parse the arguments
+  cmake_parse_arguments(ign_string_append "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+  if(ign_string_append_DELIM)
+    set(delim "${ign_string_append_DELIM}")
+  else()
+    set(delim " ")
+  endif()
+
+  set(${output_var} "${${output_var}}${delim}${val}")
 
 endmacro()
 

@@ -25,5 +25,9 @@ list(APPEND CMAKE_MODULE_PATH "${IGNITION_CMAKE_DIR}")
 include(IgnCMake)
 
 #--------------------------------------
+# Create a variable to indicate what version of ignition-cmake we are using
+set(IGNITION-CMAKE_VERSION_MAJOR @PROJECT_VERSION_MAJOR@)
+
+#--------------------------------------
 # Activate the _FOUND variable
 set(IGNITION-CMAKE@PROJECT_VERSION_MAJOR@_FOUND TRUE)

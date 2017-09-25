@@ -45,7 +45,12 @@ set(@PKG_NAME@_INCLUDE_DIRS "@PACKAGE_IGN_INCLUDE_INSTALL_DIR_FULL@")
 set(@PKG_NAME@_LIBRARY_DIRS "@PACKAGE_IGN_LIB_INSTALL_DIR@")
 set(@PKG_NAME@_LDFLAGS      "-L@PACKAGE_IGN_LIB_INSTALL_DIR@")
 
+# Get access to the find_dependency utility
 include(CMakeFindDependencyMacro)
-foreach(dependency @PROJECT_CMAKE_DEPENDENCIES@)
-  find_dependency(${dependency})
-endforeach()
+
+# Find ignition-cmake, because we need its modules in order to find the rest of
+# our dependencies.
+find_dependency(ignition-cmake@IGNITION-CMAKE_VERSION_MAJOR@)
+
+# Find each dependency of this project (if nothing is below, then the project
+# has no external dependencies).@PROJECT_CMAKE_DEPENDENCIES@
