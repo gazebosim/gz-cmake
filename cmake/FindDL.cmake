@@ -44,6 +44,11 @@ if(DL_FOUND)
   ign_import_target(DL)
 endif()
 
+# We need to manually specify the pkgconfig entry (and type of entry) for dl,
+# because ign_pkg_check_modules does not work for it.
+set(DL_PKGCONFIG_ENTRY "-ldl")
+set(DL_PKGCONFIG_TYPE PROJECT_PKGCONFIG_LIBS)
+
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(
   DL

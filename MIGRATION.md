@@ -205,24 +205,19 @@ can be found in the section on anti-patterns.
 To reduce complexity, this macro no longer takes in any arguments, and instead
 uses the standardized target name and export name.
 
-### Replace calls to `#include "ignition/<project>/System.hh"` with `#include "ignition/<project>/Export.h"`, and delete `System.hh`.
+### Replace calls to `#include "ignition/<project>/System.hh"` with `#include "ignition/<project>/Export.hh"`, and delete the file `System.hh`.
 
 Up until now, we've been maintaining a "System" header in each ignition library.
 This is being replaced by a set of auto-generated headers, because some of the
 individual projects' implementations had errors or issues in them. The new
 auto-generated headers will enforce consistency and compatibility across all of
-the ignition projects. The header is also being renamed for two reasons:
-
-1. The role of the header is to provide macros that facilitate exporting the
-library, therefore it seems more appropriate to name it "Export" instead of
-"System". Nothing in the header is interacting with the operating system, so the
-current name feels like somewhat of a misnomer (presumably the name "System"
-came from the fact that the macros are system-dependent, but I think naming the
-header after the role that it's performing would be more appropriate).
-
-2. The macros provided by this header are fully compatible with plain C, so the
-`*.h` extension seems more fitting than the `*.hh` extension, which usually
-indicates that the file is exclusively compatible with C++.
+the ignition projects. The header is also being renamed because the role of the
+header is to provide macros that facilitate exporting the library, therefore it
+seems more appropriate to name it "Export" instead of "System". Nothing in the
+header is interacting with the operating system, so the current name feels like
+somewhat of a misnomer (presumably the name "System" came from the fact that the
+macros are system-dependent, but I think naming the header after the role that
+it's performing would be more appropriate).
 
 ### Replace `IGNITION_<VISIBLE/HIDDEN>` with `IGNITION_<PROJECT>_<VISIBLE/HIDDEN>` in all headers
 
@@ -231,13 +226,18 @@ unique. Different ignition libraries might depend on each other, and the
 compiler/linker would be misinformed about which symbols to export if two
 different libraries share the same export macro.
 
+### Move all find-modules in your project's `cmake/` directory to your `ign-cmake` repo, and submit a pull request for them
+
+We are centralizing all find-modules into `ign-cmake` so that everyone benefits
+from them, and we get a single place to maintain them.
+
 ### Remove the entire `cmake/` subdirectory from your project
 
 Once the above steps are complete, your project's `cmake/` subdirectory should
-no longer be needed. If your `cmake/` subdirectory contained some find-modules
+no longer be needed. If your `cmake/` subdirectory contained some features
 that are not already present in `ign-cmake`, then you should add those
-find-modules to `ign-cmake` and submit a pull request. I will try to be very
-prompt about reviewing and approving those PRs.
+features to `ign-cmake` and submit a pull request. I will try to be very prompt
+about reviewing and approving those PRs.
 
 
 
@@ -254,21 +254,21 @@ directory and sort them into a `source` variable (containing the library sources
 and a `tests` variable (containing the unit test sources).
 
 If there are files that you want to exclude from either of these lists, you can
-use `list(REMOVE_ITEM <list> <filenames>)`. That method can be used to
-conditionally remove files from a list (see `ign-common/src/CMakeLists.txt` for
-an example). Alternatively, if you always want a file to be excluded, you can
-change its extension (e.g. `*.cc.backup` or `.cc.old`) until a later time when
-you want it to be used again.
+use `list(REMOVE_ITEM <list> <filenames>)` after calling the function. That
+approach can be used to conditionally remove files from a list (see
+`ign-common/src/CMakeLists.txt` for an example). Alternatively, if you always
+want a file to be excluded, you can change its extension (e.g. `*.cc.backup` or
+`.cc.old`) until a later time when you want it to be used again.
 
 ### Use `ign_install_all_headers(~)` in `include/ignition/<project>/CMakeLists.txt`
 
-Using this macro will install all files ending in `*.h` and `.hh` in the current
-source directory as well as the subdirectory named `detail` (if it exists). It
-will also configure your project's `<project>.hh` and `config.hh.in` files and
-install them.
+Using this macro will install all files ending in `*.h` and `*.hh` in the
+current source directory as well as the subdirectory named `detail` (if it
+exists). It will also configure your project's `<project>.hh` and `config.hh.in`
+files and install them.
 
 You can use the argument `ADDITIONAL_DIRS` to specify additional subdirectories
-to install, and the argument `EXCLUDE` to specify files that should not be
+to install, and the argument `EXCLUDE` can specify files that should not be
 installed.
 
 ### Use `ign_get_sources(~)` in `test/<type>/CMakeLists.txt` to collect source files
@@ -326,14 +326,14 @@ divergent methods of varying quality for solving the same problem). Instead, any
 procedures or operations that are needed to find a package dependency should be
 put into a file called `Find<PACKAGE>.cmake` where `<PACKAGE>` should be
 replaced with the name of the package (often this is done in all uppercase
-letters). This `Find<PACKAGE>.cmake` should be added to `ignition-cmake/cmake`.
+letters). This `Find<PACKAGE>.cmake` should be added to `ign-cmake/cmake`.
 Pull requests for adding find-modules will be reviewed and approved as quickly
 as possible. This way, all projects can benefit from any one person's effort in
 writing a good quality find-module.
 
 In many cases, a package that we depend on will be distributed with a pkgconfig
-(*.pc) file. In such a case, `ignition-cmake` provides a macro that can easily
-find the package and create an imported target for it. Simple use `include(IgnPkgConfig)`
+(`*.pc`) file. In such a case, `ignition-cmake` provides a macro that can easily
+find the package and create an imported target for it. Simply use `include(IgnPkgConfig)`
 and then `ign_pkg_check_modules(~)` in your find-module, and you are done. An
 example of a simple case of this can be found in `ign-cmake/cmake/FindGTS.cmake`.
 
@@ -347,7 +347,10 @@ file will be available for it. For an example of how to handle that, see
 
 Some libraries are never distributed with a pkgconfig file. For an example of
 how to create a find-module when a pkgconfig file is guaranteed to not exist,
-see `ign-cmake/cmake/FindDL.cmake`.
+see `ign-cmake/cmake/FindDL.cmake`. Note that you must manually specify the
+variables `<PACKAGE>_PKGCONFIG_ENTRY` and `<PACKAGE>_PKGCONFIG_TYPE` in such
+cases. The entry will have to be the name of library (or libraries), preceded by
+`-l`, while the type must be `PROJECT_PKGCONFIG_LIBS`.
 
 ### Do not use `CACHE INTERNAL`
 
@@ -359,15 +362,15 @@ unnoticed because the internally cached data isn't readily visible to a
 developer.
 
 To understand why `CACHE INTERNAL` should be unnecessary, it is important to
-understand variable scope in cmake (which is very different than C++). When you
-call `add_subdirectory(~)`, you will enter a child scope. Each child scope can
-see all the variables that were set in its ancestors (parent directory,
-grandparent directory, etc.). This allows variables to easily trickle down the
-directory tree. A child directory can override a variable that was set in its
-parent directory, and that change will trickle down into all the children of
-that child, but the parent and the parent's other children will not see the
-change. This is an intentional feature to make sure that the special needs of
-one child do not impact its siblings (or cousins, etc).
+understand variable scope in cmake. When you call `add_subdirectory(~)`, you
+will enter a child scope. Each child scope can see all the variables that were
+set in its ancestors (parent directory, grandparent directory, etc.). This
+allows variables to easily trickle down the directory tree. A child directory
+can override a variable that was set in its parent directory, and that change
+will trickle down into all the children of that child, but the parent and the
+parent's other children will not see the change. This is an intentional feature
+to make sure that the special needs of one child do not impact its siblings (or
+cousins, etc).
 
 If for some reason a child *should* change a variable for its parent and
 siblings, then the `set(~)` function accepts the `PARENT_SCOPE` option. If a
@@ -379,7 +382,7 @@ a higher scope rather than added to the cache.
 
 Note that a cmake function will behave as though it has a child scope, while a
 macro will behave as though it has the same scope as the parent that calls it.
-If the role of the function/macro is to set effectively copy/paste a bunch of
+If the role of the function/macro is to effectively copy/paste a bunch of
 text into the file that calls it, it should be written as a macro. If the role
 is to perform some complex operations and then return just a small number of
 variables, then it should be written as a function, and `set( ... PARENT_SCOPE)`
@@ -391,9 +394,9 @@ useful for exposing build options to the user. However, in those cases, a type
 `INTERNAL`. When providing a bool option, you should prefer to use the command
 `option(<variable> "Description" <default>)`. When providing a string option
 where a set of valid choices is known ahead of time, use
-`set(<variable> "Default" CACHE STRING "Description")` followed by
-`set_property(CACHE <variable> PROPERTY STRINGS <list_of_choices>)`. This will
-explicitly inform the user of their choices for the option.
+`set(<variable> "Default Variable Value" CACHE STRING "Description")` followed
+by `set_property(CACHE <variable> PROPERTY STRINGS <list_of_choices>)`. This
+will explicitly inform the user of their choices for the option.
 
 ### Do not use `link_directories(~)`
 

@@ -239,7 +239,7 @@ endfunction()
 function(ign_create_cmake_package)
 
   # Set configuration arguments
-  set(PKG_NAME ${PROJECT_NAME_UPPER})
+  set(PKG_NAME ${PROJECT_NAME_LOWER})
   set(ign_config_input "${IGNITION_CMAKE_DIR}/ignition-config.cmake.in")
   set(ign_config_output "${PROJECT_NAME_LOWER}-config.cmake")
   set(ign_version_output "${PROJECT_NAME_LOWER}-config-version.cmake")

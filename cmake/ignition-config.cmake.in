@@ -42,6 +42,11 @@ set(@PKG_NAME@_INCLUDE_DIRS "@PACKAGE_IGN_INCLUDE_INSTALL_DIR_FULL@")
 set(@PKG_NAME@_LIBRARY_DIRS "@PACKAGE_IGN_LIB_INSTALL_DIR@")
 set(@PKG_NAME@_LDFLAGS      "-L@PACKAGE_IGN_LIB_INSTALL_DIR@")
 
+# These variables are used by ignition-cmake to automatically configure the
+# pkgconfig files for ignition projects.
+set(@PKG_NAME@_PKGCONFIG_ENTRY "@PKG_NAME@")
+set(@PKG_NAME@_PKGCONFIG_TYPE PROJECT_PKGCONFIG_REQUIRES)
+
 # Get access to the find_dependency utility
 include(CMakeFindDependencyMacro)
 

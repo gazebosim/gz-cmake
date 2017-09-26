@@ -1,13 +1,14 @@
 
 #################################################
-# ign_find_package(<PACKAGE_NAME> [REQUIRED] [EXACT] [QUIET] [PRIVATE] [BUILD_ONLY] [PKGCONFIG_IGNORE]
+# ign_find_package(<PACKAGE_NAME>
+#                  [REQUIRED] [EXACT] [QUIET] [PRIVATE] [BUILD_ONLY] [PKGCONFIG_IGNORE]
 #                  [VERSION <ver>]
 #                  [EXTRA_ARGS <args>]
 #                  [PRETTY <name>]
+#                  [PURPOSE <"explanation for this dependency">]
 #                  [PKGCONFIG <pkgconfig_name>]
 #                  [PKGCONFIG_LIB <lib_name>]
-#                  [PKGCONFIG_VER_COMPARISON <|>|=|<=|>=]
-#                  [PURPOSE <"explanation for this dependency">])
+#                  [PKGCONFIG_VER_COMPARISON <|>|=|<=|>=])
 #
 # This is a wrapper for the standard cmake find_package which behaves according
 # to the conventions of the ignition library. In particular, we do not quit
@@ -26,31 +27,35 @@
 #                 alternative names for this package that can be used depending
 #                 on the context.
 #
-# [REQUIRED]: Optional. If provided, this will trigger an ignition build_error.
-#             If not provided, this will trigger an ignition build_warning.
+# [REQUIRED]: Optional. If provided, macro will trigger an ignition build_error
+#             when the package cannot be found. If not provided, this macro will
+#             trigger an ignition build_warning when the package is not found.
 #
 # [EXACT]: Optional. This will pass on the EXACT option to find_package(~) and
 #          also add it to the call to find_dependency(~) in the
 #          <project>-config.cmake file.
 #
 # [QUIET]: Optional. If provided, it will be passed forward to cmake's
-#          find_package(~) command. This function will still print its normal
+#          find_package(~) command. This macro will still print its normal
 #          output.
 #
 # [PRIVATE]: Optional. Use this to indicate that consumers of the project do not
-#            need to link against this package, but it must be present on the
+#            need to link against the package, but it must be present on the
 #            system, because our project must link against it.
 #
 # [BUILD_ONLY]: Optional. Use this to indicate that the project only needs this
 #               package while building, and it does not need to be available to
 #               the consumer of this project at all. Normally this should only
-#               apply to a header-only library whose headers are included
+#               apply to (1) a header-only library whose headers are included
 #               exclusively in the source files and not included in any public
-#               (i.e. installed) project headers.
+#               (i.e. installed) project headers, or to (2) a static library
+#               dependency.
 #
 # [PKGCONFIG_IGNORE]: Discouraged. If this option is provided, this package will
 #                     not be added to the project's pkgconfig file in any way.
-#                     This should only be used in very rare circumstances.
+#                     This should only be used in very rare circumstances. Note
+#                     that BUILD_ONLY will also prevent a pkgconfig entry from
+#                     being produced.
 #
 # [VERSION]: Optional. Follow this argument with the major[.minor[.patch[.tweak]]]
 #            version that you need for this package.
@@ -61,6 +66,20 @@
 #           <PACKAGE_NAME> when printing messages, warnings, or errors to the
 #           terminal.
 #
+# [PURPOSE]: Optional. If provided, the string that follows will be appended to
+#            the build_warning or build_error that this function produces when
+#            the package could not be found.
+#
+#  ==========================================================================
+#  The following arguments pertain to the automatic generation of your
+#  project's pkgconfig file. Ideally, this information should be provided
+#  automatically by ignition-cmake through the cmake find-module that is written
+#  for your dependency. However, if your package gets distributed with its own
+#  cmake config-file or find-module, then it might not automatically set this
+#  information. Therefore, we provide the ability to set it through your call to
+#  ign_find_package(~). Do not hesitate to ask for help if you need to use these
+#  arguments.
+#
 # [PKGCONFIG]: Optional. If provided, the string that follows will be used to
 #              specify a "required" package for pkgconfig. If not provided, then
 #              <PACKAGE_NAME> will be used instead.
@@ -70,8 +89,7 @@
 #                  libraries which do not come with *.pc metadata, such as
 #                  system libraries, libm, libdl, or librt. Generally you should
 #                  leave this out, because most packages will be considered
-#                  "modules" by pkgconfig, which is how we will treat the
-#                  package by default. The string which follows this argument
+#                  "modules" by pkgconfig. The string which follows this argument
 #                  will be used as the library name, and the string that follows
 #                  a PKGCONFIG argument will be ignored, so the PKGCONFIG
 #                  argument can be left out when using this argument.
@@ -82,10 +100,6 @@
 #                             =, <, >, <=, >=. Default will be =. If no version
 #                             is provided using VERSION, then this will be left
 #                             out, whether or not it is provided.
-#
-# [PURPOSE]: Optional. If provided, the string that follows will be appended to
-#            the build_warning or build_error that this function produces when
-#            the package could not be found.
 #
 macro(ign_find_package PACKAGE_NAME)
 
@@ -181,49 +195,51 @@ macro(ign_find_package PACKAGE_NAME)
     # Add this library or project to its relevant pkgconfig entry, unless we
     # have been explicitly instructed to ignore it.
     if(NOT ign_find_package_PKGCONFIG_IGNORE)
-      # Create the string that will be used as this library or package's entry
-      # in the pkgconfig file.
+
+      # Here we will set up the pkgconfig entry for this package. Ordinarily,
+      # these variables should be set by ign_pkg_check_modules[_quiet]. However,
+      # that might not be available for third-party dependencies that provide
+      # their own find-module or cmake config-module. Therefore, we provide the
+      # option of specifying pkgconfig information through the call to
+      # ign_find_package.
+
+      # If the caller has specified the arguments PKGCONFIG_LIB or PKGCONFIG,
+      # then we will overwrite these pkgconfig variables with the information
+      # provided by the caller.
       if(ign_find_package_PKGCONFIG_LIB)
         # Libraries must be prepended with -l
-        set(${PACKAGE_NAME}_pkgconfig_entry "-l${ign_find_package_PKGCONFIG_LIB}")
+        set(${PACKAGE_NAME}_PKGCONFIG_ENTRY "-l${ign_find_package_PKGCONFIG_LIB}")
+        set(${PACKAGE_NAME}_PKGCONFIG_TYPE PROJECT_PKGCONFIG_LIBS)
       elseif(ign_find_package_PKGCONFIG)
         # Modules (a.k.a. packages) can just be provided with the name
-        set(${PACKAGE_NAME}_pkgconfig_entry "${ign_find_package_PKGCONFIG}")
-      else()
-        set(${PACKAGE_NAME}_pkgconfig_entry "${PACKAGE_NAME}")
-      endif()
+        set(${PACKAGE_NAME}_PKGCONFIG_ENTRY "${ign_find_package_PKGCONFIG}")
+        set(${PACKAGE_NAME}_PKGCONFIG_TYPE PROJECT_PKGCONFIG_REQUIRES)
 
-      # Add the version requirements to the entry.
-      if(ign_find_package_VERSION)
-        # Note, specifying the version is not supported for library dependencies.
-        # It is only supported for packages, a.k.a. modules.
-        if(NOT ign_find_package_PKGCONFIG_LIB)
+        # Add the version requirements to the entry.
+        if(ign_find_package_VERSION)
+          # Use equivalency by default
           set(comparison "=")
+
+          # If the caller has specified a version comparison operator, use that
+          # instead of equivalency.
           if(ign_find_package_PKGCONFIG_VER_COMPARISON)
             set(comparison ${ign_find_package_PKGCONFIG_VER_COMPARISON})
           endif()
-          set(${PACKAGE_NAME}_pkgconfig_entry "${${PACKAGE_NAME}_pkgconfig_entry} ${comparison} ${ign_find_package_VERSION}")
-        endif()
-      endif()
 
-      #------------------------------------
-      # Figure out what type of entry this should be for pkgconfig
-      set(${PACKAGE_NAME}_pkgconfig_type)
-      if(ign_find_package_PKGCONFIG_LIB)
-        # If we have a "library", use PROJECT_PKGCONFIG_LIB
-        set(${PACKAGE_NAME}_pkgconfig_type PROJECT_PKGCONFIG_LIBS)
-      else()
-        # If we have a "module", use PROJECT_PKGCONFIG_REQUIRES
-        set(${PACKAGE_NAME}_pkgconfig_type PROJECT_PKGCONFIG_REQUIRES)
+          # Append the comparison and the version onto the pkgconfig entry
+          set(${PACKAGE_NAME}_PKGCONFIG_ENTRY "${${PACKAGE_NAME}_PKGCONFIG_ENTRY} ${comparison} ${ign_find_package_VERSION}")
+
+        endif()
+
       endif()
 
       if(ign_find_package_PRIVATE)
         # If this is a private library or module, add the _PRIVATE suffix
-        set(${PACKAGE_NAME}_pkgconfig_type ${${PACKAGE_NAME}_pkgconfig_type}_PRIVATE)
+        set(${PACKAGE_NAME}_PKGCONFIG_TYPE ${${PACKAGE_NAME}_PKGCONFIG_TYPE}_PRIVATE)
       endif()
 
       # Append the entry as a string onto whichever type we selected
-      set(${${PACKAGE_NAME}_pkgconfig_type} "${${${PACKAGE_NAME}_pkgconfig_type}} ${${PACKAGE_NAME}_pkgconfig_entry}")
+      set(${${PACKAGE_NAME}_PKGCONFIG_TYPE} "${${${PACKAGE_NAME}_PKGCONFIG_TYPE}} ${${PACKAGE_NAME}_PKGCONFIG_ENTRY}")
 
     endif()
   endif()
@@ -531,11 +547,11 @@ macro(ign_add_library lib_name)
   # another header to wrap this one.
   file(RENAME
     "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME_NO_VERSION_LOWER}_export.h"
-    "${binary_include_dir}/detail/Export.h")
+    "${binary_include_dir}/detail/Export.hh")
 
   # Configure the installation of the automatically generated file.
   install(
-    FILES "${binary_include_dir}/detail/Export.h"
+    FILES "${binary_include_dir}/detail/Export.hh"
     DESTINATION "${install_include_dir}/detail"
     COMPONENT headers)
 
@@ -543,12 +559,12 @@ macro(ign_add_library lib_name)
   # header provides commentary for the macros so that developers can know their
   # purpose.
   configure_file(
-    "${IGNITION_CMAKE_DIR}/Export.h.in"
-    "${binary_include_dir}/Export.h")
+    "${IGNITION_CMAKE_DIR}/Export.hh.in"
+    "${binary_include_dir}/Export.hh")
 
   # Configure the installation of the public-facing header.
   install(
-    FILES "${binary_include_dir}/Export.h"
+    FILES "${binary_include_dir}/Export.hh"
     DESTINATION "${install_include_dir}"
     COMPONENT headers)
 
@@ -622,25 +638,12 @@ macro(ign_install_executable _name )
   manpage(${_name} 1)
 endmacro()
 
-
-
-# This should be migrated to more fine control solution based on set_property APPEND
-# directories. It's present on cmake 2.8.8 while precise version is 2.8.7
-link_directories(${PROJECT_BINARY_DIR}/test)
-include_directories("${PROJECT_SOURCE_DIR}/test/gtest/include")
-
-#################################################
-# Enable tests compilation by default
-if (NOT DEFINED ENABLE_TESTS_COMPILATION)
-  set (ENABLE_TESTS_COMPILATION True)
-endif()
-
 #################################################
 # Macro to setup supported compiler warnings
 # Based on work of Florent Lamiraux, Thomas Moulard, JRL, CNRS/AIST.
-include(CheckCXXCompilerFlag)
-
 macro(ign_filter_valid_compiler_options var)
+
+  include(CheckCXXCompilerFlag)
   # Store the current setting for CMAKE_REQUIRED_QUIET
   set(original_cmake_required_quiet ${CMAKE_REQUIRED_QUIET})
 

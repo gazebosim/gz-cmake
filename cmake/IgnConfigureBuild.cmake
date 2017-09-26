@@ -45,9 +45,9 @@ macro(ign_configure_build)
   # invoking cmake using -DENABLE_TESTS_COMPILATION=val
   if(NOT DEFINED ENABLE_TESTS_COMPILATION)
     if(DISABLE_TEST_CONFIGURATION)
-      set(ENABLE_TEST_COMPILATION false)
+      set(ENABLE_TESTS_COMPILATION false)
     else()
-      set(ENABLE_TEST_COMPILATION true)
+      set(ENABLE_TESTS_COMPILATION true)
     endif()
   endif()
 

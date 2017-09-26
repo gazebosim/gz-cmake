@@ -23,18 +23,14 @@ set(minor_version ${FreeImage_FIND_VERSION_MINOR})
 # Set the full version number
 set(full_version ${major_version}.${minor_version})
 
-# See if we have PkgConfig
-find_package(PkgConfig QUIET)
-if(PKG_CONFIG_FOUND)
-  include(IgnPkgConfig)
-  ign_pkg_check_modules_quiet(FreeImage FreeImage>=${full_version})
-  if(NOT FreeImage_FOUND)
-    message(STATUS "FreeImage.pc not found, we will search for FreeImage_INCLUDE_DIRS and FreeImage_LIBRARIES")
-  endif(NOT FreeImage_FOUND)
-endif(PKG_CONFIG_FOUND)
+include(IgnPkgConfig)
+ign_pkg_check_modules_quiet(FreeImage FreeImage>=${full_version})
 
 # If we don't have PkgConfig, or if PkgConfig failed, then do a manual search
 if(NOT FreeImage_FOUND)
+  message(STATUS "FreeImage.pc not found, we will search for "
+                 "FreeImage_INCLUDE_DIRS and FreeImage_LIBRARIES")
+
   find_path(FreeImage_INCLUDE_DIRS FreeImage.h)
   if(NOT FreeImage_INCLUDE_DIRS)
     message(STATUS "Looking for FreeImage.h - not found")
