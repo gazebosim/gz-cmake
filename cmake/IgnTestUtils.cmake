@@ -74,6 +74,7 @@ macro(ign_build_tests)
       target_include_directories(${BINARY_NAME}
         PRIVATE
           ${PROJECT_SOURCE_DIR}
+          ${PROJECT_SOURCE_DIR}/test/gtest/include
           ${PROJECT_BINARY_DIR}
           ${ign_build_tests_INCLUDE_DIRS})
 
