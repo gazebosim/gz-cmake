@@ -15,7 +15,7 @@ section details some of the new CMake features that we'll be using through
 section describes some CMake anti-patterns which we should aggressively avoid
 as we move forward.
 
-## 1. Required Changes
+# 1. Required Changes
 
 You can find examples of projects that have been set up to use `ign-cmake` in
 the repos of `ign-common` (branch: `CMakeRefactor`) and `ign-math`
@@ -156,7 +156,7 @@ Calling `find_package(~)` will generally produce a set of variables which look
 like `DEPENDENCY_FOUND`, `DEPENDENCY_LIBRARIES`, `DEPENDENCY_INCLUDE_DIRS`, and
 `DEPENDENCY_CXX_FLAGS`. These variables are often passed to cmake functions like
 `target_add_library(my_target ${DEPENDENCY_LIBRARIES})`. These variables often
-contain hard-coded full system paths. This results in package information which
+contain explicit full system paths. This results in package information which
 is not relocatable, and that may cause significant problems when distributing
 pre-built packages, or when relocating a package within a system.
 
@@ -177,7 +177,11 @@ will be needed by libraries which depend on your project's library. This should
 be done using `ign_target_interface_include_directories(<project_target> <dependency_targets>)`.
 That function will add the interface include directories of the dependency
 targets that you pass in to the interface include directory list of
-<project_target> in a way which is relocatable.
+`<project_target>` in a way which is relocatable by using generator expressions.
+This is in contrast to just using
+`target_include_directories(<project_target> ${DEPENDENCY_INCLUDE_DIRS})` which
+will not be relocatable, because `${DEPENDENCY_INCLUDE_DIRS}` just contains an
+explicit list of full paths to the directories.
 
 **BEWARE**: Very often, a target name might be identical to the name of the
 library that it is meant to represent. This can cause confusion for cmake when
@@ -190,14 +194,15 @@ and it will throw an error and quit if that target is not found, instead of
 failing quietly or subtly. Therefore, we should always exercise the practice of
 using `::` in the names of any imported targets that we intend to use.
 `ignition-cmake` will automatically export all ignition library targets to have
-the name `ignition-<project><major_version>::ignition-<project><major_version>`.
-When creating a cmake find-module, the macro `ign_import_target(~)` should be
-used generate an imported target which follows this convention. Creating
-find-modules will be discussed further later on in this document.
+the name `ignition-<project><major_version>::ignition-<project><major_version>`
+(for example, `ignition-common0::ignition-common0`). When creating a cmake
+find-module, the macro `ign_import_target(~)` should be used generate an
+imported target which follows this convention. More about creating find-modules
+can be found in the section on anti-patterns.
 
 ### Remove all arguments from `ign_install_library()`
 
-To reduce confusion, this macro no longer takes in any arguments, and instead
+To reduce complexity, this macro no longer takes in any arguments, and instead
 uses the standardized target name and export name.
 
 ### Replace calls to `#include "ignition/<project>/System.hh"` with `#include "ignition/<project>/Export.h"`, and delete `System.hh`.
@@ -216,10 +221,10 @@ came from the fact that the macros are system-dependent, but I think naming the
 header after the role that it's performing would be more appropriate).
 
 2. The macros provided by this header are fully compatible with plain C, so the
-"*.h" extension seems more fitting than the "*.hh" extension, which usually
+`*.h` extension seems more fitting than the `*.hh` extension, which usually
 indicates that the file is exclusively compatible with C++.
 
-### Replace `IGNITION_[VISIBLE/HIDDEN]` with `IGNITION_<PROJECT>_[VISIBLE/HIDDEN]` in all headers
+### Replace `IGNITION_<VISIBLE/HIDDEN>` with `IGNITION_<PROJECT>_<VISIBLE/HIDDEN>` in all headers
 
 The export (a.k.a. visibility) macros used by each ignition library must be
 unique. Different ignition libraries might depend on each other, and the
@@ -237,7 +242,7 @@ prompt about reviewing and approving those PRs.
 
 
 
-## 2. Recommended Changes
+# 2. Recommended Changes
 
 The following changes are not necessary, but may improve the readability and
 maintainability of your CMake code. Use of these utilities is optional.
@@ -252,7 +257,7 @@ If there are files that you want to exclude from either of these lists, you can
 use `list(REMOVE_ITEM <list> <filenames>)`. That method can be used to
 conditionally remove files from a list (see `ign-common/src/CMakeLists.txt` for
 an example). Alternatively, if you always want a file to be excluded, you can
-change its extension (e.g. "*.cc.backup" or ".cc.old") until a later time when
+change its extension (e.g. `*.cc.backup` or `.cc.old`) until a later time when
 you want it to be used again.
 
 ### Use `ign_install_all_headers(~)` in `include/ignition/<project>/CMakeLists.txt`
@@ -274,7 +279,7 @@ list of source files, which is sufficient to be passed to `ign_build_tests(~)`.
 
 
 
-## 3. Anti-patterns to avoid
+# 3. Anti-patterns to avoid
 
 ### Do not use `include(${cmake_dir}/ModuleName.cmake)`
 
@@ -289,11 +294,11 @@ find the appropriate file.
 
 ### Do not use `include(FindSomePackage)`
 
-When a `*.cmake` file begins with the word "Find", it is a special type of
+When a `*.cmake` file begins with the word `Find`, it is a special type of
 cmake module known as a find-module. Its purpose is to search for a package
 after being invoked by the command `find_package(SomePackage)`. Notice that the
-"SomePackage" argument must match the string of characters in between "Find" and
-".cmake" in the filename "FindSomePackage.cmake". Case matters. This is not just
+`SomePackage` argument must match the string of characters in between `Find` and
+`.cmake` in the filename `FindSomePackage.cmake`. Case matters. This is not just
 a convention; it is a cmake requirement.
 
 Note that while using `ignition-cmake`, you should be using `ign_find_package(~)`
@@ -306,7 +311,7 @@ correctness in the package configuration files that we generate for our projects
 We had files named `FindOS.cmake` which checked the operating system type, and
 `FindSSE.cmake` which checked the SSE compatibility of the build machine.
 Neither of these were searching for packages, so neither of them should begin
-with the word "Find". As explained above, that pattern of filename is reserved
+with the word `Find`. As explained above, that pattern of filename is reserved
 for find-modules that are supposed to search for packages after being invoked by
 the `find_package(~)` command.
 
