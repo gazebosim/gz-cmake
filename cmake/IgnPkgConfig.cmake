@@ -24,6 +24,11 @@ macro(ign_pkg_check_modules package)
 
   ign_pkg_check_modules_quiet(${package} ${ARGN})
 
+  if(NOT PKG_CONFIG_FOUND)
+    status(WARNING "The package [${package}] requires pkg-config in order to be found. "
+                   "Please install pkg-config so we can search for that package.")
+  endif()
+
   include(FindPackageHandleStandardArgs)
   find_package_handle_standard_args(
     ${package}
@@ -31,29 +36,37 @@ macro(ign_pkg_check_modules package)
 
 endmacro()
 
+# This is an alternative to ign_pkg_check_modules(~) which you can use if you
+# have an alternative way to look for the package if pkgconfig is not available
+# or cannot find the requested package.
 macro(ign_pkg_check_modules_quiet package)
 
   find_package(PkgConfig QUIET)
-  pkg_check_modules(${package} ${ARGN})
 
-  if(${package}_FOUND AND NOT TARGET ${package}::${package})
+  if(PKG_CONFIG_FOUND)
 
-    # For some reason, pkg_check_modules does not provide complete paths to the
-    # libraries it returns, even though find_package is conventionally supposed
-    # to provide complete library paths. Having only the library name is harmful
-    # to the ign_create_imported_target macro, so we will change the variable to
-    # give it complete paths.
-    #
-    # TODO: How would we deal with multiple modules that are in different
-    # directories? How does cmake-3.6+ handle that situation?
-    _ign_pkgconfig_find_libraries(
-      ${package}_LIBRARIES
-      ${package}
-      "${${package}_LIBRARIES}"
-      "${${package}_LIBRARY_DIRS}")
+    pkg_check_modules(${package} ${ARGN})
 
-    include(IgnImportTarget)
-    ign_import_target(${package})
+    if(${package}_FOUND AND NOT TARGET ${package}::${package})
+
+      # For some reason, pkg_check_modules does not provide complete paths to the
+      # libraries it returns, even though find_package is conventionally supposed
+      # to provide complete library paths. Having only the library name is harmful
+      # to the ign_create_imported_target macro, so we will change the variable to
+      # give it complete paths.
+      #
+      # TODO: How would we deal with multiple modules that are in different
+      # directories? How does cmake-3.6+ handle that situation?
+      _ign_pkgconfig_find_libraries(
+        ${package}_LIBRARIES
+        ${package}
+        "${${package}_LIBRARIES}"
+        "${${package}_LIBRARY_DIRS}")
+
+      include(IgnImportTarget)
+      ign_import_target(${package})
+
+    endif()
 
   endif()
 

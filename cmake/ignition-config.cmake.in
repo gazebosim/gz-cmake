@@ -19,9 +19,6 @@
 # target.
 
 
-
-find_package(PkgConfig REQUIRED)
-
 if(@PKG_NAME@_CONFIG_INCLUDED)
   return()
 endif()
