@@ -2,7 +2,7 @@
 #
 # For finding and loading @PKG_NAME@ from your project, type:
 #
-# find_package(@PROJECT_NAME_LOWER@@PROJECT_VERSION_MAJOR@)
+# find_package(@PKG_NAME@)
 #
 # It defines the following variables:
 #
