@@ -2,7 +2,7 @@
 
 This file provides instructions for `ignition` library developers to adopt the
 `ignition-cmake` package into their own library's build system. This document
-is primarily targetted at ignition libraries that existed before `ignition-cmake`
+is primarily targeted at ignition libraries that existed before `ignition-cmake`
 was available, but it might also be useful for getting a new `ignition` project
 started.
 
@@ -15,7 +15,7 @@ section details some of the new CMake features that we'll be using through
 section describes some CMake anti-patterns which we should aggressively avoid
 as we move forward.
 
-## Required Changes
+## 1. Required Changes
 
 You can find examples of projects that have been set up to use `ign-cmake` in
 the repos of `ign-common` (branch: `CMakeRefactor`) and `ign-math`
@@ -23,29 +23,41 @@ the repos of `ign-common` (branch: `CMakeRefactor`) and `ign-math`
 your project is migrated properly.
 
 ### Clear out your top-level `CMakeLists.txt` entirely
+That's right, just throw it all out.
 
 ### Begin your top-level `CMakeLists.txt` with `cmake_minimum_required(VERSION 3.5.1 FATAL_ERROR)`
 
-### Then `find_package(ignition-cmake0 REQUIRED)`
+We're migrating to 3.5 because it provides many valuable features that we are
+now taking advantage of.
 
-### Then `ign_configure_project(<project> <version>)`
+### Then call `find_package(ignition-cmake0 REQUIRED)`
 
-### Then search for dependencies using `ign_find_package(~)`
+This will find `ignition-cmake` and load up all its useful features for you.
+
+### Then call `ign_configure_project(<project> <version>)`
+
+This is a wrapper for cmake's native `project(~)` command which additionally
+sets a bunch of variables that will be needed by the `ignition-cmake` macros and
+functions.
+
+### Then search for each dependency using `ign_find_package(~)`
 
 We now have a cmake macro `ign_find_package(~)` which is a wrapper for the
 native cmake `find_package(~)` function, which additionally:
 
-1. Handles collects build errors and build warnings so that they can all be
-printed out at the end of the script, instead of quitting immediately upon
-encountering an error.
+1. Collects build errors and build warnings so that they can all be printed out
+at the end of the script, instead of quitting immediately upon encountering an
+error.
 
-2. Automatically populates your project's dependencies for your project's
-pkgconfig file and cmake config file.
+2. Automatically populates the dependencies for your project's pkgconfig file
+and cmake config file.
 
 A variety of arguments are available to guide the behavior of
 `ign_find_package(~)`. Most of them will not be needed in most situations, but
 you should consider reading them over once just in case they might be relevant
-for you. Feel free to ask questions about any arguments that are unclear.
+for you. The macro's documentation is available in
+`ign-cmake/cmake/IgnUtils.cmake` just above definition of `ign_find_package(~)`.
+Feel free to ask questions about any of its arguments that are unclear.
 
 Any operations that might need to be performed while searching for a package
 should be done in a find-module. See the section on anti-patterns for more
@@ -56,12 +68,12 @@ information on writing find-modules.
 This macro accepts the argument `QUIT_IF_BUILD_ERRORS` which you should pass to
 it to get the standard behavior for the ignition projects. If for some reason
 you want to handle build errors in your own way, you can leave that argument
-out and then do as please after the macro finishes.
+out and then do as you please after the macro finishes.
 
 ### Finally, call `ign_create_packages()`
 
 After this, your top-level `CMakeLists.txt` is finished. The remaining changes
-must be applied throughout your source code.
+listed below must be applied throughout your directory tree.
 
 ### Change instances of `PROJECT_<type>_VERSION` variables to `PROJECT_VERSION_<type>`.
 
@@ -70,31 +82,31 @@ of the library version: `PROJECT_MAJOR_VERSION`, `PROJECT_MINOR_VERSION`, and
 `PROJECT_PATCH_VERSION`. While there is nothing inherently wrong with these
 variable names, in CMake 3+ the `project(~)` command automatically defines the
 following variables: `PROJECT_VERSION_MAJOR`, `PROJECT_VERSION_MINOR`, and
-`PROJECT_VERSION_PATCH`. The pattern that is automatically provided by CMake is
-consistent with how CMake names project variables in general, and adopting their
-convention will reduce the friction that we experience when interfacing with a
-wide variety of native CMake utilities. It's also beneficial to embrace the
-"single source of truth" pattern.
+`PROJECT_VERSION_PATCH`. The pattern that is automatically provided by
+`project(~)` is consistent with how CMake names project variables in general,
+and adopting their convention will reduce the friction that we experience when
+interfacing with a wide variety of native CMake utilities. It's also beneficial
+to embrace the "single source of truth" pattern.
 
 ### Change instances of `IGN_PROJECT_NAME` to `IGN_DESIGNATION`
 
 We've had a variable called `IGN_PROJECT_NAME` which refers to the `<suffix>`
 in the `ignition-<suffix>` name of each project. I felt that the name of the
 variable was too similar to the `PROJECT_NAME` variable that is automatically
-defined by CMake, as well as the PROJECT_NAME[_NO_VERSION][_UPPER/_LOWER] that
-we define for convenience. Instead of referring to both as "[IGN_]PROJECT_NAME",
+defined by CMake, as well as the `PROJECT_NAME[_NO_VERSION][_UPPER/_LOWER]` that
+we define for convenience. Instead of referring to both as `[IGN_]PROJECT_NAME`,
 I thought it would be better to use clear and distinct words to distinguish
 them. Therefore the `<suffix>` part of the project name is now referred to as
 `IGN_DESIGNATION`, and we provide `IGN_DESIGNATION[_LOWER/_UPPER]` for
 convenience.
 
-### Do not use `append_to_cached_string` or `append_to_cached_list` any more.
+### Do not use `append_to_cached_string` or `append_to_cached_list` anymore.
 
 These macros have been removed because they were facilitating bad practices
-which we should aggressively avoid moving forward. To put it briefly, we should
-not be using the CMake cache except to allow human users to set build options.
-For more explanation about why and how we should avoid using the cache, see the
-below section on CMake anti-patterns.
+which we should aggressively avoid as we move forward. To put it briefly, we
+should not be using the CMake cache except to allow human users to set build
+options. For more explanation about why and how we should avoid using the cache,
+see the below section on CMake anti-patterns.
 
 ### Specify `TYPE` and `SOURCES` arguments in `ign_build_tests(~)`
 
@@ -115,22 +127,22 @@ library target will automatically be linked to each test by the macro (for Unix
 systems, `pthread` is also added, since gtest requires it on those platforms).
 Since the tests link to your library's target, all of your library's "interface"
 dependencies will also be automatically linked to each test. In most cases, this
-will render `LIB_DEPS` unnecessary, but it is still provided for edge cases.
+will make `LIB_DEPS` unnecessary, but it is still provided for edge cases.
 Note that when individual tests depend on additional libraries, those individual
 tests should be linked to their dependencies using
 `target_link_libraries(<test_name> <dependency>)` after the call to
 `ign_build_tests(~)`. `LIB_DEPS` should only be used for dependencies that are
 needed by (nearly) all of the tests.
 
-`INCLUDE_DIRS`: Include directories need to be visible to all (or most) of the
-tests can be specified using the `INCLUDE_DIRS` tag. Note that the macro will
-automatically include the "interface include directories" of your project's
+`INCLUDE_DIRS`: Include directories that need to be visible to all (or most) of
+the tests can be specified using the `INCLUDE_DIRS` tag. Note that the macro
+will automatically include the "interface include directories" of your project's
 library target, as well as the `PROJECT_SOURCE_DIR` and `PROJECT_BINARY_DIR`.
 Also note that all of the "interface include directories" of any targets that
 you pass to `LIB_DEPS` will automatically be visible to all the tests, so this
 tag should be even less commonly needed than `LIB_DEPS`.
 
-### Move your project's `cmake/config.hh.in` file into `include/ignition/<project>`
+### Move your project's `cmake/config.hh.in` file to `include/ignition/<project>/config.hh.in`
 
 The `config.hh.in` file has traditionally lived in the `cmake` subdirectory of
 each project, but that subdirectory should be deleted at the end of the
@@ -144,8 +156,8 @@ Calling `find_package(~)` will generally produce a set of variables which look
 like `DEPENDENCY_FOUND`, `DEPENDENCY_LIBRARIES`, `DEPENDENCY_INCLUDE_DIRS`, and
 `DEPENDENCY_CXX_FLAGS`. These variables are often passed to cmake functions like
 `target_add_library(my_target ${DEPENDENCY_LIBRARIES})`. These variables often
-contain hard-coded full system paths. This results in package information is
-not relocatable, and that may cause significant problems when distributing
+contain hard-coded full system paths. This results in package information which
+is not relocatable, and that may cause significant problems when distributing
 pre-built packages, or when relocating a package within a system.
 
 Instead, we should prefer passing **only targets** into `target_link_libraries(~)`.
@@ -188,8 +200,7 @@ find-modules will be discussed further later on in this document.
 To reduce confusion, this macro no longer takes in any arguments, and instead
 uses the standardized target name and export name.
 
-### Replace calls to `#include "ignition/<project>/System.hh"` with
-`#include "ignition/<project>/Export.h"`, and delete `System.hh`.
+### Replace calls to `#include "ignition/<project>/System.hh"` with `#include "ignition/<project>/Export.h"`, and delete `System.hh`.
 
 Up until now, we've been maintaining a "System" header in each ignition library.
 This is being replaced by a set of auto-generated headers, because some of the
@@ -223,13 +234,15 @@ that are not already present in `ign-cmake`, then you should add those
 find-modules to `ign-cmake` and submit a pull request. I will try to be very
 prompt about reviewing and approving those PRs.
 
-## Recommended Changes
+
+
+
+## 2. Recommended Changes
 
 The following changes are not necessary, but may improve the readability and
 maintainability of your CMake code. Use of these utilities is optional.
 
-### GLOB up library source files and unit test source files using
-`ign_get_libsources_and_unittests(sources tests)`
+### GLOB up library source files and unit test source files using `ign_get_libsources_and_unittests(sources tests)`
 
 Placing this in `src/CMakeLists.txt` will collect all the source files in the
 directory and sort them into a `source` variable (containing the library sources)
@@ -253,13 +266,15 @@ You can use the argument `ADDITIONAL_DIRS` to specify additional subdirectories
 to install, and the argument `EXCLUDE` to specify files that should not be
 installed.
 
-### Use `ign_get_sources(~)` in `test/<type>/CMakeLists.txt` to collect source
-files
+### Use `ign_get_sources(~)` in `test/<type>/CMakeLists.txt` to collect source files
 
 Similar to `ign_get_libsources_and_unittests(~)` except it only produces one
 list of source files, which is sufficient to be passed to `ign_build_tests(~)`.
 
-## Anti-patterns to avoid
+
+
+
+## 3. Anti-patterns to avoid
 
 ### Do not use `include(${cmake_dir}/ModuleName.cmake)`
 
