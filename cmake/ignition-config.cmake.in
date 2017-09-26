@@ -6,7 +6,7 @@
 #
 # It defines the following variables:
 #
-#  @PROJECT_NAME_LOWER@@PROJECT_VERSION_MAJOR@_FOUND       - System has @PKG_NAME@.
+#  @PKG_NAME@_FOUND        - System has @PKG_NAME@.
 #  @PKG_NAME@_INCLUDE_DIRS - include directories for @PKG_NAME@ and its dependencies.
 #  @PKG_NAME@_LIBRARY_DIRS - Paths in which the linker should search for libraries.
 #  @PKG_NAME@_LIBRARIES    - Libraries to link against.
