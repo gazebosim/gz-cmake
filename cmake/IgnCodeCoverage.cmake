@@ -29,8 +29,8 @@
 #        coverage            # Name of output directory.
 #        )
 #
-# 4. Build a Debug build:
-#   cmake -DCMAKE_BUILD_TYPE=Debug ..
+# 4. Build a Coverge build:
+#   cmake -DCMAKE_BUILD_TYPE=Coverage ..
 #   make
 #   make my_coverage_target
 #
@@ -56,6 +56,28 @@ IF(NOT CMAKE_COMPILER_IS_GNUCXX)
   ENDIF()
 ENDIF() # NOT CMAKE_COMPILER_IS_GNUCXX
 
+SET(CMAKE_CXX_FLAGS_COVERAGE
+    "-g -O0 --coverage -fprofile-arcs -ftest-coverage"
+    CACHE STRING "Flags used by the C++ compiler during coverage builds."
+    FORCE )
+SET(CMAKE_C_FLAGS_COVERAGE
+    "-g -O0 --coverage -fprofile-arcs -ftest-coverage"
+    CACHE STRING "Flags used by the C compiler during coverage builds."
+    FORCE )
+SET(CMAKE_EXE_LINKER_FLAGS_COVERAGE
+    ""
+    CACHE STRING "Flags used for linking binaries during coverage builds."
+    FORCE )
+SET(CMAKE_SHARED_LINKER_FLAGS_COVERAGE
+    ""
+    CACHE STRING "Flags used by the shared libraries linker during coverage builds."
+    FORCE )
+MARK_AS_ADVANCED(
+    CMAKE_CXX_FLAGS_COVERAGE
+    CMAKE_C_FLAGS_COVERAGE
+    CMAKE_EXE_LINKER_FLAGS_COVERAGE
+    CMAKE_SHARED_LINKER_FLAGS_COVERAGE )
+
 IF ( NOT (CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "Coverage"))
   MESSAGE( WARNING "Code coverage results with an optimized (non-Debug) build may be misleading" )
 ENDIF() # NOT CMAKE_BUILD_TYPE STREQUAL "Debug"
@@ -63,13 +85,13 @@ ENDIF() # NOT CMAKE_BUILD_TYPE STREQUAL "Debug"
 
 # Param _targetname     The name of new the custom make target
 # Param _testrunner     The name of the target which runs the tests.
-#                       MUST return ZERO always, even on errors.
-#                       If not, no coverage report will be created!
+#						MUST return ZERO always, even on errors.
+#						If not, no coverage report will be created!
 # Param _outputname     lcov output is generated as _outputname.info
 #                       HTML report is generated in _outputname/index.html
 # Optional fourth parameter is passed as arguments to _testrunner
 #   Pass them in list form, e.g.: "-j;2" for -j 2
-FUNCTION(IGN_SETUP_TARGET_FOR_COVERAGE _targetname _testrunner _outputname)
+FUNCTION(SETUP_TARGET_FOR_COVERAGE _targetname _testrunner _outputname)
 
   IF(NOT LCOV_PATH)
     MESSAGE(FATAL_ERROR "lcov not found! Aborting...")
@@ -86,6 +108,8 @@ FUNCTION(IGN_SETUP_TARGET_FOR_COVERAGE _targetname _testrunner _outputname)
   # Setup target
   ADD_CUSTOM_TARGET(${_targetname}
 
+    COMMAND ${CMAKE_COMMAND} -E remove ${_outputname}.info.cleaned
+      ${_outputname}.info
     # Capturing lcov counters and generating report
     COMMAND ${LCOV_PATH} -q --no-checksum --directory ${PROJECT_BINARY_DIR}
       --capture --output-file ${_outputname}.info 2>/dev/null
@@ -95,8 +119,8 @@ FUNCTION(IGN_SETUP_TARGET_FOR_COVERAGE _targetname _testrunner _outputname)
       ${_outputname}.info.cleaned
     COMMAND ${LCOV_PATH} --summary ${_outputname}.info.cleaned 2>&1 | grep "lines" | cut -d ' ' -f 4 | cut -d '%' -f 1 > coverage/lines.txt
     COMMAND ${LCOV_PATH} --summary ${_outputname}.info.cleaned 2>&1 | grep "functions" | cut -d ' ' -f 4 | cut -d '%' -f 1 > coverage/functions.txt
-    COMMAND ${CMAKE_COMMAND} -E remove ${_outputname}.info
-      ${_outputname}.info.cleaned
+    COMMAND ${CMAKE_COMMAND} -E rename ${_outputname}.info.cleaned
+      ${_outputname}.info
 
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
     COMMENT "Resetting code coverage counters to zero.\n"
