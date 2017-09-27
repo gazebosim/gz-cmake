@@ -116,7 +116,6 @@ macro(ign_configure_build)
 
     #--------------------------------------
     # Add all the source code directories
-    set(TEST_TYPE "UNIT")
     add_subdirectory(src)
     add_subdirectory(include)
     add_subdirectory(test)
