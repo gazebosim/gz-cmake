@@ -64,6 +64,8 @@ macro(ign_configure_project designation full_version)
   set(PROJECT_VERSION_FULL
     ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH})
 
+  set(PKG_NAME ${PROJECT_NAME_LOWER})
+
   message(STATUS "${PROJECT_NAME} version ${PROJECT_VERSION_FULL}")
 
   #============================================================================

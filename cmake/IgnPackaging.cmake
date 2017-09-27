@@ -148,7 +148,7 @@ macro(ign_create_packages)
 
   #============================================================================
   # Configure the typical package configs for this project
-  ign_create_pkgconfigs()
+  ign_create_pkgconfig()
 
   #============================================================================
   # Configure the cmake package for this project
@@ -167,70 +167,18 @@ endmacro()
 
 
 #################################################
-# Create a package. Optionally specify some additional arguments.
-# ign_create_pkgconfigs([DIRECTORY dir] [SOURCES name1 name2 ...] [VERSION ver])
-# Default values if the arguments are not specified:
-#   DIRECTORY: "${IGNITION_CMAKE_DIR}/pkgconfig"
-#   SOURCES: All *.in source files in DIRECTORY
-#   VERSION: ${PROJECT_VERSION_MAJOR}
-#
-# NOTE: When providing file names for SOURCES, do NOT include the *.in prefix.
-# NOTE: To not have a version, specify VERSION followed by nothing (or followed
-#       by one of the other argument options).
-function(ign_create_pkgconfigs)
+# Create a pkgconfig file for your ignition project, and install it.
+# ign_create_pkgconfig()
+function(ign_create_pkgconfig)
 
-  #--------------------------------------
-  # Parse the optional arguments given to the function
-  set(multiValueArgs DIRECTORY SOURCES VERSION)
-  cmake_parse_arguments(ign_create_pkgconfigs "" "" "${multiValueArgs}" ${ARGN})
+  set(pkgconfig_input "${IGNITION_CMAKE_DIR}/pkgconfig/ignition.pc.in")
+  set(pkgconfig_output "${CMAKE_BINARY_DIR}/${PKG_NAME}.pc")
+  configure_file(${pkgconfig_input} ${pkgconfig_output} @ONLY)
 
-  #--------------------------------------
-  # Use the user-specified directory if one was provided. Otherwise, use the
-  # pkgconfig directory inside of the root directory of the build system.
-  if(ign_create_pkgconfigs_DIRECTORY)
-    set(pkgconfig_dir "${ign_create_pkgconfigs_DIRECTORY}")
-  else()
-    set(pkgconfig_dir "${IGNITION_CMAKE_DIR}/pkgconfig")
-  endif()
-
-  if(ign_create_pkgconfigs_SOURCES)
-    # If the user has specified a set of source files, attach the directory name
-    # and suffix onto them.
-    set(pkgconfig_files "")
-    foreach(name ${ign_create_pkgconfigs_SOURCES})
-      list(APPEND pkgconfig_files "${pkgconfig_dir}/${name}.in")
-    endforeach()
-  else()
-    # If the user has not specified a set of source files, use all *.in files
-    # located in the directory.
-    file(GLOB pkgconfig_files "${pkgconfig_dir}/*.in")
-  endif()
-
-  #--------------------------------------
-  # Get the user-provided version number, or else use the project's major
-  # version number
-  if(ign_create_pkgconfigs_VERSION)
-    set(version ${ign_create_pkgconfigs_VERSION})
-  else()
-    set(version ${PROJECT_VERSION_MAJOR})
-  endif()
-
-  foreach(pkgconfig_file ${pkgconfig_files})
-    # Get each filename
-    get_filename_component(name ${pkgconfig_file} NAME_WE)
-
-    set(${name}_configured_file "${CMAKE_CURRENT_BINARY_DIR}/cmake/pkgconfig/${name}${version}.pc")
-
-    # Configure each file
-    configure_file(${pkgconfig_file} ${${name}_configured_file} @ONLY)
-
-    # Install each configured file
-    install(
-      FILES ${${name}_configured_file}
-      DESTINATION ${IGN_LIB_INSTALL_DIR}/pkgconfig
-      COMPONENT pkgconfig)
-
-  endforeach()
+  install(
+    FILES ${pkgconfig_output}
+    DESTINATION ${IGN_LIB_INSTALL_DIR}/pkgconfig
+    COMPONENT pkgconfig)
 
 endfunction()
 
@@ -239,7 +187,6 @@ endfunction()
 function(ign_create_cmake_package)
 
   # Set configuration arguments
-  set(PKG_NAME ${PROJECT_NAME_LOWER})
   set(ign_config_input "${IGNITION_CMAKE_DIR}/ignition-config.cmake.in")
   set(ign_config_output "${PROJECT_NAME_LOWER}-config.cmake")
   set(ign_version_output "${PROJECT_NAME_LOWER}-config-version.cmake")
