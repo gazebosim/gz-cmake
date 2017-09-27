@@ -23,7 +23,6 @@
 # ignition-cmake modules
 #============================================================================
 include(IgnUtils)
-include(IgnTestUtils)
 include(IgnConfigureProject)
 include(IgnPackaging)
 include(IgnCreateDocs)
