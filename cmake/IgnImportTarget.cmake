@@ -89,13 +89,13 @@ endmacro()
 function(_ign_sort_libraries target_name first_lib)
 
   if(MSVC)
-    # Note: For MSVC, we only care about the "import library" which is the 
+    # Note: For MSVC, we only care about the "import library" which is the
     # library ending in *.lib. The linker only needs to be told where the
     # *.lib library is. The dynamic library (*.dll) only needs to be visible
     # to the program at run-time, not at compile or link time. Furthermore,
     # find_library on Windows only looks for *.lib files, so we expect that
     # results of the form package_LIBRARIES will contain *.lib files when
-    # running on Windows. IMPORTED_IMPLIB is the target property that 
+    # running on Windows. IMPORTED_IMPLIB is the target property that
     # indicates the "import library" of an "imported target", so that is
     # the property that will fill in first and foremost.
     #
@@ -113,7 +113,7 @@ function(_ign_sort_libraries target_name first_lib)
   endforeach()
 
   get_target_property(ill ${target_name} INTERFACE_LINK_LIBRARIES)
-  set_target_properties(${target_name} 
+  set_target_properties(${target_name}
     PROPERTIES IMPORTED_LINK_INTERFACE_LIBRARIES ${ill})
   set_target_properties(${target_name}
     PROPERTIES IMPORTED_LINK_DEPENDENT_LIBRARIES ${ill})

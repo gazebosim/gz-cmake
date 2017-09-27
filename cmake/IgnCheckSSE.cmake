@@ -154,7 +154,7 @@ else()
 endif()
 
 
-# Check if SSE instructions are available on the machine where 
+# Check if SSE instructions are available on the machine where
 # the project is compiled.
 
 IF (ARCH MATCHES "i386" OR ARCH MATCHES "x86_64")
