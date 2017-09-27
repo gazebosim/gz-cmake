@@ -32,26 +32,7 @@ macro(ign_configure_build)
   set(options QUIT_IF_BUILD_ERRORS)
   cmake_parse_arguments(ign_configure_build "${options}" "" "" ${ARGN})
 
-
   #============================================================================
-  # Check if the user wants to build tests
-  option(DISABLE_TEST_CONFIGURATION "Do not configure any of the tests" OFF)
-  # TODO(MXG): Consider replacing this variable with DISABLE_TEST_CONFIGURATION,
-  #            because it would be a more accurate name and a more natural
-  #            "option" to pass in. We're keeping ENABLE_TESTS_COMPILATION for
-  #            now to support backwards compatibility.
-  # If ENABLE_TESTS_COMPILATION is defined, it will take precedence over
-  # DISABLE_TEST_CONFIGURATION. It can be defined from the command line when
-  # invoking cmake using -DENABLE_TESTS_COMPILATION=val
-  if(NOT DEFINED ENABLE_TESTS_COMPILATION)
-    if(DISABLE_TEST_CONFIGURATION)
-      set(ENABLE_TESTS_COMPILATION false)
-    else()
-      set(ENABLE_TESTS_COMPILATION true)
-    endif()
-  endif()
-
-  #--------------------------------------
   # Examine the build type. If we do not recognize the type, we will generate
   # an error, so this must come before the error handling.
   ign_parse_build_type()
