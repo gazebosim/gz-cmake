@@ -24,8 +24,8 @@
 #    SETUP_TARGET_FOR_COVERAGE(
 #        my_coverage_target  # Name for custom target.
 #        test_driver         # Name of the test driver executable that runs the tests.
-#                  # NOTE! This should always have a ZERO as exit code
-#                  # otherwise the coverage generation will not complete.
+#                            # NOTE! This should always have a ZERO as exit code
+#                            # otherwise the coverage generation will not complete.
 #        coverage            # Name of output directory.
 #        )
 #
@@ -63,8 +63,8 @@ ENDIF() # NOT CMAKE_BUILD_TYPE STREQUAL "Debug"
 
 # Param _targetname     The name of new the custom make target
 # Param _testrunner     The name of the target which runs the tests.
-#            MUST return ZERO always, even on errors.
-#            If not, no coverage report will be created!
+#                       MUST return ZERO always, even on errors.
+#                       If not, no coverage report will be created!
 # Param _outputname     lcov output is generated as _outputname.info
 #                       HTML report is generated in _outputname/index.html
 # Optional fourth parameter is passed as arguments to _testrunner
