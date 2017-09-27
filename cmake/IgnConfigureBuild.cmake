@@ -38,6 +38,10 @@ macro(ign_configure_build)
   ign_parse_build_type()
 
   #============================================================================
+  # Ask whether we should make a shared or static library
+  option(BUILD_SHARED_LIBS "Set this to true to generate a shared library (recommended), or false for a static library" ON)
+
+  #============================================================================
   # Print warnings and errors
   if(build_warnings)
     message(STATUS "BUILD WARNINGS")
