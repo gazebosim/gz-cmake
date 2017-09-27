@@ -508,7 +508,6 @@ endmacro(ign_build_warning)
 macro(ign_add_library lib_name)
 
   set(LIBS_DESTINATION ${PROJECT_BINARY_DIR}/src)
-  set_source_files_properties(${ARGN} PROPERTIES COMPILE_DEFINITIONS "BUILDING_DLL")
   add_library(${lib_name} ${ARGN})
 
   # This generator expression is necessary for multi-configuration generators,
