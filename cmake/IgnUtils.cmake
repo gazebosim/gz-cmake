@@ -514,18 +514,21 @@ macro(ign_add_library lib_name)
   # such as MSVC on Windows, and also to ensure that our target exports the
   # headers correctly
   target_include_directories(${lib_name}
-    # This is the publicly installed ignition/math headers directory
-    PUBLIC $<INSTALL_INTERFACE:${IGN_INCLUDE_INSTALL_DIR_FULL}>
-    # This is the build directory version of the headers
-    PRIVATE $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>)
+    PUBLIC
+      # This is the publicly installed ignition/math headers directory.
+      $<INSTALL_INTERFACE:${IGN_INCLUDE_INSTALL_DIR_FULL}>
+      # This is the build directory version of the headers. When exporting the
+      # target, this will not be included, because it is tied to the build
+      # interface instead of the install interface.
+      $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>)
 
   include(GenerateExportHeader)
   generate_export_header(${lib_name}
     # This will create a file named ${PROJECT_NAME_NO_VERSION_LOWER}_export.h
     # (even though we specify upper; cmake automatically lower cases it),
     # but that is not the filename that we want. CMake does not allow us to
-    # specify an exact filename, so we will create it as ign_export and the
-    # rename it afterwards.
+    # specify an exact filename, so we will let cmake create it according to
+    # cmake's built-in behavior and then rename it afterwards.
     BASE_NAME ${PROJECT_NAME_NO_VERSION_UPPER}
     EXPORT_MACRO_NAME DETAIL_IGNITION_${IGN_DESIGNATION_UPPER}_VISIBLE
     NO_EXPORT_MACRO_NAME DETAIL_IGNITION_${IGN_DESIGNATION_UPPER}_HIDDEN
