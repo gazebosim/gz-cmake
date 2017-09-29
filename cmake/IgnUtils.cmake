@@ -522,38 +522,30 @@ macro(ign_add_library lib_name)
       # interface instead of the install interface.
       $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>)
 
+  set(binary_include_dir
+    "${CMAKE_BINARY_DIR}/include/ignition/${IGN_DESIGNATION_LOWER}")
+
+  set(implementation_file_name "${binary_include_dir}/detail/Export.hh")
+
   include(GenerateExportHeader)
+  # This macro will generate a header called detail/Export.hh which implements
+  # some C-macros that are useful for exporting our libraries. The
+  # implementation header does not provide any commentary or explanation for its
+  # macros, so we tuck it away in the detail/ subdirectory, and then provide a
+  # public-facing header that provides commentary for the macros.
   generate_export_header(${lib_name}
-    # This will create a file named ${PROJECT_NAME_NO_VERSION_LOWER}_export.h
-    # (even though we specify upper; cmake automatically lower cases it),
-    # but that is not the filename that we want. CMake does not allow us to
-    # specify an exact filename, so we will let cmake create it according to
-    # cmake's built-in behavior and then rename it afterwards.
     BASE_NAME ${PROJECT_NAME_NO_VERSION_UPPER}
+    EXPORT_FILE_NAME ${implementation_file_name}
     EXPORT_MACRO_NAME DETAIL_IGNITION_${IGN_DESIGNATION_UPPER}_VISIBLE
     NO_EXPORT_MACRO_NAME DETAIL_IGNITION_${IGN_DESIGNATION_UPPER}_HIDDEN
     DEPRECATED_MACRO_NAME IGN_DEPRECATED_ALL_VERSIONS)
 
-  # Make sure we have a detail subdirectory in our include directory
-  file(MAKE_DIRECTORY
-    "${CMAKE_BINARY_DIR}/include/ignition/${IGN_DESIGNATION_LOWER}/detail")
-
-  set(binary_include_dir
-    "${CMAKE_BINARY_DIR}/include/ignition/${IGN_DESIGNATION_LOWER}")
-
   set(install_include_dir
     "${IGN_INCLUDE_INSTALL_DIR_FULL}/ignition/${IGN_DESIGNATION}")
 
-  # Rename the automatically generated file to match our desired style, and
-  # place it in the detail include directory, because we will be configuring
-  # another header to wrap this one.
-  file(RENAME
-    "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME_NO_VERSION_LOWER}_export.h"
-    "${binary_include_dir}/detail/Export.hh")
-
   # Configure the installation of the automatically generated file.
   install(
-    FILES "${binary_include_dir}/detail/Export.hh"
+    FILES "${implementation_file_name}"
     DESTINATION "${install_include_dir}/detail"
     COMPONENT headers)
 
