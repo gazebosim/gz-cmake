@@ -2,14 +2,10 @@
 #
 # To find and load ignition-cmake modules into your project, simply invoke:
 #
-# find_package(ignition-cmake@PROJECT_VERSION_MAJOR@)
+# find_package(@PKG_NAME@)
 #
-# That will define the variable IGNITION-CMAKE@PROJECT_VERSION_MAJOR@_FOUND,
-# and will open up access to all the cmake-modules and find-modules that are
-# provided by ignition-cmake.
-#
-# NOTE: This file may be uninstalled and/or reinstalled to a new location, but
-# it may not be moved manually moved to a new directory, or else
+# That will define the variable @PKG_NAME@_FOUND, and will open up access
+# to all the cmake-modules and find-modules that are provided by ignition-cmake.
 
 #--------------------------------------
 # Initialize the IGNITION_CMAKE_DIR variable with the location of the cmake
@@ -25,9 +21,7 @@ list(APPEND CMAKE_MODULE_PATH "${IGNITION_CMAKE_DIR}")
 include(IgnCMake)
 
 #--------------------------------------
-# Create a variable to indicate what version of ignition-cmake we are using
-set(IGNITION-CMAKE_VERSION_MAJOR @PROJECT_VERSION_MAJOR@)
-
-#--------------------------------------
-# Activate the _FOUND variable
-set(IGNITION-CMAKE@PROJECT_VERSION_MAJOR@_FOUND TRUE)
+# Create a variable to indicate what version of ignition-cmake we are using.
+# This variable does not follow the usual cmake naming convention because it is
+# a non-standard package variable.
+set(IGNITION_CMAKE_VERSION_MAJOR @PROJECT_VERSION_MAJOR@)
