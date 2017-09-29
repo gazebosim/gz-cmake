@@ -39,18 +39,18 @@ macro(ign_set_compiler_flags)
 
   # Check if we are compiling with Clang and cache it
   if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    set(CLANG true CACHE INTERNAL "Compiling with Clang")
+    set(CLANG true)
   endif()
 
   # Check if we are compiling with GCC and cache it
   if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-    set(GCC true CACHE INTERNAL "Compiling with GCC")
+    set(GCC true)
   endif()
 
   # GCC and Clang use many of the same compilation flags, so it might be useful
   # to have a variable that indicates if one of them is being used.
   if(GCC OR CLANG)
-    set(GCC_OR_CLANG true CACHE INTERNAL "Compiling with GCC or Clang")
+    set(GCC_OR_CLANG true)
   endif()
 
   if(GCC_OR_CLANG)
@@ -69,11 +69,8 @@ macro(ign_set_compiler_flags)
 endmacro()
 
 #################################################
-# Set up compilation flags for GCC/Clang
+# Configure settings for Unix
 macro(ign_setup_unix)
-
-  # Default to the system-wide /usr install directory
-  set(CMAKE_INSTALL_PREFIX "/usr" CACHE STRING "Install Prefix")
 
   find_program(CMAKE_UNAME uname /bin /usr/bin /usr/local/bin )
   if(CMAKE_UNAME)
@@ -81,7 +78,7 @@ macro(ign_setup_unix)
     set(CMAKE_SYSTEM_PROCESSOR ${CMAKE_SYSTEM_PROCESSOR} CACHE INTERNAL
         "processor type (i386 and x86_64)")
     if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
-      add_compile_options(-fPIC)
+      set(IGN_ADD_fPIC_TO_LIBRARIES true)
     endif(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
   endif(CMAKE_UNAME)
 

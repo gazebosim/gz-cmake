@@ -510,6 +510,10 @@ macro(ign_add_library lib_name)
   set(LIBS_DESTINATION ${PROJECT_BINARY_DIR}/src)
   add_library(${lib_name} ${ARGN})
 
+  if(IGN_ADD_fPIC_TO_LIBRARIES)
+    target_compile_options(${lib_name} PRIVATE -fPIC)
+  endif()
+
   # This generator expression is necessary for multi-configuration generators,
   # such as MSVC on Windows, and also to ensure that our target exports the
   # headers correctly
