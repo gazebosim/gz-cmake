@@ -13,7 +13,7 @@
 #  @PKG_NAME@_CXX_FLAGS    - Compiler flags for compiling C++ sources.
 #  @PKG_NAME@_LDFLAGS      - Linker flags.
 #
-# Additionally, it will create an imported target named @PROJECT_EXPORT_NAME@::@PROJECT_EXPORT_NAME@.
+# Additionally, it will create an imported target named @PROJECT_LIBRARY_TARGET_NAME@::@PROJECT_LIBRARY_TARGET_NAME@.
 # You can link your library against that target using target_link_library(~),
 # and all the variables mentioned above will automatically be pulled into your
 # target.
@@ -38,8 +38,8 @@ endif()
 
 # Compatibility
 set(@PKG_NAME@_LIBRARIES @PROJECT_LIBRARY_TARGET_NAME@)
-set(@PKG_NAME@_INCLUDE_DIRS "@PACKAGE_IGN_INCLUDE_INSTALL_DIR_FULL@")
-set(@PKG_NAME@_LIBRARY_DIRS "@PACKAGE_IGN_LIB_INSTALL_DIR@")
+set_and_check(@PKG_NAME@_INCLUDE_DIRS "@PACKAGE_IGN_INCLUDE_INSTALL_DIR_FULL@")
+set_and_check(@PKG_NAME@_LIBRARY_DIRS "@PACKAGE_IGN_LIB_INSTALL_DIR@")
 set(@PKG_NAME@_LDFLAGS      "-L@PACKAGE_IGN_LIB_INSTALL_DIR@")
 
 # These variables are used by ignition-cmake to automatically configure the
@@ -54,5 +54,27 @@ include(CMakeFindDependencyMacro)
 # our dependencies.
 find_dependency(ignition-cmake@IGNITION_CMAKE_VERSION_MAJOR@)
 
-# Find each dependency of this project (if nothing is below, then the project
-# has no external dependencies).@PROJECT_CMAKE_DEPENDENCIES@
+# --------------------------------
+# Find each required dependency of this project (if nothing is below, then the
+# project has no external dependencies).@PROJECT_CMAKE_DEPENDENCIES@
+# --------------------------------
+
+# --------------------------------
+# Find each component requested by the user
+foreach(component ${@PKG_NAME@_FIND_COMPONENTS})
+
+  get_property(checked DIRECTORY PROPERTY "@PKG_NAME@-${component}_CHECKED")
+  set_property(DIRECTORY PROPERTY "@PKG_NAME@-${component}_CHECKED" true)
+
+  if(NOT checked)
+    # ... do things to handle this component ...
+  endif()
+
+endforeach()
+# --------------------------------
+
+
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(@PKG_NAME@
+  FOUND_VAR @PKG_NAME@_FOUND
+  REQUIRED_VARS @PKG_NAME@_INCLUDE_DIRS)

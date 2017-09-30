@@ -1,7 +1,9 @@
 
 #################################################
 # ign_find_package(<PACKAGE_NAME>
-#                  [REQUIRED] [EXACT] [QUIET] [PRIVATE] [BUILD_ONLY] [PKGCONFIG_IGNORE]
+#                  [REQUIRED] [PRIVATE] [EXACT] [QUIET] [BUILD_ONLY] [PKGCONFIG_IGNORE]
+#                  [REQUIRED_BY <components>]
+#                  [PRIVATE_FOR <components>]
 #                  [VERSION <ver>]
 #                  [EXTRA_ARGS <args>]
 #                  [PRETTY <name>]
@@ -30,6 +32,12 @@
 # [REQUIRED]: Optional. If provided, macro will trigger an ignition build_error
 #             when the package cannot be found. If not provided, this macro will
 #             trigger an ignition build_warning when the package is not found.
+#             To specify that something is required by some set of components
+#             (rather than the main library), use REQUIRED_BY.
+#
+# [PRIVATE]: Optional. Use this to indicate that consumers of the project do not
+#            need to link against the package, but it must be present on the
+#            system, because our project must link against it.
 #
 # [EXACT]: Optional. This will pass on the EXACT option to find_package(~) and
 #          also add it to the call to find_dependency(~) in the
@@ -38,10 +46,6 @@
 # [QUIET]: Optional. If provided, it will be passed forward to cmake's
 #          find_package(~) command. This macro will still print its normal
 #          output.
-#
-# [PRIVATE]: Optional. Use this to indicate that consumers of the project do not
-#            need to link against the package, but it must be present on the
-#            system, because our project must link against it.
 #
 # [BUILD_ONLY]: Optional. Use this to indicate that the project only needs this
 #               package while building, and it does not need to be available to
@@ -56,6 +60,22 @@
 #                     This should only be used in very rare circumstances. Note
 #                     that BUILD_ONLY will also prevent a pkgconfig entry from
 #                     being produced.
+#
+# [REQUIRED_BY]: Optional. If provided, the list that follows it must indicate
+#                which library components require the dependency. Note that if
+#                REQUIRED is specified, then REQUIRED_BY does NOT need to be
+#                specified for any components which depend on the main library,
+#                because their dependence on this package will effectively be
+#                inherited from the main library.
+#
+# [PRIVATE_FOR]: Optional. If provided, the list that follows it must indicate
+#                which library components depend on this package privately (i.e.
+#                the package should not be included in its list of interface
+#                libraries). This is only relevant for components that follow
+#                the REQUIRED_BY command. Note that the PRIVATE argument does
+#                not apply to components specified by REQUIRED_BY. This argument
+#                MUST be given for components whose private dependencies have
+#                been specified with REQUIRED_BY.
 #
 # [VERSION]: Optional. Follow this argument with the major[.minor[.patch[.tweak]]]
 #            version that you need for this package.
@@ -107,7 +127,7 @@ macro(ign_find_package PACKAGE_NAME)
   # Define the expected arguments
   set(options REQUIRED EXACT QUIET PRIVATE BUILD_ONLY)
   set(oneValueArgs VERSION PRETTY PURPOSE EXTRA_ARGS PKGCONFIG PKGCONFIG_LIB PKGCONFIG_VER_COMPARISON)
-  set(multiValueArgs) # We are not using multiValueArgs yet
+  set(multiValueArgs REQUIRED_BY PRIVATE_FOR)
 
   #------------------------------------
   # Parse the arguments
@@ -173,7 +193,7 @@ macro(ign_find_package PACKAGE_NAME)
   # find-config file, unless the invoker specifies that it should not be added.
   # Also, add this package or library as an entry to the pkgconfig file that we
   # will produce for our project.
-  if(ign_find_package_REQUIRED AND NOT ign_find_package_BUILD_ONLY)
+  if( (ign_find_package_REQUIRED OR ign_find_package_REQUIRED_BY) AND NOT ign_find_package_BUILD_ONLY)
 
     # Set up the arguments we want to pass to the find_dependency invokation for
     # our ignition project. We always need to pass the name of the dependency.
@@ -189,7 +209,21 @@ macro(ign_find_package PACKAGE_NAME)
       ign_string_append(${PACKAGE_NAME}_dependency_args EXACT)
     endif()
 
-    ign_string_append(PROJECT_CMAKE_DEPENDENCIES "find_dependency(${${PACKAGE_NAME}_dependency_args})" DELIM "\n")
+    set(${PACKAGE_NAME}_find_dependency "find_dependency(${${PACKAGE_NAME}_dependency_args})")
+
+    if(ign_find_package_REQUIRED)
+      # If this is REQUIRED, add it to PROJECT_CMAKE_DEPENDENCIES
+      ign_string_append(PROJECT_CMAKE_DEPENDENCIES ${${PACKAGE_NAME}_find_dependency} DELIM "\n")
+    endif()
+
+    if(ign_find_package_REQUIRED_BY)
+      # If this is required by some components, add it to the
+      # ${component}_CMAKE_DEPENDENCIES variables that are specific to those
+      # componenets
+      foreach(component ${ign_find_package_REQUIRED_BY})
+        ign_string_append(${component}_CMAKE_DEPENDENCIES ${${PACKAGE_NAME}_find_dependency} DELIM "\n")
+      endforeach()
+    endif()
 
     #------------------------------------
     # Add this library or project to its relevant pkgconfig entry, unless we
@@ -209,11 +243,28 @@ macro(ign_find_package PACKAGE_NAME)
       if(ign_find_package_PKGCONFIG_LIB)
         # Libraries must be prepended with -l
         set(${PACKAGE_NAME}_PKGCONFIG_ENTRY "-l${ign_find_package_PKGCONFIG_LIB}")
-        set(${PACKAGE_NAME}_PKGCONFIG_TYPE PROJECT_PKGCONFIG_LIBS)
-      elseif(ign_find_package_PKGCONFIG)
+        set(${PACKAGE_NAME}_PKGCONFIG_TYPE PKGCONFIG_LIBS)
+      elseif(ign_find_package_PKGCONFIG OR NOT ${PACKAGE_NAME}_PKGCONFIG_ENTRY)
+
+        # If (1) the caller has specified a PKGCONFIG argument, or if (2) the
+        # call to find_package(~) did not produce a ${PACKAGE_NAME}_PKGCONFIG_ENTRY
+        # (probably because its find-module was not generated by ign-cmake), we
+        # will end up here.
+
+        if(ign_find_package_PKGCONFIG)
+          # The called explicitly provided a PKGCONFIG argument, so we will use
+          # it.
+          set(pkgconfig_name ${ign_find_package_PKGCONFIG})
+        else()
+          # The caller did not provide a PKGCONFIG argument and the package did
+          # not provide one itself, so we will assume the package name passed
+          # in is suitable for pkg-config.
+          set(pkgconfig_name ${PACKAGE_NAME})
+        endif()
+
         # Modules (a.k.a. packages) can just be provided with the name
-        set(${PACKAGE_NAME}_PKGCONFIG_ENTRY "${ign_find_package_PKGCONFIG}")
-        set(${PACKAGE_NAME}_PKGCONFIG_TYPE PROJECT_PKGCONFIG_REQUIRES)
+        set(${PACKAGE_NAME}_PKGCONFIG_ENTRY "${pkgconfig_name}")
+        set(${PACKAGE_NAME}_PKGCONFIG_TYPE PKGCONFIG_REQUIRES)
 
         # Add the version requirements to the entry.
         if(ign_find_package_VERSION)
@@ -233,15 +284,55 @@ macro(ign_find_package PACKAGE_NAME)
 
       endif()
 
-      if(ign_find_package_PRIVATE)
-        # If this is a private library or module, add the _PRIVATE suffix
-        set(${PACKAGE_NAME}_PKGCONFIG_TYPE ${${PACKAGE_NAME}_PKGCONFIG_TYPE}_PRIVATE)
+      if(ign_find_package_REQUIRED)
+
+        if(ign_find_package_PRIVATE)
+          # If this is a private library or module, use the _PRIVATE suffix
+          set(PROJECT_${PACKAGE_NAME}_PKGCONFIG_TYPE ${${PACKAGE_NAME}_PKGCONFIG_TYPE}_PRIVATE)
+        else()
+          # Otherwise, use the plain type
+          set(PROJECT_${PACKAGE_NAME}_PKGCONFIG_TYPE ${${PACKAGE_NAME}_PKGCONFIG_TYPE})
+        endif()
+
+        # Append the entry as a string onto the project-wide variable for
+        # whichever requirement type we selected
+        ign_string_append(${PROJECT_${PACKAGE_NAME}_PKGCONFIG_TYPE} ${${PACKAGE_NAME}_PKGCONFIG_ENTRY})
+        message(STATUS "package:${PACKAGE_NAME}")
+        message(STATUS "var:${PROJECT_${PACKAGE_NAME}_PKGCONFIG_TYPE}")
+        message(STATUS "val:${${PACKAGE_NAME}_PKGCONFIG_ENTRY}")
+
       endif()
 
-      # Append the entry as a string onto whichever type we selected
-      set(${${PACKAGE_NAME}_PKGCONFIG_TYPE} "${${${PACKAGE_NAME}_PKGCONFIG_TYPE}} ${${PACKAGE_NAME}_PKGCONFIG_ENTRY}")
+      if(ign_find_package_REQUIRED_BY)
+
+        # Identify which components are privately requiring this package
+        foreach(component ${ign_find_package_PRIVATE_FOR})
+          set(${component}_${PACKAGE_NAME}_PRIVATE true)
+        endforeach()
+
+        # For each of the components that requires this package, append its
+        # entry as a string onto the component-specific variable for whichever
+        # requirement type we selected
+        foreach(component ${ign_find_package_REQUIRED_BY})
+
+          if(${component}_${PACKAGE_NAME}_PRIVATE)
+            # If this is a private library or module, use the _PRIVATE suffix
+            set(${component}_${PACKAGE_NAME}_PKGCONFIG_TYPE ${${PACKAGE_NAME}_PKGCONFIG_TYPE}_PRIVATE)
+          else()
+            # Otherwise, use the plain type
+            set(${component}_${PACKAGE_NAME}_PKGCONFIG_TYPE ${${PACKAGE_NAME}_PKGCONFIG_TYPE})
+          endif()
+
+          # Append the entry as a string onto the component-specific variable
+          # for whichever required type we selected
+          ign_string_append(${${component}_${PACKAGE_NAME}_PKGCONFIG_TYPE} ${${PACKAGE_NAME}_PKGCONFIG_ENTRY})
+
+        endforeach()
+
+      endif()
 
     endif()
+
   endif()
 
 endmacro()
@@ -391,7 +482,12 @@ function(ign_install_all_headers)
 
   #------------------------------------
   # Build list of directories
-  set(dir_list "." "detail" ${ign_install_all_headers_ADDITIONAL_DIRS})
+  set(dir_list "." "detail")
+
+  foreach(additional_dir ${ign_install_all_headers_ADDITIONAL_DIRS})
+    list(APPEND dir_list "${additional_dir}")
+    list(APPEND dir_list "${additional_dir}/detail")
+  endforeach()
 
   #------------------------------------
   # Grab the excluded files
@@ -452,7 +548,7 @@ function(ign_install_all_headers)
 
   # Define the input/output of the configuration for the "master" header
   set(master_header_in ${IGNITION_CMAKE_DIR}/ign_auto_headers.hh.in)
-  set(master_header_out ${CMAKE_CURRENT_BINARY_DIR}/${IGN_DESIGNATION}.hh)
+  set(master_header_out ${CMAKE_CURRENT_BINARY_DIR}/../${IGN_DESIGNATION}.hh)
 
   # Generate the "master" header that includes all of the headers
   configure_file(${master_header_in} ${master_header_out})
@@ -460,7 +556,7 @@ function(ign_install_all_headers)
   # Install the "master" header
   install(
     FILES ${master_header_out}
-    DESTINATION ${meta_header_install_dir}
+    DESTINATION ${meta_header_install_dir}/..
     COMPONENT headers)
 
   # Define the input/output of the configuration for the "config" header
@@ -505,19 +601,29 @@ macro(ign_build_warning)
 endmacro(ign_build_warning)
 
 #################################################
-macro(ign_add_library lib_name)
+macro(ign_add_library)
 
-  set(LIBS_DESTINATION ${PROJECT_BINARY_DIR}/src)
-  add_library(${lib_name} ${ARGN})
+  message(FATAL_ERROR "ign_add_library is deprecated. Instead, use "
+                      "ign_create_main_library(~) and pass it ONLY THE SOURCE "
+                      "FILES. The library name is determined automatically by "
+                      "the project name. To add a component library, use "
+                      "ign_add_component(~).")
 
-  if(IGN_ADD_fPIC_TO_LIBRARIES)
-    target_compile_options(${lib_name} PRIVATE -fPIC)
-  endif()
+endmacro()
+
+#################################################
+function(ign_create_main_library)
+
+  _ign_add_library_or_component(
+    LIB_NAME ${PROJECT_LIBRARY_TARGET_NAME}
+    INCLUDE_DIR "ignition/${IGN_DESIGNATION_LOWER}"
+    EXPORT_BASE IGNITION_${IGN_DESIGNATION_UPPER}
+    SOURCES ${ARGN})
 
   # This generator expression is necessary for multi-configuration generators,
   # such as MSVC on Windows, and also to ensure that our target exports the
   # headers correctly
-  target_include_directories(${lib_name}
+  target_include_directories(${PROJECT_LIBRARY_TARGET_NAME}
     PUBLIC
       # This is the publicly installed ignition/math headers directory.
       $<INSTALL_INTERFACE:${IGN_INCLUDE_INSTALL_DIR_FULL}>
@@ -526,8 +632,178 @@ macro(ign_add_library lib_name)
       # interface instead of the install interface.
       $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>)
 
+endfunction()
+
+#################################################
+# ign_add_component(<component>
+#                   SOURCES <sources>
+#                   [INCLUDE_SUBDIR <subdirectory_name>]
+#                   [GET_TARGET_NAME output_var]
+#                   [EXCLUDE_PROJECT_LIB])
+#
+# This macro will produce a "component" library for your project. This is the
+# recommended way to produce plugins or library modules.
+#
+# <component>: Required. Name of the component. The final name of this library
+#              and its target will be ignition-<project><major_ver>-<component>
+#
+# SOURCES: Required. Specify the source files that will be used to generate the
+#          library.
+#
+# [INCLUDE_SUBDIR]: Optional. If specified, the public include headers for this
+#                   component will go into "ignition/<project>/<subdirectory_name>/".
+#                   If not specified, they will go into "ignition/<project>/<component>/"
+#
+# [GET_TARGET_NAME]: Optional. The variable that follows this argument will be
+#                    set to the library target name that gets produced by this
+#                    macro.
+#                   by default.
+#
+# [EXCLUDE_PROJECT_LIB]: Optional. Specify this if you do NOT want this
+#                        component to automatically be linked to the main
+#                        library of this project.
+#
+function(ign_add_component component_name)
+
+  #------------------------------------
+  # Define the expected arguments
+  set(options EXCLUDE_PROJECT_LIB)
+  set(oneValueArgs INCLUDE_SUBDIR GET_TARGET_NAME)
+  set(multiValueArgs SOURCES)
+
+  #------------------------------------
+  # Parse the arguments
+  cmake_parse_arguments(ign_add_component "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+  if(ign_add_component_SOURCES)
+    set(sources ${ign_add_component_SOURCES})
+  else()
+    message(FATAL_ERROR "You must specify SOURCES for ign_add_component(~)!")
+  endif()
+
+  if(ign_add_component_INCLUDE_SUBDIR)
+    set(include_subdir ${ign_add_component_INCLUDE_SUBDIR})
+  else()
+    set(include_subdir ${component_name})
+  endif()
+
+  # Set the name of the component's target
+  set(component_target_name ${PROJECT_LIBRARY_TARGET_NAME}-${component_name})
+
+  # Pass the component's target name back to the caller if requested
+  if(ign_add_component_GET_TARGET_NAME)
+    set(${ign_add_component_GET_TARGET_NAME} ${component_target_name} PARENT_SCOPE)
+  endif()
+
+  # Create an upper case version of the component name, to be used as an export
+  # base name.
+  string(TOUPPER ${component_name} component_name_upper)
+
+  _ign_add_library_or_component(
+    LIB_NAME ${component_target_name}
+    INCLUDE_DIR "ignition/${IGN_DESIGNATION_LOWER}/${include_subdir}"
+    EXPORT_BASE IGNITION_${IGN_DESIGNATION_UPPER}_${component_name_upper}
+    SOURCES ${sources})
+
+  if(ign_add_component_EXCLUDE_PROJECT_LIB)
+
+    # If we are not linking this component to the main library, then we need to
+    # add these include directories to this component library directly. This is
+    # not needed if we link to the main library, because that will pull in these
+    # include directories automatically.
+    target_include_directories(${PROJECT_LIBRARY_TARGET_NAME}
+      PUBLIC
+        # This is the publicly installed ignition/math headers directory.
+        $<INSTALL_INTERFACE:${IGN_INCLUDE_INSTALL_DIR_FULL}>
+        # This is the build directory version of the headers. When exporting the
+        # target, this will not be included, because it is tied to the build
+        # interface instead of the install interface.
+        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>)
+
+  else()
+
+    target_link_libraries(${component_target_name}
+      PUBLIC ${PROJECT_LIBRARY_TARGET_NAME})
+
+  endif()
+
+endfunction()
+
+#################################################
+# Used internally by _ign_add_library_or_component to report argument errors
+macro(_ign_add_library_or_component_arg_error missing_arg)
+
+  message(FATAL_ERROR "ignition-cmake developer error: Must specify "
+                      "${missing_arg} to _ign_add_library_or_component!")
+
+endmacro()
+
+#################################################
+# This is only meant for internal use by ignition-cmake. If you are a consumer
+# of ignition-cmake, please use ign_create_main_library(~) or
+# ign_add_component(~) instead of this.
+#
+# _ign_add_library_or_component(LIB_NAME <lib_name>
+#                               INCLUDE_DIR <dir_name>
+#                               EXPORT_BASE <export_base>
+#                               SOURCES <sources>)
+#
+macro(_ign_add_library_or_component)
+
+  # NOTE: The following local variables are used in the Export.hh.in file, so if
+  # you change their names here, you must also change their names there:
+  # - include_dir
+  # - export_base
+  # - lib_name
+
+  #------------------------------------
+  # Define the expected arguments
+  set(options) # We are not using options yet
+  set(oneValueArgs LIB_NAME INCLUDE_DIR EXPORT_BASE)
+  set(multiValueArgs SOURCES)
+
+  #------------------------------------
+  # Parse the arguments
+  cmake_parse_arguments(_ign_add_library "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+  if(_ign_add_library_LIB_NAME)
+    set(lib_name ${_ign_add_library_LIB_NAME})
+  else()
+    _ign_add_library_or_component_arg_error(LIB_NAME)
+  endif()
+
+  if(_ign_add_library_SOURCES)
+    set(sources ${_ign_add_library_SOURCES})
+  else()
+    _ign_add_library_or_component_arg_error(SOURCES)
+  endif()
+
+  if(_ign_add_library_INCLUDE_DIR)
+    set(include_dir ${_ign_add_library_INCLUDE_DIR})
+  else()
+    _ign_add_library_or_component_arg_error(INCLUDE_DIR)
+  endif()
+
+  if(_ign_add_library_EXPORT_BASE)
+    set(export_base ${_ign_add_library_EXPORT_BASE})
+  else()
+    _ign_add_library_or_component_arg_error(EXPORT_BASE)
+  endif()
+
+  #------------------------------------
+  # Create the library target
+  add_library(${lib_name} ${sources})
+
+  #------------------------------------
+  # Add fPIC if we are supposed to
+  if(IGN_ADD_fPIC_TO_LIBRARIES)
+    target_compile_options(${lib_name} PRIVATE -fPIC)
+  endif()
+
+  #------------------------------------
+  # Generate export macro headers
   set(binary_include_dir
-    "${CMAKE_BINARY_DIR}/include/ignition/${IGN_DESIGNATION_LOWER}")
+    "${CMAKE_BINARY_DIR}/include/${include_dir}")
 
   set(implementation_file_name "${binary_include_dir}/detail/Export.hh")
 
@@ -538,14 +814,14 @@ macro(ign_add_library lib_name)
   # macros, so we tuck it away in the detail/ subdirectory, and then provide a
   # public-facing header that provides commentary for the macros.
   generate_export_header(${lib_name}
-    BASE_NAME ${PROJECT_NAME_NO_VERSION_UPPER}
+    BASE_NAME ${export_base}
     EXPORT_FILE_NAME ${implementation_file_name}
-    EXPORT_MACRO_NAME DETAIL_IGNITION_${IGN_DESIGNATION_UPPER}_VISIBLE
-    NO_EXPORT_MACRO_NAME DETAIL_IGNITION_${IGN_DESIGNATION_UPPER}_HIDDEN
+    EXPORT_MACRO_NAME DETAIL_${export_base}_VISIBLE
+    NO_EXPORT_MACRO_NAME DETAIL_${export_base}_HIDDEN
     DEPRECATED_MACRO_NAME IGN_DEPRECATED_ALL_VERSIONS)
 
   set(install_include_dir
-    "${IGN_INCLUDE_INSTALL_DIR_FULL}/ignition/${IGN_DESIGNATION}")
+    "${IGN_INCLUDE_INSTALL_DIR_FULL}/${include_dir}")
 
   # Configure the installation of the automatically generated file.
   install(
@@ -566,12 +842,22 @@ macro(ign_add_library lib_name)
     DESTINATION "${install_include_dir}"
     COMPONENT headers)
 
-endmacro()
+  #------------------------------------
+  # Configure the installation of the target
+  set_target_properties(
+    ${lib_name}
+    PROPERTIES
+      SOVERSION ${PROJECT_VERSION_MAJOR}
+      VERSION ${PROJECT_VERSION_FULL})
 
-#################################################
-macro(ign_add_static_library _name)
-  add_library(${_name} STATIC ${ARGN})
-  target_link_libraries(${_name} ${general_libraries})
+  install(
+    TARGETS ${lib_name}
+    EXPORT ${PROJECT_LIBRARY_TARGET_NAME}
+    LIBRARY DESTINATION ${IGN_LIB_INSTALL_DIR}
+    ARCHIVE DESTINATION ${IGN_LIB_INSTALL_DIR}
+    RUNTIME DESTINATION ${IGN_LIB_INSTALL_DIR}
+    COMPONENT libraries)
+
 endmacro()
 
 #################################################
@@ -608,24 +894,8 @@ endmacro()
 #################################################
 macro(ign_install_library)
 
-  if(${ARGC} GREATER 0)
-    message(WARNING "Warning to the developer: ign_install_library no longer "
-                    "accepts any arguments. Please remove them from your call.")
-  endif()
-
-  set_target_properties(
-    ${PROJECT_LIBRARY_TARGET_NAME}
-    PROPERTIES
-      SOVERSION ${PROJECT_VERSION_MAJOR}
-      VERSION ${PROJECT_VERSION_FULL})
-
-  install(
-    TARGETS ${PROJECT_LIBRARY_TARGET_NAME}
-    EXPORT ${PROJECT_EXPORT_NAME}
-    LIBRARY DESTINATION ${IGN_LIB_INSTALL_DIR}
-    ARCHIVE DESTINATION ${IGN_LIB_INSTALL_DIR}
-    RUNTIME DESTINATION ${IGN_LIB_INSTALL_DIR}
-    COMPONENT shlib)
+  message(FATAL_ERROR "ign_install_library is deprecated. Please remove it "
+                      "from your cmake script!")
 
 endmacro()
 

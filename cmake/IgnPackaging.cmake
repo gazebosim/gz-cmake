@@ -219,7 +219,7 @@ function(ign_create_cmake_package)
 
   # Create *-targets.cmake file for build directory
   export(
-    EXPORT ${PROJECT_EXPORT_NAME}
+    EXPORT ${PROJECT_LIBRARY_TARGET_NAME}
     FILE ${CMAKE_BINARY_DIR}/${ign_targets_output}
     # We add a namespace that ends with a :: to the name of the exported target.
     # This is so consumers of the project can call
@@ -235,15 +235,15 @@ function(ign_create_cmake_package)
     # The advantage of linking against a target rather than a library is that
     # you will automatically link against all the dependencies of that target.
     # This also helps us create find-config files that are relocatable.
-    NAMESPACE ${PROJECT_EXPORT_NAME}::)
+    NAMESPACE ${PROJECT_LIBRARY_TARGET_NAME}::)
 
   # Install *-targets.cmake file
   install(
-    EXPORT ${PROJECT_EXPORT_NAME}
+    EXPORT ${PROJECT_LIBRARY_TARGET_NAME}
     DESTINATION ${ign_config_install_dir}
     FILE ${ign_targets_output}
     # See explanation above for NAMESPACE
-    NAMESPACE ${PROJECT_EXPORT_NAME}::)
+    NAMESPACE ${PROJECT_LIBRARY_TARGET_NAME}::)
 
 endfunction()
 
