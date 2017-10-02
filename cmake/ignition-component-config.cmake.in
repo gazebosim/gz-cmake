@@ -1,0 +1,48 @@
+# - Config file for the @component_pkg_name@ component
+#
+# This should only be invoked by @PKG_NAME@-config.cmake.
+#
+# To load this component into your project, use:
+# find_package(@PKG_NAME@ COMPONENTS @component_name@)
+#
+# That will define the following variables:
+#
+#  @component_pkg_name@_FOUND        - The system has @component_pkg_name@
+#  @component_pkg_name@_LIBRARIES    - Libraries for this component
+#
+# The variable @component_pkg_name@_LIBRARIES will contain an imported target
+# for this component library, so no other variables are necessary. Simply use
+# target_link_library(tgt ${@component_pkg_name@_LIBRARIES}), and your target
+# will also pull in the interface properties of the component, such as the
+# include directories, compile flags, etc.
+
+if(@component_pkg_name@_CONFIG_INCLUDED)
+  return()
+endif()
+set(@component_pkg_name@_CONFIG_INCLUDED TRUE)
+
+@PACKAGE_INIT@
+
+# Get access to the find_dependency utility
+include(CMakeFindDependencyMacro)
+
+# Find ignition-cmake, because we need its modules in order to find the rest of
+# our dependencies.
+find_dependency(ignition-cmake@IGNITION_CMAKE_VERSION_MAJOR@)
+
+# --------------------------------
+# Find the dependencies that are specific to this component (if nothing is
+# below, then the component has no additional dependencies).
+@component_cmake_dependencies@
+# --------------------------------
+
+if(NOT TARGET @import_target_name@)
+  include("${CMAKE_CURRENT_LIST_DIR}/@target_output_filename@")
+endif()
+
+set(@component_pkg_name@_LIBRARIES @import_target_name@)
+
+# These variables are used by ignition-cmake to automatically configure the
+# pkgconfig files for ignition projects.
+set(@component_pkg_name@_PKGCONFIG_ENTRY "@component_pkg_name@")
+set(@component_pkg_name@_PKGCONFIG_TYPE PROJECT_PKGCONFIG_REQUIRES)
