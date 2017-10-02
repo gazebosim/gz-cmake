@@ -10,7 +10,6 @@
 #  @PKG_NAME@_INCLUDE_DIRS - include directories for @PKG_NAME@ and its dependencies.
 #  @PKG_NAME@_LIBRARY_DIRS - Paths in which the linker should search for libraries.
 #  @PKG_NAME@_LIBRARIES    - Libraries to link against.
-#  @PKG_NAME@_CXX_FLAGS    - Compiler flags for compiling C++ sources.
 #  @PKG_NAME@_LDFLAGS      - Linker flags.
 #
 # Additionally, it will create an imported target named @PROJECT_EXPORT_NAME@::@PROJECT_EXPORT_NAME@.
@@ -26,7 +25,7 @@ set(@PKG_NAME@_CONFIG_INCLUDED TRUE)
 
 @PACKAGE_INIT@
 
-if(NOT TARGET @PROJECT_LIBRARY_TARGET_NAME@)
+if(NOT TARGET @PROJECT_EXPORT_NAME@::@PROJECT_EXPORT_NAME@)
   include("${CMAKE_CURRENT_LIST_DIR}/@ign_targets_output@")
 endif()
 
@@ -37,7 +36,7 @@ if(WIN32)
 endif()
 
 # Compatibility
-set(@PKG_NAME@_LIBRARIES @PROJECT_LIBRARY_TARGET_NAME@)
+set(@PKG_NAME@_LIBRARIES @PROJECT_EXPORT_NAME@::@PROJECT_EXPORT_NAME@)
 set(@PKG_NAME@_INCLUDE_DIRS "@PACKAGE_IGN_INCLUDE_INSTALL_DIR_FULL@")
 set(@PKG_NAME@_LIBRARY_DIRS "@PACKAGE_IGN_LIB_INSTALL_DIR@")
 set(@PKG_NAME@_LDFLAGS      "-L@PACKAGE_IGN_LIB_INSTALL_DIR@")
