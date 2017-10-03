@@ -1,22 +1,17 @@
 # - Config file for the @PKG_NAME@ package.
 #
 # For finding and loading @PKG_NAME@ from your project, type:
-#
 # find_package(@PKG_NAME@)
 #
 # It defines the following variables:
 #
 #  @PKG_NAME@_FOUND        - System has @PKG_NAME@.
 #  @PKG_NAME@_INCLUDE_DIRS - include directories for @PKG_NAME@ and its dependencies.
-#  @PKG_NAME@_LIBRARY_DIRS - Paths in which the linker should search for libraries.
 #  @PKG_NAME@_LIBRARIES    - Libraries to link against.
-#  @PKG_NAME@_CXX_FLAGS    - Compiler flags for compiling C++ sources.
-#  @PKG_NAME@_LDFLAGS      - Linker flags.
 #
 # Additionally, it will create an imported target named @import_target_name@.
 # You can link your library against that target using target_link_library(~),
-# and all the variables mentioned above will automatically be pulled into your
-# target.
+# and all the interface build variables will be pulled into your target.
 
 if(@PKG_NAME@_CONFIG_INCLUDED)
   return()
@@ -48,11 +43,11 @@ if(WIN32)
  set(CMAKE_FIND_LIBRARY_SUFFIXES ".lib" ".dll")
 endif()
 
-# Compatibility
+# Set the old-fashioned variables in case a user prefers those over the imported
+# target. @PKG_NAME@_LIBRARIES is just set to the imported target, so the user
+# will end up linking to the imported target anyway.
 set(@PKG_NAME@_LIBRARIES @import_target_name@)
 set_and_check(@PKG_NAME@_INCLUDE_DIRS "@PACKAGE_IGN_INCLUDE_INSTALL_DIR_FULL@")
-set_and_check(@PKG_NAME@_LIBRARY_DIRS "@PACKAGE_IGN_LIB_INSTALL_DIR@")
-set(@PKG_NAME@_LDFLAGS "-L@PACKAGE_IGN_LIB_INSTALL_DIR@")
 
 # These variables are used by ignition-cmake to automatically configure the
 # pkgconfig files for ignition projects.

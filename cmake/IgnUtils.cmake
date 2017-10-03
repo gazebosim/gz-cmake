@@ -359,13 +359,13 @@ macro(ign_string_append output_var val)
 
   #------------------------------------
   # Define the expected arguments
-  set(options) # We are not using options yet
+  set(options) # options cannot be set to PARENT_SCOPE alone
   set(oneValueArgs DELIM)
   set(multiValueArgs ADDITIONAL_DIRS EXCLUDE) # We are not using multiValueArgs yet
 
   #------------------------------------
   # Parse the arguments
-  cmake_parse_arguments(ign_string_append "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  cmake_parse_arguments(ign_string_append "PARENT_SCOPE ${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   if(ign_string_append_DELIM)
     set(delim "${ign_string_append_DELIM}")
@@ -373,7 +373,7 @@ macro(ign_string_append output_var val)
     set(delim " ")
   endif()
 
-  set(${output_var} "${${output_var}}${delim}${val}")
+  set(${output_var} "${${output_var}}${delim}${val}" ${ign_string_append_PARENT_SCOPE})
 
 endmacro()
 
@@ -453,67 +453,66 @@ endfunction()
 
 #################################################
 # ign_install_all_headers(
-#   [ADDITIONAL_DIRS <dirs>]
-#   [EXCLUDE <excluded_headers>])
+#   [EXCLUDE_FILES <excluded_headers>]
+#   [EXCLUDE_DIRS  <dirs>])
 #
-# From the current directory, install all header files, including files from the
-# "detail" subdirectory. You can optionally specify additional directories
-# (besides detail) to also install. You may also specify header files to
-# exclude from the installation. This will accept all files ending in *.h and
-# *.hh. You may append an additional suffix (like .old or .backup) to prevent
-# a file from being included here.
+# From the current directory, install all header files, including files from all
+# subdirectories (recursively). You can optionally specify directories or files
+# to include (the names must be provided relative to the current source directory).
+#
+# This will accept all files ending in *.h and *.hh. You may append an
+# additional suffix (like .old or .backup) to prevent a file from being included.
 #
 # This will also run configure_file on ign_auto_headers.hh.in and config.hh.in
-# and install both of them.
+# and install them. This will NOT install any other files or directories that
+# appear in the ${CMAKE_CURRENT_BINARY_DIR}.
+#
 function(ign_install_all_headers)
 
   #------------------------------------
   # Define the expected arguments
   set(options) # We are not using options yet
   set(oneValueArgs) # We are not using oneValueArgs yet
-  set(multiValueArgs ADDITIONAL_DIRS EXCLUDE)
+  set(multiValueArgs EXCLUDE_FILES EXCLUDE_DIRS)
 
   #------------------------------------
   # Parse the arguments
   cmake_parse_arguments(ign_install_all_headers "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
-  #------------------------------------
-  # Build list of directories
-  set(dir_list "." "detail")
-
-  foreach(additional_dir ${ign_install_all_headers_ADDITIONAL_DIRS})
-    list(APPEND dir_list "${additional_dir}")
-    list(APPEND dir_list "${additional_dir}/detail")
-  endforeach()
 
   #------------------------------------
-  # Grab the excluded files
-  set(excluded ${ign_install_all_headers_EXCLUDE})
+  # Build the list of directories
+  file(GLOB_RECURSE all_files LIST_DIRECTORIES TRUE RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "*")
+  list(SORT all_files)
 
-  #------------------------------------
-  # Initialize the string of all headers
-  set(ign_headers)
+  set(directories)
+  foreach(f ${all_files})
+    # Check if this file is a directory
+    if(IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${f})
 
-  #------------------------------------
-  # Install all the non-excluded headers
-  foreach(dir ${dir_list})
+      # Check if it is in the list of excluded directories
+      list(FIND ign_install_all_headers_EXCLUDE_DIRS ${f} f_index)
 
-    # GLOB all the header files in dir
-    file(GLOB header_files "${dir}/*.h" "${dir}/*.hh")
-    list(SORT header_files)
-
-    # Replace full paths with relative paths
-    set(headers)
-    foreach(header_file ${header_files})
-
-      get_filename_component(header ${header_file} NAME)
-      if("." STREQUAL ${dir})
-        list(APPEND headers ${header})
-      else()
-        list(APPEND headers ${dir}/${header})
+      # list(FIND ...) will make f_index equal to -1 if ${f} was not in the list
+      # of excluded directories.
+      if(${f_index} EQUALS -1)
+        list(APPEND directories ${f})
       endif()
 
-    endforeach()
+    endif()
+  endforeach()
+
+  # Append the current directory to the list
+  list(APPEND directories ".")
+
+  #------------------------------------
+  # Install all the non-excluded header directories along with all of their
+  # non-excluded headers
+  foreach(dir ${directories})
+
+    # GLOB all the header files in dir
+    file(GLOB headers RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "${dir}/*.h" "${dir}/*.hh")
+    list(SORT headers)
 
     # Remove the excluded headers
     if(headers)
@@ -633,16 +632,46 @@ function(ign_create_main_library)
 
 endfunction()
 
-function(ign_install_main_library)
+function(ign_install_component component_name)
+
+  # Set the name of the component's target
+  set(component_target_name ${PROJECT_LIBRARY_TARGET_NAME}-${component_name})
 
   #------------------------------------
-  # No variables need to be set for the project-level config files
+  # Configure the installation of the target
+  set_target_properties(
+    ${component_target_name}
+    PROPERTIES
+      SOVERSION ${PROJECT_VERSION_MAJOR}
+      VERSION ${PROJECT_VERSION_FULL})
 
-  # Export and install the main library's cmake target and package information
-  _ign_create_cmake_package(${PROJECT_LIBRARY_TARGET_NAME})
+  install(
+    TARGETS ${component_target_name}
+    EXPORT ${component_target_name}
+    LIBRARY DESTINATION ${IGN_LIB_INSTALL_DIR}
+    ARCHIVE DESTINATION ${IGN_LIB_INSTALL_DIR}
+    RUNTIME DESTINATION ${IGN_LIB_INSTALL_DIR}
+    COMPONENT libraries)
 
-  # Generate and install the main library's pkgconfig information
-  _ign_create_pkgconfig(${PROJECT_LIBRARY_TARGET_NAME})
+  #------------------------------------
+  # Set variables that are needed by cmake/ignition-component-config.cmake.in
+  set(component_pkg_name ${component_target_name})
+  set(component_cmake_dependencies ${${component_name}_CMAKE_DEPENDENCIES})
+  # This next set is redundant, but it serves as a reminder that this input
+  # variable is used in config files
+  set(component_name ${component_name})
+
+  # ... and by cmake/pkgconfig/ignition-component.pc.in
+  set(component_pkgconfig_requires ${${component_name}_PKGCONFIG_REQUIRES})
+  set(component_pkgconfig_requires_private ${${component_name}_PKGCONFIG_REQUIRES_PRIVATE})
+  set(component_pkgconfig_libs ${${component_name}_PKGCONFIG_LIBS})
+  set(component_pkgconfig_libs_private ${${component_name}_PKGCONFIG_LIBS_PRIVATE})
+
+  # Export and install the cmake target and package information
+  _ign_create_cmake_package(${component_target_name} COMPONENT)
+
+  # Generate and install the pkgconfig information for this component
+  _ign_create_pkgconfig({component_target_name} COMPONENT)
 
 endfunction()
 
@@ -787,7 +816,7 @@ function(ign_add_component component_name)
       PUBLIC ${PROJECT_LIBRARY_TARGET_NAME})
 
     # Add the main library as a cmake dependency for this component
-    ign_string_append(${component_name}_CMAKE_DEPENDENCIES "find_package(${PKG_NAME} ${PROJECT_VERSION_FULL} EXACT)" DELIM "\n")
+    ign_string_append(${component_name}_CMAKE_DEPENDENCIES "find_package(${PKG_NAME} ${PROJECT_VERSION_FULL} EXACT)" DELIM "\n" PARENT_SCOPE)
 
     # Choose what type of pkgconfig entry the main library belongs to
     set(lib_pkgconfig_type ${component_name}_PKGCONFIG_REQUIRES)
@@ -795,29 +824,9 @@ function(ign_add_component component_name)
       set(lib_pkgconfig_type ${lib_pkgconfig_type}_PRIVATE)
     endif()
 
-    ign_string_append(${lib_pkgconfig_type} "${PKG_NAME}=${PROJECT_VERSION_FULL}")
+    ign_string_append(${lib_pkgconfig_type} "${PKG_NAME}=${PROJECT_VERSION_FULL}" PARENT_SCOPE)
 
   endif()
-
-  #------------------------------------
-  # Set variables that are needed by cmake/ignition-component-config.cmake.in
-  set(component_pkg_name ${component_target_name})
-  set(component_cmake_dependencies ${${component_name}_CMAKE_DEPENDENCIES})
-  # This next set is redundant, but it serves as a reminder that this input
-  # variable is used in config files
-  set(component_name ${component_name})
-
-  # ... and by cmake/pkgconfig/ignition-component.pc.in
-  set(component_pkgconfig_requires ${${component_name}_PKGCONFIG_REQUIRES})
-  set(component_pkgconfig_requires_private ${${component_name}_PKGCONFIG_REQUIRES_PRIVATE})
-  set(component_pkgconfig_libs ${${component_name}_PKGCONFIG_LIBS})
-  set(component_pkgconfig_libs_private ${${component_name}_PKGCONFIG_LIBS_PRIVATE})
-
-  # Export and install the cmake target and package information
-  _ign_create_cmake_package(${component_target_name} COMPONENT)
-
-  # Generate and install the pkgconfig information for this component
-  _ign_create_pkgconfig({component_target_name} COMPONENT)
 
 endfunction()
 
@@ -934,6 +943,7 @@ macro(_ign_add_library_or_component)
     DESTINATION "${install_include_dir}"
     COMPONENT headers)
 
+
   #------------------------------------
   # Configure the installation of the target
   set_target_properties(
@@ -949,6 +959,16 @@ macro(_ign_add_library_or_component)
     ARCHIVE DESTINATION ${IGN_LIB_INSTALL_DIR}
     RUNTIME DESTINATION ${IGN_LIB_INSTALL_DIR}
     COMPONENT libraries)
+
+
+  #------------------------------------
+  # No variables need to be set for the project-level config files
+
+  # Export and install the main library's cmake target and package information
+  _ign_create_cmake_package(${PROJECT_LIBRARY_TARGET_NAME})
+
+  # Generate and install the main library's pkgconfig information
+  _ign_create_pkgconfig(${PROJECT_LIBRARY_TARGET_NAME})
 
 endmacro()
 

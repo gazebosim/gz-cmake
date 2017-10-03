@@ -222,7 +222,7 @@ endfunction()
 #       - target_output_filename
 #
 # Make the cmake config files for this target
-function(_ign_create_cmake_package lib_name)
+function(_ign_create_cmake_package target_name)
 
   #------------------------------------
   # Define the expected arguments
@@ -301,7 +301,7 @@ function(_ign_create_cmake_package lib_name)
   install(
     EXPORT ${target_name}
     DESTINATION ${ign_config_install_dir}
-    FILE ${ign_target_ouput}
+    FILE ${target_output_filename}
     # See explanation above for NAMESPACE
     NAMESPACE ${ign_namespace})
 
