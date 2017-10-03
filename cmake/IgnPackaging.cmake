@@ -30,7 +30,7 @@
 macro(ign_setup_packages)
 
   #============================================================================
-  # Use GNUInstallDirst to get canonical paths.
+  # Use GNUInstallDirs to get canonical paths.
   # We use this filesystem style on Windows as well, because (quite frankly)
   # Windows does not seem to have any sensible convention of its own for
   # installing development libraries. (If anyone is aware of a widely accepted
