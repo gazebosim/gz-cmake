@@ -460,7 +460,7 @@ function(ign_install_all_headers)
   # Install the "master" header
   install(
     FILES ${master_header_out}
-    DESTINATION ${meta_header_install_dir}
+    DESTINATION ${meta_header_install_dir}/..
     COMPONENT headers)
 
   # Define the input/output of the configuration for the "config" header
