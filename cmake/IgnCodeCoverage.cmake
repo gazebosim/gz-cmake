@@ -18,10 +18,10 @@
 #    SET(CMAKE_CXX_FLAGS "-g -O0 -fprofile-arcs -ftest-coverage")
 #    SET(CMAKE_C_FLAGS "-g -O0 -fprofile-arcs -ftest-coverage")
 #
-# 3. Use the function SETUP_TARGET_FOR_COVERAGE to create a custom make target
+# 3. Use the function IGN_SETUP_TARGET_FOR_COVERAGE to create a custom make target
 #    which runs your test executable and produces a lcov code coverage report:
 #    Example:
-#    SETUP_TARGET_FOR_COVERAGE(
+#    IGN_SETUP_TARGET_FOR_COVERAGE(
 #        my_coverage_target  # Name for custom target.
 #        test_driver         # Name of the test driver executable that runs the tests.
 #                            # NOTE! This should always have a ZERO as exit code
@@ -91,7 +91,7 @@ ENDIF() # NOT CMAKE_BUILD_TYPE STREQUAL "Debug"
 #                       HTML report is generated in _outputname/index.html
 # Optional fourth parameter is passed as arguments to _testrunner
 #   Pass them in list form, e.g.: "-j;2" for -j 2
-FUNCTION(SETUP_TARGET_FOR_COVERAGE _targetname _testrunner _outputname)
+FUNCTION(IGN_SETUP_TARGET_FOR_COVERAGE _targetname _testrunner _outputname)
 
   IF(NOT LCOV_PATH)
     MESSAGE(FATAL_ERROR "lcov not found! Aborting...")
@@ -133,4 +133,4 @@ FUNCTION(SETUP_TARGET_FOR_COVERAGE _targetname _testrunner _outputname)
     COMMENT "Open ./${_outputname}/index.html in your browser to view the coverage report."
   )
 
-ENDFUNCTION() # SETUP_TARGET_FOR_COVERAGE
+ENDFUNCTION() # IGN_SETUP_TARGET_FOR_COVERAGE
