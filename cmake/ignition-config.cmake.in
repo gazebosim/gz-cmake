@@ -14,6 +14,7 @@
 # and all the interface build variables will be pulled into your target.
 
 if(@PKG_NAME@_CONFIG_INCLUDED)
+  message(STATUS "Skipping check on @PKG_NAME@")
   return()
 endif()
 set(@PKG_NAME@_CONFIG_INCLUDED TRUE)
@@ -22,7 +23,6 @@ set(@PKG_NAME@_CONFIG_INCLUDED TRUE)
 
 # Get access to the find_dependency utility
 include(CMakeFindDependencyMacro)
-
 # Find ignition-cmake, because we need its modules in order to find the rest of
 # our dependencies.
 find_dependency(ignition-cmake@IGNITION_CMAKE_VERSION_MAJOR@)

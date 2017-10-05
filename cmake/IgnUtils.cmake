@@ -66,7 +66,9 @@
 #                REQUIRED is specified, then REQUIRED_BY does NOT need to be
 #                specified for any components which depend on the main library,
 #                because their dependence on this package will effectively be
-#                inherited from the main library.
+#                inherited from the main library. This will trigger a build
+#                warning to tell the user which component requires this
+#                dependency.
 #
 # [PRIVATE_FOR]: Optional. If provided, the list that follows it must indicate
 #                which library components depend on this package privately (i.e.
@@ -179,12 +181,29 @@ macro(ign_find_package PACKAGE_NAME)
     endif()
 
     #------------------------------------
-    # Produce an error if the package is required, or a warning if it is not
+    # If the package is unavailable, tell the user.
     if(ign_find_package_REQUIRED)
+
+      # If it was required by the project, we will create an error.
       ign_build_error(${${PACKAGE_NAME}_msg})
+
+    elseif(ign_find_package_REQUIRED_BY)
+
+      foreach(component ${ign_find_package_REQUIRED_BY})
+
+        # Otherwise, if it was only required by some of the components, create
+        # a warning about which components will not be available.
+        ign_build_warning("Cannot build component [${component}] - ${${PACKAGE_NAME}_msg}")
+
+        # Also create a variable to indicate that we should skip the component
+        set(SKIP_${component} true)
+
+      endforeach()
+
     else()
       ign_build_warning(${${PACKAGE_NAME}_msg})
     endif()
+
   endif()
 
 
@@ -495,7 +514,7 @@ function(ign_install_all_headers)
 
       # list(FIND ...) will make f_index equal to -1 if ${f} was not in the list
       # of excluded directories.
-      if(${f_index} EQUALS -1)
+      if(${f_index} EQUAL -1)
         list(APPEND directories ${f})
       endif()
 
@@ -630,48 +649,15 @@ function(ign_create_main_library)
       # interface instead of the install interface.
       $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>)
 
-endfunction()
-
-function(ign_install_component component_name)
-
-  # Set the name of the component's target
-  set(component_target_name ${PROJECT_LIBRARY_TARGET_NAME}-${component_name})
 
   #------------------------------------
-  # Configure the installation of the target
-  set_target_properties(
-    ${component_target_name}
-    PROPERTIES
-      SOVERSION ${PROJECT_VERSION_MAJOR}
-      VERSION ${PROJECT_VERSION_FULL})
+  # No variables need to be set for the project-level config files
 
-  install(
-    TARGETS ${component_target_name}
-    EXPORT ${component_target_name}
-    LIBRARY DESTINATION ${IGN_LIB_INSTALL_DIR}
-    ARCHIVE DESTINATION ${IGN_LIB_INSTALL_DIR}
-    RUNTIME DESTINATION ${IGN_LIB_INSTALL_DIR}
-    COMPONENT libraries)
+  # Export and install the main library's cmake target and package information
+  _ign_create_cmake_package(${PROJECT_LIBRARY_TARGET_NAME})
 
-  #------------------------------------
-  # Set variables that are needed by cmake/ignition-component-config.cmake.in
-  set(component_pkg_name ${component_target_name})
-  set(component_cmake_dependencies ${${component_name}_CMAKE_DEPENDENCIES})
-  # This next set is redundant, but it serves as a reminder that this input
-  # variable is used in config files
-  set(component_name ${component_name})
-
-  # ... and by cmake/pkgconfig/ignition-component.pc.in
-  set(component_pkgconfig_requires ${${component_name}_PKGCONFIG_REQUIRES})
-  set(component_pkgconfig_requires_private ${${component_name}_PKGCONFIG_REQUIRES_PRIVATE})
-  set(component_pkgconfig_libs ${${component_name}_PKGCONFIG_LIBS})
-  set(component_pkgconfig_libs_private ${${component_name}_PKGCONFIG_LIBS_PRIVATE})
-
-  # Export and install the cmake target and package information
-  _ign_create_cmake_package(${component_target_name} COMPONENT)
-
-  # Generate and install the pkgconfig information for this component
-  _ign_create_pkgconfig({component_target_name} COMPONENT)
+  # Generate and install the main library's pkgconfig information
+  _ign_create_pkgconfig(${PROJECT_LIBRARY_TARGET_NAME})
 
 endfunction()
 
@@ -761,8 +747,7 @@ function(ign_add_component component_name)
     LIB_NAME ${component_target_name}
     INCLUDE_DIR "ignition/${IGN_DESIGNATION_LOWER}/${include_subdir}"
     EXPORT_BASE IGNITION_${IGN_DESIGNATION_UPPER}_${component_name_upper}
-    SOURCES ${sources}
-    EXCLUDE_PROJECT_LIB)
+    SOURCES ${sources})
 
   if(ign_add_component_INDEPENDENT_FROM_PROJECT_LIB  OR
      ign_add_component_PRIVATELY_DEPENDS_ON_PROJECT_LIB)
@@ -816,7 +801,7 @@ function(ign_add_component component_name)
       PUBLIC ${PROJECT_LIBRARY_TARGET_NAME})
 
     # Add the main library as a cmake dependency for this component
-    ign_string_append(${component_name}_CMAKE_DEPENDENCIES "find_package(${PKG_NAME} ${PROJECT_VERSION_FULL} EXACT)" DELIM "\n" PARENT_SCOPE)
+    ign_string_append(${component_name}_CMAKE_DEPENDENCIES "find_package(${PKG_NAME} ${PROJECT_VERSION_FULL} EXACT)" DELIM "\n")
 
     # Choose what type of pkgconfig entry the main library belongs to
     set(lib_pkgconfig_type ${component_name}_PKGCONFIG_REQUIRES)
@@ -824,9 +809,29 @@ function(ign_add_component component_name)
       set(lib_pkgconfig_type ${lib_pkgconfig_type}_PRIVATE)
     endif()
 
-    ign_string_append(${lib_pkgconfig_type} "${PKG_NAME}=${PROJECT_VERSION_FULL}" PARENT_SCOPE)
+    ign_string_append(${lib_pkgconfig_type} "${PKG_NAME}=${PROJECT_VERSION_FULL}")
 
   endif()
+
+  #------------------------------------
+  # Set variables that are needed by cmake/ignition-component-config.cmake.in
+  set(component_pkg_name ${component_target_name})
+  set(component_cmake_dependencies ${${component_name}_CMAKE_DEPENDENCIES})
+  # This next set is redundant, but it serves as a reminder that this input
+  # variable is used in config files
+  set(component_name ${component_name})
+
+  # ... and by cmake/pkgconfig/ignition-component.pc.in
+  set(component_pkgconfig_requires ${${component_name}_PKGCONFIG_REQUIRES})
+  set(component_pkgconfig_requires_private ${${component_name}_PKGCONFIG_REQUIRES_PRIVATE})
+  set(component_pkgconfig_libs ${${component_name}_PKGCONFIG_LIBS})
+  set(component_pkgconfig_libs_private ${${component_name}_PKGCONFIG_LIBS_PRIVATE})
+
+  # Export and install the cmake target and package information
+  _ign_create_cmake_package(${component_target_name} COMPONENT)
+
+  # Generate and install the pkgconfig information for this component
+  _ign_create_pkgconfig(${component_target_name} COMPONENT)
 
 endfunction()
 
@@ -959,16 +964,6 @@ macro(_ign_add_library_or_component)
     ARCHIVE DESTINATION ${IGN_LIB_INSTALL_DIR}
     RUNTIME DESTINATION ${IGN_LIB_INSTALL_DIR}
     COMPONENT libraries)
-
-
-  #------------------------------------
-  # No variables need to be set for the project-level config files
-
-  # Export and install the main library's cmake target and package information
-  _ign_create_cmake_package(${PROJECT_LIBRARY_TARGET_NAME})
-
-  # Generate and install the main library's pkgconfig information
-  _ign_create_pkgconfig(${PROJECT_LIBRARY_TARGET_NAME})
 
 endmacro()
 

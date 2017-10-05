@@ -75,4 +75,9 @@ if(NOT FreeImage_FOUND)
     ign_import_target(FreeImage)
   endif()
 
+  include(FindPackageHandleStandardArgs)
+  find_package_handle_standard_args(
+    FreeImage
+    REQUIRED_VARS FreeImage_FOUND)
+
 endif()
