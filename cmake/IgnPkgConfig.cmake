@@ -58,6 +58,18 @@ macro(ign_pkg_check_modules_quiet package)
     #       here.
     if(${package}_FOUND AND NOT TARGET ${package}::${package})
 
+      # pkg_check_modules will put ${package}_FOUND into the CACHE, which would
+      # prevent our FindXXX.cmake script from being entered the next time cmake
+      # is run by a dependent project. This is a problem for us because we
+      # produce an imported target which gets wiped out and needs to recreated
+      # between runs.
+      #
+      # TODO: Investigate if there is a more conventional solution to this
+      # problem. Perhaps the cmake-3.6 version of pkg_check_modules has a
+      # better solution.
+      unset(${package}_FOUND CACHE)
+      set(${package}_FOUND true)
+
       # For some reason, pkg_check_modules does not provide complete paths to the
       # libraries it returns, even though find_package is conventionally supposed
       # to provide complete library paths. Having only the library name is harmful
