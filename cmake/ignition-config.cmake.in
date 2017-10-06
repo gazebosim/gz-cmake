@@ -7,8 +7,8 @@
 # It defines the following variables:
 #
 #  @PKG_NAME@_FOUND        - System has @PKG_NAME@.
-#  @PKG_NAME@_INCLUDE_DIRS - include directories for @PKG_NAME@ and its dependencies.
 #  @PKG_NAME@_LIBRARIES    - Libraries to link against.
+#  @PKG_NAME@_INCLUDE_DIRS - include directories for @PKG_NAME@ and its dependencies.
 #
 # Additionally, it will create an imported target named @import_target_name@.
 # You can link your library against that target using target_link_library(~),
@@ -46,10 +46,8 @@ endif()
 # Package variables. Note that @PKG_NAME@_LIBRARIES merely contains an imported
 # target for the library, so it is sufficient to simply link to
 # @PKG_NAME@_LIBRARIES. None of the other package variables are needed.
-set(@PKG_NAME@_LIBRARIES @PROJECT_EXPORT_NAME@::@PROJECT_EXPORT_NAME@)
-set(@PKG_NAME@_INCLUDE_DIRS "@PACKAGE_IGN_INCLUDE_INSTALL_DIR_FULL@")
-set(@PKG_NAME@_LIBRARY_DIRS "@PACKAGE_IGN_LIB_INSTALL_DIR@")
-set(@PKG_NAME@_LDFLAGS      "-L@PACKAGE_IGN_LIB_INSTALL_DIR@")
+set(@PKG_NAME@_LIBRARIES @import_target_name@)
+set_and_check(@PKG_NAME@_INCLUDE_DIRS "@PACKAGE_IGN_INCLUDE_INSTALL_DIR_FULL@")
 
 # Backwards compatibility variables
 set(@PROJECT_NAME_NO_VERSION_UPPER@_LIBRARIES ${@PKG_NAME@_LIBRARIES})
