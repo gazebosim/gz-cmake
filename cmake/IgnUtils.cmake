@@ -273,7 +273,7 @@ macro(ign_string_append output_var val)
   # Define the expected arguments
   set(options) # We are not using options yet
   set(oneValueArgs DELIM)
-  set(multiValueArgs ADDITIONAL_DIRS EXCLUDE) # We are not using multiValueArgs yet
+  set(multiValueArgs) # We are not using multiValueArgs yet
 
   #------------------------------------
   # Parse the arguments
@@ -857,3 +857,30 @@ macro(ign_build_tests)
   endforeach()
 
 endmacro()
+
+#################################################
+# ign_set_target_public_cxx_standard(<11|14>)
+#
+# This lets you set the C++ standard required to compile and/or link against
+# your project's main library target. Acceptable options for the standard are 11
+# and 14.
+#
+# NOTE: This is a temporary workaround for the first pull request and will be
+#       removed in the very next revision of ignition-cmake.
+#
+macro(ign_set_project_public_cxx_standard standard)
+
+  list(FIND IGN_KNOWN_CXX_STANDARDS ${standard} known)
+  if(${known} EQUAL -1)
+    message(FATAL_ERROR "Specified invalid standard: ${standard}. Accepted values are: ${IGN_KNOWN_CXX_STANDARDS}.")
+  endif()
+
+  target_compile_features(${PROJECT_LIBRARY_TARGET_NAME} PUBLIC ${IGN_CXX_${standard}_FEATURES})
+
+  ign_string_append(PROJECT_PKGCONFIG_CFLAGS "-std=c++${standard}")
+  set(PROJECT_PKGCONFIG_CFLAGS ${PROJECT_PKGCONFIG_CFLAGS} PARENT_SCOPE)
+
+endmacro()
+
+
+
