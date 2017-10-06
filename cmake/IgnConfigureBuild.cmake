@@ -84,6 +84,11 @@ macro(ign_configure_build)
 
 
     #--------------------------------------
+    # Set up the compiler feature flags to help us choose our standard
+    ign_set_cxx_feature_flags()
+
+
+    #--------------------------------------
     # We want to include both the include directory from the source tree and
     # also the include directory that's generated in the build folder,
     # ${PROJECT_BINARY_DIR}, so that headers which are generated via cmake will
@@ -111,6 +116,71 @@ macro(ign_configure_build)
     message(STATUS "Build configuration successful")
 
   endif()
+
+endmacro()
+
+macro(ign_set_cxx_feature_flags)
+
+  set(IGN_KNOWN_CXX_STANDARDS 11 14)
+
+  set(IGN_CXX_11_FEATURES
+    cxx_alias_templates
+    cxx_alignas
+    cxx_alignof
+    cxx_attributes
+    cxx_auto_type
+    cxx_constexpr
+    cxx_decltype_incomplete_return_types
+    cxx_decltype
+    cxx_default_function_template_args
+    cxx_defaulted_functions
+    cxx_defaulted_move_initializers
+    cxx_delegating_constructors
+    cxx_deleted_functions
+    cxx_enum_forward_declarations
+    cxx_explicit_conversions
+    cxx_extended_friend_declarations
+    cxx_extern_templates
+    cxx_final
+    cxx_func_identifier
+    cxx_generalized_initializers
+    cxx_inheriting_constructors
+    cxx_inline_namespaces
+    cxx_lambdas
+    cxx_local_type_template_args
+    cxx_long_long_type
+    cxx_noexcept
+    cxx_nonstatic_member_init
+    cxx_nullptr
+    cxx_override
+    cxx_range_for
+    cxx_raw_string_literals
+    cxx_reference_qualified_functions
+    cxx_right_angle_brackets
+    cxx_rvalue_references
+    cxx_sizeof_member
+    cxx_static_assert
+    cxx_strong_enums
+    cxx_thread_local
+    cxx_trailing_return_types
+    cxx_unicode_literals
+    cxx_unrestricted_unions
+    cxx_user_literals
+    cxx_variadic_macros
+    cxx_variadic_templates)
+
+  set(IGN_CXX_14_FEATURES
+    cxx_attribute_deprecated
+    cxx_binary_literals
+    cxx_contextual_conversions
+    cxx_decltype_auto
+    cxx_digit_separators
+    cxx_generic_lambdas
+    cxx_lambda_init_captures
+    cxx_relaxed_constexpr
+    cxx_return_type_deduction
+    cxx_variable_templates)
+
 
 endmacro()
 
