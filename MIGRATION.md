@@ -251,7 +251,28 @@ that are not already present in `ign-cmake`, then you should add those
 features to `ign-cmake` and submit a pull request. I will try to be very prompt
 about reviewing and approving those PRs.
 
+### To add a component library, use `ign_add_component(<component> SOURCES ${sources})`
 
+This new function allows you to create a "component" library which will be
+compiled separately from your main library. It will be packaged as a cmake
+component of your main library, and it will also be packaged as its own
+independent cmake package. For pkg-config, it will packaged as its own
+independent package because pkg-config does not seem to have a concept analogous
+to components.
+
+By default, your component will be publicly linked to your main library. To
+change this behavior, you may pass one of the following arguments:
+`INDEPENDENT_FROM_PROJECT_LIB`, `PRIVATELY_DEPENDS_ON_PROJECT_LIB`, or
+`INTERFACE_DEPENDS_ON_PROJECT_LIB`.
+
+By default, the auto-generate public headers for this component will go into the
+directory `ignition/<project>/<component>/`. You can change the subdirectory
+using the optional argument `INCLUDE_SUBDIR <subdir>` which will instead put
+the auto-generate public headers into `ignition/<project>/<subdir>/`.
+
+You may also pass the argument `GET_TARGET_NAME <output_var>` to retrieve the
+auto-generated name of the target. You can then use the target with
+`${<output_var>}`.
 
 
 # 2. Recommended Changes
