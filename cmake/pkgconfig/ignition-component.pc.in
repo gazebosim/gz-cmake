@@ -9,4 +9,4 @@ Requires:@component_pkgconfig_requires@
 Requires.private:@component_pkgconfig_requires_private@
 Libs: -L${libdir} -l@component_pkg_name@ @component_pkgconfig_libs@
 Libs.private:@component_pkgconfig_libs_private@
-CFLags: -I${includedir}
+CFLags: -I${includedir} @component_pkgconfig_cflags@

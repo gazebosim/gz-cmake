@@ -619,15 +619,139 @@ endmacro(ign_build_warning)
 macro(ign_add_library)
 
   message(FATAL_ERROR "ign_add_library is deprecated. Instead, use "
-                      "ign_create_main_library(~) and pass it ONLY THE SOURCE "
-                      "FILES. The library name is determined automatically by "
-                      "the project name. To add a component library, use "
-                      "ign_add_component(~).")
+                      "ign_create_main_library(SOURCES <sources>). The library "
+                      "name is determined automatically by the project name. "
+                      "To add a component library, use ign_add_component(~). "
+                      "Be sure to pass the CXX_STANDARD argument to these "
+                      "functions in order to set the C++ standard that they "
+                      "require.")
 
 endmacro()
 
 #################################################
+# _ign_check_known_cxx_standards(<11|14|...>)
+#
+# Creates a fatal error if the variable passed in does not represent a supported
+# version of the C++ standard.
+#
+# NOTE: This function is meant for internal ign-cmake use
+#
+function(_ign_check_known_cxx_standards standard)
+
+  list(FIND IGN_KNOWN_CXX_STANDARDS ${standard} known)
+  if(${known} EQUAL -1)
+    message(FATAL_ERROR "You have specified unsupported standard: ${standard}. "
+                        "Accepted values are: ${IGN_KNOWN_CXX_STANDARDS}.")
+  endif()
+
+endfunction()
+
+#################################################
+# _ign_handle_cxx_standard(<function_prefix>
+#                          <target_name>
+#                          <pkgconfig_cflags_variable>)
+#
+# Handles the C++ standard argument for ign_create_main_library(~) and
+# ign_add_component(~).
+#
+# NOTE: This is only meant for internal ign-cmake use.
+#
+macro(_ign_handle_cxx_standard prefix target pkgconfig_cflags)
+
+  if(${prefix}_CXX_STANDARD)
+    _ign_check_known_cxx_standards(${${prefix}_CXX_STANDARD})
+  endif()
+
+  if(${prefix}_PRIVATE_CXX_STANDARD)
+    _ign_check_known_cxx_standards(${${prefix}_PRIVATE_CXX_STANDARD})
+  endif()
+
+  if(${prefix}_INTERFACE_CXX_STANDARD)
+    _ign_check_known_cxx_standards(${${prefix}_INTERFACE_CXX_STANDARD})
+  endif()
+
+  if(${prefix}_CXX_STANDARD
+      AND (${prefix}_PRIVATE_CXX_STANDARD
+           OR ${prefix}_INTERFACE_CXX_STANDARD))
+    message(FATAL_ERROR
+      "If CXX_STANDARD has been specified, then you are not allowed to specify "
+      "PRIVATE_CXX_STANDARD or INTERFACE_CXX_STANDARD. Please choose to either "
+      "specify CXX_STANDARD alone, or else specify some combination of "
+      "PRIVATE_CXX_STANDARD and INTERFACE_CXX_STANDARD")
+  endif()
+
+  if(${prefix}_CXX_STANDARD)
+    set(${prefix}_INTERFACE_CXX_STANDARD ${${prefix}_CXX_STANDARD})
+    set(${prefix}_PRIVATE_CXX_STANDARD ${${prefix}_CXX_STANDARD})
+  endif()
+
+  if(${prefix}_INTERFACE_CXX_STANDARD)
+    target_compile_features(${target} INTERFACE ${IGN_CXX_${${prefix}_INTERFACE_CXX_STANDARD}_FEATURES})
+    ign_string_append(${pkgconfig_cflags} "-std=c++${${prefix}_INTERFACE_CXX_STANDARD}")
+  endif()
+
+  if(${prefix}_PRIVATE_CXX_STANDARD)
+    target_compile_features(${target} PRIVATE ${IGN_CXX_${${prefix}_PRIVATE_CXX_STANDARD}_FEATURES})
+  endif()
+
+endmacro()
+
+#################################################
+# ign_create_main_library(SOURCES <sources>
+#                         [CXX_STANDARD <11|14|...>]
+#                         [PRIVATE_CXX_STANDARD <11|14|...>]
+#                         [INTERFACE_CXX_STANDARD <11|14|...>]
+#                         [GET_TARGET_NAME <output_var>])
+#
+# This function will produce the "main" library for your project. There is no
+# need to specify a name for the library, because that will be determined by
+# your project information.
+#
+# SOURCES: Required. Specify the source files that will be used to generate the
+#          library.
+#
+# [GET_TARGET_NAME]: Optional. The variable that follows this argument will be
+#                    set to the library target name that gets produced by this
+#                    function. The target name will always be
+#                    ${PROJECT_LIBRARY_TARGET_NAME}.
+#
+# If you need a specific C++ standard, you must also specify it in this
+# function in order to ensure that your library's target properties get set
+# correctly. The following is a breakdown of your choices:
+#
+# [CXX_STANDARD]: This library must compile using the specified standard, and so
+#                 must any libraries which link to it.
+#
+# [PRIVATE_CXX_STANDARD]: This library must compile using the specified standard,
+#                         but libraries which link to it do not need to.
+#
+# [INTERFACE_CXX_STANDARD]: Any libraries which link to this library must compile
+#                           with the specified standard.
+#
+# Most often, you will want to use CXX_STANDARD, but there may be cases in which
+# you want a finer degree of control. If your library must compile with a
+# different standard than what is required by dependent libraries, then you can
+# specify both PRIVATE_CXX_STANDARD and INTERFACE_CXX_STANDARD without any
+# conflict. However, both of those arguments conflict with CXX_STANDARD, so you
+# are not allowed to use either of them if you use the CXX_STANDARD argument.
+#
 function(ign_create_main_library)
+
+  #------------------------------------
+  # Define the expected arguments
+  set(options) # Not using options yet
+  set(oneValueArgs INCLUDE_SUBDIR CXX_STANDARD PRIVATE_CXX_STANDARD INTERFACE_CXX_STANDARD GET_TARGET_NAME)
+  set(multiValueArgs SOURCES)
+
+  #------------------------------------
+  # Parse the arguments
+  cmake_parse_arguments(ign_create_main_library "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+  if(ign_create_main_library_SOURCES)
+    set(sources ${ign_create_main_library_SOURCES})
+  else()
+    message(FATAL_ERROR "You must specify SOURCES for ign_create_main_library(~)!")
+  endif()
 
   #------------------------------------
   # Create the target for the main library, and configure it to be installed
@@ -635,7 +759,7 @@ function(ign_create_main_library)
     LIB_NAME ${PROJECT_LIBRARY_TARGET_NAME}
     INCLUDE_DIR "ignition/${IGN_DESIGNATION_LOWER}"
     EXPORT_BASE IGNITION_${IGN_DESIGNATION_UPPER}
-    SOURCES ${ARGN})
+    SOURCES ${sources})
 
   # This generator expression is necessary for multi-configuration generators,
   # such as MSVC on Windows, and also to ensure that our target exports the
@@ -651,7 +775,12 @@ function(ign_create_main_library)
 
 
   #------------------------------------
-  # No variables need to be set for the project-level config files
+  # Adjust variables if a specific C++ standard was requested
+  _ign_handle_cxx_standard(ign_create_main_library ${PROJECT_LIBRARY_TARGET_NAME} PROJECT_PKGCONFIG_CFLAGS)
+
+
+  #------------------------------------
+  # Handle cmake and pkgconfig packaging
 
   # Export and install the main library's cmake target and package information
   _ign_create_cmake_package(${PROJECT_LIBRARY_TARGET_NAME})
@@ -659,18 +788,28 @@ function(ign_create_main_library)
   # Generate and install the main library's pkgconfig information
   _ign_create_pkgconfig(${PROJECT_LIBRARY_TARGET_NAME})
 
+
+  #------------------------------------
+  # Pass back the target name if they ask for it.
+  if(ign_create_main_library_GET_TARGET_NAME)
+    set(${ign_create_main_library_GET_TARGET_NAME} ${PROJECT_LIBRARY_TARGET_NAME} PARENT_SCOPE)
+  endif()
+
 endfunction()
 
 #################################################
 # ign_add_component(<component>
 #                   SOURCES <sources>
 #                   [INCLUDE_SUBDIR <subdirectory_name>]
-#                   [GET_TARGET_NAME output_var]
+#                   [GET_TARGET_NAME <output_var>]
 #                   [INDEPENDENT_FROM_PROJECT_LIB]
 #                   [PRIVATELY_DEPENDS_ON_PROJECT_LIB]
-#                   [INTERFACE_DEPENDS_ON_PROJECT_LIB])
+#                   [INTERFACE_DEPENDS_ON_PROJECT_LIB]
+#                   [CXX_STANDARD <11|14|...>]
+#                   [PRIVATE_CXX_STANDARD <11|14|...>]
+#                   [INTERFACE_CXX_STANDARD <11|14|...>])
 #
-# This macro will produce a "component" library for your project. This is the
+# This function will produce a "component" library for your project. This is the
 # recommended way to produce plugins or library modules.
 #
 # <component>: Required. Name of the component. The final name of this library
@@ -685,8 +824,8 @@ endfunction()
 #
 # [GET_TARGET_NAME]: Optional. The variable that follows this argument will be
 #                    set to the library target name that gets produced by this
-#                    macro.
-#                    by default.
+#                    function. The target name will always be
+#                    ${PROJECT_LIBRARY_TARGET_NAME}-<component>.
 #
 # [INDEPENDENT_FROM_PROJECT_LIB]:
 #     Optional. Specify this if you do NOT want this component to automatically
@@ -705,6 +844,10 @@ endfunction()
 #     with the main library), but the component itself does not need to link to
 #     the main library.
 #
+# See the documentation of ign_create_main_library(~) for more information about
+# specifying the C++ standard. If your component publicly depends on the main
+# library, then you probably do not need to specify the standard, because it
+# will get inherited from the main library.
 function(ign_add_component component_name)
 
   #------------------------------------
@@ -769,6 +912,11 @@ function(ign_add_component component_name)
 
 
   #------------------------------------
+  # Adjust variables if a specific C++ standard was requested
+  _ign_handle_cxx_standard(ign_add_component ${component_target_name} ${component_name}_PKGCONFIG_CFLAGS)
+
+
+  #------------------------------------
   # Adjust the packaging variables based on how this component depends (or not)
   # on the main library.
   if(ign_add_component_PRIVATELY_DEPENDS_ON_PROJECT_LIB)
@@ -826,6 +974,7 @@ function(ign_add_component component_name)
   set(component_pkgconfig_requires_private ${${component_name}_PKGCONFIG_REQUIRES_PRIVATE})
   set(component_pkgconfig_libs ${${component_name}_PKGCONFIG_LIBS})
   set(component_pkgconfig_libs_private ${${component_name}_PKGCONFIG_LIBS_PRIVATE})
+  set(component_pkgconfig_cflags ${${component_name}_PKGCONFIG_CFLAGS})
 
   # Export and install the cmake target and package information
   _ign_create_cmake_package(${component_target_name} COMPONENT)
@@ -1238,26 +1387,13 @@ endmacro()
 #################################################
 # ign_set_target_public_cxx_standard(<11|14>)
 #
-# This lets you set the C++ standard required to compile and/or link against
-# your project's main library target. Acceptable options for the standard are 11
-# and 14.
-#
-# NOTE: This is a temporary workaround for the first pull request and will be
-#       removed in the very next revision of ignition-cmake.
+# NOTE: This was a temporary workaround for the first pull request and is
+#       removed as of the "Components" pull request.
 #
 macro(ign_set_project_public_cxx_standard standard)
 
-  list(FIND IGN_KNOWN_CXX_STANDARDS ${standard} known)
-  if(${known} EQUAL -1)
-    message(FATAL_ERROR "Specified invalid standard: ${standard}. Accepted values are: ${IGN_KNOWN_CXX_STANDARDS}.")
-  endif()
-
-  target_compile_features(${PROJECT_LIBRARY_TARGET_NAME} PUBLIC ${IGN_CXX_${standard}_FEATURES})
-
-  ign_string_append(PROJECT_PKGCONFIG_CFLAGS "-std=c++${standard}")
-  set(PROJECT_PKGCONFIG_CFLAGS ${PROJECT_PKGCONFIG_CFLAGS} PARENT_SCOPE)
+  message(FATAL_ERROR
+    "The ign_set_project_public_cxx_standard(~) macro is no longer allowed. "
+    "Instead, use the CXX_STANDARD argument of ign_create_main_library(~).")
 
 endmacro()
-
-
-
