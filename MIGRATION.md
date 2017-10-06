@@ -108,6 +108,13 @@ should not be using the CMake cache except to allow human users to set build
 options. For more explanation about why and how we should avoid using the cache,
 see the below section on CMake anti-patterns.
 
+### Replace `ign_add_library(${PROJECT_LIBRARY_TARGET_NAME} ${sources})` with `ign_create_main_library(${sources})`
+
+The `ign_add_library(~)` macro has been removed and replaced with the macro
+`ign_create_main_library(~)`. The new macro only takes in the source files for
+the library. **You must not specify a target name**, because that is handled
+automatically.
+
 ### Specify `TYPE` and `SOURCES` arguments in `ign_build_tests(~)`
 
 Previously, ignition libraries would set a `TEST_TYPE` variable before calling
@@ -132,7 +139,8 @@ Note that when individual tests depend on additional libraries, those individual
 tests should be linked to their dependencies using
 `target_link_libraries(<test_name> <dependency>)` after the call to
 `ign_build_tests(~)`. `LIB_DEPS` should only be used for dependencies that are
-needed by (nearly) all of the tests.
+needed by (nearly) all of the tests. For component libraries, you can use
+`LIB_DEPS` to have the tests link to your component library.
 
 `INCLUDE_DIRS`: Include directories that need to be visible to all (or most) of
 the tests can be specified using the `INCLUDE_DIRS` tag. Note that the macro
@@ -200,10 +208,10 @@ find-module, the macro `ign_import_target(~)` should be used generate an
 imported target which follows this convention. More about creating find-modules
 can be found in the section on anti-patterns.
 
-### Remove all arguments from `ign_install_library()`
+### Remove ign_install_library()
 
-To reduce complexity, this macro no longer takes in any arguments, and instead
-uses the standardized target name and export name.
+Calling `ign_create_main_library()` will also take care of installing the
+library. Simply remove this function from your cmake script.
 
 ### Replace calls to `#include "ignition/<project>/System.hh"` with `#include "ignition/<project>/Export.hh"`, and delete the file `System.hh`.
 
@@ -225,6 +233,10 @@ The export (a.k.a. visibility) macros used by each ignition library must be
 unique. Different ignition libraries might depend on each other, and the
 compiler/linker would be misinformed about which symbols to export if two
 different libraries share the same export macro.
+
+Note that component libraries will generate their own visibility macros so that
+they can correctly be compiled alongside their main library. Those macros will
+look like `IGNITION_<PROJECT>_<COMPONENT>_<VISIBLE/HIDDEN>`.
 
 ### Move all find-modules in your project's `cmake/` directory to your `ign-cmake` repo, and submit a pull request for them
 
@@ -263,13 +275,14 @@ want a file to be excluded, you can change its extension (e.g. `*.cc.backup` or
 ### Use `ign_install_all_headers(~)` in `include/ignition/<project>/CMakeLists.txt`
 
 Using this macro will install all files ending in `*.h` and `*.hh` in the
-current source directory as well as the subdirectory named `detail` (if it
-exists). It will also configure your project's `<project>.hh` and `config.hh.in`
-files and install them.
+current source directory recursively (so all the files in all subdirectories as
+well as their subdirectories will also be installed). It will also configure
+your project's `<project>.hh` and `config.hh.in` files and install them.
 
-You can use the argument `ADDITIONAL_DIRS` to specify additional subdirectories
-to install, and the argument `EXCLUDE` can specify files that should not be
-installed.
+You can use the argument `EXCLUDE_FILES` to specify files that should not be
+installed. The argument `EXCLUDE_DIRS` lets you specify subdirectories to not
+install. Note that the files or directories must be specified relative to the
+current directory.
 
 ### Use `ign_get_sources(~)` in `test/<type>/CMakeLists.txt` to collect source files
 
