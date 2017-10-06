@@ -1,6 +1,7 @@
 # - Config file for the @PKG_NAME@ package.
 #
 # For finding and loading @PKG_NAME@ from your project, type:
+#
 # find_package(@PKG_NAME@)
 #
 # It defines the following variables:
@@ -14,7 +15,6 @@
 # and all the interface build variables will be pulled into your target.
 
 if(@PKG_NAME@_CONFIG_INCLUDED)
-  message(STATUS "Skipping check on @PKG_NAME@")
   return()
 endif()
 set(@PKG_NAME@_CONFIG_INCLUDED TRUE)
@@ -43,11 +43,17 @@ if(WIN32)
  set(CMAKE_FIND_LIBRARY_SUFFIXES ".lib" ".dll")
 endif()
 
-# Set the old-fashioned variables in case a user prefers those over the imported
-# target. @PKG_NAME@_LIBRARIES is just set to the imported target, so the user
-# will end up linking to the imported target anyway.
-set(@PKG_NAME@_LIBRARIES @import_target_name@)
-set_and_check(@PKG_NAME@_INCLUDE_DIRS "@PACKAGE_IGN_INCLUDE_INSTALL_DIR_FULL@")
+# Package variables. Note that @PKG_NAME@_LIBRARIES merely contains an imported
+# target for the library, so it is sufficient to simply link to
+# @PKG_NAME@_LIBRARIES. None of the other package variables are needed.
+set(@PKG_NAME@_LIBRARIES @PROJECT_EXPORT_NAME@::@PROJECT_EXPORT_NAME@)
+set(@PKG_NAME@_INCLUDE_DIRS "@PACKAGE_IGN_INCLUDE_INSTALL_DIR_FULL@")
+set(@PKG_NAME@_LIBRARY_DIRS "@PACKAGE_IGN_LIB_INSTALL_DIR@")
+set(@PKG_NAME@_LDFLAGS      "-L@PACKAGE_IGN_LIB_INSTALL_DIR@")
+
+# Backwards compatibility variables
+set(@PROJECT_NAME_NO_VERSION_UPPER@_LIBRARIES ${@PKG_NAME@_LIBRARIES})
+set(@PROJECT_NAME_NO_VERSION_UPPER@_INCLUDE_DIRS ${@PKG_NAME@_INCLUDE_DIRS})
 
 # These variables are used by ignition-cmake to automatically configure the
 # pkgconfig files for ignition projects.
