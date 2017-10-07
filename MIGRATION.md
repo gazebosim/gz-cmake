@@ -108,12 +108,22 @@ should not be using the CMake cache except to allow human users to set build
 options. For more explanation about why and how we should avoid using the cache,
 see the below section on CMake anti-patterns.
 
-### Replace `ign_add_library(${PROJECT_LIBRARY_TARGET_NAME} ${sources})` with `ign_create_main_library(${sources})`
+### Replace `ign_add_library(${PROJECT_LIBRARY_TARGET_NAME} ${sources})` with `ign_create_main_library(SOURCES ${sources})`
 
 The `ign_add_library(~)` macro has been removed and replaced with the macro
-`ign_create_main_library(~)`. The new macro only takes in the source files for
-the library. **You must not specify a target name**, because that is handled
-automatically.
+`ign_create_main_library(~)`. With this new macro, you no longer need to specify
+the library name, because it will be inferred from your project information.
+Instead, you should pass the `SOURCES` argument, followed my the source files
+which will be used to generate your library.
+
+You may also use the `CXX_STANDARD` argument to specify which C++ standard your
+library requires (current options are 11 or 14). Note that if your library
+requires a certain standard, it MUST be specified directly to this function in
+order to ensure that the requirement gets correctly propagated into the
+project's package information so that dependent libraries will also be aware of
+the requirement. See the documentation of `ign_create_main_library(~)` in
+`ign-cmake/cmake/IgnUtils.cmake` for more details on how to specify your
+library's C++ standard requirement.
 
 ### Specify `TYPE` and `SOURCES` arguments in `ign_build_tests(~)`
 
