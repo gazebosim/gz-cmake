@@ -2,15 +2,17 @@
 #################################################
 # ign_find_package(<PACKAGE_NAME>
 #                  [REQUIRED] [PRIVATE] [EXACT] [QUIET] [BUILD_ONLY] [PKGCONFIG_IGNORE]
-#                  [REQUIRED_BY <components>]
-#                  [PRIVATE_FOR <components>]
+#                  [COMPONENTS <components_of_PACKAGE_NAME>]
+#                  [OPTIONAL_COMPONENTS <components_of_PACKAGE_NAME>]
+#                  [REQUIRED_BY <components_of_project>]
+#                  [PRIVATE_FOR <components_of_project>]
 #                  [VERSION <ver>]
 #                  [EXTRA_ARGS <args>]
 #                  [PRETTY <name>]
 #                  [PURPOSE <"explanation for this dependency">]
 #                  [PKGCONFIG <pkgconfig_name>]
 #                  [PKGCONFIG_LIB <lib_name>]
-#                  [PKGCONFIG_VER_COMPARISON <|>|=|<=|>=])
+#                  [PKGCONFIG_VER_COMPARISON  <  >  =  <=  >= ])
 #
 # This is a wrapper for the standard cmake find_package which behaves according
 # to the conventions of the ignition library. In particular, we do not quit
@@ -60,6 +62,13 @@
 #                     This should only be used in very rare circumstances. Note
 #                     that BUILD_ONLY will also prevent a pkgconfig entry from
 #                     being produced.
+#
+# [COMPONENTS]: Optional. If provided, the list that follows it will be passed
+#               to find_package(~) to indicate which components of PACKAGE_NAME
+#               are considered to be dependencies of either this project
+#               (specified by REQUIRED) or this project's components (specified
+#               by REQUIRED_BY). This is effectively the same as the
+#               find_package( ... COMPONENTS <components>) argument.
 #
 # [REQUIRED_BY]: Optional. If provided, the list that follows it must indicate
 #                which library components require the dependency. Note that if
@@ -129,7 +138,7 @@ macro(ign_find_package PACKAGE_NAME)
   # Define the expected arguments
   set(options REQUIRED EXACT QUIET PRIVATE BUILD_ONLY)
   set(oneValueArgs VERSION PRETTY PURPOSE EXTRA_ARGS PKGCONFIG PKGCONFIG_LIB PKGCONFIG_VER_COMPARISON)
-  set(multiValueArgs REQUIRED_BY PRIVATE_FOR)
+  set(multiValueArgs REQUIRED_BY PRIVATE_FOR COMPONENTS OPTIONAL_COMPONENTS)
 
   #------------------------------------
   # Parse the arguments
@@ -137,6 +146,8 @@ macro(ign_find_package PACKAGE_NAME)
 
   #------------------------------------
   # Construct the arguments to pass to find_package
+  set(${PACKAGE_NAME}_find_package_args ${PACKAGE_NAME})
+
   if(ign_find_package_VERSION)
     list(APPEND ${PACKAGE_NAME}_find_package_args ${ign_find_package_VERSION})
   endif()
@@ -149,9 +160,18 @@ macro(ign_find_package PACKAGE_NAME)
     list(APPEND ${PACKAGE_NAME}_find_package_args EXACT)
   endif()
 
+  if(ign_find_package_COMPONENTS)
+    list(APPEND ${PACKAGE_NAME}_find_package_args COMPONENTS ${ign_find_package_COMPONENTS})
+  endif()
+
+  if(ign_find_package_OPTIONAL_COMPONENTS)
+    list(APPEND ${PACKAGE_NAME}_find_package_args OPTIONAL_COMPONENTS ${ign_find_package_OPTIONAL_COMPONENTS})
+  endif()
+
   if(ign_find_package_EXTRA_ARGS)
     list(APPEND ${PACKAGE_NAME}_find_package_args ${ign_find_package_EXTRA_ARGS})
   endif()
+
 
   #------------------------------------
   # Figure out which name to print
@@ -164,7 +184,7 @@ macro(ign_find_package PACKAGE_NAME)
 
   #------------------------------------
   # Call find_package with the provided arguments
-  find_package(${PACKAGE_NAME} ${${PACKAGE_NAME}_find_package_args})
+  find_package(${${PACKAGE_NAME}_find_package_args})
   if(${PACKAGE_NAME}_FOUND)
 
     message(STATUS "Looking for ${${PACKAGE_NAME}_pretty} - found\n")
@@ -216,7 +236,15 @@ macro(ign_find_package PACKAGE_NAME)
 
     # Set up the arguments we want to pass to the find_dependency invokation for
     # our ignition project. We always need to pass the name of the dependency.
-    set(${PACKAGE_NAME}_dependency_args ${PACKAGE_NAME})
+    #
+    # NOTE: We escape the dollar signs because we want those variable
+    #       evaluations to be a part of the string that we produce. It is going
+    #       to be put into a *-config.cmake file. Those variables determine
+    #       whether the find_package(~) call will be REQUIRED and/or QUIET.
+    #
+    # TODO: When we migrate to cmake-3.9+, this can be removed because calling
+    #       find_dependency(~) will automatically forward these properties.
+    set(${PACKAGE_NAME}_dependency_args "${PACKAGE_NAME}")
 
     # If a version is provided here, we should pass that as well.
     if(ign_find_package_VERSION)
@@ -228,7 +256,31 @@ macro(ign_find_package PACKAGE_NAME)
       ign_string_append(${PACKAGE_NAME}_dependency_args EXACT)
     endif()
 
-    set(${PACKAGE_NAME}_find_dependency "find_dependency(${${PACKAGE_NAME}_dependency_args})")
+    # NOTE (MXG): 7 seems to be the number of escapes required to get
+    # "${ign_package_required}" and "${ign_package_quiet}" to show up correctly
+    # as strings in the final config-file outputs. It is unclear to me why the
+    # escapes get collapsed exactly three times, so it is possible that any
+    # changes to this script could cause a different number of escapes to be
+    # necessary. Please use caution when modifying this script.
+    ign_string_append(${PACKAGE_NAME}_dependency_args "\\\\\\\${ign_package_quiet} \\\\\\\${ign_package_required}")
+
+    # If we have specified components of the dependency, mention those.
+    if(ign_find_package_COMPONENTS)
+      ign_string_append(${PACKAGE_NAME}_dependency_args "COMPONENTS ${ign_find_package_COMPONENTS}")
+    endif()
+
+    # If there are any additional arguments for the find_package(~) command,
+    # forward them along.
+    if(ign_find_package_EXTRA_ARGS)
+      ign_string_append(${PACKAGE_NAME}_dependency_args "${ign_find_package_EXTRA_ARGS}")
+    endif()
+
+    # TODO: When we migrate to cmake-3.9+ bring back find_dependency(~) because
+    #       at that point it will be able to support COMPONENTS and EXTRA_ARGS
+#    set(${PACKAGE_NAME}_find_dependency "find_dependency(${${PACKAGE_NAME}_dependency_args})")
+
+    set(${PACKAGE_NAME}_find_dependency "find_package(${${PACKAGE_NAME}_dependency_args})")
+
 
     if(ign_find_package_REQUIRED)
       # If this is REQUIRED, add it to PROJECT_CMAKE_DEPENDENCIES
@@ -783,10 +835,10 @@ function(ign_create_main_library)
   # Handle cmake and pkgconfig packaging
 
   # Export and install the main library's cmake target and package information
-  _ign_create_cmake_package(${PROJECT_LIBRARY_TARGET_NAME})
+  _ign_create_cmake_package()
 
   # Generate and install the main library's pkgconfig information
-  _ign_create_pkgconfig(${PROJECT_LIBRARY_TARGET_NAME})
+  _ign_create_pkgconfig()
 
 
   #------------------------------------
@@ -949,7 +1001,10 @@ function(ign_add_component component_name)
       PUBLIC ${PROJECT_LIBRARY_TARGET_NAME})
 
     # Add the main library as a cmake dependency for this component
-    ign_string_append(${component_name}_CMAKE_DEPENDENCIES "find_package(${PKG_NAME} ${PROJECT_VERSION_FULL} EXACT)" DELIM "\n")
+    # NOTE: It seems we need to triple-escape "${ign_package_required}" and
+    #       "${ign_package_quiet}" here.
+    ign_string_append(${component_name}_CMAKE_DEPENDENCIES
+      "find_package(${PKG_NAME} ${PROJECT_VERSION_FULL} EXACT \\\${ign_package_quiet} \\\${ign_package_required})" DELIM "\n")
 
     # Choose what type of pkgconfig entry the main library belongs to
     set(lib_pkgconfig_type ${component_name}_PKGCONFIG_REQUIRES)
@@ -977,10 +1032,10 @@ function(ign_add_component component_name)
   set(component_pkgconfig_cflags ${${component_name}_PKGCONFIG_CFLAGS})
 
   # Export and install the cmake target and package information
-  _ign_create_cmake_package(${component_target_name} COMPONENT)
+  _ign_create_cmake_package(COMPONENT ${component_name})
 
   # Generate and install the pkgconfig information for this component
-  _ign_create_pkgconfig(${component_target_name} COMPONENT)
+  _ign_create_pkgconfig(COMPONENT ${component_name})
 
 endfunction()
 

@@ -30,9 +30,31 @@ include(CMakeFindDependencyMacro)
 # our dependencies.
 find_dependency(ignition-cmake@IGNITION_CMAKE_VERSION_MAJOR@)
 
+# Set the REQUIRED flag for the find_package(~) calls on this component's
+# dependencies.
+if(@component_pkg_name@_FIND_REQUIRED)
+  set(ign_package_required REQUIRED)
+else()
+  set(ign_package_required "")
+endif()
+
+# Set the QUIET flag for the find_package(~) calls on this component's
+# dependencies.
+if(@component_pkg_name@_FIND_QUIETLY)
+  set(ign_package_quiet QUIET)
+else()
+  set(ign_package_quiet "")
+endif()
+
 # --------------------------------
 # Find the dependencies that are specific to this component (if nothing is
-# below, then the component has no additional dependencies).
+# below, then the component has no additional dependencies). We use
+# find_package(~) instead of find_dependency(~) here so that we can support
+# COMPONENT arguments.
+#
+# TODO: When we migrate to cmake-3.9+, change these to find_dependency(~),
+#       because at that point the find_dependency(~) function will support
+#       the COMPONENT argument.
 @component_cmake_dependencies@
 # --------------------------------
 

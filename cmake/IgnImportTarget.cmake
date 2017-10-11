@@ -44,31 +44,32 @@ macro(ign_import_target package)
     set(target_name ${package}::${package})
   endif()
 
+  if(NOT TARGET ${target_name})
+    #------------------------------------
+    # Link against this "imported" target by saying
+    # target_link_libraries(mytarget package::package), instead of linking
+    # against the variable package_LIBRARIES with the old-fashioned
+    # target_link_libraries(mytarget ${package_LIBRARIES}
+    add_library(${target_name} IMPORTED SHARED)
 
-  #------------------------------------
-  # Link against this "imported" target by saying
-  # target_link_libraries(mytarget package::package), instead of linking
-  # against the variable package_LIBRARIES with the old-fashioned
-  # target_link_libraries(mytarget ${package_LIBRARIES}
-  add_library(${target_name} IMPORTED SHARED)
+    if(${package}_LIBRARIES)
+      _ign_sort_libraries(${target_name} ${${package}_LIBRARIES})
+    endif()
 
-  if(${package}_LIBRARIES)
-    _ign_sort_libraries(${target_name} ${${package}_LIBRARIES})
-  endif()
+    if(${package}_LIBRARIES)
+      set_target_properties(${target_name} PROPERTIES
+        INTERFACE_LINK_LIBRARIES "${${package}_LIBRARIES}")
+    endif()
 
-  if(${package}_LIBRARIES)
-    set_target_properties(${target_name} PROPERTIES
-      INTERFACE_LINK_LIBRARIES "${${package}_LIBRARIES}")
-  endif()
+    foreach(${package}_inc ${${package}_INCLUDE_DIRS})
+      set_target_properties(${target_name} PROPERTIES
+        INTERFACE_INCLUDE_DIRECTORIES "${${package}_inc}")
+    endforeach()
 
-  foreach(${package}_inc ${${package}_INCLUDE_DIRS})
-    set_target_properties(${target_name} PROPERTIES
-      INTERFACE_INCLUDE_DIRECTORIES "${${package}_inc}")
-  endforeach()
-
-  if(${package}_CFLAGS)
-    set_target_properties(${target_name} PROPERTIES
-      INTERFACE_COMPILE_OPTIONS "${${package}_CFLAGS}")
+    if(${package}_CFLAGS)
+      set_target_properties(${target_name} PROPERTIES
+        INTERFACE_COMPILE_OPTIONS "${${package}_CFLAGS}")
+    endif()
   endif()
 
   # What about linker flags? Is there no target property for that?

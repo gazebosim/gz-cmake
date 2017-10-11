@@ -159,10 +159,11 @@ endmacro()
 
 
 #################################################
-# _ign_create_pkgconfig(target [COMPONENT])
+# _ign_create_pkgconfig([COMPONENT <component>])
 #
 # Provide the name of the target for which we will generate package config info.
-# If the target is a component, pass in the COMPONENTS argument.
+# If the target is a component, pass in the COMPONENT argument followed by the
+# component's name.
 #
 # NOTE: This will be called automatically by ign_create_main_library(~) and
 #       ign_add_component(~), so users of ignition-cmake should not call this
@@ -172,12 +173,12 @@ endmacro()
 #       ignition-component.pc.in MUST be set before calling this function.
 #
 # Create a pkgconfig file for your target, and install it.
-function(_ign_create_pkgconfig target_name)
+function(_ign_create_pkgconfig)
 
   #------------------------------------
   # Define the expected arguments
-  set(options COMPONENT)
-  set(oneValueArgs) # Unused
+  set(options)
+  set(oneValueArgs COMPONENT) # Unused
   set(multiValueArgs) # Unused
 
   #------------------------------------
@@ -188,8 +189,10 @@ function(_ign_create_pkgconfig target_name)
   # Choose which input file to use
   if(_ign_create_pkgconfig_COMPONENT)
     set(pkgconfig_input "${IGNITION_CMAKE_DIR}/pkgconfig/ignition-component.pc.in")
+    set(target_name ${PROJECT_LIBRARY_TARGET_NAME}-${_ign_create_pkgconfig_COMPONENT})
   else()
     set(pkgconfig_input "${IGNITION_CMAKE_DIR}/pkgconfig/ignition.pc.in")
+    set(target_name ${PROJECT_LIBRARY_TARGET_NAME})
   endif()
 
   set(pkgconfig_output "${CMAKE_BINARY_DIR}/cmake/pkgconfig/${target_name}.pc")
@@ -205,10 +208,11 @@ endfunction()
 
 
 #################################################
-# _ign_create_cmake_package(target [COMPONENT])
+# _ign_create_cmake_package([COMPONENT <component>])
 #
 # Provide the name of the target that will be installed and exported. If the
-# target is a component, pass in the COMPONENTS argument.
+# target is a component, pass in the COMPONENT argument followed by the
+# component's name.
 #
 # NOTE: This will be called automatically by ign_create_main_library(~) and
 #       ign_add_component(~), so users of ignition-cmake should not call this
@@ -222,12 +226,12 @@ endfunction()
 #       - target_output_filename
 #
 # Make the cmake config files for this target
-function(_ign_create_cmake_package target_name)
+function(_ign_create_cmake_package)
 
   #------------------------------------
   # Define the expected arguments
-  set(options COMPONENT)
-  set(oneValueArgs) # Unused
+  set(options)
+  set(oneValueArgs COMPONENT) # Unused
   set(multiValueArgs) # Unused
 
   #------------------------------------
@@ -237,18 +241,29 @@ function(_ign_create_cmake_package target_name)
   #------------------------------------
   # Set configuration arguments
   if(_ign_create_cmake_package_COMPONENT)
+
+    set(component ${_ign_create_cmake_package_COMPONENT})
+    set(target_name ${PROJECT_LIBRARY_TARGET_NAME}-${component})
     set(ign_config_input "${IGNITION_CMAKE_DIR}/ignition-component-config.cmake.in")
+
   else()
+
+    set(target_name ${PROJECT_LIBRARY_TARGET_NAME})
     set(ign_config_input "${IGNITION_CMAKE_DIR}/ignition-config.cmake.in")
+
   endif()
+
+
 
   # This gets used by the ignition-*.config.cmake.in files
   set(target_output_filename ${target_name}-targets.cmake)
-
   set(ign_config_output "${PROJECT_BINARY_DIR}/cmake/${target_name}-config.cmake")
   set(ign_version_output "${PROJECT_BINARY_DIR}/cmake/${target_name}-config-version.cmake")
   set(ign_target_ouput "${PROJECT_BINARY_DIR}/cmake/${target_output_filename}")
-  set(ign_config_install_dir "${IGN_LIB_INSTALL_DIR}/cmake/${PROJECT_NAME_LOWER}")
+
+  # NOTE: Each component needs to go into its own cmake directory in order to be
+  # found by cmake's native find_package(~) command.
+  set(ign_config_install_dir "${IGN_LIB_INSTALL_DIR}/cmake/${target_name}")
   set(ign_namespace ${PROJECT_LIBRARY_TARGET_NAME}::)
 
   set(import_target_name ${ign_namespace}${target_name})
