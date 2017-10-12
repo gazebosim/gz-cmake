@@ -940,9 +940,9 @@ function(ign_add_component component_name)
    target_link_libraries(${component_target_name}
      PUBLIC ${PROJECT_LIBRARY_TARGET_NAME})
 
- endif()
+  endif()
 
- if(NOT ign_add_component_INDEPENDENT_FROM_PROJECT_LIB)
+  if(NOT ign_add_component_INDEPENDENT_FROM_PROJECT_LIB)
 
     # Link to the target of the main library
     target_link_libraries(${component_target_name}
