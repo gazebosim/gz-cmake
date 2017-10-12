@@ -208,7 +208,7 @@ endfunction()
 # _ign_create_cmake_package(target [COMPONENT])
 #
 # Provide the name of the target that will be installed and exported. If the
-# target is a component, pass in the COMPONENTS argument.
+# target is a component, pass in the COMPONENT argument.
 #
 # NOTE: This will be called automatically by ign_create_main_library(~) and
 #       ign_add_component(~), so users of ignition-cmake should not call this
