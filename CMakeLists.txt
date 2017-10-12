@@ -76,3 +76,8 @@ install(
   COMPONENT modules)
 
 message(STATUS "Install prefix: ${CMAKE_INSTALL_PREFIX}")
+
+#============================================================================
+# Build examples
+#============================================================================
+add_subdirectory(examples)
