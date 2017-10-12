@@ -430,13 +430,16 @@ macro(ign_string_append output_var val)
 
   #------------------------------------
   # Define the expected arguments
-  set(options) # options cannot be set to PARENT_SCOPE alone
+  # NOTE: options cannot be set to PARENT_SCOPE alone, so we put it explicitly
+  # into cmake_parse_arguments(~). We use a semicolon to concatenate it with
+  # this options variable, so all other options should be specified here.
+  set(options)
   set(oneValueArgs DELIM)
   set(multiValueArgs) # We are not using multiValueArgs yet
 
   #------------------------------------
   # Parse the arguments
-  cmake_parse_arguments(ign_string_append "PARENT_SCOPE ${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  cmake_parse_arguments(ign_string_append "PARENT_SCOPE;${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   if(ign_string_append_DELIM)
     set(delim "${ign_string_append_DELIM}")
@@ -444,7 +447,11 @@ macro(ign_string_append output_var val)
     set(delim " ")
   endif()
 
-  set(${output_var} "${${output_var}}${delim}${val}" ${ign_string_append_PARENT_SCOPE})
+  if(ign_string_append_PARENT_SCOPE)
+    set(${output_var} "${${output_var}}${delim}${val}" PARENT_SCOPE)
+  else()
+    set(${output_var} "${${output_var}}${delim}${val}")
+  endif()
 
 endmacro()
 
@@ -546,6 +553,8 @@ function(ign_install_all_headers)
   set(oneValueArgs) # We are not using oneValueArgs yet
   set(multiValueArgs EXCLUDE_FILES EXCLUDE_DIRS)
 
+  message(STATUS "multiValueArgs:${multiValueArgs}")
+
   #------------------------------------
   # Parse the arguments
   cmake_parse_arguments(ign_install_all_headers "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
@@ -564,9 +573,25 @@ function(ign_install_all_headers)
       # Check if it is in the list of excluded directories
       list(FIND ign_install_all_headers_EXCLUDE_DIRS ${f} f_index)
 
-      # list(FIND ...) will make f_index equal to -1 if ${f} was not in the list
-      # of excluded directories.
-      if(${f_index} EQUAL -1)
+      set(append_file TRUE)
+      foreach(subdir ${ign_install_all_headers_EXCLUDE_DIRS})
+
+        # Check if ${f} contains ${subdir} as a substring
+        string(FIND ${f} ${subdir} pos)
+
+        # If ${subdir} is a substring of ${f} at the very first position, then
+        # we should not include anything from this directory. This makes sure
+        # that if a user specifies "EXCLUDE_DIRS foo" we will also exclude
+        # the directories "foo/bar/..." and so on. We will not, however, exclude
+        # a directory named "bar/foo/".
+        if(${pos} EQUAL 0)
+          set(append_file FALSE)
+          break()
+        endif()
+
+      endforeach()
+
+      if(append_file)
         list(APPEND directories ${f})
       endif()
 
@@ -828,7 +853,8 @@ function(ign_create_main_library)
 
   #------------------------------------
   # Adjust variables if a specific C++ standard was requested
-  _ign_handle_cxx_standard(ign_create_main_library ${PROJECT_LIBRARY_TARGET_NAME} PROJECT_PKGCONFIG_CFLAGS)
+  _ign_handle_cxx_standard(ign_create_main_library
+    ${PROJECT_LIBRARY_TARGET_NAME} PROJECT_PKGCONFIG_CFLAGS)
 
 
   #------------------------------------
@@ -887,7 +913,7 @@ endfunction()
 # [PRIVATELY_DEPENDS_ON_PROJECT_LIB]:
 #     Optional. Specify this if this component privately depends on the main
 #     library of this project (i.e. users of this component do not need to
-#     interface with the main library). The default behavior is to be publically
+#     interface with the main library). The default behavior is to be publicly
 #     linked.
 #
 # [INTERFACE_DEPENDS_ON_PROJECT_LIB]:
@@ -965,7 +991,8 @@ function(ign_add_component component_name)
 
   #------------------------------------
   # Adjust variables if a specific C++ standard was requested
-  _ign_handle_cxx_standard(ign_add_component ${component_target_name} ${component_name}_PKGCONFIG_CFLAGS)
+  _ign_handle_cxx_standard(ign_add_component
+    ${component_target_name} ${component_name}_PKGCONFIG_CFLAGS)
 
 
   #------------------------------------
@@ -989,16 +1016,12 @@ function(ign_add_component component_name)
      NOT ign_add_component_PRIVATELY_DEPENDS_ON_PROJECT_LIB AND
      NOT ign_add_component_INTERFACE_DEPENDS_ON_PROJECT_LIB)
 
-   target_link_libraries(${component_target_name}
-     PUBLIC ${PROJECT_LIBRARY_TARGET_NAME})
-
- endif()
-
- if(NOT ign_add_component_INDEPENDENT_FROM_PROJECT_LIB)
-
-    # Link to the target of the main library
     target_link_libraries(${component_target_name}
       PUBLIC ${PROJECT_LIBRARY_TARGET_NAME})
+
+  endif()
+
+  if(NOT ign_add_component_INDEPENDENT_FROM_PROJECT_LIB)
 
     # Add the main library as a cmake dependency for this component
     # NOTE: It seems we need to triple-escape "${ign_package_required}" and
@@ -1008,7 +1031,8 @@ function(ign_add_component component_name)
 
     # Choose what type of pkgconfig entry the main library belongs to
     set(lib_pkgconfig_type ${component_name}_PKGCONFIG_REQUIRES)
-    if(ign_add_component_PRIVATELY_DEPENDS_ON_PROJECT_LIB)
+    if(ign_add_component_PRIVATELY_DEPENDS_ON_PROJECT_LIB
+        AND NOT ign_add_component_INTERFACE_DEPENDS_ON_PROJECT_LIB)
       set(lib_pkgconfig_type ${lib_pkgconfig_type}_PRIVATE)
     endif()
 
