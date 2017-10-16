@@ -17,6 +17,13 @@
 # and all the variables mentioned above will automatically be pulled into your
 # target.
 
+# We explicitly set the desired cmake version to ensure that the policy settings
+# of users or of toolchains do not result in the wrong behavior for our modules.
+# Note that the call to find_package(~) will PUSH a new policy stack which gets
+# and then that stack will POP after the find_package(~) has exited, so this
+# will not affect the cmake policy settings of a caller.
+cmake_minimum_required(VERSION @CMAKE_MAJOR_VERSION@.@CMAKE_MINOR_VERSION@.@CMAKE_PATCH_VERSION@ FATAL_ERROR)
+
 
 if(@PKG_NAME@_CONFIG_INCLUDED)
   return()
