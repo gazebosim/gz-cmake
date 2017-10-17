@@ -13,7 +13,7 @@
 # taking on these version settings, and then that stack will POP after the
 # find_package(~) has exited, so this will not affect the cmake policy settings
 # of a caller.
-cmake_minimum_required(VERSION @CMAKE_MAJOR_VERSION@.@CMAKE_MINOR_VERSION@.@CMAKE_PATCH_VERSION@ FATAL_ERROR)
+cmake_minimum_required(VERSION 3.5.1 FATAL_ERROR)
 
 #--------------------------------------
 # Initialize the IGNITION_CMAKE_DIR variable with the location of the cmake
