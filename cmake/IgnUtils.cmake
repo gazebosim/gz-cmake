@@ -798,7 +798,6 @@ macro(ign_build_tests)
   set(oneValueArgs TYPE)
   set(multiValueArgs SOURCES LIB_DEPS INCLUDE_DIRS)
 
-
   #------------------------------------
   # Parse the arguments
   cmake_parse_arguments(ign_build_tests "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
@@ -812,49 +811,60 @@ macro(ign_build_tests)
 
   set(TEST_TYPE ${ign_build_tests_TYPE})
 
-  if(NOT DEFINED ign_build_tests_SOURCES)
-    message(STATUS "No tests have been specified for ${TEST_TYPE}")
+  if(BUILD_TESTING)
+
+    if(NOT DEFINED ign_build_tests_SOURCES)
+      message(STATUS "No tests have been specified for ${TEST_TYPE}")
+    else()
+      list(LENGTH ign_build_tests_SOURCES num_tests)
+      message(STATUS "Adding ${num_tests} ${TEST_TYPE} tests")
+    endif()
+
+    ign_build_executables(
+      PREFIX "${TEST_TYPE}_"
+      SOURCES ${ign_build_tests_SOURCES}
+      LIB_DEPS gtest gtest_main ${ign_build_tests_LIB_DEPS}
+      INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/test/gtest/include ${ign_build_tests_INCLUDE_DIRS}
+      EXEC_LIST test_list)
+
+    if(ign_build_tests_TEST_LIST)
+      set(${ign_build_tests_TEST_LIST} ${test_list})
+    endif()
+
+    # Find the Python interpreter for running the
+    # check_test_ran.py script
+    find_package(PythonInterp QUIET)
+
+    # Build all the tests
+    foreach(BINARY_NAME ${test_list})
+
+      if(USE_LOW_MEMORY_TESTS)
+        target_compile_options(${BINARY_NAME} PRIVATE -DUSE_LOW_MEMORY_TESTS=1)
+      endif()
+
+      add_test(${BINARY_NAME} ${CMAKE_CURRENT_BINARY_DIR}/${BINARY_NAME}
+               --gtest_output=xml:${CMAKE_BINARY_DIR}/test_results/${BINARY_NAME}.xml)
+
+      if(UNIX)
+        # gtest requies pthread when compiled on a Unix machine
+        target_link_libraries(${BINARY_NAME} pthread)
+      endif()
+
+      set_tests_properties(${BINARY_NAME} PROPERTIES TIMEOUT 240)
+
+      if(PYTHONINTERP_FOUND)
+        # Check that the test produced a result and create a failure if it didn't.
+        # Guards against crashed and timed out tests.
+        add_test(check_${BINARY_NAME} ${PYTHON_EXECUTABLE} ${PROJECT_SOURCE_DIR}/tools/check_test_ran.py
+          ${CMAKE_BINARY_DIR}/test_results/${BINARY_NAME}.xml)
+      endif()
+    endforeach()
+
+  else()
+
+    message(STATUS "Testing is disabled -- skipping ${TEST_TYPE} tests")
+
   endif()
-
-  ign_build_executables(
-    PREFIX "${TEST_TYPE}_"
-    SOURCES ${ign_build_tests_SOURCES}
-    LIB_DEPS gtest gtest_main ${ign_build_tests_LIB_DEPS}
-    INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/test/gtest/include ${ign_build_tests_INCLUDE_DIRS}
-    EXEC_LIST test_list)
-
-  if(ign_build_tests_TEST_LIST)
-    set(${ign_build_tests_TEST_LIST} ${test_list})
-  endif()
-
-  # Find the Python interpreter for running the
-  # check_test_ran.py script
-  find_package(PythonInterp QUIET)
-
-  # Build all the tests
-  foreach(BINARY_NAME ${test_list})
-
-    if(USE_LOW_MEMORY_TESTS)
-      target_compile_options(${BINARY_NAME} PRIVATE -DUSE_LOW_MEMORY_TESTS=1)
-    endif()
-
-    add_test(${BINARY_NAME} ${CMAKE_CURRENT_BINARY_DIR}/${BINARY_NAME}
-             --gtest_output=xml:${CMAKE_BINARY_DIR}/test_results/${BINARY_NAME}.xml)
-
-    if(UNIX)
-      # gtest requies pthread when compiled on a Unix machine
-      target_link_libraries(${BINARY_NAME} pthread)
-    endif()
-
-    set_tests_properties(${BINARY_NAME} PROPERTIES TIMEOUT 240)
-
-    if(PYTHONINTERP_FOUND)
-      # Check that the test produced a result and create a failure if it didn't.
-      # Guards against crashed and timed out tests.
-      add_test(check_${BINARY_NAME} ${PYTHON_EXECUTABLE} ${PROJECT_SOURCE_DIR}/tools/check_test_ran.py
-        ${CMAKE_BINARY_DIR}/test_results/${BINARY_NAME}.xml)
-    endif()
-  endforeach()
 
 endmacro()
 
