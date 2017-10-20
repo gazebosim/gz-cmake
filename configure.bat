@@ -5,7 +5,7 @@
 :: ign-cmake has no dependencies
 
 :: Go to the directory that this file configure.bat file exists in
-cd %~dp0
+cd /d %~dp0
 
 :: Create a build directory and configure
 md build
