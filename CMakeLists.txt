@@ -80,4 +80,9 @@ message(STATUS "Install prefix: ${CMAKE_INSTALL_PREFIX}")
 #============================================================================
 # Build examples
 #============================================================================
-add_subdirectory(examples)
+if (UNIX)
+  execute_process(
+    COMMAND
+      ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/cmake ${CMAKE_BINARY_DIR}/cmake${PROJECT_VERSION_MAJOR})
+  add_subdirectory(examples)
+endif()
