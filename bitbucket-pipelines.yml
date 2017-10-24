@@ -15,3 +15,4 @@ pipelines:
           - cd build
           - cmake ..
           - make
+          - make install
