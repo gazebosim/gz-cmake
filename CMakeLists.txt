@@ -80,7 +80,9 @@ message(STATUS "Install prefix: ${CMAKE_INSTALL_PREFIX}")
 #============================================================================
 # Build examples
 #============================================================================
-# find_package expects cmakeN in the build folder
+# find_package expects cmakeN (e.g. cmake0, cmake1, ... depending on the major version of ign-cmake)
+# to be in the build folder because that is where the ignition-cmake-config.cmake file is located
+# before it is installed
 if (UNIX)
   # make a symlink on unix
   execute_process(
