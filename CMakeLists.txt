@@ -80,9 +80,22 @@ message(STATUS "Install prefix: ${CMAKE_INSTALL_PREFIX}")
 #============================================================================
 # Build examples
 #============================================================================
+# find_package expects cmakeN in the build folder
 if (UNIX)
+  # make a symlink on unix
   execute_process(
     COMMAND
       ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/cmake ${CMAKE_BINARY_DIR}/cmake${PROJECT_VERSION_MAJOR})
-  add_subdirectory(examples)
+else()
+  # copy the files one by one otherwise
+  # use configure_file(... COPYONLY) since it will run again if files change
+  foreach (filename ${modules} ${templates})
+    get_filename_component(file ${filename} NAME)
+    configure_file(${filename} ${CMAKE_BINARY_DIR}/cmake${PROJECT_VERSION_MAJOR}/${file} COPYONLY)
+  endforeach()
+  foreach (filename ${pkgconfig_templates})
+    get_filename_component(file ${filename} NAME)
+    configure_file(${filename} ${CMAKE_BINARY_DIR}/cmake${PROJECT_VERSION_MAJOR}/pkgconfig/${file} COPYONLY)
+  endforeach()
 endif()
+add_subdirectory(examples)
