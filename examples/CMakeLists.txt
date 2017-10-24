@@ -1,6 +1,9 @@
 include(ExternalProject)
 
-set(build_types Release RelWithDebInfo Debug Coverage)
+set(build_types Release RelWithDebInfo Debug)
+if (NOT WIN32)
+  list(APPEND build_types Coverage)
+endif()
 foreach (build_type ${build_types})
   ExternalProject_Add(
     ign_configure_build_${build_type}
