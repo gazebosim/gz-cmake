@@ -16,7 +16,7 @@ foreach (build_type ${build_types})
     @ONLY)
   configure_file(
     "${CMAKE_CURRENT_SOURCE_DIR}/junit_fail.xml.in"
-    "${CMAKE_BINARY_DIR}/test_results/${EXAMPLE_NAME}.xml"
+    "${CMAKE_CURRENT_BINARY_DIR}/test_results/${EXAMPLE_NAME}.xml"
     @ONLY)
   ExternalProject_Add(
     ${EXAMPLE_NAME}
@@ -28,6 +28,12 @@ foreach (build_type ${build_types})
     TEST_COMMAND
       ${CMAKE_COMMAND} -E copy
       "${CMAKE_CURRENT_BINARY_DIR}/${EXAMPLE_NAME}_pass.xml"
-      ${CMAKE_BINARY_DIR}/test_results/${EXAMPLE_NAME}.xml
+      "${CMAKE_CURRENT_BINARY_DIR}/test_results/${EXAMPLE_NAME}.xml"
+  )
+  add_test(
+    ${EXAMPLE_NAME}
+    ${CMAKE_COMMAND} -E copy
+    "${CMAKE_CURRENT_BINARY_DIR}/test_results/${EXAMPLE_NAME}.xml"
+    "${CMAKE_BINARY_DIR}/test_results/${EXAMPLE_NAME}.xml"
   )
 endforeach()
