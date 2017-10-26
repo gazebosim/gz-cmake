@@ -1,7 +1,7 @@
 #!/bin/bash
 # Verify that cmake_minimum_required statements have matching version numbers
 
-unset TEST_CMAKE_MIN_REQUIRED_MATH_FAILED
+unset TEST_CMAKE_MIN_REQUIRED_FAILED
 # first argument is root of ign-cmake repository
 grep -h '^cmake_minimum_required' \
   $1/CMakeLists.txt \
@@ -10,7 +10,7 @@ grep -h '^cmake_minimum_required' \
   | uniq -c \
   | awk '{ if ($1 != "3") { exit 1 }}' \
   || \
-  export TEST_CMAKE_MIN_REQUIRED_MATH_FAILED=1
+  export TEST_CMAKE_MIN_REQUIRED_FAILED=1
 
 if test "$2" = "--xml_output_dir"; then
   xml_output_dir=$3
@@ -21,7 +21,7 @@ if test "$2" = "--xml_output_dir"; then
     echo If using --xml_output_dir, the 3rd argument must be a directory.
     exit 1
   fi
-  if [[ -z ${TEST_CMAKE_MIN_REQUIRED_MATH_FAILED} ]]; then
+  if [[ -z ${TEST_CMAKE_MIN_REQUIRED_FAILED} ]]; then
     cat <<END > ${xml_output_dir}/cmake_minimum_required.xml
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites tests="1" failures="0" disabled="0" errors="0" timestamp="$(date '+%Y-%m-%dT%H:%M:%S')" time="0" name="AllTests">
@@ -44,7 +44,7 @@ END
     $1/config/ignition-cmake-config.cmake.in \
     >> ${xml_output_dir}/cmake_minimum_required.xml
     cat <<END >> ${xml_output_dir}/cmake_minimum_required.xml
-      ]]</failure>
+      ]]></failure>
     </testcase>
   </testsuite>
 </testsuites>
@@ -58,7 +58,7 @@ else
     $1/cmake/ignition-config.cmake.in \
     $1/config/ignition-cmake-config.cmake.in \
     | sed -e 's@^@  @'
-  if [[ -z ${TEST_CMAKE_MIN_REQUIRED_MATH_FAILED} ]]; then
+  if [[ -z ${TEST_CMAKE_MIN_REQUIRED_FAILED} ]]; then
     echo --------------------------- Passed ---------------------------
   else
     echo --------------------------- Failed ---------------------------
