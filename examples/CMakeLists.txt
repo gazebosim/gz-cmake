@@ -30,6 +30,17 @@ foreach (build_type ${build_types})
       "${CMAKE_CURRENT_BINARY_DIR}/${EXAMPLE_NAME}_pass.xml"
       "${CMAKE_CURRENT_BINARY_DIR}/test_results/${EXAMPLE_NAME}.xml"
   )
+  ExternalProject_Add_Step(
+    ${EXAMPLE_NAME} CMakeDepend
+    DEPENDS
+      "${CMAKE_CURRENT_SOURCE_DIR}/${example}/CMakeLists.txt"
+      "${CMAKE_CURRENT_SOURCE_DIR}/${example}/doc/CMakeLists.txt"
+      "${CMAKE_CURRENT_SOURCE_DIR}/${example}/include/CMakeLists.txt"
+      "${CMAKE_CURRENT_SOURCE_DIR}/${example}/src/CMakeLists.txt"
+      "${CMAKE_CURRENT_SOURCE_DIR}/${example}/test/CMakeLists.txt"
+    DEPENDERS
+      configure
+  )
   add_test(
     ${EXAMPLE_NAME}
     ${CMAKE_COMMAND} -E copy
