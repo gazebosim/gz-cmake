@@ -76,3 +76,31 @@ install(
   COMPONENT modules)
 
 message(STATUS "Install prefix: ${CMAKE_INSTALL_PREFIX}")
+
+#============================================================================
+# Build examples
+#============================================================================
+include(CTest)
+if (BUILD_TESTING)
+  # find_package expects cmakeN (e.g. cmake0, cmake1, ... depending on the major version of ign-cmake)
+  # to be in the build folder because that is where the ignition-cmake-config.cmake file is located
+  # before it is installed
+  if (UNIX)
+    # make a symlink on unix
+    execute_process(
+      COMMAND
+        ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/cmake ${CMAKE_BINARY_DIR}/cmake${PROJECT_VERSION_MAJOR})
+  else()
+    # otherwise copy the files one by one
+    # use configure_file(... COPYONLY) since it will run again if files change
+    foreach (filename ${modules} ${templates})
+      get_filename_component(file ${filename} NAME)
+      configure_file(${filename} ${CMAKE_BINARY_DIR}/cmake${PROJECT_VERSION_MAJOR}/${file} COPYONLY)
+    endforeach()
+    foreach (filename ${pkgconfig_templates})
+      get_filename_component(file ${filename} NAME)
+      configure_file(${filename} ${CMAKE_BINARY_DIR}/cmake${PROJECT_VERSION_MAJOR}/pkgconfig/${file} COPYONLY)
+    endforeach()
+  endif()
+  add_subdirectory(examples)
+endif()
