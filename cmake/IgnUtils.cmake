@@ -366,7 +366,8 @@ endfunction()
 #################################################
 # ign_install_all_headers(
 #   [ADDITIONAL_DIRS <dirs>]
-#   [EXCLUDE <excluded_headers>])
+#   [EXCLUDE <excluded_headers>]
+#   [GENERATED_HEADERS <headers>])
 #
 # From the current directory, install all header files, including files from the
 # "detail" subdirectory. You can optionally specify additional directories
@@ -374,6 +375,10 @@ endfunction()
 # exclude from the installation. This will accept all files ending in *.h and
 # *.hh. You may append an additional suffix (like .old or .backup) to prevent
 # a file from being included here.
+#
+# GENERATED_HEADERS should be generated headers which should be included by
+# ${IGN_DESIGNATION}.hh. This will only add them to the header, it will not
+# generate or install them.
 #
 # This will also run configure_file on ign_auto_headers.hh.in and config.hh.in
 # and install both of them.
@@ -383,7 +388,7 @@ function(ign_install_all_headers)
   # Define the expected arguments
   set(options) # We are not using options yet
   set(oneValueArgs) # We are not using oneValueArgs yet
-  set(multiValueArgs ADDITIONAL_DIRS EXCLUDE)
+  set(multiValueArgs ADDITIONAL_DIRS EXCLUDE GENERATED_HEADERS)
 
   #------------------------------------
   # Parse the arguments
@@ -445,6 +450,11 @@ function(ign_install_all_headers)
       DESTINATION ${destination}
       COMPONENT headers)
 
+  endforeach()
+
+  # Add generated headers to the list of includes
+  foreach(header ${ign_install_all_headers_GENERATED_HEADERS})
+      set(ign_headers "${ign_headers}#include <ignition/${IGN_DESIGNATION}/${header}>\n")
   endforeach()
 
   # Define the install directory for the meta headers
