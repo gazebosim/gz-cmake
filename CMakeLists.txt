@@ -77,11 +77,13 @@ install(
 
 message(STATUS "Install prefix: ${CMAKE_INSTALL_PREFIX}")
 
-#============================================================================
-# Build examples
-#============================================================================
 include(CTest)
 if (BUILD_TESTING)
+  add_subdirectory(test)
+
+  #============================================================================
+  # Build examples
+  #============================================================================
   # find_package expects cmakeN (e.g. cmake0, cmake1, ... depending on the major version of ign-cmake)
   # to be in the build folder because that is where the ignition-cmake-config.cmake file is located
   # before it is installed
