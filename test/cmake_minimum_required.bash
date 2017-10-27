@@ -3,14 +3,22 @@
 
 unset TEST_CMAKE_MIN_REQUIRED_FAILED
 # first argument is root of ign-cmake repository
-grep -h '^cmake_minimum_required' \
-  $1/CMakeLists.txt \
-  $1/cmake/ignition-config.cmake.in \
-  $1/config/ignition-cmake-config.cmake.in \
-  | uniq -c \
-  | awk '{ if ($1 != "3") { exit 1 }}' \
-  || \
+if [[ ! -d "$1"  \
+   || ! -a "$1/CMakeLists.txt" \
+   || ! -a "$1/cmake/ignition-config.cmake.in" \
+   || ! -a "$1/config/ignition-cmake-config.cmake.in" ]]; then
+  echo the first argument must be the root of the ign-cmake repository
   export TEST_CMAKE_MIN_REQUIRED_FAILED=1
+else
+  grep -h '^cmake_minimum_required' \
+    $1/CMakeLists.txt \
+    $1/cmake/ignition-config.cmake.in \
+    $1/config/ignition-cmake-config.cmake.in \
+    | uniq -c \
+    | awk '{ if ($1 != "3") { exit 1 }}' \
+    || \
+    export TEST_CMAKE_MIN_REQUIRED_FAILED=1
+fi
 
 if test "$2" = "--xml_output_dir"; then
   xml_output_dir=$3
