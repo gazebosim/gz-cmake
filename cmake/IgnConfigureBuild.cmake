@@ -105,6 +105,10 @@ macro(ign_configure_build)
 
 
     #--------------------------------------
+    # Setup Google Test and Google Mock
+    ign_configure_googletest()
+
+    #--------------------------------------
     # Add all the source code directories
     add_subdirectory(src)
     add_subdirectory(include)

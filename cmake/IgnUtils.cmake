@@ -829,8 +829,8 @@ macro(ign_build_tests)
   ign_build_executables(
     PREFIX "${TEST_TYPE}_"
     SOURCES ${ign_build_tests_SOURCES}
-    LIB_DEPS gtest gtest_main ${ign_build_tests_LIB_DEPS}
-    INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/test/gtest/include ${ign_build_tests_INCLUDE_DIRS}
+    LIB_DEPS gmock_main ${ign_build_tests_LIB_DEPS}
+    ${ign_build_tests_INCLUDE_DIRS}
     EXEC_LIST test_list)
 
   if(ign_build_tests_TEST_LIST)
