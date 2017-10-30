@@ -31,9 +31,6 @@ macro(ign_configure_googletest)
   # Generate the "CMakeLists.txt" that downloads Google Test
   configure_file(${google_test_in} ${google_test_out})
 
-  # Remove CMake warning in version 1.8.0
-
-
   # Download and unpack googletest at configure time
   execute_process(COMMAND ${CMAKE_COMMAND} -Wno-dev -G "${CMAKE_GENERATOR}" .
     RESULT_VARIABLE result
