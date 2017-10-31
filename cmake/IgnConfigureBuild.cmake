@@ -75,6 +75,7 @@ macro(ign_configure_build)
 
     #--------------------------------------
     # Turn on testing
+    include(CTest)
     enable_testing()
 
 
