@@ -27,17 +27,6 @@
 # Initialize the ignition project
 macro(ign_configure_project designation full_version)
 
-  #------------------------------------
-  # Define the expected arguments
-  set(options) # We are not using options yet
-  set(oneValueArgs VERSION_SUFFIX)
-  set(multiValueArgs) # We are not using multiValueArgs yet
-
-  #------------------------------------
-  # Parse the arguments
-  cmake_parse_arguments(ign_configure_project "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-
-
   #============================================================================
   # Extract the major version
   #============================================================================
@@ -53,9 +42,6 @@ macro(ign_configure_project designation full_version)
   # PROJECT_VERSION_MINOR
   # PROJECT_VERSION_PATCH
 
-  if(ign_configure_project_VERSION_SUFFIX)
-    set(PROJECT_VERSION_SUFFIX ${ign_configure_project_VERSION_SUFFIX})
-  endif()
 
 
   #============================================================================
@@ -77,10 +63,6 @@ macro(ign_configure_project designation full_version)
   set(PROJECT_VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
   set(PROJECT_VERSION_FULL
     ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH})
-
-  if(PROJECT_VERSION_SUFFIX)
-    set(PROJECT_VERSION_FULL ${PROJECT_VERSION_FULL}~${PROJECT_VERSION_SUFFIX})
-  endif()
 
   set(PKG_NAME ${PROJECT_NAME_LOWER})
 
