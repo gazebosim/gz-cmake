@@ -17,7 +17,7 @@ foreach(example ${example_directories})
   endif()
 
   foreach (build_type ${build_types})
-    set(EXAMPLE_NAME EXAMPLE_${example}_${build_type})
+    set(EXAMPLE_NAME ${example}_${build_type})
     string(TIMESTAMP EXAMPLE_TIME)
     configure_file(
       "${CMAKE_CURRENT_SOURCE_DIR}/junit_pass.xml.in"
@@ -43,7 +43,7 @@ foreach(example ${example_directories})
         "${CMAKE_CURRENT_BINARY_DIR}/${EXAMPLE_NAME}_pass.xml"
         "${CMAKE_CURRENT_BINARY_DIR}/test_results/${EXAMPLE_NAME}.xml"
     )
-    if (UNIX)
+    if (CPACK_GENERATOR)
       ExternalProject_Add_Step(
         ${EXAMPLE_NAME}
         package_source
