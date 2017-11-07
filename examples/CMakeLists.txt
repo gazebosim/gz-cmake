@@ -43,24 +43,26 @@ foreach(example ${example_directories})
         "${CMAKE_CURRENT_BINARY_DIR}/${EXAMPLE_NAME}_pass.xml"
         "${CMAKE_CURRENT_BINARY_DIR}/test_results/${EXAMPLE_NAME}.xml"
     )
-    ExternalProject_Add_Step(
-      ${EXAMPLE_NAME}
-      package_source
-      COMMAND
-        ${CMAKE_COMMAND} --build <BINARY_DIR> --target package_source
-      DEPENDEES
-        configure
-    )
-    ExternalProject_Add_Step(
-      ${EXAMPLE_NAME}
-      test_tarball_name
-      COMMAND
-        ${CMAKE_COMMAND} -E tar tf <BINARY_DIR>/${example_tarball_name}
-      DEPENDEES
+    if (UNIX)
+      ExternalProject_Add_Step(
+        ${EXAMPLE_NAME}
         package_source
-      DEPENDERS
-        test
-    )
+        COMMAND
+          ${CMAKE_COMMAND} --build <BINARY_DIR> --target package_source
+        DEPENDEES
+          configure
+      )
+      ExternalProject_Add_Step(
+        ${EXAMPLE_NAME}
+        test_tarball_name
+        COMMAND
+          ${CMAKE_COMMAND} -E tar tf <BINARY_DIR>/${example_tarball_name}
+        DEPENDEES
+          package_source
+        DEPENDERS
+          test
+      )
+    endif()
     add_test(
       ${EXAMPLE_NAME}
       ${CMAKE_COMMAND} -E copy
