@@ -10,9 +10,14 @@ endif()
 set(example_directories ign_configure_build ign_configure_prerelease)
 
 foreach(example ${example_directories})
+  if (${example} STREQUAL "ign_configure_build")
+    set(example_tarball_name ignition-minimal-0.1.0.tar.bz2)
+  elseif (${example} STREQUAL "ign_configure_prerelease")
+    set(example_tarball_name ignition-minimal-0.1.0~pre.tar.bz2)
+  endif()
 
   foreach (build_type ${build_types})
-    set(EXAMPLE_NAME ${example}_${build_type})
+    set(EXAMPLE_NAME EXAMPLE_${example}_${build_type})
     string(TIMESTAMP EXAMPLE_TIME)
     configure_file(
       "${CMAKE_CURRENT_SOURCE_DIR}/junit_pass.xml.in"
@@ -37,6 +42,24 @@ foreach(example ${example_directories})
         ${CMAKE_COMMAND} -E copy
         "${CMAKE_CURRENT_BINARY_DIR}/${EXAMPLE_NAME}_pass.xml"
         "${CMAKE_CURRENT_BINARY_DIR}/test_results/${EXAMPLE_NAME}.xml"
+    )
+    ExternalProject_Add_Step(
+      ${EXAMPLE_NAME}
+      package_source
+      COMMAND
+        ${CMAKE_COMMAND} --build <BINARY_DIR> --target package_source
+      DEPENDEES
+        configure
+    )
+    ExternalProject_Add_Step(
+      ${EXAMPLE_NAME}
+      test_tarball_name
+      COMMAND
+        ${CMAKE_COMMAND} -E tar tf <BINARY_DIR>/${example_tarball_name}
+      DEPENDEES
+        package_source
+      DEPENDERS
+        test
     )
     add_test(
       ${EXAMPLE_NAME}
