@@ -7,12 +7,12 @@ if (NOT WIN32 AND EXAMPLE_LCOV_PATH)
   list(APPEND build_types Coverage)
 endif()
 
-set(example_directories ign_configure_build ign_configure_prerelease)
+set(example_directories ign_configure_build prerelease)
 
 foreach(example ${example_directories})
   if (${example} STREQUAL "ign_configure_build")
     set(example_tarball_name ignition-minimal-0.1.0.tar.bz2)
-  elseif (${example} STREQUAL "ign_configure_prerelease")
+  elseif (${example} STREQUAL "prerelease")
     set(example_tarball_name ignition-minimal-0.1.0~pre.tar.bz2)
   endif()
 
