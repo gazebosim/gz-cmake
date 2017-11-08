@@ -13,7 +13,7 @@ foreach(example ${example_directories})
   if (${example} STREQUAL "ign_configure_build")
     set(example_tarball_name ignition-minimal-0.1.0.tar.bz2)
   elseif (${example} STREQUAL "prerelease")
-    set(example_tarball_name ignition-minimal-0.1.0~pre.tar.bz2)
+    set(example_tarball_name ignition-minimal-0.1.0~pre1.tar.bz2)
   endif()
 
   foreach (build_type ${build_types})
