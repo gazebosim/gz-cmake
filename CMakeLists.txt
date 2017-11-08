@@ -19,7 +19,7 @@ include(IgnCMake)
 
 #--------------------------------------
 # Set up the project
-ign_configure_project(cmake 0.1.1)
+ign_configure_project(cmake 0.2.0 VERSION_SUFFIX pre1)
 
 #============================================================================
 # Configure the package to be installed
