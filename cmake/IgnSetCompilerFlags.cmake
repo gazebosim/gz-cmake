@@ -277,8 +277,8 @@ macro(ign_setup_msvc)
   # It also allows us to avoid a "One Definition Rule" violation when linking
   # with libraries that also use the dynamically loaded run-time.
   set(BUILD_SHARED_LIBS TRUE)
-  set(IGN_RUNTIME_LIBRARY "/MD" CACHE STRING "Visual Studio Runtime Library Flag")
-  set_property(CACHE IGN_RUNTIME_LIBRARY PROPERTY STRINGS /MD /MT)
+  set(IGN_RUNTIME_LIBRARY "/MT" CACHE STRING "Visual Studio Runtime Library Flag")
+  set_property(CACHE IGN_RUNTIME_LIBRARY PROPERTY STRINGS /MT /MD)
 
   # Don't pull in the Windows min/max macros
   add_definitions(-DNOMINMAX)
