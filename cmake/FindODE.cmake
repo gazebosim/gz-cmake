@@ -2,40 +2,41 @@
 # Written by there.exists.teslos<there.exists.teslos.gmail.com>
 #
 # Find ODE Open Dynamics Engine
-FIND_PATH(ODE_INCLUDE_DIR ode/ode.h
+find_path(ODE_INCLUDE_DIR ode/ode.h
     /usr/include
     /usr/local/include
 )
 
-SET(ODE_NAMES ${ODE_NAMES} ode libode)
-FIND_LIBRARY(ODE_LIBRARY NAMES ${ODE_NAMES} PATH)
+set(ODE_NAMES ${ODE_NAMES} ode libode)
+find_library(ODE_LIBRARY NAMES ${ODE_NAMES} PATH)
 
-IF(ODE_INCLUDE_DIR)
-    MESSAGE(STATUS "Found ODE include dir: ${ODE_INCLUDE_DIR}")
-ELSE(ODE_INCLUDE_DIR)
-    MESSAGE(STATUS "Couldn't find ODE include dir: ${ODE_INCLUDE_DIR}")
-ENDIF(ODE_INCLUDE_DIR)
+if(ODE_INCLUDE_DIR)
+    message(STATUS "Found ODE include dir: ${ODE_INCLUDE_DIR}")
+else(ODE_INCLUDE_DIR)
+    message(STATUS "Couldn't find ODE include dir: ${ODE_INCLUDE_DIR}")
+endif(ODE_INCLUDE_DIR)
 
-IF(ODE_LIBRARY)
-    MESSAGE(STATUS "Found ODE library: ${ODE_LIBRARY}")
-ELSE(ODE_LIBRARY)
-    MESSAGE(STATUS "Couldn't find ODE library: ${ODE_LIBRARY}")
-ENDIF(ODE_LIBRARY)
+if(ODE_LIBRARY)
+    message(STATUS "Found ODE library: ${ODE_LIBRARY}")
+else(ODE_LIBRARY)
+    message(STATUS "Couldn't find ODE library: ${ODE_LIBRARY}")
+endif(ODE_LIBRARY)
 
-IF(ODE_INCLUDE_DIR AND ODE_LIBRARY)
-  SET(ODE_FOUND TRUE CACHE STRING "Whether ODE was found or not")
-ENDIF(ODE_INCLUDE_DIR AND ODE_LIBRARY)
+if(ODE_INCLUDE_DIR AND ODE_LIBRARY)
+  set(ODE_FOUND TRUE CACHE STRING "Whether ODE was found or not")
+endif(ODE_INCLUDE_DIR AND ODE_LIBRARY)
 
-IF(ODE_FOUND)
-    MESSAGE(STATUS "Looking for Open Dynamics Engine - found")
-    SET(CMAKE_C_FLAGS "-DdSINGLE")
-    SET(HAVE_ODE true)
-  IF(NOT ODE_FIND_QUIETLY)
-    MESSAGE(STATUS "Found ODE: ${ODE_LIBRARY}")
-  ENDIF (NOT ODE_FIND_QUIETLY)
-ELSE(ODE_FOUND)
-  IF(ODE_FIND_REQUIRED)
-    MESSAGE(FATAL_ERROR "Could not find ODE")
-  ENDIF(ODE_FIND_REQUIRED)
-ENDIF(ODE_FOUND)
-
+if(ODE_FOUND)
+    message(STATUS "Looking for Open Dynamics Engine - found")
+    set(CMAKE_C_FLAGS "-DdSINGLE")
+    set(HAVE_ODE true)
+    include(IgnImportTarget)
+    ign_import_target(FreeImage)
+  if(NOT ODE_FIND_QUIETLY)
+    message(STATUS "Found ODE: ${ODE_LIBRARY}")
+  endif(NOT ODE_FIND_QUIETLY)
+else(ODE_FOUND)
+  if(ODE_FIND_REQUIRED)
+    message(FATAL_ERROR "Could not find ODE")
+  endif(ODE_FIND_REQUIRED)
+endif(ODE_FOUND)
