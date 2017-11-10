@@ -17,7 +17,7 @@ if [ ! -f "@CMAKE_BINARY_DIR@/doxygen/html/index.html" ]; then
 fi
 
 # Dry run
-s3cmd sync @CMAKE_BINARY_DIR@/doxygen/html/* s3://osrf-distributions/ign-@IGN_DESIGNATION@/api/@PROJECT_VERSION_FULL@/ --dry-run -v
+s3cmd sync @CMAKE_BINARY_DIR@/doxygen/html/ s3://ignitionrobotics.org/api/@IGN_DESIGNATION@/@PROJECT_VERSION_MAJOR@.@PROJECT_VERSION_MINOR@/ -v
 
 echo -n "Upload (Y/n)? "
 read ans
@@ -25,5 +25,6 @@ read ans
 if [ "$ans" = "n" ] || [ "$ans" = "N" ]; then
   exit 1
 else
-  s3cmd sync @CMAKE_BINARY_DIR@/doxygen/html/* s3://osrf-distributions/ign-@IGN_DESIGNATION@/api/@PROJECT_VERSION_FULL@/ -v
+  s3cmd sync @CMAKE_BINARY_DIR@/doxygen/html/ s3://ignitionrobotics.org/api/@IGN_DESIGNATION@/@PROJECT_VERSION_MAJOR@.@PROJECT_VERSION_MINOR@/ -v
+  s3cmd sync @CMAKE_BINARY_DIR@/tutorials/html/ s3://ignitionrobotics.org/tutorials/@IGN_DESIGNATION@/@PROJECT_VERSION_MAJOR@.@PROJECT_VERSION_MINOR@/ -v
 fi

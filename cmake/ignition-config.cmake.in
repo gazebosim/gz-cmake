@@ -69,3 +69,9 @@ find_dependency(ignition-cmake@IGNITION_CMAKE_VERSION_MAJOR@)
 
 # Find each dependency of this project (if nothing is below, then the project
 # has no external dependencies).@PROJECT_CMAKE_DEPENDENCIES@
+
+# Specify the doxygen tag file
+set(@PROJECT_NAME_NO_VERSION_UPPER@_DOXYGEN_TAGFILE "@CMAKE_INSTALL_PREFIX@/share/ignition/@PROJECT_NAME_LOWER@_@PROJECT_VERSION_MINOR@/@PROJECT_NAME_LOWER@.tag.xml")
+
+# Specify the API url. This is where the doxygen tag file will resolve URLS to.
+set(@PROJECT_NAME_NO_VERSION_UPPER@_API_URL "https://ignitionrobotics.org/api/@IGN_DESIGNATION@/@PROJECT_VERSION_MAJOR@.@PROJECT_VERSION_MINOR@")
