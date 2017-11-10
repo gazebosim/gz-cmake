@@ -1,7 +1,25 @@
+#===============================================================================
 # Base Io build system
 # Written by there.exists.teslos<there.exists.teslos.gmail.com>
+# Modified by Open Source Robotics Foundation
 #
+# Copyright (C) 2017 Open Source Robotics Foundation
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+########################################
 # Find ODE Open Dynamics Engine
+
 find_path(ODE_INCLUDE_DIR ode/ode.h
     /usr/include
     /usr/local/include
@@ -23,7 +41,7 @@ else(ODE_LIBRARY)
 endif(ODE_LIBRARY)
 
 if(ODE_INCLUDE_DIR AND ODE_LIBRARY)
-  set(ODE_FOUND TRUE CACHE STRING "Whether ODE was found or not")
+  set(ODE_FOUND true)
 endif(ODE_INCLUDE_DIR AND ODE_LIBRARY)
 
 if(ODE_FOUND)
