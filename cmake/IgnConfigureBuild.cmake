@@ -38,13 +38,8 @@ macro(ign_configure_build)
   ign_parse_build_type()
 
   #============================================================================
-  # Ask whether we should make a shared or static library. We default to static
-  # for Windows and dynamic for everything else.
-  if(WIN32)
-    option(BUILD_SHARED_LIBS "Set this to true to generate shared libraries, or false for static libraries (recommended)" OFF)
-  else()
-    option(BUILD_SHARED_LIBS "Set this to true to generate shared libraries (recommended), or false for static libraries" ON)
-  endif()
+  # Ask whether we should make a shared or static library.
+  option(BUILD_SHARED_LIBS "Set this to true to generate shared libraries (recommended), or false for static libraries" ON)
 
   #============================================================================
   # Print warnings and errors
