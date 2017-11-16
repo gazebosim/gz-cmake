@@ -520,6 +520,10 @@ macro(ign_add_library lib_name)
   set(LIBS_DESTINATION ${PROJECT_BINARY_DIR}/src)
   add_library(${lib_name} ${ARGN})
 
+  if(NOT BUILD_SHARED_LIBS)
+    target_compile_definitions(${lib_name} PUBLIC -D${PROJECT_NAME_NO_VERSION_UPPER}_STATIC)
+  endif()
+
   if(IGN_ADD_fPIC_TO_LIBRARIES)
     target_compile_options(${lib_name} PRIVATE -fPIC)
   endif()
@@ -552,7 +556,8 @@ macro(ign_add_library lib_name)
     EXPORT_FILE_NAME ${implementation_file_name}
     EXPORT_MACRO_NAME DETAIL_IGNITION_${IGN_DESIGNATION_UPPER}_VISIBLE
     NO_EXPORT_MACRO_NAME DETAIL_IGNITION_${IGN_DESIGNATION_UPPER}_HIDDEN
-    DEPRECATED_MACRO_NAME IGN_DEPRECATED_ALL_VERSIONS)
+    DEPRECATED_MACRO_NAME IGN_DEPRECATED_ALL_VERSIONS
+    STATIC_DEFINE ${PROJECT_NAME_NO_VERSION_UPPER}_STATIC)
 
   set(install_include_dir
     "${IGN_INCLUDE_INSTALL_DIR_FULL}/ignition/${IGN_DESIGNATION}")

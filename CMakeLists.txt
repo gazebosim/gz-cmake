@@ -77,6 +77,12 @@ install(
 
 message(STATUS "Install prefix: ${CMAKE_INSTALL_PREFIX}")
 
+if(WIN32)
+  # FIXME: For some reason, building the ign-cmake tests always requires administrative privileges
+  # on Windows. We should figure out why that's happening, and fix it.
+  option(BUILD_TESTING "ign-cmake tests require administrative privileges on Windows" OFF)
+endif()
+
 include(CTest)
 if (BUILD_TESTING)
   add_subdirectory(test)
