@@ -35,4 +35,29 @@ if(${Protobuf_FOUND})
   # If we have found Protobuf, then set the IgnProtobuf_FOUND flag to true so
   # that ign_find_package(~) knows that we were successful.
   set(IgnProtobuf_FOUND true)
+
+  # Older versions of protobuf don't create imported targets, so we will create
+  # them here if they have not been provided.
+  include(IgnImportTarget)
+
+  if(NOT TARGET protobuf::libprotobuf)
+    ign_import_target(protobuf
+      TARGET_NAME protobuf::libprotobuf
+      LIB_VAR PROTOBUF_LIBRARY
+      INCLUDE_VAR PROTOBUF_INCLUDE_DIR)
+  endif()
+
+  if(NOT TARGET protobuf::libprotoc)
+    ign_import_target(protobuf
+      TARGET_NAME protobuf::libprotoc
+      LIB_VAR PROTOBUF_PROTOC_LIBRARY
+      INCLUDE_VAR PROTOBUF_INCLUDE_DIR)
+  endif()
+
+  if(NOT TARGET protobuf::protoc)
+    add_executable(protobuf::protoc IMPORTED)
+    set_target_properties(protobuf::protoc PROPERTIES
+      IMPORTED_LOCATION ${PROTOBUF_PROTOC_EXECUTABLE})
+  endif()
+
 endif()
