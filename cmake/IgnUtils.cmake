@@ -1,7 +1,7 @@
 
 #################################################
 # ign_find_package(<PACKAGE_NAME>
-#                  [REQUIRED] [EXACT] [QUIET] [PRIVATE] [BUILD_ONLY] [PKGCONFIG_IGNORE] [PREFER_CONFIG]
+#                  [REQUIRED] [EXACT] [QUIET] [PRIVATE] [BUILD_ONLY] [PKGCONFIG_IGNORE]
 #                  [VERSION <ver>]
 #                  [EXTRA_ARGS <args>]
 #                  [PRETTY <name>]
@@ -42,10 +42,6 @@
 # [PRIVATE]: Optional. Use this to indicate that consumers of the project do not
 #            need to link against the package, but it must be present on the
 #            system, because our project must link against it.
-#
-# [PREFER_CONFIG]: Optional. Use this to indicate that ign_find_package should
-#                  first attempt to find a config-file before looking for a
-#                  find-module.
 #
 # [BUILD_ONLY]: Optional. Use this to indicate that the project only needs this
 #               package while building, and it does not need to be available to
@@ -109,7 +105,7 @@ macro(ign_find_package PACKAGE_NAME)
 
   #------------------------------------
   # Define the expected arguments
-  set(options REQUIRED EXACT QUIET PRIVATE BUILD_ONLY PREFER_CONFIG)
+  set(options REQUIRED EXACT QUIET PRIVATE BUILD_ONLY)
   set(oneValueArgs VERSION PRETTY PURPOSE EXTRA_ARGS PKGCONFIG PKGCONFIG_LIB PKGCONFIG_VER_COMPARISON)
   set(multiValueArgs) # We are not using multiValueArgs yet
 
@@ -146,17 +142,7 @@ macro(ign_find_package PACKAGE_NAME)
 
   #------------------------------------
   # Call find_package with the provided arguments
-
-  if(ign_find_package_PREFER_CONFIG)
-    # If we were told to prefer config mode, try that first.
-    find_package(${PACKAGE_NAME} ${${PACKAGE_NAME}_find_package_args} CONFIG)
-  endif()
-
-  if( (NOT ign_find_package_PREFER_CONFIG) OR (NOT ${PACKAGE_NAME}_FOUND) )
-    # If we don't prefer config mode, or config mode failed, call the normal
-    # mode of find_package.
-    find_package(${PACKAGE_NAME} ${${PACKAGE_NAME}_find_package_args})
-  endif()
+  find_package(${PACKAGE_NAME} ${${PACKAGE_NAME}_find_package_args})
 
   if(${PACKAGE_NAME}_FOUND)
 
