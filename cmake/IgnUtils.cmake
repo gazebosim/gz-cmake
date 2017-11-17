@@ -152,7 +152,7 @@ macro(ign_find_package PACKAGE_NAME)
     find_package(${PACKAGE_NAME} ${${PACKAGE_NAME}_find_package_args} CONFIG)
   endif()
 
-  if( (NOT ign_find_package_PREFER_CONFIG) or (NOT ${PACKAGE_NAME}_FOUND) )
+  if( (NOT ign_find_package_PREFER_CONFIG) OR (NOT ${PACKAGE_NAME}_FOUND) )
     # If we don't prefer config mode, or config mode failed, call the normal
     # mode of find_package.
     find_package(${PACKAGE_NAME} ${${PACKAGE_NAME}_find_package_args})
