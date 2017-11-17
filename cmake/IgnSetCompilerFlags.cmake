@@ -271,15 +271,6 @@ macro(ign_setup_msvc)
   # Reduce overhead by ignoring unnecessary Windows headers
   add_definitions(-DWIN32_LEAN_AND_MEAN)
 
-  # Use the dynamically loaded run-time library in Windows by default. The
-  # dynamically loaded run-time reduces the binary size and automatically
-  # benefits from updates to the run-time library without the need to recompile.
-  # It also allows us to avoid a "One Definition Rule" violation when linking
-  # with libraries that also use the dynamically loaded run-time.
-  set(BUILD_SHARED_LIBS TRUE)
-  set(IGN_RUNTIME_LIBRARY "/MDd" CACHE STRING "Visual Studio Runtime Library Flag (strongly recommend /MDd or /MD)")
-  set_property(CACHE IGN_RUNTIME_LIBRARY PROPERTY STRINGS /MDd /MD /MT /MTd)
-
   # Don't pull in the Windows min/max macros
   add_definitions(-DNOMINMAX)
 
@@ -331,6 +322,31 @@ macro(ign_setup_msvc)
     # TODO: What flags should be set for PROFILE and COVERAGE build types?
     #       Is it even possible to generate those build types on Windows?
 
+  endif()
+
+  # Use the dynamically loaded run-time library in Windows by default. The
+  # dynamically loaded run-time allows dynamically allocated objects to be
+  # passed between different DLLs, which is important for our plugin-based
+  # framework.
+  #
+  # In some cases, a user might want to compile with the static runtime. This
+  # should ONLY be done if they do not intend to use the ignition library as
+  # part of a plugin-based framework.
+  option(IGN_USE_STATIC_RUNTIME "Use the static runtime (strongly discouraged)" OFF)
+  if(BUILD_SHARED_LIBS)
+    # Users should not choose the static runtime unless they are compiling a
+    # static library, so we completely disable this option if BUILD_SHARED_LIBS
+    # is turned on.
+    set(IGN_USE_STATIC_RUNTIME OFF CACHE BOOL "Use the static runtime (strongly discouraged)" FORCE)
+  endif()
+
+  if(IGN_USE_STATIC_RUNTIME)
+    foreach(build_type DEBUG RELEASE RELWITHDEBINFO MINSIZEREL)
+      foreach(lang C CXX)
+        set(flags_var CMAKE_${lang}_FLAGS_${build_type})
+        string(REGEX REPLACE "/MD" "/MT" ${flags_var} "${${flags_var}}")
+      endforeach()
+    endforeach()
   endif()
 
   # We always want this flag to be specified so we get standard-compliant
