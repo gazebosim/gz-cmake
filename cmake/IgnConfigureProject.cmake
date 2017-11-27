@@ -2,11 +2,11 @@
 # IgnConfigureProject
 # -------------------
 #
-# ign_configure_project(designation major_version[.minor[.patch[.tweak]]])
+# ign_configure_project([VERSION_SUFFIX <pre|alpha|beta|etc>])
 #
-# Sets up an ignition library project. Note that ign_designation should only be
-# the second part of the library name (i.e. it should NOT include the
-# "ignition-" prefix).
+# Sets up an ignition library project.
+#
+# VERSION_SUFFIX: Optional. Specify a prerelease version suffix.
 #
 #===============================================================================
 # Copyright (C) 2017 Open Source Robotics Foundation
@@ -54,7 +54,7 @@ macro(ign_configure_project)
   # Remove the leading "ignition-"
   string(REGEX REPLACE "ignition-" "" IGN_DESIGNATION ${IGN_DESIGNATION})
   # Remove the trailing version number
-  string(REGEX REPLACE "[0-9]" "" IGN_DESIGNATION ${IGN_DESIGNATION})
+  string(REGEX REPLACE "[0-9]+" "" IGN_DESIGNATION ${IGN_DESIGNATION})
 
   #============================================================================
   # Set project variables
