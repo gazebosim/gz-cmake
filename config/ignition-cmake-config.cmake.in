@@ -33,3 +33,5 @@ include(IgnCMake)
 # This variable does not follow the usual cmake naming convention because it is
 # a non-standard package variable.
 set(IGNITION_CMAKE_VERSION_MAJOR @PROJECT_VERSION_MAJOR@)
+
+set(IGNITION_CMAKE_DOXYGEN_DIR "@CMAKE_INSTALL_PREFIX@/share/ignition/@PROJECT_NAME_LOWER@/doxygen")
