@@ -25,7 +25,7 @@
 
 #################################################
 # Initialize the ignition project
-macro(ign_configure_project designation full_version)
+macro(ign_configure_project)
 
   #------------------------------------
   # Define the expected arguments
@@ -37,18 +37,8 @@ macro(ign_configure_project designation full_version)
   # Parse the arguments
   cmake_parse_arguments(ign_configure_project "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
-
-  #============================================================================
-  # Extract the major version
-  #============================================================================
-  string(REGEX REPLACE "^([0-9]+).*" "\\1" major_version "${full_version}")
-
-  #============================================================================
-  # Initiate project
-  #============================================================================
-  project(ignition-${designation}${major_version} VERSION ${full_version})
-
   # Note: The following are automatically defined by project(~) in cmake v3:
+  # PROJECT_NAME
   # PROJECT_VERSION_MAJOR
   # PROJECT_VERSION_MINOR
   # PROJECT_VERSION_PATCH
@@ -57,11 +47,18 @@ macro(ign_configure_project designation full_version)
     set(PROJECT_VERSION_SUFFIX ${ign_configure_project_VERSION_SUFFIX})
   endif()
 
+  #============================================================================
+  # Extract the designation
+  #============================================================================
+  set(IGN_DESIGNATION ${PROJECT_NAME})
+  # Remove the leading "ignition-"
+  string(REGEX REPLACE "ignition-" "" IGN_DESIGNATION ${IGN_DESIGNATION})
+  # Remove the trailing version number
+  string(REGEX REPLACE "[0-9]" "" IGN_DESIGNATION ${IGN_DESIGNATION})
 
   #============================================================================
   # Set project variables
   #============================================================================
-  set(IGN_DESIGNATION "${designation}")
 
   set(PROJECT_NAME_NO_VERSION "ignition-${IGN_DESIGNATION}")
   string(TOLOWER ${PROJECT_NAME_NO_VERSION} PROJECT_NAME_NO_VERSION_LOWER)
