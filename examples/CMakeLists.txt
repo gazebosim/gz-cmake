@@ -42,6 +42,12 @@ foreach(example ${example_directories})
         ${CMAKE_COMMAND} -E copy
         "${CMAKE_CURRENT_BINARY_DIR}/${EXAMPLE_NAME}_pass.xml"
         "${CMAKE_CURRENT_BINARY_DIR}/test_results/${EXAMPLE_NAME}.xml"
+
+      # We explicitly disable the install command to ensure that the examples
+      # do not get installed, and also because some strange behavior on Windows
+      # causes the tests to require administrative privileges to build when this
+      # option is left unset.
+      INSTALL_COMMAND ""
     )
     if (CPACK_GENERATOR)
       ExternalProject_Add_Step(

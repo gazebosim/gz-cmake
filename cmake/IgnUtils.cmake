@@ -143,6 +143,7 @@ macro(ign_find_package PACKAGE_NAME)
   #------------------------------------
   # Call find_package with the provided arguments
   find_package(${PACKAGE_NAME} ${${PACKAGE_NAME}_find_package_args})
+
   if(${PACKAGE_NAME}_FOUND)
 
     message(STATUS "Looking for ${${PACKAGE_NAME}_pretty} - found\n")
@@ -634,7 +635,7 @@ macro(ign_install_library)
     EXPORT ${PROJECT_EXPORT_NAME}
     LIBRARY DESTINATION ${IGN_LIB_INSTALL_DIR}
     ARCHIVE DESTINATION ${IGN_LIB_INSTALL_DIR}
-    RUNTIME DESTINATION ${IGN_LIB_INSTALL_DIR}
+    RUNTIME DESTINATION ${IGN_BIN_INSTALL_DIR}
     COMPONENT shlib)
 
 endmacro()

@@ -16,7 +16,39 @@
 ########################################
 # Find libdl
 
-# NOTE: libdl is a system library, so it does not come with pkgconfig metadata
+if(MSVC)
+  # The dlfcn-win32 library installs a config module, so we should leverage that
+  find_package(dlfcn-win32)
+
+  # Note: Ideally, we would create an alias target for dlfcn-win32::dl, but 
+  # cmake does not (currently) support aliasing imported targets
+  # (see: https://gitlab.kitware.com/cmake/cmake/issues/15569)
+  #
+  # For now, we will use a variable named DL_TARGET for linking, even though 
+  # it is old-fashioned. If a day comes when cmake supported aliasing 
+  # imported targets, then we should migrate to something like
+  #
+  # add_library(DL::DL ALIAS dlfcn-win32::dl)
+  #
+  # And then link to DL::DL.
+  set(DL_TARGET dlfcn-win32::dl)
+
+  if(dlfcn-win32_FOUND)
+    set(DL_FOUND true)
+  else()
+    set(DL_FOUND false)
+  endif()
+
+  include(FindPackageHandleStandardArgs)
+  find_package_handle_standard_args(
+    DL
+    REQUIRED_VARS DL_FOUND)
+
+  return()
+
+endif()
+
+# NOTE: libdl is a system library on UNIX, so it does not come with pkgconfig metadata
 
 # If we cannot find the header or the library, we will switch this to false
 set(DL_FOUND true)
@@ -42,6 +74,7 @@ endif()
 if(DL_FOUND)
   include(IgnImportTarget)
   ign_import_target(DL)
+  set(DL_TARGET DL::DL)
 endif()
 
 # We need to manually specify the pkgconfig entry (and type of entry) for dl,
