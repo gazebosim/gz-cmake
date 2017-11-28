@@ -8,7 +8,7 @@ environment:
 build_script:
   - md build
   - cd build
-  - cmake .. -DCMAKE_CXX_FLAGS="-WX" -DBUILD_TESTING=ON
+  - cmake .. -DCMAKE_CXX_FLAGS="-WX"
   - cmake --build .
 
 after_build:
