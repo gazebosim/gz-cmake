@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.5.1 FATAL_ERROR)
 #============================================================================
 # Initialize the project
 #============================================================================
+project(ignition-cmake0 VERSION 0.2.0)
 
 #--------------------------------------
 # Initialize the IGNITION_CMAKE_DIR variable with the location of the cmake
@@ -19,7 +20,7 @@ include(IgnCMake)
 
 #--------------------------------------
 # Set up the project
-ign_configure_project(cmake 0.2.0 VERSION_SUFFIX pre2)
+ign_configure_project(VERSION_SUFFIX pre3)
 
 #============================================================================
 # Configure the package to be installed
