@@ -21,16 +21,19 @@ set(IFADDRS_FOUND true)
 
 # Find ifaddrs.h
 find_path(IFADDRS_INCLUDE_DIRS ifaddrs.h)
-if(IFADDRS_INCLUDE_DIRS)
-  message (STATUS "Looking for ifaddrs.hh - found")
-else(IFADDRS_INCLUDE_DIRS)
-  message (STATUS "Looking for ifaddrs.hh - not found")
+
+if(NOT IFADDRS_INCLUDE_DIRS)
   set(IFADDRS_FOUND false)
 endif(IFADDRS_INCLUDE_DIRS)
 
 if(IFADDRS_FOUND)
+
   include(IgnImportTarget)
-  ign_import_target(IFADDRS)
+
+  # Since this is a header-only library, we should import it as an INTERFACE
+  # target.
+  ign_import_target(IFADDRS INTERFACE)
+
 endif()
 
 include(FindPackageHandleStandardArgs)

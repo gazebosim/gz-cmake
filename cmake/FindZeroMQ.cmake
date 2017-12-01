@@ -80,8 +80,6 @@ if(MSVC)
   set(_zmq_debug_names)
   foreach( ver ${_zmq_versions})
     list(APPEND _zmq_release_names "libzmq${_zmq_TOOLSET}-mt-${ver}")
-  endforeach()
-  foreach( ver ${_zmq_versions})
     list(APPEND _zmq_debug_names "libzmq${_zmq_TOOLSET}-mt-gd-${ver}")
   endforeach()
 
@@ -99,37 +97,54 @@ if(MSVC)
     )
 
   if(ZeroMQ_LIBRARY_RELEASE AND ZeroMQ_LIBRARY_DEBUG)
-    set(ZeroMQ_LIBRARY
+    set(ZeroMQ_LIBRARIES
         debug ${ZeroMQ_LIBRARY_DEBUG}
         optimized ${ZeroMQ_LIBRARY_RELEASE}
         )
   elseif(ZeroMQ_LIBRARY_RELEASE)
-    set(ZeroMQ_LIBRARY ${ZeroMQ_LIBRARY_RELEASE})
+    set(ZeroMQ_LIBRARIES ${ZeroMQ_LIBRARY_RELEASE})
   elseif(ZeroMQ_LIBRARY_DEBUG)
-    set(ZeroMQ_LIBRARY ${ZeroMQ_LIBRARY_DEBUG})
+    set(ZeroMQ_LIBRARIES ${ZeroMQ_LIBRARY_DEBUG})
   endif()
 
 
-  find_path(ZeroMQ_INCLUDE_DIR
+  find_path(ZeroMQ_INCLUDE_DIRS
     NAMES zmq.h
     HINTS ${ZeroMQ_ROOT_DIR}/include
   )
 
+  if(ZeroMQ_LIBRARIES AND ZeroMQ_INCLUDE_DIRS)
+
+    # TODO: Create a way for ign_import_target to support this edge-case.
+    add_library(ZeroMQ::ZeroMQ UNKNOWN IMPORTED)
+
+    # Note: We're setting IMPORTED_IMPLIB here because this is if(MSVC), and on
+    #       MSVC, the find_library(~) function only returns import library files
+    #       (.lib). Imported library files go into the IMPORTED_IMPLIB field.
+    set_target_properties(ZeroMQ::ZeroMQ
+      PROPERTIES IMPORTED_IMPLIB_DEBUG "${ZeroMQ_LIBRARY_DEBUG}")
+
+    set_target_properties(ZeroMQ::ZeroMQ
+      PROPERTIES IMPORTED_IMPLIB_RELEASE "${ZeroMQ_LIBRARY_RELEASE}")
+
+  endif()
+
   include(FindPackageHandleStandardArgs)
   find_package_handle_standard_args(ZeroMQ DEFAULT_MSG
-    ZeroMQ_LIBRARY
-    ZeroMQ_INCLUDE_DIR
+    ZeroMQ_LIBRARIES
+    ZeroMQ_INCLUDE_DIRS
   )
 
-  set(ZeroMQ_INCLUDE_DIRS ${ZeroMQ_INCLUDE_DIR})
-  set(ZeroMQ_LIBRARIES ${ZeroMQ_LIBRARY})
+  # TODO: Are these needed for backwards compatibility, or can they be removed?
+  set(ZeroMQ_INCLUDE_DIR ${ZeroMQ_INCLUDE_DIRS})
+  set(ZeroMQ_LIBRARY ${ZeroMQ_LIBRARIES})
 
   mark_as_advanced(
    ZeroMQ_ROOT_DIR
-   ZeroMQ_LIBRARY
+   ZeroMQ_LIBRARIES
    ZeroMQ_LIBRARY_DEBUG
    ZeroMQ_LIBRARY_RELEASE
-   ZeroMQ_INCLUDE_DIR
+   ZeroMQ_INCLUDE_DIRS
   )
 
   # ZEROMQ_FOUND is uppercase in Windows, make it compatible with pkgconfig
