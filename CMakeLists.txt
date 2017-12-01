@@ -20,7 +20,7 @@ include(IgnCMake)
 
 #--------------------------------------
 # Set up the project
-ign_configure_project(VERSION_SUFFIX pre1)
+ign_configure_project(VERSION_SUFFIX pre3)
 
 #============================================================================
 # Configure the package to be installed
