@@ -105,7 +105,7 @@ macro(ign_find_package PACKAGE_NAME)
 
   #------------------------------------
   # Define the expected arguments
-  set(options REQUIRED EXACT QUIET PRIVATE BUILD_ONLY)
+  set(options REQUIRED EXACT QUIET PRIVATE BUILD_ONLY PKGCONFIG_IGNORE)
   set(oneValueArgs VERSION PRETTY PURPOSE EXTRA_ARGS PKGCONFIG PKGCONFIG_LIB PKGCONFIG_VER_COMPARISON)
   set(multiValueArgs) # We are not using multiValueArgs yet
 
