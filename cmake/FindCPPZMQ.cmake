@@ -16,7 +16,7 @@
 ########################################
 # Find cppzmq
 
-# If we cannot find the header or the library, we will switch this to false
+# If we cannot find the header, we will switch this to false
 set(CPPZMQ_FOUND true)
 
 # Search for the header
@@ -33,5 +33,5 @@ endif()
 
 if(CPPZMQ_FOUND)
   include(IgnImportTarget)
-  ign_import_target(ZPPZMQ)
+  ign_import_target(CPPZMQ)
 endif()
