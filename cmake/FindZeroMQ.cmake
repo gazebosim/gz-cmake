@@ -135,10 +135,6 @@ if(MSVC)
     ZeroMQ_INCLUDE_DIRS
   )
 
-  # TODO: Are these needed for backwards compatibility, or can they be removed?
-  set(ZeroMQ_INCLUDE_DIR ${ZeroMQ_INCLUDE_DIRS})
-  set(ZeroMQ_LIBRARY ${ZeroMQ_LIBRARIES})
-
   mark_as_advanced(
    ZeroMQ_ROOT_DIR
    ZeroMQ_LIBRARIES
