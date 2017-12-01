@@ -24,10 +24,8 @@ find_path(CPPZMQ_INCLUDE_DIRS zmq.hpp
           PATHS
             ${zmq_INCLUDE_DIRS}
             ${CPPZMQ_HEADER_PATH})
-if(CPPZMQ_INCLUDE_DIRS)
-  message(STATUS "Looking for zmq.hpp - found")
-else(CPPZMQ_INCLUDE_DIRS)
-  message(STATUS "Looking for zmq.hpp - not found")
+
+if(NOT CPPZMQ_INCLUDE_DIRS)
   set(CPPZMQ_FOUND false)
 endif()
 
