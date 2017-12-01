@@ -60,4 +60,7 @@ if(${Protobuf_FOUND})
       IMPORTED_LOCATION ${PROTOBUF_PROTOC_EXECUTABLE})
   endif()
 
+  include(IgnPkgConfig)
+  ign_pkg_config_entry(IgnProtobuf "protobuf >= ${IgnProtobuf_FIND_VERSION}")
+
 endif()

@@ -66,8 +66,7 @@ macro(ign_pkg_check_modules_quiet package)
 
   find_package(PkgConfig QUIET)
 
-  set(${package}_PKGCONFIG_ENTRY "${ARGN}")
-  set(${package}_PKGCONFIG_TYPE PROJECT_PKGCONFIG_REQUIRES)
+  ign_pkg_config_entry(${package} "${ARGN}")
 
   if(PKG_CONFIG_FOUND)
 
@@ -111,6 +110,13 @@ macro(ign_pkg_check_modules_quiet package)
     endif()
 
   endif()
+
+endmacro()
+
+macro(ign_pkg_config_entry package string)
+
+  set(${package}_PKGCONFIG_ENTRY "${string}")
+  set(${package}_PKGCONFIG_TYPE PROJECT_PKGCONFIG_REQUIRES)
 
 endmacro()
 
