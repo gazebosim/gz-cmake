@@ -38,8 +38,8 @@ macro(ign_configure_build)
   ign_parse_build_type()
 
   #============================================================================
-  # Ask whether we should make a shared or static library
-  option(BUILD_SHARED_LIBS "Set this to true to generate a shared library (recommended), or false for a static library" ON)
+  # Ask whether we should make a shared or static library.
+  option(BUILD_SHARED_LIBS "Set this to true to generate shared libraries (recommended), or false for static libraries" ON)
 
   #============================================================================
   # Print warnings and errors
@@ -75,6 +75,7 @@ macro(ign_configure_build)
 
     #--------------------------------------
     # Turn on testing
+    include(CTest)
     enable_testing()
 
 

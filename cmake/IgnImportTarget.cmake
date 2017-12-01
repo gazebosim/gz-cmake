@@ -28,7 +28,7 @@ macro(ign_import_target package)
   #------------------------------------
   # Define the expected arguments
   set(options) # We are not using options yet
-  set(oneValueArgs "TARGET_NAME")
+  set(oneValueArgs "TARGET_NAME" "LIB_VAR" "INCLUDE_VAR" "CFLAGS_VAR")
   set(multiValueArgs) # We are not using multiValueArgs yet
 
   #------------------------------------
@@ -44,31 +44,45 @@ macro(ign_import_target package)
     set(target_name ${package}::${package})
   endif()
 
+  #------------------------------------
+  # Use default versions of these build variables if custom versions were not
+  # provided.
+  if(NOT ign_import_target_LIB_VAR)
+    set(ign_import_target_LIB_VAR ${package}_LIBRARIES)
+  endif()
+
+  if(NOT ign_import_target_INCLUDE_VAR)
+    set(ign_import_target_INCLUDE_VAR ${package}_INCLUDE_DIRS)
+  endif()
+
+  if(NOT ign_import_target_CFLAGS_VAR)
+    set(ign_import_target_CFLAGS_VAR ${package}_CFLAGS)
+  endif()
 
   #------------------------------------
   # Link against this "imported" target by saying
   # target_link_libraries(mytarget package::package), instead of linking
   # against the variable package_LIBRARIES with the old-fashioned
   # target_link_libraries(mytarget ${package_LIBRARIES}
-  add_library(${target_name} IMPORTED SHARED)
+  add_library(${target_name} SHARED IMPORTED)
 
-  if(${package}_LIBRARIES)
-    _ign_sort_libraries(${target_name} ${${package}_LIBRARIES})
+  if(${ign_import_target_LIB_VAR})
+    _ign_sort_libraries(${target_name} ${${ign_import_target_LIB_VAR}})
   endif()
 
-  if(${package}_LIBRARIES)
+  if(${ign_import_target_LIB_VAR})
     set_target_properties(${target_name} PROPERTIES
-      INTERFACE_LINK_LIBRARIES "${${package}_LIBRARIES}")
+      INTERFACE_LINK_LIBRARIES "${${ign_import_target_LIB_VAR}}")
   endif()
 
-  foreach(${package}_inc ${${package}_INCLUDE_DIRS})
+  foreach(${package}_inc ${${ign_import_target_INCLUDE_VAR}})
     set_target_properties(${target_name} PROPERTIES
       INTERFACE_INCLUDE_DIRECTORIES "${${package}_inc}")
   endforeach()
 
-  if(${package}_CFLAGS)
+  if(${ign_import_target_CFLAGS_VAR})
     set_target_properties(${target_name} PROPERTIES
-      INTERFACE_COMPILE_OPTIONS "${${package}_CFLAGS}")
+      INTERFACE_COMPILE_OPTIONS "${${ign_import_target_CFLAGS_VAR}}")
   endif()
 
   # What about linker flags? Is there no target property for that?
