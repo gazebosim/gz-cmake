@@ -263,10 +263,12 @@ macro(ign_find_package PACKAGE_NAME)
         # ignition-<project>.pc file. This is probably an oversight in our build
         # system scripts, so we will emit a warning about this.
         message(AUTHOR_WARNING
+          " -- THIS MESSAGE IS INTENDED FOR IGNITION-${IGN_DESIGNATION_UPPER} AUTHORS. --\n"
+          "    (IF YOU SEE THIS, PLEASE REPORT IT)\n"
           "Could not find pkg-config information for ${PACKAGE_NAME}. "
-          "It was not provided by the find-module for the package, nor did you "
-          "explicitly provide it in your call to ign_find_package(~). This is "
-          "most likely an error in your use of ign-cmake.")
+          "It was not provided by the find-module for the package, nor was it "
+          "explicitly provided it in the call to ign_find_package(~). This is "
+          "most likely an error in this project's use of ign-cmake.")
 
       endif()
 
