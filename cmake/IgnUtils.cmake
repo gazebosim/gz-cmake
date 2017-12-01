@@ -208,13 +208,40 @@ macro(ign_find_package PACKAGE_NAME)
       # then we will overwrite these pkgconfig variables with the information
       # provided by the caller.
       if(ign_find_package_PKGCONFIG_LIB)
+
         # Libraries must be prepended with -l
         set(${PACKAGE_NAME}_PKGCONFIG_ENTRY "-l${ign_find_package_PKGCONFIG_LIB}")
         set(${PACKAGE_NAME}_PKGCONFIG_TYPE PROJECT_PKGCONFIG_LIBS)
-      elseif(ign_find_package_PKGCONFIG)
-        # Modules (a.k.a. packages) can just be provided with the name
-        set(${PACKAGE_NAME}_PKGCONFIG_ENTRY "${ign_find_package_PKGCONFIG}")
-        set(${PACKAGE_NAME}_PKGCONFIG_TYPE PROJECT_PKGCONFIG_REQUIRES)
+
+      elseif(ign_find_package_PKGCONFIG OR NOT ${PACKAGE_NAME}_PKGCONFIG_ENTRY)
+
+        # Either the find-module of ${PACKAGE_NAME} did not provide any
+        # ${PACKAGE_NAME}_PKGCONFIG_ENTRY information so we need to fill in the
+        # entry information, or the caller provided an explicit PKGCONFIG
+        # argument which should override any information that was filled in by
+        # the find-module.
+
+        if(ign_find_package_PKGCONFIG)
+
+          # Modules (a.k.a. packages) can just be specified by their package
+          # name without any prefixes like -l
+          set(${PACKAGE_NAME}_PKGCONFIG_ENTRY "${ign_find_package_PKGCONFIG}")
+          set(${PACKAGE_NAME}_PKGCONFIG_TYPE PROJECT_PKGCONFIG_REQUIRES)
+
+        else()
+
+          # The caller did not provide a PKGCONFIG argument, and the find-module
+          # did not fill in ${PACKAGE_NAME}_PKGCONFIG_ENTRY, so we will construct
+          # it ourselves, assuming the pkg-config name is the same as
+          # ${PACKAGE_NAME}.
+          set(${PACKAGE_NAME}_PKGCONFIG_ENTRY "${PACKAGE_NAME}")
+
+          # We assume this is a package and not a system library since
+          # PKGCONFIG_LIB was not specified, so we use the *_REQUIRES type rather
+          # than the *_LIBS type.
+          set(${PACKAGE_NAME}_PKGCONFIG_TYPE PROJECT_PKGCONFIG_REQUIRES)
+
+        endif()
 
         # Add the version requirements to the entry.
         if(ign_find_package_VERSION)
