@@ -56,7 +56,7 @@
 
 if (UNIX)
   include(IgnPkgConfig)
-  ign_pkg_check_modules(ZeroMQ "libzmq >= 4.0.0")
+  ign_pkg_check_modules(ZeroMQ "libzmq >= ${ZeroMQ_FIND_VERSION}")
 endif()
 
 if(MSVC)
@@ -147,8 +147,4 @@ if(MSVC)
    ZeroMQ_INCLUDE_DIRS
   )
 
-  # ZEROMQ_FOUND is uppercase in Windows, make it compatible with pkgconfig
-  if (ZEROMQ_FOUND)
-    set(ZeroMQ_FOUND TRUE)
-  endif()
 endif()

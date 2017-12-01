@@ -24,7 +24,7 @@ find_path(IFADDRS_INCLUDE_DIRS ifaddrs.h)
 
 if(NOT IFADDRS_INCLUDE_DIRS)
   set(IFADDRS_FOUND false)
-endif(IFADDRS_INCLUDE_DIRS)
+endif()
 
 if(IFADDRS_FOUND)
 
