@@ -52,16 +52,11 @@
 #
 #  ZEROMQ_FOUND              System has ZeroMQ libs/headers
 #  ZeroMQ_LIBRARIES          The ZeroMQ libraries
-#  ZeroMQ_INCLUDE_DIR        The location of ZeroMQ headers
+#  ZeroMQ_INCLUDE_DIRS       The location of ZeroMQ headers
 
 if (UNIX)
-  find_package(PkgConfig REQUIRED)
-  pkg_check_modules(ZeroMQ libzmq>=3.2.0)
-  if (NOT ZeroMQ_FOUND)
-    message (STATUS "Looking for zmq pkgconfig file - not found")
-  else()
-    message (STATUS "Looking for zmq pkgconfig file - found")
-  endif()
+  include(IgnPkgConfig)
+  ign_pkg_check_modules(ZeroMQ "libzmq >= 4.0.0")
 endif()
 
 if(MSVC)
@@ -80,8 +75,7 @@ if(MSVC)
     set(_zmq_TOOLSET "-v90")
   endif()
 
-  set(_zmq_versions "4_0_4" "4_0_3" "4_0_2" "4_0_1" "4_0_0"
-                    "3_2_5" "3_2_4" "3_2_3" "3_2_2"  "3_2_1" "3_2_0" "3_1_0")
+  set(_zmq_versions "4_1_4" "4_0_4" "4_0_3" "4_0_2" "4_0_1" "4_0_0")
   set(_zmq_release_names)
   set(_zmq_debug_names)
   foreach( ver ${_zmq_versions})
