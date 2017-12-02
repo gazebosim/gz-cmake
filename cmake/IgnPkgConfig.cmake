@@ -66,8 +66,7 @@ macro(ign_pkg_check_modules_quiet package)
 
   find_package(PkgConfig QUIET)
 
-  set(${package}_PKGCONFIG_ENTRY "${ARGN}")
-  set(${package}_PKGCONFIG_TYPE PROJECT_PKGCONFIG_REQUIRES)
+  ign_pkg_config_entry(${package} "${ARGN}")
 
   if(PKG_CONFIG_FOUND)
 
@@ -111,6 +110,19 @@ macro(ign_pkg_check_modules_quiet package)
     endif()
 
   endif()
+
+endmacro()
+
+# This creates variables which inform ign_find_package(~) that your package
+# should be found as a module by pkg-config. In most cases, this will be called
+# implicitly by ign_pkg_check_modules[_quiet], but if a package provides both a
+# cmake config-file (*-config.cmake) and a pkg-config file (*.pc), then you can
+# use the cmake config-file to retrieve the package information, and then use
+# this macro to generate the relevant pkg-config information.
+macro(ign_pkg_config_entry package string)
+
+  set(${package}_PKGCONFIG_ENTRY "${string}")
+  set(${package}_PKGCONFIG_TYPE PROJECT_PKGCONFIG_REQUIRES)
 
 endmacro()
 
