@@ -14,6 +14,14 @@
 # You can link your library against that target using target_link_library(~),
 # and all the interface build variables will be pulled into your target.
 
+# We explicitly set the desired cmake version to ensure that the policy settings
+# of users or of toolchains do not result in the wrong behavior for our modules.
+# Note that the call to find_package(~) will PUSH a new policy stack before
+# taking on these version settings, and then that stack will POP after the
+# find_package(~) has exited, so this will not affect the cmake policy settings
+# of a caller.
+cmake_minimum_required(VERSION 3.5.1 FATAL_ERROR)
+
 if(@PKG_NAME@_CONFIG_INCLUDED)
 
   # Check that each of the components requested in this call to find_package(~)
@@ -105,14 +113,14 @@ foreach(component ${@PKG_NAME@_FIND_COMPONENTS})
     # argument to find_package(~).
     if(NOT @PKG_NAME@_FIND_QUIETLY)
       message(WARNING "A config-file for the [${component}] component of "
-                      "[@PKG_NAME@] could not be found. Either that component "
+                      "<@PKG_NAME@> could not be found. Either that component "
                       "does not exist, or it was not installed on this machine.")
     endif()
   endif()
 
   # Find the component package using find_dependency(~). We will call this even
   # if the config file does not exist, because this function will correctly
-  # handle the REQUIRED argument.
+  # handle the REQUIRED argument for us.
   find_dependency(@PKG_NAME@-${component} @PROJECT_VERSION_FULL@ EXACT)
 
 endforeach()

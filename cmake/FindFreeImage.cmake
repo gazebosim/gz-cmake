@@ -24,7 +24,7 @@ set(minor_version ${FreeImage_FIND_VERSION_MINOR})
 set(full_version ${major_version}.${minor_version})
 
 include(IgnPkgConfig)
-ign_pkg_check_modules_quiet(FreeImage FreeImage>=${full_version})
+ign_pkg_check_modules_quiet(FreeImage "FreeImage >= ${full_version}")
 
 # If we don't have PkgConfig, or if PkgConfig failed, then do a manual search
 if(NOT FreeImage_FOUND)

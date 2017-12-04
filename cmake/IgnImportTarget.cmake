@@ -14,7 +14,11 @@
 # limitations under the License.
 #
 ########################################
-# ign_import_target(<package> [TARGET_NAME <target_name>])
+# ign_import_target(<package> [INTERFACE]
+#     [TARGET_NAME <target_name>]
+#     [LIB_VAR <library_variable>]
+#     [INCLUDE_VAR <header_directory_variable>]
+#     [CFLAGS_VAR <cflags_varaible>])
 #
 # This macro will create an imported target based on the variables pertaining
 # to <package>, such as <package>_LIBRARIES, <package>_INCLUDE_DIRS, and
@@ -23,12 +27,28 @@
 # TARGET_NAME is not provided, the name of the imported target will default to
 # <package>::<package>.
 #
+# INTERFACE: Optional. Use INTERFACE when the target does not actually provide
+#            a library that needs to be linked against (e.g. it is a header-only
+#            library, or the target is just used to specify compiler flags).
+#
+# TARGET_NAME: Optional. Explicitly specify the desired imported target name.
+#              Default is <package>::<package>.
+#
+# LIB_VAR: Optional. Explicitly specify the name of the library variable for
+#          this package. Default is <package>_LIBRARIES.
+#
+# INCLUDE_VAR: Optional. Explicitly specify the name of the include directory
+#              variable for this package. Default is <package>_INCLUDE_DIRS.
+#
+# CFLAGS_VAR: Optional. Explicitly specify the name of the cflags variable for
+#             this package. Default is <package>_CFLAGS.
+#
 macro(ign_import_target package)
 
   #------------------------------------
   # Define the expected arguments
-  set(options) # We are not using options yet
-  set(oneValueArgs "TARGET_NAME")
+  set(options "INTERFACE")
+  set(oneValueArgs "TARGET_NAME" "LIB_VAR" "INCLUDE_VAR" "CFLAGS_VAR")
   set(multiValueArgs) # We are not using multiValueArgs yet
 
   #------------------------------------
@@ -45,34 +65,61 @@ macro(ign_import_target package)
   endif()
 
   if(NOT TARGET ${target_name})
+
+    #------------------------------------
+    # Use default versions of these build variables if custom versions were not
+    # provided.
+    if(NOT ign_import_target_LIB_VAR)
+      set(ign_import_target_LIB_VAR ${package}_LIBRARIES)
+    endif()
+
+    if(NOT ign_import_target_INCLUDE_VAR)
+      set(ign_import_target_INCLUDE_VAR ${package}_INCLUDE_DIRS)
+    endif()
+
+    if(NOT ign_import_target_CFLAGS_VAR)
+      set(ign_import_target_CFLAGS_VAR ${package}_CFLAGS)
+    endif()
+
     #------------------------------------
     # Link against this "imported" target by saying
     # target_link_libraries(mytarget package::package), instead of linking
     # against the variable package_LIBRARIES with the old-fashioned
     # target_link_libraries(mytarget ${package_LIBRARIES}
-    add_library(${target_name} IMPORTED SHARED)
-
-    if(${package}_LIBRARIES)
-      _ign_sort_libraries(${target_name} ${${package}_LIBRARIES})
+    if(NOT ign_import_target_INTERFACE)
+      add_library(${target_name} UNKNOWN IMPORTED)
+    else()
+      add_library(${target_name} INTERFACE IMPORTED)
     endif()
 
-    if(${package}_LIBRARIES)
+    # Do not bother with the IMPORTED_LOCATION or IMPORTED_IMPLIB variables if it
+    # is an INTERFACE target.
+    if(NOT ign_import_target_INTERFACE)
+
+      if(${ign_import_target_LIB_VAR})
+        _ign_sort_libraries(${target_name} ${${ign_import_target_LIB_VAR}})
+      endif()
+
+    endif()
+
+    if(${ign_import_target_LIB_VAR})
       set_target_properties(${target_name} PROPERTIES
-        INTERFACE_LINK_LIBRARIES "${${package}_LIBRARIES}")
+        INTERFACE_LINK_LIBRARIES "${${ign_import_target_LIB_VAR}}")
     endif()
 
-    foreach(${package}_inc ${${package}_INCLUDE_DIRS})
+    foreach(${package}_inc ${${ign_import_target_INCLUDE_VAR}})
       set_target_properties(${target_name} PROPERTIES
         INTERFACE_INCLUDE_DIRECTORIES "${${package}_inc}")
     endforeach()
 
-    if(${package}_CFLAGS)
+    if(${ign_import_target_CFLAGS_VAR})
       set_target_properties(${target_name} PROPERTIES
-        INTERFACE_COMPILE_OPTIONS "${${package}_CFLAGS}")
+        INTERFACE_COMPILE_OPTIONS "${${ign_import_target_CFLAGS_VAR}}")
     endif()
-  endif()
 
-  # What about linker flags? Is there no target property for that?
+    # What about linker flags? Is there no target property for that?
+
+  endif()
 
 endmacro()
 

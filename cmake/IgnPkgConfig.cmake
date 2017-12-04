@@ -17,10 +17,29 @@
 # An alternative to pkg_check_modules that creates an "imported target" which
 # helps us to make relocatable packages.
 #
-# NOTE: This macro assumes that pkgconfig is the only means by which you will be
-#       searching for the package. If you intend to continue searching in the
-#       event that pkgconfig fails (or is unavailable), then you should instead
+# NOTE: This macro assumes that pkg-config is the only means by which you will
+#       be searching for the package. If you intend to continue searching in the
+#       event that pkg-config fails (or is unavailable), then you should instead
 #       call ign_pkg_check_modules_quiet(~).
+#
+# NOTE: If you need to specify a version comparison for pkg-config, then your
+#       second argument must be wrapped in quotes. E.g. if you want to find
+#       version greater than or equal to 3.2.1 of a package called SomePackage
+#       which is known to pkg-config as libsomepackage, then you should call
+#       ign_pkg_check_modules as follows:
+#
+#       ign_pkg_check_modules(SomePackage "libsomepackage >= 3.2.1")
+#
+#       The quotes and spaces in the second argument are all very important in
+#       order to ensure that our auto-generated *.pc file gets filled in
+#       correctly. If you do not have any version requirements, then you can
+#       simply leave all of that out:
+#
+#       ign_pkg_check_modules(SomePackage libsomepackage)
+#
+#       Without the version comparison, the quotes and spacing are irrelevant.
+#       This usage note applies to ign_pkg_check_modules_quiet(~) as well.
+#
 macro(ign_pkg_check_modules package)
 
   ign_pkg_check_modules_quiet(${package} ${ARGN})
@@ -38,15 +57,16 @@ macro(ign_pkg_check_modules package)
 endmacro()
 
 # This is an alternative to ign_pkg_check_modules(~) which you can use if you
-# have an alternative way to look for the package if pkgconfig is not available
-# or cannot find the requested package. This will still setup the pkgconfig
-# variables for you, whether or not pkgconfig is available.
+# have an alternative way to look for the package if pkg-config is not available
+# or cannot find the requested package. This will still setup the pkg-config
+# variables for you, whether or not pkg-config is available.
+#
+# For usage instructions, see ign_pkg_check_modules(~) above.
 macro(ign_pkg_check_modules_quiet package)
 
   find_package(PkgConfig QUIET)
 
-  set(${package}_PKGCONFIG_ENTRY "${ARGN}")
-  set(${package}_PKGCONFIG_TYPE PROJECT_PKGCONFIG_REQUIRES)
+  ign_pkg_config_entry(${package} "${ARGN}")
 
   if(PKG_CONFIG_FOUND)
 
@@ -90,6 +110,13 @@ macro(ign_pkg_check_modules_quiet package)
     endif()
 
   endif()
+
+endmacro()
+
+macro(ign_pkg_config_entry package string)
+
+  set(${package}_PKGCONFIG_ENTRY "${string}")
+  set(${package}_PKGCONFIG_TYPE PROJECT_PKGCONFIG_REQUIRES)
 
 endmacro()
 

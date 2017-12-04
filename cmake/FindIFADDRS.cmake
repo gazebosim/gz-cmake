@@ -14,10 +14,29 @@
 # limitations under the License.
 #
 ########################################
-# Find AV device.
-set(av_major ${AVDEVICE_FIND_VERSION_MAJOR})
-set(av_minor ${AVDEVICE_FIND_VERSION_MINOR})
-set(av_patch ${AVDEVICE_FIND_VERSION_PATCH})
+# Find ifaddrs
 
-include(IgnPkgConfig)
-ign_pkg_check_modules(AVDEVICE "libavdevice >= ${av_major}.${av_minor}.${av_patch}")
+# If we cannot find the header or the library, we will switch this to false
+set(IFADDRS_FOUND true)
+
+# Find ifaddrs.h
+find_path(IFADDRS_INCLUDE_DIRS ifaddrs.h)
+
+if(NOT IFADDRS_INCLUDE_DIRS)
+  set(IFADDRS_FOUND false)
+endif()
+
+if(IFADDRS_FOUND)
+
+  include(IgnImportTarget)
+
+  # Since this is a header-only library, we should import it as an INTERFACE
+  # target.
+  ign_import_target(IFADDRS INTERFACE)
+
+endif()
+
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(
+  IFADDRS
+  REQUIRED_VARS IFADDRS_FOUND)
