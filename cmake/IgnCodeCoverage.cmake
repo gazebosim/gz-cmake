@@ -91,6 +91,8 @@ FUNCTION(IGN_SETUP_TARGET_FOR_COVERAGE _targetname _testrunner _outputname)
     # Capturing lcov counters and generating report
     COMMAND ${LCOV_PATH} -q --no-checksum --directory ${PROJECT_BINARY_DIR}
       --capture --output-file ${_outputname}.info 2>/dev/null
+    # Remove negative counts
+    COMMAND sed -i '/,-/d' ${_outputname}.info
     COMMAND ${LCOV_PATH} -q --remove ${_outputname}.info
       'test/*' '/usr/*' '*_TEST*' --output-file ${_outputname}.info.cleaned
     COMMAND ${GENHTML_PATH} -q --legend -o ${_outputname}
