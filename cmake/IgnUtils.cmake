@@ -713,15 +713,19 @@ macro(ign_build_warning)
 endmacro(ign_build_warning)
 
 #################################################
-macro(ign_add_library)
+macro(ign_add_library lib_name)
 
-  message(FATAL_ERROR "ign_add_library is deprecated. Instead, use "
-                      "ign_create_main_library(SOURCES <sources>). The library "
-                      "name is determined automatically by the project name. "
-                      "To add a component library, use ign_add_component(~). "
-                      "Be sure to pass the CXX_STANDARD argument to these "
-                      "functions in order to set the C++ standard that they "
-                      "require.")
+  # TODO: For the first stable release of ign-cmake1, uncomment the following
+  # block and remove everything else from this function.
+#  message(FATAL_ERROR "ign_add_library is deprecated. Instead, use "
+#                      "ign_create_main_library(SOURCES <sources>). The library "
+#                      "name is determined automatically by the project name. "
+#                      "To add a component library, use ign_add_component(~). "
+#                      "Be sure to pass the CXX_STANDARD argument to these "
+#                      "functions in order to set the C++ standard that they "
+#                      "require.")
+
+  ign_create_main_library(SOURCES ${ARGN})
 
 endmacro()
 
