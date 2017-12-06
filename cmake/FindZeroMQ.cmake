@@ -75,7 +75,7 @@ if(MSVC)
     set(_zmq_TOOLSET "-v90")
   endif()
 
-  set(_zmq_versions "4_1_4" "4_0_4" "4_0_3" "4_0_2" "4_0_1" "4_0_0")
+  set(_zmq_versions "4_2_2" "4_1_6" "4_1_4" "4_0_8" "4_0_4" "4_0_3" "4_0_2" "4_0_1" "4_0_0")
   set(_zmq_release_names)
   set(_zmq_debug_names)
   foreach( ver ${_zmq_versions})
