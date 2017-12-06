@@ -713,17 +713,19 @@ macro(ign_build_warning)
 endmacro(ign_build_warning)
 
 #################################################
-macro(ign_add_library lib_name)
+macro(ign_add_library lib_target_name)
 
-  # TODO: For the first stable release of ign-cmake1, uncomment the following
-  # block and remove everything else from this function.
-#  message(FATAL_ERROR "ign_add_library is deprecated. Instead, use "
-#                      "ign_create_main_library(SOURCES <sources>). The library "
-#                      "name is determined automatically by the project name. "
-#                      "To add a component library, use ign_add_component(~). "
-#                      "Be sure to pass the CXX_STANDARD argument to these "
-#                      "functions in order to set the C++ standard that they "
-#                      "require.")
+  # TODO: For the first stable release of ign-cmake1, switch from the
+  # AUTHOR_WARNING message type to the FATAL_ERROR type.
+
+#  message(FATAL_ERROR
+  message(AUTHOR_WARNING
+    "ign_add_library(<target_name> <sources>)) is deprecated. Instead, use "
+    "ign_create_main_library(SOURCES <sources>). The library target name is "
+    "determined automatically by the project name. To add a component library, "
+    "use ign_add_component(~). Be sure to pass the CXX_STANDARD argument to "
+    "these functions in order to set the C++ standard that they require.")
+
 
   ign_create_main_library(SOURCES ${ARGN})
 
@@ -741,8 +743,9 @@ function(_ign_check_known_cxx_standards standard)
 
   list(FIND IGN_KNOWN_CXX_STANDARDS ${standard} known)
   if(${known} EQUAL -1)
-    message(FATAL_ERROR "You have specified unsupported standard: ${standard}. "
-                        "Accepted values are: ${IGN_KNOWN_CXX_STANDARDS}.")
+    message(FATAL_ERROR
+      "You have specified an unsupported standard: ${standard}. "
+      "Accepted values are: ${IGN_KNOWN_CXX_STANDARDS}.")
   endif()
 
 endfunction()
@@ -1253,8 +1256,13 @@ endmacro()
 #################################################
 macro(ign_install_library)
 
-  message(FATAL_ERROR "ign_install_library is deprecated. Please remove it "
-                      "from your cmake script!")
+  # TODO: For the first stable release of ign-cmake1, switch from the
+  # AUTHOR_WARNING message type to the FATAL_ERROR type.
+
+#  message(FATAL_ERROR
+  message(AUTHOR_WARNING
+    "ign_install_library is deprecated. "
+    "Please remove it from your cmake script!")
 
 endmacro()
 

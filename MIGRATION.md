@@ -113,7 +113,7 @@ see the below section on CMake anti-patterns.
 The `ign_add_library(~)` macro has been removed and replaced with the macro
 `ign_create_main_library(~)`. With this new macro, you no longer need to specify
 the library name, because it will be inferred from your project information.
-Instead, you should pass the `SOURCES` argument, followed my the source files
+Instead, you should pass the `SOURCES` argument, followed by the source files
 which will be used to generate your library.
 
 You may also use the `CXX_STANDARD` argument to specify which C++ standard your
