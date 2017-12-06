@@ -1154,6 +1154,9 @@ macro(_ign_add_library_or_component)
 
   #------------------------------------
   # Create the library target
+
+  message(STATUS "Configuring library: ${lib_name}")
+
   add_library(${lib_name} ${sources})
 
   #------------------------------------
