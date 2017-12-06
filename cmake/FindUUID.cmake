@@ -15,5 +15,7 @@
 #
 ########################################
 # Find uuid
-include(IgnPkgConfig)
-ign_pkg_check_modules(UUID uuid)
+if (UNIX)
+  include(IgnPkgConfig)
+  ign_pkg_check_modules(UUID uuid)
+endif()
