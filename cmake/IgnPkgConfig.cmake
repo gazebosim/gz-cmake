@@ -45,7 +45,7 @@ macro(ign_pkg_check_modules package)
   ign_pkg_check_modules_quiet(${package} ${ARGN})
 
   if(NOT PKG_CONFIG_FOUND)
-    status(WARNING "The package [${package}] requires pkg-config in order to be found. "
+    message(WARNING "The package [${package}] requires pkg-config in order to be found. "
                    "Please install pkg-config so we can search for that package.")
   endif()
 
