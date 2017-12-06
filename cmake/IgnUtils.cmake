@@ -1526,14 +1526,12 @@ macro(ign_set_project_public_cxx_standard standard)
 
   target_compile_features(${PROJECT_LIBRARY_TARGET_NAME} PUBLIC ${IGN_CXX_${standard}_FEATURES})
 
-  # Note: pkg-config information will not get configured correctly anymore when
-  # using this macro, because the pkg-config information is configured during
-  # the call to ign_create_main_library(~), but this macro can only be called
-  # after the library target is created by ign_create_main_library(~). That's
-  # why it is important to move away from calling this macro and instead use the
-  # CXX_STANDARD argument in ign_create_main_library(~).
-  #
-  # This will not impact users who link against the library using cmake, but it
-  # could impact users who link against the library using pkg-config.
+  # Note: We have to reconfigure the pkg-config information for the main library
+  # because this macro can only be called after ign_create_main_library(~). This
+  # is somewhat wasteful, so we should strongly prefer to use the CXX_STANDARD
+  # argument of ign_create_main_library(~).
+
+  ign_string_append(PROJECT_PKGCONFIG_CFLAGS "-std=c++${standard}")
+  _ign_create_pkgconfig()
 
 endmacro()
