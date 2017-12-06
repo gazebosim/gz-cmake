@@ -720,11 +720,12 @@ macro(ign_add_library lib_target_name)
 
 #  message(FATAL_ERROR
   message(AUTHOR_WARNING
-    "ign_add_library(<target_name> <sources>)) is deprecated. Instead, use "
-    "ign_create_main_library(SOURCES <sources>). The library target name is "
-    "determined automatically by the project name. To add a component library, "
-    "use ign_add_component(~). Be sure to pass the CXX_STANDARD argument to "
-    "these functions in order to set the C++ standard that they require.")
+    "ign_add_library(<target_name> <sources>) is deprecated. Instead, use "
+    "ign_create_main_library(SOURCES <sources>). It will determine the library "
+    "target name automatically from the project name. To add a component "
+    "library, use ign_add_component(~). Be sure to pass the CXX_STANDARD "
+    "argument to these functions in order to set the C++ standard that they "
+    "require.")
 
 
   ign_create_main_library(SOURCES ${ARGN})
