@@ -54,6 +54,13 @@
 #  ZeroMQ_LIBRARIES          The ZeroMQ libraries
 #  ZeroMQ_INCLUDE_DIRS       The location of ZeroMQ headers
 
+find_package(ZeroMQ REQUIRED CONFIG)
+if (ZeroMQ_FOUND)
+  set(ZeroMQ_LIBRARIES ${ZeroMQ_LIBRARY})
+  set(ZeroMQ_INCLUDE_DIRS ${ZeroMQ_INCLUDE_DIR})
+  return()
+endif()
+
 if (UNIX)
   include(IgnPkgConfig)
   ign_pkg_check_modules(ZeroMQ "libzmq >= ${ZeroMQ_FIND_VERSION}")
