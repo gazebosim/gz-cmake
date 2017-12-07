@@ -56,8 +56,10 @@
 
 find_package(ZeroMQ REQUIRED CONFIG)
 if (ZeroMQ_FOUND)
-  set(ZeroMQ_LIBRARIES ${ZeroMQ_LIBRARY})
-  set(ZeroMQ_INCLUDE_DIRS ${ZeroMQ_INCLUDE_DIR})
+  include(IgnImportTarget)
+  ign_import_target(ZeroMQ
+    INCLUDE_VAR ZeroMQ_INCLUDE_DIR
+    LIB_VAR     ZeroMQ_LIBRARY)
   return()
 endif()
 
