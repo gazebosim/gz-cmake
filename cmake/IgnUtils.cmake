@@ -832,7 +832,7 @@ macro(ign_build_tests)
 
   #------------------------------------
   # Define the expected arguments
-  set(options)
+  set(options SOURCE) # NOTE: DO NOT USE "SOURCE", we're adding it here to catch typos
   set(oneValueArgs TYPE)
   set(multiValueArgs SOURCES LIB_DEPS INCLUDE_DIRS)
 
@@ -845,6 +845,18 @@ macro(ign_build_tests)
     # new ignition-cmake system. Be sure to also provide a SOURCES argument
     # when calling ign_build_tests.
     message(FATAL_ERROR "Developer error: You must specify a TYPE for your tests!")
+  endif()
+
+  if(ign_build_tests_SOURCE)
+
+    # We have encountered cases where someone accidentally passes a SOURCE
+    # argument instead of a SOURCES argument into ign_build_tests, and the macro
+    # didn't report any problem with it. Adding this warning should make it more
+    # clear when that particular typo occurs.
+    message(AUTHOR_WARNING
+      "Your script has specified SOURCE for ign_build_tests, which is not an "
+      "option. Did you mean to specify SOURCES (note the plural)?")
+
   endif()
 
   set(TEST_TYPE ${ign_build_tests_TYPE})
