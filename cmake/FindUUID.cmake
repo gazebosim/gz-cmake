@@ -18,4 +18,7 @@
 if (UNIX)
   include(IgnPkgConfig)
   ign_pkg_check_modules(UUID uuid)
+elseif (MSVC)
+  message (STATUS "Using Windows RPC UuidCreate function")
+  set(UUID_FOUND True)
 endif()
