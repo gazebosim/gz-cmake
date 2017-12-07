@@ -219,6 +219,8 @@ macro(ign_find_package PACKAGE_NAME)
         # Also create a variable to indicate that we should skip the component
         set(SKIP_${component} true)
 
+        ign_string_append(${component}_MISSING_DEPS "${${PACKAGE_NAME}_pretty}" DELIM ", ")
+
       endforeach()
 
     else()
@@ -405,6 +407,7 @@ macro(ign_find_package PACKAGE_NAME)
           # Append the entry as a string onto the component-specific variable
           # for whichever required type we selected
           ign_string_append(${${component}_${PACKAGE_NAME}_PKGCONFIG_TYPE} ${${PACKAGE_NAME}_PKGCONFIG_ENTRY})
+          message(STATUS "Adding to ${${component}_${PACKAGE_NAME}_PKGCONFIG_TYPE} entry for ${component}: ${${PACKAGE_NAME}_PKGCONFIG_ENTRY}")
 
         endforeach()
 
@@ -458,10 +461,17 @@ macro(ign_string_append output_var val)
     set(delim " ")
   endif()
 
-  if(ign_string_append_PARENT_SCOPE)
-    set(${output_var} "${${output_var}}${delim}${val}" PARENT_SCOPE)
+  if(${output_var} STREQUAL "")
+    # If ${output_var} is blank, just set it to equal ${val}
+    set(${output_var} "${val}")
   else()
+    # If ${output_var} already has a value in it, append ${val} with the
+    # delimiter in-between.
     set(${output_var} "${${output_var}}${delim}${val}")
+  endif()
+
+  if(ign_string_append_PARENT_SCOPE)
+    set(${output_var} "${${output_var}}" PARENT_SCOPE)
   endif()
 
 endmacro()
@@ -545,6 +555,7 @@ endfunction()
 #   [EXCLUDE_FILES <excluded_headers>]
 #   [EXCLUDE_DIRS  <dirs>]
 #   [GENERATED_HEADERS <headers>])
+#   [COMPONENT]
 #
 # From the current directory, install all header files, including files from all
 # subdirectories (recursively). You can optionally specify directories or files
@@ -562,11 +573,14 @@ endfunction()
 # and install them. This will NOT install any other files or directories that
 # appear in the ${CMAKE_CURRENT_BINARY_DIR}.
 #
+# If the COMPONENT option is specified, this will skip over configuring a
+# config.hh file since it would be redundant with the main library.
+#
 function(ign_install_all_headers)
 
   #------------------------------------
   # Define the expected arguments
-  set(options) # We are not using options yet
+  set(options COMPONENT)
   set(oneValueArgs) # We are not using oneValueArgs yet
   set(multiValueArgs EXCLUDE_FILES EXCLUDE_DIRS GENERATED_HEADERS)
 
@@ -675,21 +689,29 @@ function(ign_install_all_headers)
   set(config_header_in ${CMAKE_CURRENT_SOURCE_DIR}/config.hh.in)
   set(config_header_out ${CMAKE_CURRENT_BINARY_DIR}/config.hh)
 
-  if(NOT EXISTS ${config_header_in})
-    message(FATAL_ERROR
-      "Developer error: You are missing the file [${config_header_in}]! "
-      "Did you forget to move it from your project's cmake directory while "
-      "migrating to the use of ignition-cmake?")
+  if(NOT ign_install_all_headers_COMPONENT)
+
+    # Produce an error if the config file is missing
+    #
+    # TODO: Maybe we should have a generic config.hh.in file that we fall back
+    # on if the project does not have one for itself?
+    if(NOT EXISTS ${config_header_in})
+      message(FATAL_ERROR
+        "Developer error: You are missing the file [${config_header_in}]! "
+        "Did you forget to move it from your project's cmake directory while "
+        "migrating to the use of ignition-cmake?")
+    endif()
+
+    # Generate the "config" header that describes our project configuration
+    configure_file(${config_header_in} ${config_header_out})
+
+    # Install the "config" header
+    install(
+      FILES ${config_header_out}
+      DESTINATION ${meta_header_install_dir}
+      COMPONENT headers)
+
   endif()
-
-  # Generate the "config" header that describes our project configuration
-  configure_file(${config_header_in} ${config_header_out})
-
-  # Install the "config" header
-  install(
-    FILES ${config_header_out}
-    DESTINATION ${meta_header_install_dir}
-    COMPONENT headers)
 
 endfunction()
 
@@ -876,7 +898,10 @@ function(ign_create_main_library)
       # This is the build directory version of the headers. When exporting the
       # target, this will not be included, because it is tied to the build
       # interface instead of the install interface.
-      $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>)
+      $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+      # This is the in-build version of the main library headers directory.
+      # Generated headers for the main library get placed here.
+      $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>)
 
 
   #------------------------------------
@@ -1005,17 +1030,27 @@ function(ign_add_component component_name)
     # add these include directories to this component library directly. This is
     # not needed if we link to the main library, because that will pull in these
     # include directories automatically.
-    target_include_directories(${PROJECT_LIBRARY_TARGET_NAME}
+    target_include_directories(${component_target_name}
       PUBLIC
         # This is the publicly installed ignition/math headers directory.
         $<INSTALL_INTERFACE:${IGN_INCLUDE_INSTALL_DIR_FULL}>
-        # This is the build directory version of the headers. When exporting the
-        # target, this will not be included, because it is tied to the build
-        # interface instead of the install interface.
-        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>)
+        # This is the in-build version of the main library's headers directory.
+        # Generated headers for this component might get placed here, even if
+        # the component is independent of the main library.
+        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>)
 
   endif()
 
+  target_include_directories(${component_target_name}
+    PUBLIC
+      # This is the in-source version of the component-specific headers
+      # directory. When exporting the target, this will not be included,
+      # because it is tied to the build interface instead of the install
+      # interface.
+      $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/${component_name}/include>
+      # This is the in-build version of the component-specific headers
+      # directory. Generated headers for this component might end up here.
+      $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/${component_name}/include>)
 
   #------------------------------------
   # Adjust variables if a specific C++ standard was requested
@@ -1064,7 +1099,9 @@ function(ign_add_component component_name)
       set(lib_pkgconfig_type ${lib_pkgconfig_type}_PRIVATE)
     endif()
 
-    ign_string_append(${lib_pkgconfig_type} "${PKG_NAME}=${PROJECT_VERSION_FULL}")
+    # TODO: Does pkg-config support prerelease versioning? If not, we cannot use
+    # PROJECT_VERSION_FULL here, so we'll spell out major.minor.patch instead.
+    ign_string_append(${lib_pkgconfig_type} "${PKG_NAME} = ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}")
 
   endif()
 

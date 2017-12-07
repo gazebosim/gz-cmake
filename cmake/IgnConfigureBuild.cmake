@@ -30,7 +30,9 @@ macro(ign_configure_build)
   #============================================================================
   # Parse the arguments that are passed in
   set(options QUIT_IF_BUILD_ERRORS)
-  cmake_parse_arguments(ign_configure_build "${options}" "" "" ${ARGN})
+  set(oneValueArgs)
+  set(multiValueArgs COMPONENTS)
+  cmake_parse_arguments(ign_configure_build "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   #============================================================================
   # Examine the build type. If we do not recognize the type, we will generate
@@ -106,11 +108,41 @@ macro(ign_configure_build)
 
 
     #--------------------------------------
-    # Add all the source code directories
+    # Add the source code directories of the main library
     add_subdirectory(src)
     add_subdirectory(include)
     add_subdirectory(test)
 
+    #--------------------------------------
+    # Add the source code directories of each component if they exist
+    foreach(component ${ign_configure_build_COMPONENTS})
+
+      if(NOT SKIP_${component})
+
+        if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/${component}/src/CMakeLists.txt")
+          add_subdirectory(${component}/src)
+        endif()
+
+        if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/${component}/include/CMakeLists.txt")
+          add_subdirectory(${component}/include)
+        endif()
+
+        if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/${component}/test/CMakeLists.txt")
+          add_subdirectory(${component}/test)
+        endif()
+
+      else()
+
+        set(skip_msg "Skipping the component [${component}]")
+        if(${component}_MISSING_DEPS)
+          ign_append_string(skip_msg "because the following packages are missing: ${${component}_MISSING_DEPS}")
+        endif()
+
+        message(STATUS "${skip_msg}")
+
+      endif()
+
+    endforeach()
 
     #--------------------------------------
     # If we made it this far, the configuration was successful

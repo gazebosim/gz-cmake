@@ -116,7 +116,7 @@ endmacro()
 macro(ign_pkg_config_entry package string)
 
   set(${package}_PKGCONFIG_ENTRY "${string}")
-  set(${package}_PKGCONFIG_TYPE PROJECT_PKGCONFIG_REQUIRES)
+  set(${package}_PKGCONFIG_TYPE PKGCONFIG_REQUIRES)
 
 endmacro()
 
