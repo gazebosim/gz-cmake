@@ -113,10 +113,27 @@ macro(ign_pkg_check_modules_quiet package)
 
 endmacro()
 
+# This creates variables which inform ign_find_package(~) that your package
+# should be found as a module by pkg-config. In most cases, this will be called
+# implicitly by ign_pkg_check_modules[_quiet], but if a package provides both a
+# cmake config-file (*-config.cmake) and a pkg-config file (*.pc), then you can
+# use the cmake config-file to retrieve the package information, and then use
+# this macro to generate the relevant pkg-config information.
 macro(ign_pkg_config_entry package string)
 
   set(${package}_PKGCONFIG_ENTRY "${string}")
   set(${package}_PKGCONFIG_TYPE PKGCONFIG_REQUIRES)
+
+endmacro()
+
+# This creates variables which inform ign_find_package(~) that your package must
+# be found as a plain library by pkg-config. This should be used in any
+# find-module that handles a library package which does not install a pkg-config
+# <package>.pc file.
+macro(ign_pkg_config_library_entry package lib_name)
+
+  set(${package}_PKGCONFIG_ENTRY "-l${lib_name}")
+  set(${package}_PKGCONFIG_TYPE PKGCONFIG_LIBS)
 
 endmacro()
 
