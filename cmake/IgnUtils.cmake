@@ -111,7 +111,7 @@ macro(ign_find_package PACKAGE_NAME)
 
   #------------------------------------
   # Parse the arguments
-  cmake_parse_arguments(ign_find_package "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  _ign_cmake_parse_arguments(ign_find_package "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   #------------------------------------
   # Construct the arguments to pass to find_package
@@ -305,7 +305,7 @@ macro(ign_string_append output_var val)
 
   #------------------------------------
   # Parse the arguments
-  cmake_parse_arguments(ign_string_append "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  _ign_cmake_parse_arguments(ign_string_append "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   if(ign_string_append_DELIM)
     set(delim "${ign_string_append_DELIM}")
@@ -420,7 +420,7 @@ function(ign_install_all_headers)
 
   #------------------------------------
   # Parse the arguments
-  cmake_parse_arguments(ign_install_all_headers "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  _ign_cmake_parse_arguments(ign_install_all_headers "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   #------------------------------------
   # Build list of directories
@@ -744,7 +744,7 @@ macro(ign_build_executables)
 
   #------------------------------------
   # Parse the arguments
-  cmake_parse_arguments(ign_build_executables "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  _ign_cmake_parse_arguments(ign_build_executables "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   foreach(exec_file ${ign_build_executables_SOURCES})
 
@@ -838,7 +838,7 @@ macro(ign_build_tests)
 
   #------------------------------------
   # Parse the arguments
-  cmake_parse_arguments(ign_build_tests "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  _ign_cmake_parse_arguments(ign_build_tests "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   if(NOT ign_build_tests_TYPE)
     # If you have encountered this error, you are probably migrating to the
@@ -942,5 +942,30 @@ macro(ign_set_project_public_cxx_standard standard)
 
 endmacro()
 
+#################################################
+# _ign_cmake_parse_arguments(<prefix> <options> <oneValueArgs> <multiValueArgs> [ARGN])
+#
+# Set <prefix> to match the prefix that is given to cmake_parse_arguments(~).
+# This should also match the name of the function or macro that called it.
+#
+# NOTE: This should only be used by functions inside of ign-cmake specifically.
+# Other ignition projects should not use this macro.
+#
+macro(_ign_cmake_parse_arguments prefix options oneValueArgs multiValueArgs)
 
+  cmake_parse_arguments(${prefix} "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
+  if(${prefix}_UNPARSED_ARGUMENTS)
+
+    # The user passed in some arguments that we don't currently recognize. We'll
+    # emit a warning so they can check whether they're using the correct version
+    # of ign-cmake.
+    message(AUTHOR_WARNING
+      "\nYour script has specified some unrecgonized arguments for ${prefix}(~):\n"
+      "${${prefix}_UNPARSED_ARGUMENTS}\n"
+      "Either you have a typo or are using the wrong version of ign-cmake. "
+      "You are currently using ign-cmake version ${ignition-cmake${IGNITION_CMAKE_VERSION_MAJOR}_VERSION}\n")
+
+  endif()
+
+endmacro()
