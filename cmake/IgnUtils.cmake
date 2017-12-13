@@ -409,7 +409,6 @@ macro(ign_find_package PACKAGE_NAME)
             # Append the entry as a string onto the component-specific variable
             # for whichever required type we selected
             ign_string_append(${${component}_${PACKAGE_NAME}_PKGCONFIG_TYPE} ${${PACKAGE_NAME}_PKGCONFIG_ENTRY})
-            message(STATUS "Adding to ${${component}_${PACKAGE_NAME}_PKGCONFIG_TYPE} for ${component}: ${${PACKAGE_NAME}_PKGCONFIG_ENTRY}")
 
           endforeach()
 
