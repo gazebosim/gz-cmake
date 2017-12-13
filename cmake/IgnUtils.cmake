@@ -961,7 +961,7 @@ macro(_ign_cmake_parse_arguments prefix options oneValueArgs multiValueArgs)
     # emit a warning so they can check whether they're using the correct version
     # of ign-cmake.
     message(AUTHOR_WARNING
-      "\nThe build script has specified some unrecgonized arguments for ${prefix}(~):\n"
+      "\nThe build script has specified some unrecognized arguments for ${prefix}(~):\n"
       "${${prefix}_UNPARSED_ARGUMENTS}\n"
       "Either the script has a typo, or it is using an unexpected version of ign-cmake. "
       "The version of ign-cmake currently being used is ${ignition-cmake${IGNITION_CMAKE_VERSION_MAJOR}_VERSION}\n")
