@@ -70,8 +70,8 @@ ENDIF() # NOT CMAKE_BUILD_TYPE STREQUAL "Debug"
 # Optional fourth parameter is passed as arguments to _testrunner
 #   Pass them in list form, e.g.: "-j;2" for -j 2
 #
-# Coverage coverage is not run against files with the cxx extension. We assume
-# these files are created by swig.
+# Code coverage is not run against files with the cxx extension (.cxx).
+# We assume these files are created by swig.
 FUNCTION(IGN_SETUP_TARGET_FOR_COVERAGE _targetname _testrunner _outputname)
 
   IF(NOT LCOV_PATH)
