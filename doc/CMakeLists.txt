@@ -1,8 +1,16 @@
 # TODO: Write documentation for ignition-cmake
 
 set (files
+  api.in
   cppreference.tag.xml
-  layout.xml)
+  footer.html
+  header.html
+  layout.xml
+  tutorials-footer.html
+  tutorials-header.html
+  tutorials.in)
+
 
 install(FILES ${files}
         DESTINATION ${CMAKE_INSTALL_PREFIX}/share/ignition/${PROJECT_NAME_LOWER}/doxygen)
+
