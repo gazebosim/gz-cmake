@@ -54,7 +54,7 @@
 #  ZeroMQ_LIBRARIES          The ZeroMQ libraries
 #  ZeroMQ_INCLUDE_DIRS       The location of ZeroMQ headers
 
-find_package(ZeroMQ REQUIRED CONFIG)
+find_package(ZeroMQ CONFIG)
 if (ZeroMQ_FOUND)
   include(IgnImportTarget)
   ign_import_target(ZeroMQ
