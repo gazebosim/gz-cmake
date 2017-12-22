@@ -113,7 +113,7 @@ macro(ign_import_target package)
     #
     # But this will not be possible until we are using whichever version of cmake
     # the PR https://gitlab.kitware.com/cmake/cmake/merge_requests/1264
-    # is availble for.
+    # is available for.
     set_property(
       TARGET ${target_name}
       PROPERTY INTERFACE_INCLUDE_DIRECTORIES
