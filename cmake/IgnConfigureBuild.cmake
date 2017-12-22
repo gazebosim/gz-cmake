@@ -30,7 +30,7 @@ macro(ign_configure_build)
   #============================================================================
   # Parse the arguments that are passed in
   set(options QUIT_IF_BUILD_ERRORS)
-  cmake_parse_arguments(ign_configure_build "${options}" "" "" ${ARGN})
+  _ign_cmake_parse_arguments(ign_configure_build "${options}" "" "" ${ARGN})
 
   #============================================================================
   # Examine the build type. If we do not recognize the type, we will generate

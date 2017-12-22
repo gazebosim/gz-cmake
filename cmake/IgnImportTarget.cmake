@@ -53,7 +53,7 @@ macro(ign_import_target package)
 
   #------------------------------------
   # Parse the arguments
-  cmake_parse_arguments(ign_import_target "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  _ign_cmake_parse_arguments(ign_import_target "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   #------------------------------------
   # Check if a target name has been provided, otherwise use

@@ -35,7 +35,7 @@ macro(ign_configure_project)
 
   #------------------------------------
   # Parse the arguments
-  cmake_parse_arguments(ign_configure_project "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  _ign_cmake_parse_arguments(ign_configure_project "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   # Note: The following are automatically defined by project(~) in cmake v3:
   # PROJECT_NAME
