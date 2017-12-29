@@ -111,7 +111,7 @@ macro(ign_find_package PACKAGE_NAME)
 
   #------------------------------------
   # Parse the arguments
-  cmake_parse_arguments(ign_find_package "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  _ign_cmake_parse_arguments(ign_find_package "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   #------------------------------------
   # Construct the arguments to pass to find_package
@@ -305,7 +305,7 @@ macro(ign_string_append output_var val)
 
   #------------------------------------
   # Parse the arguments
-  cmake_parse_arguments(ign_string_append "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  _ign_cmake_parse_arguments(ign_string_append "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   if(ign_string_append_DELIM)
     set(delim "${ign_string_append_DELIM}")
@@ -420,7 +420,7 @@ function(ign_install_all_headers)
 
   #------------------------------------
   # Parse the arguments
-  cmake_parse_arguments(ign_install_all_headers "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  _ign_cmake_parse_arguments(ign_install_all_headers "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   #------------------------------------
   # Build list of directories
@@ -744,7 +744,7 @@ macro(ign_build_executables)
 
   #------------------------------------
   # Parse the arguments
-  cmake_parse_arguments(ign_build_executables "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  _ign_cmake_parse_arguments(ign_build_executables "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   foreach(exec_file ${ign_build_executables_SOURCES})
 
@@ -832,19 +832,31 @@ macro(ign_build_tests)
 
   #------------------------------------
   # Define the expected arguments
-  set(options)
+  set(options SOURCE) # NOTE: DO NOT USE "SOURCE", we're adding it here to catch typos
   set(oneValueArgs TYPE)
   set(multiValueArgs SOURCES LIB_DEPS INCLUDE_DIRS)
 
   #------------------------------------
   # Parse the arguments
-  cmake_parse_arguments(ign_build_tests "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  _ign_cmake_parse_arguments(ign_build_tests "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   if(NOT ign_build_tests_TYPE)
     # If you have encountered this error, you are probably migrating to the
     # new ignition-cmake system. Be sure to also provide a SOURCES argument
     # when calling ign_build_tests.
     message(FATAL_ERROR "Developer error: You must specify a TYPE for your tests!")
+  endif()
+
+  if(ign_build_tests_SOURCE)
+
+    # We have encountered cases where someone accidentally passes a SOURCE
+    # argument instead of a SOURCES argument into ign_build_tests, and the macro
+    # didn't report any problem with it. Adding this warning should make it more
+    # clear when that particular typo occurs.
+    message(AUTHOR_WARNING
+      "Your script has specified SOURCE for ign_build_tests, which is not an "
+      "option. Did you mean to specify SOURCES (note the plural)?")
+
   endif()
 
   set(TEST_TYPE ${ign_build_tests_TYPE})
@@ -930,5 +942,30 @@ macro(ign_set_project_public_cxx_standard standard)
 
 endmacro()
 
+#################################################
+# _ign_cmake_parse_arguments(<prefix> <options> <oneValueArgs> <multiValueArgs> [ARGN])
+#
+# Set <prefix> to match the prefix that is given to cmake_parse_arguments(~).
+# This should also match the name of the function or macro that called it.
+#
+# NOTE: This should only be used by functions inside of ign-cmake specifically.
+# Other ignition projects should not use this macro.
+#
+macro(_ign_cmake_parse_arguments prefix options oneValueArgs multiValueArgs)
 
+  cmake_parse_arguments(${prefix} "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
+  if(${prefix}_UNPARSED_ARGUMENTS)
+
+    # The user passed in some arguments that we don't currently recognize. We'll
+    # emit a warning so they can check whether they're using the correct version
+    # of ign-cmake.
+    message(AUTHOR_WARNING
+      "\nThe build script has specified some unrecognized arguments for ${prefix}(~):\n"
+      "${${prefix}_UNPARSED_ARGUMENTS}\n"
+      "Either the script has a typo, or it is using an unexpected version of ign-cmake. "
+      "The version of ign-cmake currently being used is ${ignition-cmake${IGNITION_CMAKE_VERSION_MAJOR}_VERSION}\n")
+
+  endif()
+
+endmacro()
