@@ -1,5 +1,3 @@
-# TODO: Write documentation for ignition-cmake
-
 set (files
   api.in
   cppreference.tag.xml
