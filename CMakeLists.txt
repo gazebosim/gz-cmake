@@ -107,3 +107,5 @@ if (BUILD_TESTING)
   endif()
   add_subdirectory(examples)
 endif()
+
+add_subdirectory(doc)

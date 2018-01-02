@@ -898,7 +898,7 @@ IMAGE_PATH             =
 # need to set EXTENSION_MAPPING for the extension otherwise the files are not
 # properly processed by doxygen.
 
-INPUT_FILTER           = "sed -e 's/ignition::@IGN_DESIGNATION@::\|IGN_DEPRECATED\(.*\)//g'"
+INPUT_FILTER           = "sed -e 's/ignition::@IGN_DESIGNATION@::\|IGN_DEPRECATED\(.*\)\|IGNITION_@IGN_DESIGNATION_UPPER@_VISIBLE//g'"
 
 # The FILTER_PATTERNS tag can be used to specify filters on a per file pattern
 # basis. Doxygen will compare the file name with each pattern and apply the

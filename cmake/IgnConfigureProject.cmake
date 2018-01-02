@@ -97,10 +97,6 @@ macro(ign_configure_project)
   ign_setup_packages()
 
   #============================================================================
-  # Create documentation
-  ign_create_docs()
-
-  #============================================================================
   # Initialize build errors/warnings
   # NOTE: We no longer use CACHE for these variables because it was set to
   # "INTERNAL", making it unnecessary to cache them. As long as this macro is
