@@ -1,3 +1,20 @@
+#===============================================================================
+# Copyright (C) 2018 Open Source Robotics Foundation
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+########################################
+
 #--------------------------------------
 # Find ogre
 # On Windows, we assume that all the OGRE* defines are passed in manually
@@ -35,43 +52,18 @@ if (OGRE_FOUND)
   ign_pkg_check_modules_quiet(OGRE-RTShaderSystem "OGRE-RTShaderSystem >= ${full_version}")
 
   if (OGRE-RTShaderSystem_FOUND)
-    set(ogre_ldflags ${OGRE-RTShaderSystem_LDFLAGS})
-    set(ogre_include_dirs ${OGRE-RTShaderSystem_INCLUDE_DIRS})
-    set(ogre_libraries ${OGRE-RTShaderSystem_LIBRARIES})
-    set(ogre_library_dirs ${OGRE-RTShaderSystem_LIBRARY_DIRS})
-    set(ogre_cflags ${OGRE-RTShaderSystem_CFLAGS})
-
-    set (INCLUDE_RTSHADER ON CACHE BOOL "Enable GPU shaders")
-  else ()
-    set (INCLUDE_RTSHADER OFF CACHE BOOL "Enable GPU shaders")
+    set(OGRE_LIBRARIES ${OGRE_LIBRARIES} OGRE-RTShaderSystem::OGRE-RTShaderSystem)
   endif ()
-
-  set(ogre_ldflags ${ogre_ldflags} ${OGRE_LDFLAGS})
-  set(ogre_include_dirs ${ogre_include_dirs} ${OGRE_INCLUDE_DIRS})
-  set(ogre_libraries ${ogre_libraries};${OGRE_LIBRARIES})
-  set(ogre_library_dirs ${ogre_library_dirs} ${OGRE_LIBRARY_DIRS})
-  set(ogre_cflags ${ogre_cflags} ${OGRE_CFLAGS})
 
   ign_pkg_check_modules_quiet(OGRE-Terrain OGRE-Terrain)
   if (OGRE-Terrain_FOUND)
-    set(ogre_ldflags ${ogre_ldflags} ${OGRE-Terrain_LDFLAGS})
-    set(ogre_include_dirs ${ogre_include_dirs} ${OGRE-Terrain_INCLUDE_DIRS})
-    set(ogre_libraries ${ogre_libraries};${OGRE-Terrain_LIBRARIES})
-    set(ogre_library_dirs ${ogre_library_dirs} ${OGRE-Terrain_LIBRARY_DIRS})
-    set(ogre_cflags ${ogre_cflags} ${OGRE-Terrain_CFLAGS})
+    set(OGRE_LIBRARIES ${OGRE_LIBRARIES} OGRE-Terrain::OGRE-Terrain)
   endif()
 
   ign_pkg_check_modules_quiet(OGRE-Overlay OGRE-Overlay)
   if (OGRE-Overlay_FOUND)
-    set(ogre_ldflags ${ogre_ldflags} ${OGRE-Overlay_LDFLAGS})
-    set(ogre_include_dirs ${ogre_include_dirs} ${OGRE-Overlay_INCLUDE_DIRS})
-    set(ogre_libraries ${ogre_libraries};${OGRE-Overlay_LIBRARIES})
-    set(ogre_library_dirs ${ogre_library_dirs} ${OGRE-Overlay_LIBRARY_DIRS})
-    set(ogre_cflags ${ogre_cflags} ${OGRE-Overlay_CFLAGS})
+    set(OGRE_LIBRARIES ${OGRE_LIBRARIES} OGRE-Overlay::OGRE-Overlay)
   endif()
-
-  set (OGRE_INCLUDE_DIRS ${ogre_include_dirs}
-       CACHE INTERNAL "Ogre include path")
 
   # Also find OGRE's plugin directory, which is provided in its .pc file as the
   # `plugindir` variable.  We have to call pkg-config manually to get it.
@@ -93,17 +85,5 @@ if (OGRE_FOUND)
   # Seems that OGRE_PLUGINDIR can end in a newline, which will cause problems when
   # we pass it to the compiler later.
   string(REPLACE "\n" "" OGRE_RESOURCE_PATH ${OGRE_RESOURCE_PATH})
-
-  message(STATUS "Looking for OGRE - found")
-  set(HAVE_OGRE true)
-  if(NOT OGRE_FIND_QUIETLY)
-    message(STATUS "Found OGRE: ${OGRE_LIBRARIES}")
-  endif(NOT OGRE_FIND_QUIETLY)
-
-else(OGRE_FOUND)
-
-  if(OGRE_FIND_REQUIRED)
-    message(FATAL_ERROR "Could not find OGRE")
-  endif(OGRE_FIND_REQUIRED)
 
 endif ()
