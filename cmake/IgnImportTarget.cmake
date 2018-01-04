@@ -53,7 +53,7 @@ macro(ign_import_target package)
 
   #------------------------------------
   # Parse the arguments
-  cmake_parse_arguments(ign_import_target "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  _ign_cmake_parse_arguments(ign_import_target "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   #------------------------------------
   # Check if a target name has been provided, otherwise use
@@ -107,14 +107,28 @@ macro(ign_import_target package)
         INTERFACE_LINK_LIBRARIES "${${ign_import_target_LIB_VAR}}")
     endif()
 
-    foreach(${package}_inc ${${ign_import_target_INCLUDE_VAR}})
-      set_target_properties(${target_name} PROPERTIES
-        INTERFACE_INCLUDE_DIRECTORIES "${${package}_inc}")
-    endforeach()
+    if(${ign_import_target_INCLUDE_VAR})
+      # TODO: In a later version of cmake, it should be possible to replace this
+      # with
+      #
+      # target_include_directories(${target_name} INTERFACE ${${ign_import_target_INCLUDE_VAR}})
+      #
+      # But this will not be possible until we are using whichever version of cmake
+      # the PR https://gitlab.kitware.com/cmake/cmake/merge_requests/1264
+      # is available for.
+      set_property(
+        TARGET ${target_name}
+        PROPERTY INTERFACE_INCLUDE_DIRECTORIES
+          ${${ign_import_target_INCLUDE_VAR}})
+    endif()
 
     if(${ign_import_target_CFLAGS_VAR})
-      set_target_properties(${target_name} PROPERTIES
-        INTERFACE_COMPILE_OPTIONS "${${ign_import_target_CFLAGS_VAR}}")
+      # TODO: See note above. We should eventually be able to replace this with
+      # target_compile_options(${target_name} INTERFACE ${${ign_import_target_CFLAGS_VAR}})
+      set_property(
+        TARGET ${target_name}
+        PROPERTY INTERFACE_COMPILE_OPTIONS
+          ${${ign_import_target_CFLAGS_VAR}})
     endif()
 
     # What about linker flags? Is there no target property for that?

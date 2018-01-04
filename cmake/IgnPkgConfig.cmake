@@ -137,6 +137,17 @@ macro(ign_pkg_config_library_entry package lib_name)
 
 endmacro()
 
+# This creates variables which inform ign_find_package(~) that your package must
+# be found as a plain library by pkg-config. This should be used in any
+# find-module that handles a library package which does not install a pkg-config
+# <package>.pc file.
+macro(ign_pkg_config_library_entry package lib_name)
+
+  set(${package}_PKGCONFIG_ENTRY "-l${lib_name}")
+  set(${package}_PKGCONFIG_TYPE PROJECT_PKGCONFIG_LIBS)
+
+endmacro()
+
 # Based on discussion here: https://cmake.org/Bug/view.php?id=15804
 # and a patch written by Sam Thursfield
 function(_ign_pkgconfig_find_libraries output_var package library_names library_dirs)

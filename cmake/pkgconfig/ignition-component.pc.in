@@ -4,7 +4,7 @@ includedir=${prefix}/@CMAKE_INSTALL_INCLUDEDIR@/ignition/@IGN_DESIGNATION@@PROJE
 
 Name: Ignition @IGN_DESIGNATION@ @component_name@
 Description: A set of @IGN_DESIGNATION@ @component_name@ classes for robot applications
-Version: @PROJECT_VERSION_FULL@
+Version: @PROJECT_VERSION_FULL_NO_SUFFIX@
 Requires: @component_pkgconfig_requires@
 Requires.private: @component_pkgconfig_requires_private@
 Libs: -L${libdir} -l@component_pkg_name@ @component_pkgconfig_libs@
