@@ -45,7 +45,7 @@ configure_package_config_file(
 # Configure and install the version file
 write_basic_package_version_file(
   ${CMAKE_CURRENT_BINARY_DIR}/${ign_version_output}
-  VERSION "${PROJECT_VERSION_FULL}"
+  VERSION "${PROJECT_VERSION_FULL_NO_SUFFIX}"
   COMPATIBILITY SameMajorVersion)
 
 install(
