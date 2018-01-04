@@ -68,6 +68,11 @@ macro(ign_configure_project)
   string(TOLOWER ${IGN_DESIGNATION} IGN_DESIGNATION_LOWER)
   string(TOUPPER ${IGN_DESIGNATION} IGN_DESIGNATION_UPPER)
 
+  string(SUBSTRING ${IGN_DESIGNATION} 0 1 IGN_DESIGNATION_FIRST_LETTER)
+  string(TOUPPER ${IGN_DESIGNATION_FIRST_LETTER} IGN_DESIGNATION_FIRST_LETTER)
+  string(REGEX REPLACE "^.(.*)" "${IGN_DESIGNATION_FIRST_LETTER}\\1"
+         IGN_DESIGNATION_CAP "${IGN_DESIGNATION}")
+
   set(PROJECT_EXPORT_NAME ${PROJECT_NAME_LOWER})
   set(PROJECT_LIBRARY_TARGET_NAME ${PROJECT_NAME_LOWER})
 
@@ -98,10 +103,6 @@ macro(ign_configure_project)
   #============================================================================
   # Create package information
   ign_setup_packages()
-
-  #============================================================================
-  # Create documentation
-  ign_create_docs()
 
   #============================================================================
   # Initialize build errors/warnings

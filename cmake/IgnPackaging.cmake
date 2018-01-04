@@ -145,6 +145,9 @@ macro(ign_setup_packages)
 endmacro()
 
 macro(ign_create_packages)
+  #============================================================================
+  # Create documentation.
+  ign_create_docs()
 
   #============================================================================
   # Configure the typical package configs for this project
