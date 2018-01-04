@@ -1093,7 +1093,7 @@ function(ign_add_component component_name)
     # NOTE: It seems we need to triple-escape "${ign_package_required}" and
     #       "${ign_package_quiet}" here.
     ign_string_append(${component_name}_CMAKE_DEPENDENCIES
-      "find_package(${PKG_NAME} ${PROJECT_VERSION_FULL_NO_SUFFIX} EXACT \\\${ign_package_quiet} \\\${ign_package_required})" DELIM "\n")
+      "if(NOT ${PKG_NAME}_CONFIG_INCLUDED)\n  find_package(${PKG_NAME} ${PROJECT_VERSION_FULL_NO_SUFFIX} EXACT \\\${ign_package_quiet} \\\${ign_package_required})\nendif()" DELIM "\n")
 
     # Choose what type of pkgconfig entry the main library belongs to
     set(lib_pkgconfig_type ${component_name}_PKGCONFIG_REQUIRES)

@@ -70,7 +70,13 @@ macro(ign_pkg_check_modules_quiet package)
 
   if(PKG_CONFIG_FOUND)
 
-    pkg_check_modules(${package} ${ARGN})
+    if(${package}_FIND_QUIETLY)
+      set(ign_pkg_check_modules_quiet_arg QUIET)
+    else()
+      set(ign_pkg_check_modules_quiet_arg)
+    endif()
+
+    pkg_check_modules(${package} ${ign_pkg_check_modules_quiet_arg} ${ARGN})
 
     # TODO: When we require cmake-3.6+, we should remove this procedure and just
     #       use the plain pkg_check_modules, which provides an option called

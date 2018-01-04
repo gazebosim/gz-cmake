@@ -22,6 +22,10 @@
 # of a caller.
 cmake_minimum_required(VERSION 3.5.1 FATAL_ERROR)
 
+if(NOT @PKG_NAME@_FIND_QUIETLY)
+  message(STATUS "Looking for @PKG_NAME@ -- found version @PROJECT_VERSION_FULL@")
+endif()
+
 if(@PKG_NAME@_CONFIG_INCLUDED)
 
   # Check that each of the components requested in this call to find_package(~)
@@ -74,6 +78,9 @@ endif()
 # TODO: When we migrate to cmake-3.9+, change these to find_dependency(~),
 #       because at that point the find_dependency(~) function will support
 #       the COMPONENT argument.
+if(NOT @PKG_NAME@_FIND_QUIETLY)
+  message(STATUS "Searching for dependencies of @PKG_NAME@")
+endif()
 @PROJECT_CMAKE_DEPENDENCIES@
 # --------------------------------
 

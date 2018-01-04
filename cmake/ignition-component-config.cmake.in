@@ -15,11 +15,16 @@
 # target_link_library(tgt ${@component_pkg_name@_LIBRARIES}), and your target
 # will also pull in the interface properties of the component, such as the
 # include directories, compile flags, etc.
+cmake_minimum_required(VERSION 3.5.1 FATAL_ERROR)
 
 if(@component_pkg_name@_CONFIG_INCLUDED)
   return()
 endif()
 set(@component_pkg_name@_CONFIG_INCLUDED TRUE)
+
+if(NOT @component_pkg_name@_FIND_QUIETLY)
+  message(STATUS "Looking for @component_pkg_name@ -- found version @PROJECT_VERSION_FULL@")
+endif()
 
 @PACKAGE_INIT@
 
@@ -55,6 +60,9 @@ endif()
 # TODO: When we migrate to cmake-3.9+, change these to find_dependency(~),
 #       because at that point the find_dependency(~) function will support
 #       the COMPONENT argument.
+if(NOT @component_pkg_name@_FIND_QUIETLY)
+  message(STATUS "Searching for dependencies of @component_pkg_name@")
+endif()
 @component_cmake_dependencies@
 # --------------------------------
 
