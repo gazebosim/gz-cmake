@@ -50,19 +50,18 @@ ign_pkg_check_modules_quiet(OGRE "OGRE >= ${full_version}")
 if (OGRE_FOUND)
 
   ign_pkg_check_modules_quiet(OGRE-RTShaderSystem "OGRE-RTShaderSystem >= ${full_version}")
-
   if (OGRE-RTShaderSystem_FOUND)
-    set(OGRE_LIBRARIES ${OGRE_LIBRARIES} OGRE-RTShaderSystem::OGRE-RTShaderSystem)
+    list(APPEND OGRE_LIBRARIES OGRE-RTShaderSystem::OGRE-RTShaderSystem)
   endif ()
 
   ign_pkg_check_modules_quiet(OGRE-Terrain OGRE-Terrain)
   if (OGRE-Terrain_FOUND)
-    set(OGRE_LIBRARIES ${OGRE_LIBRARIES} OGRE-Terrain::OGRE-Terrain)
+    list(APPEND OGRE_LIBRARIES OGRE-Terrain::OGRE-Terrain)
   endif()
 
   ign_pkg_check_modules_quiet(OGRE-Overlay OGRE-Overlay)
   if (OGRE-Overlay_FOUND)
-    set(OGRE_LIBRARIES ${OGRE_LIBRARIES} OGRE-Overlay::OGRE-Overlay)
+    list(APPEND OGRE_LIBRARIES OGRE-Overlay::OGRE-Overlay)
   endif()
 
   # Also find OGRE's plugin directory, which is provided in its .pc file as the
@@ -85,5 +84,4 @@ if (OGRE_FOUND)
   # Seems that OGRE_PLUGINDIR can end in a newline, which will cause problems when
   # we pass it to the compiler later.
   string(REPLACE "\n" "" OGRE_RESOURCE_PATH ${OGRE_RESOURCE_PATH})
-
 endif ()
