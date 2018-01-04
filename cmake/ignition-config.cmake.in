@@ -83,8 +83,8 @@ endif()
 
 # On windows we produce .dll libraries with no prefix
 if(WIN32)
- set(CMAKE_FIND_LIBRARY_PREFIXES "")
- set(CMAKE_FIND_LIBRARY_SUFFIXES ".lib" ".dll")
+  set(CMAKE_FIND_LIBRARY_PREFIXES "")
+  set(CMAKE_FIND_LIBRARY_SUFFIXES ".lib" ".dll")
 endif()
 
 # Package variables. Note that @PKG_NAME@_LIBRARIES merely contains an imported
@@ -109,10 +109,12 @@ foreach(component ${@PKG_NAME@_FIND_COMPONENTS})
   endif()
 
   if(@PKG_NAME@_FIND_REQUIRED_${component})
+
     # Find the component package using find_dependency(~). If the user specified
     # REQUIRED or QUIET, those will automatically get forwarded to
     # find_dependency(~)
     find_dependency(@PKG_NAME@-${component} @PROJECT_VERSION_FULL_NO_SUFFIX@ EXACT)
+
   else()
 
     # If this is an optional component, use find_package(~) instead of
