@@ -64,7 +64,6 @@ endif()
 
 set(@component_pkg_name@_LIBRARIES @import_target_name@)
 
-# These variables are used by ignition-cmake to automatically configure the
-# pkgconfig files for ignition projects.
-set(@component_pkg_name@_PKGCONFIG_ENTRY "@component_pkg_name@")
-set(@component_pkg_name@_PKGCONFIG_TYPE PROJECT_PKGCONFIG_REQUIRES)
+# This macro is used by ignition-cmake to automatically configure the pkgconfig
+# files for ignition projects.
+ign_pkg_config_entry(@component_pkg_name@ "@component_pkg_name@")
