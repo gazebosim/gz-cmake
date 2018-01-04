@@ -1093,7 +1093,7 @@ function(ign_add_component component_name)
     # NOTE: It seems we need to triple-escape "${ign_package_required}" and
     #       "${ign_package_quiet}" here.
     ign_string_append(${component_name}_CMAKE_DEPENDENCIES
-      "find_package(${PKG_NAME} ${PROJECT_VERSION_FULL} EXACT \\\${ign_package_quiet} \\\${ign_package_required})" DELIM "\n")
+      "find_package(${PKG_NAME} ${PROJECT_VERSION_FULL_NO_SUFFIX} EXACT \\\${ign_package_quiet} \\\${ign_package_required})" DELIM "\n")
 
     # Choose what type of pkgconfig entry the main library belongs to
     set(lib_pkgconfig_type ${component_name}_PKGCONFIG_REQUIRES)
@@ -1102,9 +1102,7 @@ function(ign_add_component component_name)
       set(lib_pkgconfig_type ${lib_pkgconfig_type}_PRIVATE)
     endif()
 
-    # TODO: Does pkg-config support prerelease versioning? If not, we cannot use
-    # PROJECT_VERSION_FULL here, so we'll spell out major.minor.patch instead.
-    ign_string_append(${lib_pkgconfig_type} "${PKG_NAME} = ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}")
+    ign_string_append(${lib_pkgconfig_type} "${PKG_NAME} = ${PROJECT_VERSION_FULL_NO_SUFFIX}")
 
   endif()
 
