@@ -281,7 +281,7 @@ function(_ign_create_cmake_package)
   # allow users of the library to specify the API or version to depend on
   write_basic_package_version_file(
     ${ign_version_output}
-    VERSION "${PROJECT_VERSION_FULL}"
+    VERSION "${PROJECT_VERSION_FULL_NO_SUFFIX}"
     COMPATIBILITY SameMajorVersion)
 
   # Install the configuration files to the configuration installation directory
