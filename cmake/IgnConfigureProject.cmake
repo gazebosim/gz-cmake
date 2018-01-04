@@ -71,11 +71,19 @@ macro(ign_configure_project)
   set(PROJECT_EXPORT_NAME ${PROJECT_NAME_LOWER})
   set(PROJECT_LIBRARY_TARGET_NAME ${PROJECT_NAME_LOWER})
 
+  # version <major>.<minor>
   set(PROJECT_VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
+
+  # version <major>.<minor>.<patch>
   set(PROJECT_VERSION_FULL
     ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH})
 
+  # The full version of the project, but without any prerelease suffix
+  set(PROJECT_VERSION_FULL_NO_SUFFIX ${PROJECT_VERSION_FULL})
+
   if(PROJECT_VERSION_SUFFIX)
+    # Append the prerelease suffix to PROJECT_VERSION_FULL if this has a suffix
+    # version <major>.<minor>.<patch>~<suffix>
     set(PROJECT_VERSION_FULL ${PROJECT_VERSION_FULL}~${PROJECT_VERSION_SUFFIX})
   endif()
 
