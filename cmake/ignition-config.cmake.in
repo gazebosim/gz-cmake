@@ -120,16 +120,7 @@ foreach(component ${@PKG_NAME@_FIND_COMPONENTS})
     # If this is an optional component, use find_package(~) instead of
     # find_dependency(~) so we can ensure that the use of REQUIRED does not get
     # forwarded to it.
-
-    # We must manually determine whether this call to find_package should be
-    # given a QUIET argument or not.
-    if(@PKG_NAME@_FIND_QUIETLY)
-      set(ign_quiet_arg QUIET)
-    else()
-      set(ign_quiet_arg)
-    endif()
-
-    find_package(@PKG_NAME@-${component} @PROJECT_VERSION_FULL_NO_SUFFIX@ EXACT ${ign_quiet_arg})
+    find_package(@PKG_NAME@-${component} @PROJECT_VERSION_FULL_NO_SUFFIX@ EXACT ${ign_package_quiet})
 
   endif()
 
