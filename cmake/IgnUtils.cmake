@@ -296,7 +296,7 @@ macro(ign_find_package PACKAGE_NAME)
       # ${component}_CMAKE_DEPENDENCIES variables that are specific to those
       # componenets
       foreach(component ${ign_find_package_REQUIRED_BY})
-        ign_string_append(${component}_CMAKE_DEPENDENCIES ${${PACKAGE_NAME}_find_dependency} DELIM "\n")
+        ign_string_append(${component}_CMAKE_DEPENDENCIES "${${PACKAGE_NAME}_find_dependency}" DELIM "\n")
       endforeach()
     endif()
 
