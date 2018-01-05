@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.5.1 FATAL_ERROR)
 #============================================================================
 # Initialize the project
 #============================================================================
-project(ignition-cmake0 VERSION 0.2.0)
+project(ignition-cmake0 VERSION 0.3.0)
 
 #--------------------------------------
 # Initialize the IGNITION_CMAKE_DIR variable with the location of the cmake
@@ -45,7 +45,7 @@ configure_package_config_file(
 # Configure and install the version file
 write_basic_package_version_file(
   ${CMAKE_CURRENT_BINARY_DIR}/${ign_version_output}
-  VERSION "${PROJECT_VERSION_FULL}"
+  VERSION "${PROJECT_VERSION_FULL_NO_SUFFIX}"
   COMPATIBILITY SameMajorVersion)
 
 install(
@@ -107,3 +107,5 @@ if (BUILD_TESTING)
   endif()
   add_subdirectory(examples)
 endif()
+
+add_subdirectory(doc)
