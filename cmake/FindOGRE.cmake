@@ -34,26 +34,19 @@ set(minor_version ${OGRE_FIND_VERSION_MINOR})
 # Set the full version number
 set(full_version ${major_version}.${minor_version})
 
-if (NOT WIN32)
-  execute_process(COMMAND pkg-config --modversion OGRE
-                  OUTPUT_VARIABLE OGRE_VERSION)
-  string(REPLACE "\n" "" OGRE_VERSION ${OGRE_VERSION})
-
-  string (REGEX REPLACE "^([0-9]+).*" "\\1"
-    OGRE_MAJOR_VERSION "${OGRE_VERSION}")
-  string (REGEX REPLACE "^[0-9]+\\.([0-9]+).*" "\\1"
-    OGRE_MINOR_VERSION "${OGRE_VERSION}")
-  string (REGEX REPLACE "^[0-9]+\\.[0-9]+\\.([0-9]+).*" "\\1"
-    OGRE_PATCH_VERSION ${OGRE_VERSION})
-
-  set(OGRE_VERSION
-    ${OGRE_MAJOR_VERSION}.${OGRE_MINOR_VERSION}.${OGRE_PATCH_VERSION})
-endif()
-
 ign_pkg_check_modules_quiet(OGRE "OGRE >= ${full_version}")
 
 if (OGRE_FOUND)
 
+  # set OGRE major, minor, and patch version number
+  string (REGEX REPLACE "^([0-9]+).*" "\\1"
+    OGRE_VERSION_MAJOR "${OGRE_VERSION}")
+  string (REGEX REPLACE "^[0-9]+\\.([0-9]+).*" "\\1"
+    OGRE_VERSION_MINOR "${OGRE_VERSION}")
+  string (REGEX REPLACE "^[0-9]+\\.[0-9]+\\.([0-9]+).*" "\\1"
+    OGRE_VERSION_PATCH ${OGRE_VERSION})
+
+  # find ogre components
   foreach(component ${OGRE_FIND_COMPONENTS})
     ign_pkg_check_modules_quiet(OGRE-${component} "OGRE-${component} >= ${full_version}")
     if(OGRE-${component}_FOUND)
