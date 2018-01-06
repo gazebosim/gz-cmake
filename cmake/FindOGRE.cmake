@@ -19,6 +19,11 @@
 # Find ogre
 # On Windows, we assume that all the OGRE* defines are passed in manually
 # to CMake.
+#
+# Example usage:
+# ign_find_package(OGRE
+#                  VERSION 1.8.0
+#                  COMPONENTS RTShaderSystem Terrain OVerlay)
 
 include(IgnPkgConfig)
 
@@ -49,20 +54,14 @@ ign_pkg_check_modules_quiet(OGRE "OGRE >= ${full_version}")
 
 if (OGRE_FOUND)
 
-  ign_pkg_check_modules_quiet(OGRE-RTShaderSystem "OGRE-RTShaderSystem >= ${full_version}")
-  if (OGRE-RTShaderSystem_FOUND)
-    list(APPEND OGRE_LIBRARIES OGRE-RTShaderSystem::OGRE-RTShaderSystem)
-  endif ()
-
-  ign_pkg_check_modules_quiet(OGRE-Terrain OGRE-Terrain)
-  if (OGRE-Terrain_FOUND)
-    list(APPEND OGRE_LIBRARIES OGRE-Terrain::OGRE-Terrain)
-  endif()
-
-  ign_pkg_check_modules_quiet(OGRE-Overlay OGRE-Overlay)
-  if (OGRE-Overlay_FOUND)
-    list(APPEND OGRE_LIBRARIES OGRE-Overlay::OGRE-Overlay)
-  endif()
+  foreach(component ${OGRE_FIND_COMPONENTS})
+    ign_pkg_check_modules_quiet(OGRE-${component} "OGRE-${component} >= ${full_version}")
+    if(OGRE-${component}_FOUND)
+      list(APPEND OGRE_LIBRARIES OGRE-${component}::OGRE-${component})
+    else()
+      set(OGRE_FOUND false)
+    endif()
+  endforeach()
 
   # Also find OGRE's plugin directory, which is provided in its .pc file as the
   # `plugindir` variable.  We have to call pkg-config manually to get it.
