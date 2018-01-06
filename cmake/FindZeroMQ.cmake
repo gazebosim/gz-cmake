@@ -54,102 +54,21 @@
 #  ZeroMQ_LIBRARIES          The ZeroMQ libraries
 #  ZeroMQ_INCLUDE_DIRS       The location of ZeroMQ headers
 
+# We initialize this variable to the default target name
+set(ZeroMQ_TARGET ZeroMQ::ZeroMQ)
+
 find_package(ZeroMQ CONFIG)
 if (ZeroMQ_FOUND)
-  include(IgnImportTarget)
-  ign_import_target(ZeroMQ
-    INCLUDE_VAR ZeroMQ_INCLUDE_DIR
-    LIB_VAR     ZeroMQ_LIBRARY)
+  
+  # ZeroMQ's cmake script imports its own target, so we'll
+  # overwrite the default with the name of theirs. In the
+  # future, we should be able to use a target alias instead.
+  set(ZeroMQ_TARGET libzmq)
   return()
+
 endif()
 
 if (UNIX)
   include(IgnPkgConfig)
   ign_pkg_check_modules(ZeroMQ "libzmq >= ${ZeroMQ_FIND_VERSION}")
-endif()
-
-if(MSVC)
-  #add in all the names it can have on windows
-  if(CMAKE_GENERATOR_TOOLSET MATCHES "v140" OR MSVC14)
-    set(_zmq_TOOLSET "-v140")
-  elseif(CMAKE_GENERATOR_TOOLSET MATCHES "v120" OR MSVC12)
-    set(_zmq_TOOLSET "-v120")
-  elseif(CMAKE_GENERATOR_TOOLSET MATCHES "v110_xp")
-    set(_zmq_TOOLSET "-v110_xp")
-  elseif(CMAKE_GENERATOR_TOOLSET MATCHES "v110" OR MSVC11)
-    set(_zmq_TOOLSET "-v110")
-  elseif(CMAKE_GENERATOR_TOOLSET MATCHES "v100" OR MSVC10)
-    set(_zmq_TOOLSET "-v100")
-  elseif(CMAKE_GENERATOR_TOOLSET MATCHES "v90" OR MSVC90)
-    set(_zmq_TOOLSET "-v90")
-  endif()
-
-  set(_zmq_versions "4_2_3" "4_2_2" "4_1_6" "4_1_4" "4_0_8" "4_0_4" "4_0_3" "4_0_2" "4_0_1" "4_0_0")
-  set(_zmq_release_names)
-  set(_zmq_debug_names)
-  foreach( ver ${_zmq_versions})
-    list(APPEND _zmq_release_names "libzmq${_zmq_TOOLSET}-mt-${ver}")
-    list(APPEND _zmq_debug_names "libzmq${_zmq_TOOLSET}-mt-gd-${ver}")
-  endforeach()
-
-  #now try to find the release and debug version
-  find_library(ZeroMQ_LIBRARY_RELEASE
-    NAMES ${_zmq_release_names} zmq libzmq
-    HINTS ${ZeroMQ_ROOT_DIR}/bin
-          ${ZeroMQ_ROOT_DIR}/lib
-    )
-
-  find_library(ZeroMQ_LIBRARY_DEBUG
-    NAMES ${_zmq_debug_names} zmq libzmq
-    HINTS ${ZeroMQ_ROOT_DIR}/bin
-          ${ZeroMQ_ROOT_DIR}/lib
-    )
-
-  if(ZeroMQ_LIBRARY_RELEASE AND ZeroMQ_LIBRARY_DEBUG)
-    set(ZeroMQ_LIBRARIES
-        debug ${ZeroMQ_LIBRARY_DEBUG}
-        optimized ${ZeroMQ_LIBRARY_RELEASE}
-        )
-  elseif(ZeroMQ_LIBRARY_RELEASE)
-    set(ZeroMQ_LIBRARIES ${ZeroMQ_LIBRARY_RELEASE})
-  elseif(ZeroMQ_LIBRARY_DEBUG)
-    set(ZeroMQ_LIBRARIES ${ZeroMQ_LIBRARY_DEBUG})
-  endif()
-
-
-  find_path(ZeroMQ_INCLUDE_DIRS
-    NAMES zmq.h
-    HINTS ${ZeroMQ_ROOT_DIR}/include
-  )
-
-  if(ZeroMQ_LIBRARIES AND ZeroMQ_INCLUDE_DIRS)
-
-    # TODO: Create a way for ign_import_target to support this edge-case.
-    add_library(ZeroMQ::ZeroMQ UNKNOWN IMPORTED)
-
-    # Note: We're setting IMPORTED_IMPLIB here because this is if(MSVC), and on
-    #       MSVC, the find_library(~) function only returns import library files
-    #       (.lib). Imported library files go into the IMPORTED_IMPLIB field.
-    set_target_properties(ZeroMQ::ZeroMQ
-      PROPERTIES IMPORTED_IMPLIB_DEBUG "${ZeroMQ_LIBRARY_DEBUG}")
-
-    set_target_properties(ZeroMQ::ZeroMQ
-      PROPERTIES IMPORTED_IMPLIB_RELEASE "${ZeroMQ_LIBRARY_RELEASE}")
-
-  endif()
-
-  include(FindPackageHandleStandardArgs)
-  find_package_handle_standard_args(ZeroMQ DEFAULT_MSG
-    ZeroMQ_LIBRARIES
-    ZeroMQ_INCLUDE_DIRS
-  )
-
-  mark_as_advanced(
-   ZeroMQ_ROOT_DIR
-   ZeroMQ_LIBRARIES
-   ZeroMQ_LIBRARY_DEBUG
-   ZeroMQ_LIBRARY_RELEASE
-   ZeroMQ_INCLUDE_DIRS
-  )
-
 endif()
