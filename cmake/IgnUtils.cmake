@@ -288,7 +288,7 @@ macro(ign_find_package PACKAGE_NAME)
 
     if(ign_find_package_REQUIRED)
       # If this is REQUIRED, add it to PROJECT_CMAKE_DEPENDENCIES
-      ign_string_append(PROJECT_CMAKE_DEPENDENCIES ${${PACKAGE_NAME}_find_dependency} DELIM "\n")
+      ign_string_append(PROJECT_CMAKE_DEPENDENCIES "${${PACKAGE_NAME}_find_dependency}" DELIM "\n")
     endif()
 
     if(ign_find_package_REQUIRED_BY)
