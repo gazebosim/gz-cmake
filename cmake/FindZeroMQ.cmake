@@ -59,7 +59,7 @@ set(ZeroMQ_TARGET ZeroMQ::ZeroMQ)
 
 find_package(ZeroMQ CONFIG)
 if (ZeroMQ_FOUND)
-  
+
   # ZeroMQ's cmake script imports its own target, so we'll
   # overwrite the default with the name of theirs. In the
   # future, we should be able to use a target alias instead.
