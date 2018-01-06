@@ -23,7 +23,7 @@
 # Example usage:
 # ign_find_package(OGRE
 #                  VERSION 1.8.0
-#                  COMPONENTS RTShaderSystem Terrain OVerlay)
+#                  COMPONENTS RTShaderSystem Terrain Overlay)
 
 include(IgnPkgConfig)
 
