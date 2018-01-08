@@ -59,7 +59,7 @@ include(IgnPkgConfig)
 # We initialize this variable to the default target name
 set(ZeroMQ_TARGET ZeroMQ::ZeroMQ)
 
-find_package(ZeroMQ CONFIG)
+find_package(ZeroMQ ${ZeroMQ_FIND_VERSION} QUIET CONFIG)
 if (ZeroMQ_FOUND)
 
   # ZeroMQ's cmake script imports its own target, so we'll
@@ -68,12 +68,18 @@ if (ZeroMQ_FOUND)
   set(ZeroMQ_TARGET libzmq)
 
   # Make sure to fill out the pkg-config information before quitting
-  ign_pkg_config_entry(ZeroMQ "libzmq >= ${ZeroMQ_FIND_VERSION_MAJOR}")
+  ign_pkg_config_entry(ZeroMQ "libzmq >= ${ZeroMQ_FIND_VERSION}")
 
   return()
 
 endif()
 
 if (UNIX)
-  ign_pkg_check_modules(ZeroMQ "libzmq >= ${ZeroMQ_FIND_VERSION_MAJOR}")
+
+  if(NOT ZeroMQ_FIND_QUIETLY)
+    message(STATUS "Config-file not installed for ZeroMQ -- checking for pkg-config")
+  endif()
+
+  ign_pkg_check_modules(ZeroMQ "libzmq >= ${ZeroMQ_FIND_VERSION}")
+
 endif()
