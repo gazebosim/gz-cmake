@@ -54,6 +54,8 @@
 #  ZeroMQ_LIBRARIES          The ZeroMQ libraries
 #  ZeroMQ_INCLUDE_DIRS       The location of ZeroMQ headers
 
+include(IgnPkgConfig)
+
 # We initialize this variable to the default target name
 set(ZeroMQ_TARGET ZeroMQ::ZeroMQ)
 
@@ -64,11 +66,14 @@ if (ZeroMQ_FOUND)
   # overwrite the default with the name of theirs. In the
   # future, we should be able to use a target alias instead.
   set(ZeroMQ_TARGET libzmq)
+
+  # Make sure to fill out the pkg-config information before quitting
+  ign_pkg_config_entry(ZeroMQ "libzmq >= ${ZeroMQ_FIND_VERSION_MAJOR}")
+
   return()
 
 endif()
 
 if (UNIX)
-  include(IgnPkgConfig)
-  ign_pkg_check_modules(ZeroMQ "libzmq >= ${ZeroMQ_FIND_VERSION}")
+  ign_pkg_check_modules(ZeroMQ "libzmq >= ${ZeroMQ_FIND_VERSION_MAJOR}")
 endif()
