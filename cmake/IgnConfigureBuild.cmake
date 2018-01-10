@@ -150,7 +150,7 @@ macro(ign_configure_build)
 
         set(skip_msg "Skipping the component [${component}]")
         if(${component}_MISSING_DEPS)
-          ign_append_string(skip_msg "because the following packages are missing: ${${component}_MISSING_DEPS}")
+          ign_string_append(skip_msg "because the following packages are missing: ${${component}_MISSING_DEPS}")
         endif()
 
         message(STATUS "${skip_msg}")
