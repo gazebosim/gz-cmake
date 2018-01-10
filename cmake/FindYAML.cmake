@@ -16,10 +16,10 @@
 ########################################
 # Find yaml.
 
-include(IgnPkgConfig)
-
-# Use pkg_check_modules to start
-ign_pkg_check_modules_quiet(YAML yaml-0.1)
+if (UNIX)
+  include(IgnPkgConfig)
+  ign_pkg_check_modules(YAML yaml-0.1)
+endif()
 
 # If that failed, then fall back to manual detection (necessary for MacOS)
 if(NOT YAML_FOUND)
