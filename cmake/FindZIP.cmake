@@ -26,7 +26,7 @@ if(NOT ZIP_FOUND)
     message(STATUS "Attempting manual search for zip")
   endif()
 
-  find_path(ZIP_INCLUDE_DIRS zip.h ${YAML_INCLUDE_DIRS} ENV CPATH)
+  find_path(ZIP_INCLUDE_DIRS zip.h ${ZIP_INCLUDE_DIRS} ENV CPATH)
   find_library(ZIP_LIBRARIES NAMES zip)
   set(ZIP_FOUND true)
 
