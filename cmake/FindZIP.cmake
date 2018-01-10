@@ -16,27 +16,31 @@
 ########################################
 # Find zip.
 
-if (UNIX)
-  include(IgnPkgConfig)
-  ign_pkg_check_modules(ZIP libzip)
-endif()
+include(IgnPkgConfig)
+ign_pkg_check_modules(ZIP libzip)
 
-# If that failed, then fall back to manual detection (necessary for MacOS)
+# If that failed, then fall back to manual detection.
 if(NOT ZIP_FOUND)
 
-  message(STATUS "Attempting manual search for zip")
+  if(NOT ZIP_FIND_QUIETLY)
+    message(STATUS "Attempting manual search for zip")
+  endif()
 
   find_path(ZIP_INCLUDE_DIRS zip.h ${YAML_INCLUDE_DIRS} ENV CPATH)
   find_library(ZIP_LIBRARIES NAMES zip)
   set(ZIP_FOUND true)
 
   if(NOT ZIP_INCLUDE_DIRS)
-    message(STATUS "Looking for zip headers - not found")
+    if(NOT ZIP_FIND_QUIETLY)
+      message(STATUS "Looking for zip headers - not found")
+    endif()
     set(ZIP_FOUND false)
   endif()
 
   if(NOT ZIP_LIBRARIES)
-    message (STATUS "Looking for zip library - not found")
+    if(NOT ZIP_FIND_QUIETLY)
+      message (STATUS "Looking for zip library - not found")
+    endif()
     set(ZIP_FOUND false)
   endif()
 
