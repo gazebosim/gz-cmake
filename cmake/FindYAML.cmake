@@ -16,38 +16,12 @@
 ########################################
 # Find yaml.
 
-if (UNIX)
-  include(IgnPkgConfig)
-  ign_pkg_check_modules(YAML yaml-0.1)
+set(yaml_quiet_arg)
+if(YAML_FIND_QUIETLY)
+  set(yaml_quiet_arg QUIET)
 endif()
 
-# If that failed, then fall back to manual detection (necessary for MacOS)
-if(NOT YAML_FOUND)
+find_package(yaml ${YAML_VERSION} CONFIG ${yaml_quiet_arg})
 
-  message(STATUS "Attempting manual search for yaml")
-
-  find_path(YAML_INCLUDE_DIRS yaml.h ${YAML_INCLUDE_DIRS} ENV CPATH)
-  find_library(YAML_LIBRARIES NAMES yaml)
-  set(YAML_FOUND true)
-
-  if(NOT YAML_INCLUDE_DIRS)
-    message(STATUS "Looking for yaml headers - not found")
-    set(YAML_FOUND false)
-  endif()
-
-  if(NOT YAML_LIBRARIES)
-    message (STATUS "Looking for yaml library - not found")
-    set(YAML_FOUND false)
-  endif()
-
-  if(YAML_FOUND)
-    include(IgnImportTarget)
-    ign_import_target(YAML)
-  endif()
-
-  include(FindPackageHandleStandardArgs)
-  find_package_handle_standard_args(
-    YAML
-    REQUIRED_VARS YAML_FOUND)
-
-endif()
+include(IgnPkgConfig)
+ign_pkg_config_entry(YAML "yaml >= 0.1")
