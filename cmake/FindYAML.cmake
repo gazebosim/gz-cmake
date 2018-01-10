@@ -21,7 +21,7 @@ if(YAML_FIND_QUIETLY)
   set(yaml_quiet_arg QUIET)
 endif()
 
-find_package(yaml ${YAML_VERSION} CONFIG ${yaml_quiet_arg})
+find_package(yaml CONFIG ${yaml_quiet_arg})
 
 include(IgnPkgConfig)
-ign_pkg_config_entry(YAML "yaml >= 0.1")
+ign_pkg_config_entry(YAML "yaml >= ${YAML_FIND_VERSION}")
