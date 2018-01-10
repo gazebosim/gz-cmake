@@ -10,6 +10,6 @@ cd /d %~dp0
 :: Create a build directory and configure
 md build
 cd build
-cmake .. -G "NMake Makefiles" -DCMAKE_INSTALL_PREFIX="%WORKSPACE_INSTALL_DIR%"
+cmake .. -G "NMake Makefiles" -DCMAKE_INSTALL_PREFIX="%WORKSPACE_INSTALL_DIR%" -DBUILD_TESTING:BOOL=False
 
 :: If the caller wants to build and/or install, they should do so after calling this script
