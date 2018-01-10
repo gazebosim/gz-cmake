@@ -16,10 +16,10 @@
 ########################################
 # Find zip.
 
-include(IgnPkgConfig)
-
-# Use pkg_check_modules to start
-ign_pkg_check_modules_quiet(ZIP libzip)
+if (UNIX)
+  include(IgnPkgConfig)
+  ign_pkg_check_modules(ZIP libzip)
+end if()
 
 # If that failed, then fall back to manual detection (necessary for MacOS)
 if(NOT ZIP_FOUND)
