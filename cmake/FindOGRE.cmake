@@ -31,6 +31,7 @@
 #  OGRE_VERSION_MAJOR      OGRE major version
 #  OGRE_VERSION_MINOR      OGRE minor version
 #  OGRE_VERSION_PATCH      OGRE patch version
+#  OGRE_RESOURCE_PATH      Path to ogre plugins directory
 #
 # On Windows, we assume that all the OGRE* defines are passed in manually
 # to CMake.
