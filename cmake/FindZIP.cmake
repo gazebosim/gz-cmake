@@ -17,7 +17,7 @@
 # Find zip.
 
 include(IgnPkgConfig)
-ign_pkg_check_modules(ZIP "libzip >= 1.0.1")
+ign_pkg_check_modules(ZIP libzip)
 
 # If that failed, then fall back to manual detection.
 if(NOT ZIP_FOUND)
