@@ -16,14 +16,32 @@
 ########################################
 
 #--------------------------------------
-# Find ogre
+# Find OGRE headers and libraries
+#
+# Usage of this module as follows:
+#
+#     ign_find_package(OGRE)
+#
+# Variables defined by this module:
+#
+#  OGRE_FOUND              System has OGRE libs/headers
+#  OGRE_LIBRARIES          The OGRE libraries
+#  OGRE_INCLUDE_DIRS       The location of OGRE headers
+#  OGRE_VERSION            Full OGRE version in the form of MAJOR.MINOR.PATCH
+#  OGRE_VERSION_MAJOR      OGRE major version
+#  OGRE_VERSION_MINOR      OGRE minor version
+#  OGRE_VERSION_PATCH      OGRE patch version
+#
 # On Windows, we assume that all the OGRE* defines are passed in manually
 # to CMake.
 #
+# Supports finding the following OGRE components: RTShaderSystem, Terrain, Overlay
+#
 # Example usage:
-# ign_find_package(OGRE
-#                  VERSION 1.8.0
-#                  COMPONENTS RTShaderSystem Terrain Overlay)
+#
+#     ign_find_package(OGRE
+#                      VERSION 1.8.0
+#                      COMPONENTS RTShaderSystem Terrain Overlay)
 
 include(IgnPkgConfig)
 
