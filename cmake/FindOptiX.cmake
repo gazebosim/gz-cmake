@@ -16,7 +16,24 @@
 ########################################
 
 # Modified from NVIDIA's FindOptiX.cmake distributed in its OptiX SDK
+# Usage of this module as follows:
+#
+#     ign_find_package(OptiX)
+#
+# Variable used by this module, which needs to be set before calling
+# find_package:
+#
+#  OPTIX_INSTALL_DIR         Set this variable to the root installation of
+#                            OptiX SDK
+#
+# Variables defined by this module:
+#
+#  OptiX_FOUND               System has OptiX libs/headers
+#  OptiX_LIBRARIES           The OptiX libraries
+#  OptiX_INCLUDE_DIRS        The location of OptiX headers
+#
 
+########################################
 #
 # Copyright (c) 2016, NVIDIA CORPORATION. All rights reserved.
 #
