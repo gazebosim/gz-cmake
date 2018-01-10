@@ -30,7 +30,9 @@ macro(ign_configure_build)
   #============================================================================
   # Parse the arguments that are passed in
   set(options QUIT_IF_BUILD_ERRORS)
-  _ign_cmake_parse_arguments(ign_configure_build "${options}" "" "" ${ARGN})
+  set(oneValueArgs)
+  set(multiValueArgs COMPONENTS)
+  cmake_parse_arguments(ign_configure_build "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   #============================================================================
   # Examine the build type. If we do not recognize the type, we will generate
@@ -106,11 +108,56 @@ macro(ign_configure_build)
 
 
     #--------------------------------------
-    # Add all the source code directories
+    # Add the source code directories of the main library
     add_subdirectory(src)
-    add_subdirectory(include)
+    _ign_find_include_script()
     add_subdirectory(test)
 
+    #--------------------------------------
+    # Add the source code directories of each component if they exist
+    foreach(component ${ign_configure_build_COMPONENTS})
+
+      if(NOT SKIP_${component})
+
+        if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/${component}/CMakeLists.txt")
+
+          # If the component's directory has a top-level CMakeLists.txt, use
+          # that.
+          add_subdirectory(${component})
+
+        else()
+
+          # If the component's directory does not have a top-level
+          # CMakeLists.txt, try to call the expected set of subdirectories
+          # individually. This saves us from needing to create very redundant
+          # CMakeLists.txt files that do nothing but redirect us to these
+          # subdirectories.
+
+          # Add the source files
+          if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/${component}/src/CMakeLists.txt")
+            add_subdirectory(${component}/src)
+          endif()
+
+          _ign_find_include_script(COMPONENT ${component})
+
+          # Add the tests
+          if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/${component}/test/CMakeLists.txt")
+            add_subdirectory(${component}/test)
+          endif()
+        endif()
+
+      else()
+
+        set(skip_msg "Skipping the component [${component}]")
+        if(${component}_MISSING_DEPS)
+          ign_append_string(skip_msg "because the following packages are missing: ${${component}_MISSING_DEPS}")
+        endif()
+
+        message(STATUS "${skip_msg}")
+
+      endif()
+
+    endforeach()
 
     #--------------------------------------
     # If we made it this far, the configuration was successful
@@ -184,6 +231,44 @@ macro(ign_set_cxx_feature_flags)
 
 
 endmacro()
+
+function(_ign_find_include_script)
+
+  #------------------------------------
+  # Define the expected arguments
+  set(options) # Unused
+  set(oneValueArgs COMPONENT)
+  set(multiValueArgs) # Unused
+
+  #------------------------------------
+  # Parse the arguments
+  cmake_parse_arguments(_ign_find_include_script "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+  #------------------------------------
+  # Set the starting point
+  set(include_start "${CMAKE_CURRENT_LIST_DIR}")
+
+  if(_ign_find_include_script_COMPONENT)
+    ign_string_append(include_start ${_ign_find_include_script_COMPONENT} DELIM "/")
+  endif()
+
+  # Check each level of depth to find the first CMakeLists.txt. This allows us
+  # to have custom behavior for each include directory structure while also
+  # allowing us to just have one leaf CMakeLists.txt file if a project doesn't
+  # need any custom configuration in its include directories.
+  if(EXISTS "${include_start}/include/CMakeLists.txt")
+    add_subdirectory("${include_start}/include")
+  elseif(EXISTS "${include_start}/include/ignition/CMakeLists.txt")
+    add_subdirectory("${include_start}/include/ignition")
+  elseif(EXISTS "${include_start}/include/ignition/${IGN_DESIGNATION}/CMakeLists.txt")
+    add_subdirectory("${include_start}/include/ignition/${IGN_DESIGNATION}")
+  else()
+    # TODO: Should we print a warning or a status message here to indicate that
+    # no script was found for the include directory? Perhaps not all projects
+    # will have one.
+  endif()
+
+endfunction()
 
 macro(ign_parse_build_type)
 

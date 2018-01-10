@@ -1,0 +1,77 @@
+# - Config file for the @component_pkg_name@ component
+#
+# This should only be invoked by @PKG_NAME@-config.cmake.
+#
+# To load this component into your project, use:
+# find_package(@PKG_NAME@ COMPONENTS @component_name@)
+#
+# That will define the following variables:
+#
+#  @component_pkg_name@_FOUND        - The system has @component_pkg_name@
+#  @component_pkg_name@_LIBRARIES    - Libraries for this component
+#
+# The variable @component_pkg_name@_LIBRARIES will contain an imported target
+# for this component library, so no other variables are necessary. Simply use
+# target_link_library(tgt ${@component_pkg_name@_LIBRARIES}), and your target
+# will also pull in the interface properties of the component, such as the
+# include directories, compile flags, etc.
+cmake_minimum_required(VERSION 3.5.1 FATAL_ERROR)
+
+if(@component_pkg_name@_CONFIG_INCLUDED)
+  return()
+endif()
+set(@component_pkg_name@_CONFIG_INCLUDED TRUE)
+
+if(NOT @component_pkg_name@_FIND_QUIETLY)
+  message(STATUS "Looking for @component_pkg_name@ -- found version @PROJECT_VERSION_FULL@")
+endif()
+
+@PACKAGE_INIT@
+
+# Get access to the find_dependency utility
+include(CMakeFindDependencyMacro)
+
+# Find ignition-cmake, because we need its modules in order to find the rest of
+# our dependencies.
+find_dependency(ignition-cmake@IGNITION_CMAKE_VERSION_MAJOR@)
+
+# Set the REQUIRED flag for the find_package(~) calls on this component's
+# dependencies.
+if(@component_pkg_name@_FIND_REQUIRED)
+  set(ign_package_required REQUIRED)
+else()
+  set(ign_package_required "")
+endif()
+
+# Set the QUIET flag for the find_package(~) calls on this component's
+# dependencies.
+if(@component_pkg_name@_FIND_QUIETLY)
+  set(ign_package_quiet QUIET)
+else()
+  set(ign_package_quiet "")
+endif()
+
+# --------------------------------
+# Find the dependencies that are specific to this component (if nothing is
+# below, then the component has no additional dependencies). We use
+# find_package(~) instead of find_dependency(~) here so that we can support
+# COMPONENT arguments.
+#
+# TODO: When we migrate to cmake-3.9+, change these to find_dependency(~),
+#       because at that point the find_dependency(~) function will support
+#       the COMPONENT argument.
+if(NOT @component_pkg_name@_FIND_QUIETLY)
+  message(STATUS "Searching for dependencies of @component_pkg_name@")
+endif()
+@component_cmake_dependencies@
+# --------------------------------
+
+if(NOT TARGET @import_target_name@)
+  include("${CMAKE_CURRENT_LIST_DIR}/@target_output_filename@")
+endif()
+
+set(@component_pkg_name@_LIBRARIES @import_target_name@)
+
+# This macro is used by ignition-cmake to automatically configure the pkgconfig
+# files for ignition projects.
+ign_pkg_config_entry(@component_pkg_name@ "@component_pkg_name@")

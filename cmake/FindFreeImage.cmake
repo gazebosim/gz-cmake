@@ -28,13 +28,15 @@ ign_pkg_config_library_entry(FreeImage freeimage)
 
 # If we don't have PkgConfig, or if PkgConfig failed, then do a manual search
 if(NOT FreeImage_FOUND)
-  message(STATUS "FreeImage.pc not found, we will search for "
-                 "FreeImage_INCLUDE_DIRS and FreeImage_LIBRARIES")
 
   find_path(FreeImage_INCLUDE_DIRS FreeImage.h)
   if(NOT FreeImage_INCLUDE_DIRS)
-    message(STATUS "Looking for FreeImage.h - not found")
-    message(STATUS "Missing: Unable to find FreeImage.h")
+
+    if(NOT FreeImage_FIND_QUIETLY)
+      message(STATUS "Looking for FreeImage.h - not found")
+      message(STATUS "Missing: Unable to find FreeImage.h")
+    endif()
+
   else(NOT FreeImage_INCLUDE_DIRS)
     # Check the FreeImage header for the right version
     set(testFreeImageSource ${CMAKE_CURRENT_BINARY_DIR}/CMakeTmp/test_freeimage.cc)
@@ -52,21 +54,30 @@ if(NOT FreeImage_FOUND)
             COMPILE_OUTPUT_VARIABLE FreeImage_compile_output)
 
     if(NOT FREEIMAGE_COMPILES)
-      message(STATUS "FreeImage test failed to compile - This may indicate a build system bug")
+
+      if(NOT FreeImage_FIND_QUIETLY)
+        message(STATUS "FreeImage test failed to compile - This may indicate a build system bug")
+      endif()
+
       return()
+
     endif(NOT FREEIMAGE_COMPILES)
 
     if(NOT FREEIMAGE_RUNS)
-      message(STATUS "Invalid FreeImage Version. Requires ${major_version}.${minor_version}")
+      if(NOT FreeImage_FIND_QUIETLY)
+        message(STATUS "Invalid FreeImage Version. Requires ${major_version}.${minor_version}")
+      endif()
     endif(NOT FREEIMAGE_RUNS)
+
   endif(NOT FreeImage_INCLUDE_DIRS)
 
   find_library(FreeImage_LIBRARIES freeimage)
   if(FreeImage_LIBRARIES)
     set(FreeImage_FOUND true)
   else()
-    set("Looking for libfreeimage - not found")
-    message(STATUS "Missing: Unable to find libfreeimage")
+    if(NOT FreeImage_FIND_QUIELTY)
+      message(STATUS "Missing: Unable to find libfreeimage")
+    endif()
   endif(FreeImage_LIBRARIES)
 
   if(FreeImage_FOUND)
@@ -74,5 +85,10 @@ if(NOT FreeImage_FOUND)
     include(IgnImportTarget)
     ign_import_target(FreeImage)
   endif()
+
+  include(FindPackageHandleStandardArgs)
+  find_package_handle_standard_args(
+    FreeImage
+    REQUIRED_VARS FreeImage_FOUND)
 
 endif()

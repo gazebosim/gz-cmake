@@ -56,19 +56,37 @@ set(DL_FOUND true)
 # Search for the header
 find_path(DL_INCLUDE_DIRS dlfcn.h)
 if(DL_INCLUDE_DIRS)
-  message(STATUS "Looking for dlfcn.h - found")
+
+  if(NOT DL_FIND_QUIETLY)
+    message(STATUS "Looking for dlfcn.h - found")
+  endif()
+
 else(DL_INCLUDE_DIRS)
-  message(STATUS "Looking for dlfcn.h - not found")
+
+  if(NOT DL_FIND_QUIETLY)
+    message(STATUS "Looking for dlfcn.h - not found")
+  endif()
+
   set(DL_FOUND false)
+
 endif()
 
 # Search for the library
 find_library(DL_LIBRARIES dl)
 if(DL_LIBRARIES)
-  message(STATUS "Looking for libdl - found")
+
+  if(NOT DL_FIND_QUIETLY)
+    message(STATUS "Looking for libdl - found")
+  endif()
+
 else(DL_LIBRARIES)
-  message(STATUS "Looking for libdl - not found")
+
+  if(NOT DL_FIND_QUIETLY)
+    message(STATUS "Looking for libdl - not found")
+  endif()
+
   set(DL_FOUND false)
+
 endif()
 
 if(DL_FOUND)
