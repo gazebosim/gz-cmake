@@ -18,55 +18,23 @@
 #
 # Usage of this module as follows:
 #
-#     find_package(CURL)
+#     find_package(IgnCURL)
 #
 # Variables defined by this module:
 #
-#  CURL_FOUND              System has CURL libs/headers
-#  CURL_INCLUDE_DIRS       The location of CURL headers
-#  CURL_LIBRARIES          The CURL libraries
+#  IgnCURL_FOUND              System has CURL libs/headers
+#  IgnCURL_INCLUDE_DIRS       The location of CURL headers
+#  IgnCURL_LIBRARIES          The CURL libraries
+#  IgnCURL_VERSION            The version of CURL found
 
-find_package(curl ${CURL_VERSION} CONFIG QUIET)
-include(IgnPkgConfig)
-
-if(CURL_FOUND)
-  ign_pkg_config_entry(CURL "curl = ${CURL_VERSION}")
-else()
-  ign_pkg_check_modules(CURL libcurl)
-
-  # If that failed, then fall back to manual detection.
-  if(NOT CURL_FOUND)
-
-    if(NOT CURL_FIND_QUIETLY)
-      message(STATUS "Attempting manual search for curl")
-    endif()
-
-    find_path(CURL_INCLUDE_DIRS curl.h ${CURL_INCLUDE_DIRS} ENV CPATH)
-    find_library(CURL_LIBRARIES NAMES curl)
-    set(CURL_FOUND true)
-
-    if(NOT CURL_INCLUDE_DIRS)
-      if(NOT CURL_FIND_QUIETLY)
-        message(STATUS "Looking for curl headers - not found")
-      endif()
-      set(CURL_FOUND false)
-    endif()
-
-    if(NOT CURL_LIBRARIES)
-      if(NOT CURL_FIND_QUIETLY)
-        message (STATUS "Looking for curl library - not found")
-      endif()
-      set(CURL_FOUND false)
-    endif()
-
-    if(CURL_FOUND)
-      include(IgnImportTarget)
-      ign_import_target(CURL)
-    endif()
-
-    include(FindPackageHandleStandardArgs)
-    find_package_handle_standard_args(
-      CURL
-      REQUIRED_VARS CURL_FOUND)
-  endif()
+set(ign_quiet_arg)
+if(IgnCURL_FIND_QUIETLY)
+  set(ign_quiet_arg QUIET)
 endif()
+
+find_package(CURL ${IgnCURL_VERSION} ${ign_quiet_arg})
+
+set(IgnCURL_FOUND ${CURL_FOUND})
+
+include(IgnPkgConfig)
+ign_pkg_config_entry(IgnCURL "libcurl >= ${IgnCURL_VERSION}")
