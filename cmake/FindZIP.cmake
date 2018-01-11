@@ -15,6 +15,16 @@
 #
 ########################################
 # Find zip.
+#
+# Usage of this module as follows:
+#
+#     find_package(ZIP)
+#
+# Variables defined by this module:
+#
+#  ZIP_FOUND              System has ZIP libs/headers
+#  ZIP_LIBRARIES          The ZIP libraries
+#  ZIP_INCLUDE_DIRS       The location of ZIP headers
 
 include(IgnPkgConfig)
 ign_pkg_check_modules(ZIP libzip)
