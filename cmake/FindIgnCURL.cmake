@@ -48,7 +48,6 @@ if(${IgnCURL_FOUND})
 
   if(NOT TARGET curl::curl)
     ign_import_target(curl
-      TARGET_NAME IgnCURL::IgnCURL
       LIB_VAR CURL_LIBRARIES
       INCLUDE_VAR CURL_INCLUDE_DIRS)
   endif()
