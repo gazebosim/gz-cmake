@@ -23,8 +23,8 @@
 # Variables defined by this module:
 #
 #  YAML_FOUND              System has YAML libs/headers
-#  YAML_LIBRARIES          The YAML libraries
 #  YAML_INCLUDE_DIRS       The location of YAML headers
+#  YAML_LIBRARIES          The YAML libraries
 
 find_package(yaml ${YAML_VERSION} CONFIG QUIET)
 include(IgnPkgConfig)
