@@ -22,6 +22,8 @@
 #
 # Variables defined by this module:
 #
+#  curl::curl                 Imported target for libcurl
+#
 #  IgnCURL_FOUND              System has CURL libs/headers
 #  IgnCURL_INCLUDE_DIRS       The location of CURL headers
 #  IgnCURL_LIBRARIES          The CURL libraries
