@@ -36,5 +36,24 @@ find_package(CURL ${IgnCURL_VERSION} ${ign_quiet_arg})
 
 set(IgnCURL_FOUND ${CURL_FOUND})
 
-include(IgnPkgConfig)
-ign_pkg_config_entry(IgnCURL "libcurl >= ${IgnCURL_VERSION}")
+if(${IgnCURL_FOUND})
+
+  set(IgnCURL_INCLUDE_DIRS ${CURL_INCLUDE_DIRS})
+  set(IgnCURL_LIBRARIES ${CURL_LIBRARIES})
+  set(IgnCURL_VERSION ${CURL_VERSION_STRING})
+
+  # Older versions of curl don't create imported targets, so we will create
+  # them here if they have not been provided.
+  include(IgnImportTarget)
+
+  if(NOT TARGET curl::curl)
+    ign_import_target(curl
+      TARGET_NAME IgnCURL::IgnCURL
+      LIB_VAR CURL_LIBRARIES
+      INCLUDE_VAR CURL_INCLUDE_DIRS)
+  endif()
+
+  include(IgnPkgConfig)
+  ign_pkg_config_entry(IgnCURL "libcurl >= ${IgnCURL_VERSION}")
+
+endif()
