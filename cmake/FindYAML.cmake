@@ -29,7 +29,7 @@
 #  YAML_LIBRARIES          The YAML libraries
 
 
-if(YAML_FIND_VERSION AND NOT ${YAML_FIND_VERSION} STREQUAL "0.1")
+if(YAML_FIND_VERSION AND NOT YAML_FIND_VERSION VERSION_EQUAL "0.1")
   message(WARNING "FindYAML only knows how to find version 0.1 "
   " but you requested version ${YAML_FIND_VERSION}.")
 else()
