@@ -15,13 +15,18 @@
 #
 ########################################
 # Find yaml.
+#
+# Usage of this module as follows:
+#
+#     find_package(YAML)
+#
+# Variables defined by this module:
+#
+#  YAML_FOUND              System has YAML libs/headers
+#  YAML_LIBRARIES          The YAML libraries
+#  YAML_INCLUDE_DIRS       The location of YAML headers
 
-set(yaml_quiet_arg)
-if(YAML_FIND_QUIETLY)
-  set(yaml_quiet_arg QUIET)
-endif()
-
-find_package(yaml ${YAML_VERSION} CONFIG ${yaml_quiet_arg})
+find_package(yaml ${YAML_VERSION} CONFIG QUIET)
 include(IgnPkgConfig)
 
 if(YAML_FOUND)
