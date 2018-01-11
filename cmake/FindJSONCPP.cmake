@@ -32,7 +32,7 @@ include(IgnPkgConfig)
 if(JSONCPP_FOUND)
   ign_pkg_config_entry(JSONCPP "jsoncpp = ${JSONCPP_VERSION}")
 else()
-  ign_pkg_check_modules(JSONCPP jsoncpp)
+  ign_pkg_check_modules(JSONCPP "jsoncpp = ${JSONCPP_VERSION}")
 
   # If that failed, then fall back to manual detection.
   if(NOT JSONCPP_FOUND)
