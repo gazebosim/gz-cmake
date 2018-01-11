@@ -31,7 +31,7 @@
 
 if(YAML_FIND_VERSION AND NOT YAML_FIND_VERSION VERSION_EQUAL "0.1")
   message(WARNING "FindYAML only knows how to find version 0.1 "
-  " but you requested version ${YAML_FIND_VERSION}.")
+                  "but you requested version ${YAML_FIND_VERSION}.")
 else()
   include(IgnPkgConfig)
   ign_pkg_check_modules(YAML yaml-0.1)
