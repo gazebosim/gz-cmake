@@ -25,14 +25,48 @@
 #  JSONCPP_FOUND              System has JSONCPP libs/headers
 #  JSONCPP_INCLUDE_DIRS       The location of JSONCPP headers
 #  JSONCPP_LIBRARIES          The JSONCPP libraries
-#  JSONCPP_VERSION            The library version
 
-set(jsoncpp_quiet_arg)
-if(JSONCPP_FIND_QUIETLY)
-  set(jsoncpp_quiet_arg QUIET)
-endif()
-
-find_package(jsoncpp ${JSONCPP_VERSION} CONFIG ${jsoncpp_quiet_arg})
-
+find_package(jsoncpp ${JSONCPP_VERSION} CONFIG QUIET)
 include(IgnPkgConfig)
-ign_pkg_config_entry(JSONCPP "jsoncpp = ${JSONCPP_VERSION}")
+
+if(JSONCPP_FOUND)
+  ign_pkg_config_entry(JSONCPP "jsoncpp = ${JSONCPP_VERSION}")
+else()
+  ign_pkg_check_modules(JSONCPP jsoncpp)
+
+  # If that failed, then fall back to manual detection.
+  if(NOT JSONCPP_FOUND)
+
+    if(NOT JSONCPP_FIND_QUIETLY)
+      message(STATUS "Attempting manual search for jsoncpp")
+    endif()
+
+    find_path(JSONCPP_INCLUDE_DIRS json.h ${JSONCPP_INCLUDE_DIRS} ENV CPATH)
+    find_library(JSONCPP_LIBRARIES NAMES jsoncpp)
+    set(JSONCPP_FOUND true)
+
+    if(NOT JSONCPP_INCLUDE_DIRS)
+      if(NOT JSONCPP_FIND_QUIETLY)
+        message(STATUS "Looking for jsoncpp headers - not found")
+      endif()
+      set(JSONCPP_FOUND false)
+    endif()
+
+    if(NOT JSONCPP_LIBRARIES)
+      if(NOT JSONCPP_FIND_QUIETLY)
+        message (STATUS "Looking for jsoncpp library - not found")
+      endif()
+      set(JSONCPP_FOUND false)
+    endif()
+
+    if(JSONCPP_FOUND)
+      include(IgnImportTarget)
+      ign_import_target(JSONCPP)
+    endif()
+
+    include(FindPackageHandleStandardArgs)
+    find_package_handle_standard_args(
+      JSONCPP
+      REQUIRED_VARS JSONCPP_FOUND)
+  endif()
+endif()
