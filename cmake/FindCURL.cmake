@@ -23,8 +23,8 @@
 # Variables defined by this module:
 #
 #  CURL_FOUND              System has CURL libs/headers
-#  CURL_LIBRARIES          The CURL libraries
 #  CURL_INCLUDE_DIRS       The location of CURL headers
+#  CURL_LIBRARIES          The CURL libraries
 
 find_package(curl ${CURL_VERSION} CONFIG QUIET)
 include(IgnPkgConfig)
