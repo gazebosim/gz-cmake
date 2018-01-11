@@ -28,46 +28,47 @@
 #  YAML_INCLUDE_DIRS       The location of YAML headers
 #  YAML_LIBRARIES          The YAML libraries
 
-set(ign_yaml_version 0.1)
-if (YAML_VERSION)
-  set(ign_yaml_version ${YAML_VERSION})
-endif()
 
-include(IgnPkgConfig)
-ign_pkg_check_modules(YAML yaml-${ign_yaml_version})
+if(YAML_FIND_VERSION AND NOT ${YAML_FIND_VERSION} STREQUAL "0.1")
+  message(WARNING "FindYAML only knows how to find version 0.1 "
+  " but you requested version ${YAML_FIND_VERSION}.")
+else()
+  include(IgnPkgConfig)
+  ign_pkg_check_modules(YAML yaml-0.1)
 
-# If that failed, then fall back to manual detection.
-if(NOT YAML_FOUND)
+  # If that failed, then fall back to manual detection.
+  if(NOT YAML_FOUND)
 
-  if(NOT YAML_FIND_QUIETLY)
-    message(STATUS "Attempting manual search for yaml")
-  endif()
-
-  find_path(YAML_INCLUDE_DIRS yaml.h ${YAML_INCLUDE_DIRS} ENV CPATH)
-  find_library(YAML_LIBRARIES NAMES yaml)
-  set(YAML_FOUND true)
-
-  if(NOT YAML_INCLUDE_DIRS)
     if(NOT YAML_FIND_QUIETLY)
-      message(STATUS "Looking for yaml headers - not found")
+      message(STATUS "Attempting manual search for yaml")
     endif()
-    set(YAML_FOUND false)
-  endif()
 
-  if(NOT YAML_LIBRARIES)
-    if(NOT YAML_FIND_QUIETLY)
-      message (STATUS "Looking for yaml library - not found")
+    find_path(YAML_INCLUDE_DIRS yaml.h ${YAML_INCLUDE_DIRS} ENV CPATH)
+    find_library(YAML_LIBRARIES NAMES yaml)
+    set(YAML_FOUND true)
+
+    if(NOT YAML_INCLUDE_DIRS)
+      if(NOT YAML_FIND_QUIETLY)
+        message(STATUS "Looking for yaml headers - not found")
+      endif()
+      set(YAML_FOUND false)
     endif()
-    set(YAML_FOUND false)
-  endif()
 
-  if(YAML_FOUND)
-    include(IgnImportTarget)
-    ign_import_target(YAML)
-  endif()
+    if(NOT YAML_LIBRARIES)
+      if(NOT YAML_FIND_QUIETLY)
+        message (STATUS "Looking for yaml library - not found")
+      endif()
+      set(YAML_FOUND false)
+    endif()
 
-  include(FindPackageHandleStandardArgs)
-  find_package_handle_standard_args(
-    YAML
-    REQUIRED_VARS YAML_FOUND)
+    if(YAML_FOUND)
+      include(IgnImportTarget)
+      ign_import_target(YAML)
+    endif()
+
+    include(FindPackageHandleStandardArgs)
+    find_package_handle_standard_args(
+      YAML
+      REQUIRED_VARS YAML_FOUND)
+  endif()
 endif()
