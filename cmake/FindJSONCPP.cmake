@@ -25,14 +25,16 @@
 #  JSONCPP_FOUND              System has JSONCPP libs/headers
 #  JSONCPP_INCLUDE_DIRS       The location of JSONCPP headers
 #  JSONCPP_LIBRARIES          The JSONCPP libraries
+#  JSONCPP_TARGET             Imported target for libjsoncpp
 
-find_package(jsoncpp ${JSONCPP_VERSION} CONFIG QUIET)
+find_package(jsoncpp CONFIG QUIET)
+set(JSONCPP_TARGET jsoncpp_lib)
 include(IgnPkgConfig)
 
 if(JSONCPP_FOUND)
-  ign_pkg_config_entry(JSONCPP "jsoncpp = ${JSONCPP_VERSION}")
+  ign_pkg_config_entry(JSONCPP)
 else()
-  ign_pkg_check_modules(JSONCPP "jsoncpp = ${JSONCPP_VERSION}")
+  ign_pkg_check_modules(JSONCPP)
 
   # If that failed, then fall back to manual detection.
   if(NOT JSONCPP_FOUND)
@@ -62,6 +64,7 @@ else()
     if(JSONCPP_FOUND)
       include(IgnImportTarget)
       ign_import_target(JSONCPP)
+      set(JSONCPP_TARGET JSONCPP::JSONCPP)
     endif()
 
     include(FindPackageHandleStandardArgs)
