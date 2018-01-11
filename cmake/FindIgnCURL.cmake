@@ -34,7 +34,7 @@ if(IgnCURL_FIND_QUIETLY)
   set(ign_quiet_arg QUIET)
 endif()
 
-find_package(CURL ${IgnCURL_VERSION} ${ign_quiet_arg})
+find_package(CURL ${IgnCURL_FIND_VERSION} ${ign_quiet_arg})
 
 set(IgnCURL_FOUND ${CURL_FOUND})
 
@@ -42,7 +42,7 @@ if(${IgnCURL_FOUND})
 
   set(IgnCURL_INCLUDE_DIRS ${CURL_INCLUDE_DIRS})
   set(IgnCURL_LIBRARIES ${CURL_LIBRARIES})
-  set(IgnCURL_VERSION ${CURL_VERSION_STRING})
+  set(IgnCURL_VERSION ${IgnCURL_FIND_VERSION})
 
   # Older versions of curl don't create imported targets, so we will create
   # them here if they have not been provided.
@@ -55,6 +55,6 @@ if(${IgnCURL_FOUND})
   endif()
 
   include(IgnPkgConfig)
-  ign_pkg_config_entry(IgnCURL "libcurl >= ${IgnCURL_VERSION}")
+  ign_pkg_config_entry(IgnCURL "libcurl >= ${IgnCURL_FIND_VERSION}")
 
 endif()
