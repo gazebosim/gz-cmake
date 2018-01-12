@@ -42,7 +42,7 @@ if(${IgnCURL_FOUND})
 
   set(IgnCURL_INCLUDE_DIRS ${CURL_INCLUDE_DIRS})
   set(IgnCURL_LIBRARIES ${CURL_LIBRARIES})
-  set(IgnCURL_VERSION ${IgnCURL_FIND_VERSION})
+  set(IgnCURL_VERSION ${CURL_VERSION_STRING})
 
   # Older versions of curl don't create imported targets, so we will create
   # them here if they have not been provided.
