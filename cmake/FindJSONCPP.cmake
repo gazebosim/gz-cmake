@@ -47,7 +47,7 @@ else()
         message(STATUS "Attempting manual search for jsoncpp")
       endif()
 
-      find_path(JSONCPP_INCLUDE_DIRS json.h ${JSONCPP_INCLUDE_DIRS} ENV CPATH)
+      find_path(JSONCPP_INCLUDE_DIRS json/json.h ${JSONCPP_INCLUDE_DIRS} ENV CPATH)
       find_library(JSONCPP_LIBRARIES NAMES jsoncpp)
       set(JSONCPP_FOUND true)
 
