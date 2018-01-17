@@ -80,6 +80,7 @@ else()
       message(STATUS "Assuming libyaml is static, defining YAML_DECLARE_STATIC")
       set_target_properties(YAML::YAML PROPERTIES
         INTERFACE_COMPILE_DEFINITIONS "YAML_DECLARE_STATIC"
+      )
     endif()
 
     include(FindPackageHandleStandardArgs)
