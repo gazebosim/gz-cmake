@@ -36,6 +36,9 @@ if (yaml_FOUND)
   # yaml's cmake script imports its own target, so we'll
   # overwrite the default with the name of theirs. In the
   # future, we should be able to use a target alias instead.
+  set(YAML_FOUND True)
+  set(YAML_INCLUDE_DIRS ${yaml_INCLUDE_DIRS})
+  set(YAML_LIBRARIES ${yaml_LIBRARIES})
   set(YAML_TARGET yaml)
 
   return()
