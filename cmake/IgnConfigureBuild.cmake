@@ -180,7 +180,8 @@ macro(ign_set_cxx_feature_flags)
     cxx_lambda_init_captures
 #    cxx_relaxed_constexpr # Not yet supported in MSVC (as of 2017)
     cxx_return_type_deduction
-    cxx_variable_templates)
+    cxx_variable_templates
+    )
 
 
 endmacro()
