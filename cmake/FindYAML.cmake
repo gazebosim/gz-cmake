@@ -22,12 +22,30 @@
 #
 # Variables defined by this module:
 #
-#  YAML::YAML              Imported target for libyaml
+#  YAML_TARGET             Imported target for libyaml
 #
 #  YAML_FOUND              System has YAML libs/headers
 #  YAML_INCLUDE_DIRS       The location of YAML headers
 #  YAML_LIBRARIES          The YAML libraries
 
+# initialize this variable to the default target name
+set(YAML_TARGET YAML::YAML)
+
+find_package(yaml ${YAML_FIND_VERSION} CONFIG QUIET)
+if (yaml_FOUND)
+
+  # yaml's cmake script imports its own target, so we'll
+  # overwrite the default with the name of theirs. In the
+  # future, we should be able to use a target alias instead.
+  set(YAML_TARGET yaml)
+
+  set(YAML_FOUND True)
+  set(YAML_INCLUDE_DIRS ${yaml_INCLUDE_DIRS})
+  set(YAML_LIBRARIES ${yaml_LIBRARIES})
+
+  return()
+
+endif()
 
 if(YAML_FIND_VERSION AND NOT YAML_FIND_VERSION VERSION_EQUAL "0.1")
   message(WARNING "FindYAML only knows how to find version 0.1 "
@@ -64,6 +82,10 @@ else()
     if(YAML_FOUND)
       include(IgnImportTarget)
       ign_import_target(YAML)
+      message(STATUS "Assuming libyaml is static, defining YAML_DECLARE_STATIC")
+      set_target_properties(YAML::YAML PROPERTIES
+        INTERFACE_COMPILE_DEFINITIONS "YAML_DECLARE_STATIC"
+      )
     endif()
 
     include(FindPackageHandleStandardArgs)

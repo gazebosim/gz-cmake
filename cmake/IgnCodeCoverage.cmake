@@ -70,8 +70,10 @@ ENDIF() # NOT CMAKE_BUILD_TYPE STREQUAL "Debug"
 # Optional fourth parameter is passed as arguments to _testrunner
 #   Pass them in list form, e.g.: "-j;2" for -j 2
 #
-# Code coverage is not run against files with the cxx extension (.cxx).
-# We assume these files are created by swig.
+# Coverage is not run for files in the following formats:
+#
+# *.cxx : We assume these files are created by swig.
+# moc_*.cpp and qrc_*.cpp : We assume these files are created by Qt's meta-object compiler.
 FUNCTION(IGN_SETUP_TARGET_FOR_COVERAGE _targetname _testrunner _outputname)
 
   IF(NOT LCOV_PATH)
@@ -97,7 +99,7 @@ FUNCTION(IGN_SETUP_TARGET_FOR_COVERAGE _targetname _testrunner _outputname)
     # Remove negative counts
     COMMAND sed -i '/,-/d' ${_outputname}.info
     COMMAND ${LCOV_PATH} -q --remove ${_outputname}.info
-      'test/*' '/usr/*' '*_TEST*' '*.cxx' --output-file ${_outputname}.info.cleaned
+      'test/*' '/usr/*' '*_TEST*' '*.cxx' 'moc_*.cpp' 'qrc_*.cpp' --output-file ${_outputname}.info.cleaned
     COMMAND ${GENHTML_PATH} -q --legend -o ${_outputname}
       ${_outputname}.info.cleaned
     COMMAND ${LCOV_PATH} --summary ${_outputname}.info.cleaned 2>&1 | grep "lines" | cut -d ' ' -f 4 | cut -d '%' -f 1 > coverage/lines.txt
