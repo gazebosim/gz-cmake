@@ -35,7 +35,7 @@
 #             when the package cannot be found. If not provided, this macro will
 #             trigger an ignition build_warning when the package is not found.
 #             To specify that something is required by some set of components
-#             (rather than the main library), use REQUIRED_BY.
+#             (rather than the core library), use REQUIRED_BY.
 #
 # [PRIVATE]: Optional. Use this to indicate that consumers of the project do not
 #            need to link against the package, but it must be present on the
@@ -73,9 +73,9 @@
 # [REQUIRED_BY]: Optional. If provided, the list that follows it must indicate
 #                which library components require the dependency. Note that if
 #                REQUIRED is specified, then REQUIRED_BY does NOT need to be
-#                specified for any components which depend on the main library,
+#                specified for any components which depend on the core library,
 #                because their dependence on this package will effectively be
-#                inherited from the main library. This will trigger a build
+#                inherited from the core library. This will trigger a build
 #                warning to tell the user which component requires this
 #                dependency.
 #
@@ -577,7 +577,7 @@ endfunction()
 # appear in the ${CMAKE_CURRENT_BINARY_DIR}.
 #
 # If the COMPONENT option is specified, this will skip over configuring a
-# config.hh file since it would be redundant with the main library.
+# config.hh file since it would be redundant with the core library.
 #
 function(ign_install_all_headers)
 
@@ -746,14 +746,14 @@ macro(ign_add_library lib_target_name)
 #  message(FATAL_ERROR
   message(AUTHOR_WARNING
     "ign_add_library(<target_name> <sources>) is deprecated. Instead, use "
-    "ign_create_main_library(SOURCES <sources>). It will determine the library "
+    "ign_create_core_library(SOURCES <sources>). It will determine the library "
     "target name automatically from the project name. To add a component "
     "library, use ign_add_component(~). Be sure to pass the CXX_STANDARD "
     "argument to these functions in order to set the C++ standard that they "
     "require.")
 
 
-  ign_create_main_library(SOURCES ${ARGN})
+  ign_create_core_library(SOURCES ${ARGN})
 
 endmacro()
 
@@ -781,7 +781,7 @@ endfunction()
 #                          <target_name>
 #                          <pkgconfig_cflags_variable>)
 #
-# Handles the C++ standard argument for ign_create_main_library(~) and
+# Handles the C++ standard argument for ign_create_core_library(~) and
 # ign_add_component(~).
 #
 # NOTE: This is only meant for internal ign-cmake use.
@@ -827,13 +827,13 @@ macro(_ign_handle_cxx_standard prefix target pkgconfig_cflags)
 endmacro()
 
 #################################################
-# ign_create_main_library(SOURCES <sources>
+# ign_create_core_library(SOURCES <sources>
 #                         [CXX_STANDARD <11|14|...>]
 #                         [PRIVATE_CXX_STANDARD <11|14|...>]
 #                         [INTERFACE_CXX_STANDARD <11|14|...>]
 #                         [GET_TARGET_NAME <output_var>])
 #
-# This function will produce the "main" library for your project. There is no
+# This function will produce the "core" library for your project. There is no
 # need to specify a name for the library, because that will be determined by
 # your project information.
 #
@@ -865,7 +865,7 @@ endmacro()
 # conflict. However, both of those arguments conflict with CXX_STANDARD, so you
 # are not allowed to use either of them if you use the CXX_STANDARD argument.
 #
-function(ign_create_main_library)
+function(ign_create_core_library)
 
   #------------------------------------
   # Define the expected arguments
@@ -875,16 +875,16 @@ function(ign_create_main_library)
 
   #------------------------------------
   # Parse the arguments
-  cmake_parse_arguments(ign_create_main_library "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  cmake_parse_arguments(ign_create_core_library "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
-  if(ign_create_main_library_SOURCES)
-    set(sources ${ign_create_main_library_SOURCES})
+  if(ign_create_core_library_SOURCES)
+    set(sources ${ign_create_core_library_SOURCES})
   else()
-    message(FATAL_ERROR "You must specify SOURCES for ign_create_main_library(~)!")
+    message(FATAL_ERROR "You must specify SOURCES for ign_create_core_library(~)!")
   endif()
 
   #------------------------------------
-  # Create the target for the main library, and configure it to be installed
+  # Create the target for the core library, and configure it to be installed
   _ign_add_library_or_component(
     LIB_NAME ${PROJECT_LIBRARY_TARGET_NAME}
     INCLUDE_DIR "ignition/${IGN_DESIGNATION_LOWER}"
@@ -902,31 +902,31 @@ function(ign_create_main_library)
       # target, this will not be included, because it is tied to the build
       # interface instead of the install interface.
       $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-      # This is the in-build version of the main library headers directory.
-      # Generated headers for the main library get placed here.
+      # This is the in-build version of the core library headers directory.
+      # Generated headers for the core library get placed here.
       $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>)
 
 
   #------------------------------------
   # Adjust variables if a specific C++ standard was requested
-  _ign_handle_cxx_standard(ign_create_main_library
+  _ign_handle_cxx_standard(ign_create_core_library
     ${PROJECT_LIBRARY_TARGET_NAME} PROJECT_PKGCONFIG_CFLAGS)
 
 
   #------------------------------------
   # Handle cmake and pkgconfig packaging
 
-  # Export and install the main library's cmake target and package information
+  # Export and install the core library's cmake target and package information
   _ign_create_cmake_package()
 
-  # Generate and install the main library's pkgconfig information
+  # Generate and install the core library's pkgconfig information
   _ign_create_pkgconfig()
 
 
   #------------------------------------
   # Pass back the target name if they ask for it.
-  if(ign_create_main_library_GET_TARGET_NAME)
-    set(${ign_create_main_library_GET_TARGET_NAME} ${PROJECT_LIBRARY_TARGET_NAME} PARENT_SCOPE)
+  if(ign_create_core_library_GET_TARGET_NAME)
+    set(${ign_create_core_library_GET_TARGET_NAME} ${PROJECT_LIBRARY_TARGET_NAME} PARENT_SCOPE)
   endif()
 
 endfunction()
@@ -963,25 +963,25 @@ endfunction()
 #
 # [INDEPENDENT_FROM_PROJECT_LIB]:
 #     Optional. Specify this if you do NOT want this component to automatically
-#     be linked to the main library of this project. The default behavior is to
+#     be linked to the core library of this project. The default behavior is to
 #     be publically linked.
 #
 # [PRIVATELY_DEPENDS_ON_PROJECT_LIB]:
-#     Optional. Specify this if this component privately depends on the main
+#     Optional. Specify this if this component privately depends on the core
 #     library of this project (i.e. users of this component do not need to
-#     interface with the main library). The default behavior is to be publicly
+#     interface with the core library). The default behavior is to be publicly
 #     linked.
 #
 # [INTERFACE_DEPENDS_ON_PROJECT_LIB]:
-#     Optional. Specify this if the component's interface depends on the main
+#     Optional. Specify this if the component's interface depends on the core
 #     library of this project (i.e. users of this component need to interface
-#     with the main library), but the component itself does not need to link to
-#     the main library.
+#     with the core library), but the component itself does not need to link to
+#     the core library.
 #
-# See the documentation of ign_create_main_library(~) for more information about
-# specifying the C++ standard. If your component publicly depends on the main
+# See the documentation of ign_create_core_library(~) for more information about
+# specifying the C++ standard. If your component publicly depends on the core
 # library, then you probably do not need to specify the standard, because it
-# will get inherited from the main library.
+# will get inherited from the core library.
 function(ign_add_component component_name)
 
   #------------------------------------
@@ -1029,17 +1029,17 @@ function(ign_add_component component_name)
   if(ign_add_component_INDEPENDENT_FROM_PROJECT_LIB  OR
      ign_add_component_PRIVATELY_DEPENDS_ON_PROJECT_LIB)
 
-    # If we are not linking this component to the main library, then we need to
+    # If we are not linking this component to the core library, then we need to
     # add these include directories to this component library directly. This is
-    # not needed if we link to the main library, because that will pull in these
+    # not needed if we link to the core library, because that will pull in these
     # include directories automatically.
     target_include_directories(${component_target_name}
       PUBLIC
         # This is the publicly installed ignition/math headers directory.
         $<INSTALL_INTERFACE:${IGN_INCLUDE_INSTALL_DIR_FULL}>
-        # This is the in-build version of the main library's headers directory.
+        # This is the in-build version of the core library's headers directory.
         # Generated headers for this component might get placed here, even if
-        # the component is independent of the main library.
+        # the component is independent of the core library.
         $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>)
 
   endif()
@@ -1063,7 +1063,7 @@ function(ign_add_component component_name)
 
   #------------------------------------
   # Adjust the packaging variables based on how this component depends (or not)
-  # on the main library.
+  # on the core library.
   if(ign_add_component_PRIVATELY_DEPENDS_ON_PROJECT_LIB)
 
     target_link_libraries(${component_target_name}
@@ -1089,13 +1089,13 @@ function(ign_add_component component_name)
 
   if(NOT ign_add_component_INDEPENDENT_FROM_PROJECT_LIB)
 
-    # Add the main library as a cmake dependency for this component
+    # Add the core library as a cmake dependency for this component
     # NOTE: It seems we need to triple-escape "${ign_package_required}" and
     #       "${ign_package_quiet}" here.
     ign_string_append(${component_name}_CMAKE_DEPENDENCIES
       "if(NOT ${PKG_NAME}_CONFIG_INCLUDED)\n  find_package(${PKG_NAME} ${PROJECT_VERSION_FULL_NO_SUFFIX} EXACT \\\${ign_package_quiet} \\\${ign_package_required})\nendif()" DELIM "\n")
 
-    # Choose what type of pkgconfig entry the main library belongs to
+    # Choose what type of pkgconfig entry the core library belongs to
     set(lib_pkgconfig_type ${component_name}_PKGCONFIG_REQUIRES)
     if(ign_add_component_PRIVATELY_DEPENDS_ON_PROJECT_LIB
         AND NOT ign_add_component_INTERFACE_DEPENDS_ON_PROJECT_LIB)
@@ -1140,7 +1140,7 @@ endmacro()
 
 #################################################
 # This is only meant for internal use by ignition-cmake. If you are a consumer
-# of ignition-cmake, please use ign_create_main_library(~) or
+# of ignition-cmake, please use ign_create_core_library(~) or
 # ign_add_component(~) instead of this.
 #
 # _ign_add_library_or_component(LIB_NAME <lib_name>
@@ -1366,7 +1366,7 @@ endmacro()
 #            be the names of the targets.
 #
 # EXCLUDE_PROJECT_LIB: Pass this argument if you do not want your executables to
-#                      link to your project's main library. On Windows, this
+#                      link to your project's core library. On Windows, this
 #                      will also skip the step of copying the runtime library
 #                      into your executable's directory.
 #
@@ -1574,16 +1574,16 @@ macro(ign_set_project_public_cxx_standard standard)
 #  message(FATAL_ERROR
   message(AUTHOR_WARNING
     "The ign_set_project_public_cxx_standard(~) macro is deprecated. "
-    "Instead, use the CXX_STANDARD argument of ign_create_main_library(~).")
+    "Instead, use the CXX_STANDARD argument of ign_create_core_library(~).")
 
   _ign_check_known_cxx_standards(${standard})
 
   target_compile_features(${PROJECT_LIBRARY_TARGET_NAME} PUBLIC ${IGN_CXX_${standard}_FEATURES})
 
-  # Note: We have to reconfigure the pkg-config information for the main library
-  # because this macro can only be called after ign_create_main_library(~). This
+  # Note: We have to reconfigure the pkg-config information for the core library
+  # because this macro can only be called after ign_create_core_library(~). This
   # is somewhat wasteful, so we should strongly prefer to use the CXX_STANDARD
-  # argument of ign_create_main_library(~).
+  # argument of ign_create_core_library(~).
 
   ign_string_append(PROJECT_PKGCONFIG_CFLAGS "-std=c++${standard}")
   _ign_create_pkgconfig()

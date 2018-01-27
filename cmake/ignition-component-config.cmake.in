@@ -5,16 +5,30 @@
 # To load this component into your project, use:
 # find_package(@PKG_NAME@ COMPONENTS @component_name@)
 #
-# That will define the following variables:
+# This creates the following targets:
 #
-#  @component_pkg_name@_FOUND        - The system has @component_pkg_name@
-#  @component_pkg_name@_LIBRARIES    - Libraries for this component
+#   Component library target                - @import_target_name@
+#   Alternative target name                 - @simple_import_name@
+#   Core library + all requested components - @ign_namespace@all
 #
-# The variable @component_pkg_name@_LIBRARIES will contain an imported target
-# for this component library, so no other variables are necessary. Simply use
-# target_link_library(tgt ${@component_pkg_name@_LIBRARIES}), and your target
-# will also pull in the interface properties of the component, such as the
-# include directories, compile flags, etc.
+# Use target_link_libraries() to link your library or executable to one of the
+# above targets.
+#
+# We also provide the following variable for backwards compatibility, but use of
+# this is discouraged:
+#
+#   @component_pkg_name@_LIBRARY  - Component library (actually contains @simple_import_name@)
+#
+# We will also set @component_pkg_name@_FOUND to indicate that the component was found.
+#
+################################################################################
+
+# We explicitly set the desired cmake version to ensure that the policy settings
+# of users or of toolchains do not result in the wrong behavior for our modules.
+# Note that the call to find_package(~) will PUSH a new policy stack before
+# taking on these version settings, and then that stack will POP after the
+# find_package(~) has exited, so this will not affect the cmake policy settings
+# of a caller.
 cmake_minimum_required(VERSION 3.5.1 FATAL_ERROR)
 
 if(@component_pkg_name@_CONFIG_INCLUDED)
@@ -68,9 +82,24 @@ endif()
 
 if(NOT TARGET @import_target_name@)
   include("${CMAKE_CURRENT_LIST_DIR}/@target_output_filename@")
+
+  # Create a simplified imported target name for the @component@ library.
+  # You can link to this target instead of the @component@ library.
+  add_library(@simple_import_name@ INTERFACE IMPORTED)
+  target_link_libraries(@simple_import_name@ INTERFACE @import_target_name@)
+  # Note: In a future version of cmake, we can replace this with an ALIAS target
+
 endif()
 
-set(@component_pkg_name@_LIBRARIES @import_target_name@)
+# Create the "all" target if it does not already exist
+if(NOT TARGET @ign_namespace@all)
+  add_library(@ign_namespace@all INTERFACE IMPORTED)
+endif()
+
+# Link the @component@ library to the "all" target
+target_link_libraries(@ign_namespace@::all INTERFACE @import_target_name@)
+
+set(@component_pkg_name@_LIBRARY @import_target_name@)
 
 # This macro is used by ignition-cmake to automatically configure the pkgconfig
 # files for ignition projects.

@@ -108,7 +108,7 @@ macro(ign_configure_build)
 
 
     #--------------------------------------
-    # Add the source code directories of the main library
+    # Add the source code directories of the core library
     add_subdirectory(src)
     _ign_find_include_script()
     add_subdirectory(test)

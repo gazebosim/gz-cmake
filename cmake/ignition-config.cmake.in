@@ -4,15 +4,25 @@
 #
 # find_package(@PKG_NAME@)
 #
-# It defines the following variables:
+# This creates the following targets:
 #
-#  @PKG_NAME@_FOUND        - System has @PKG_NAME@.
-#  @PKG_NAME@_LIBRARIES    - Libraries to link against.
-#  @PKG_NAME@_INCLUDE_DIRS - include directories for @PKG_NAME@ and its dependencies.
+#   Core library target                     - @import_target_name@
+#   Alternative target name                 - @simple_import_name@
+#   Core library + all requested components - @ign_namespace@all
 #
-# Additionally, it will create an imported target named @import_target_name@.
-# You can link your library against that target using target_link_library(~),
-# and all the interface build variables will be pulled into your target.
+# Use target_link_libraries() to link your library or executable to one of the
+# above targets.
+#
+# We also provide the following variables for backwards compatibility, but use
+# of these is discouraged:
+#
+#   @PKG_NAME@_CORE_LIBRARY - Core library (actually contains @simple_import_name@)
+#   @PKG_NAME@_LIBRARIES    - All libraries to link against (actually contains @ign_namespace@all).
+#   @PKG_NAME@_INCLUDE_DIRS - Include directories for @PKG_NAME@ and its dependencies.
+#
+# We will also set @PKG_NAME@_FOUND to indicate that the package was found.
+#
+################################################################################
 
 # We explicitly set the desired cmake version to ensure that the policy settings
 # of users or of toolchains do not result in the wrong behavior for our modules.
@@ -86,7 +96,22 @@ endif()
 
 if(NOT TARGET @import_target_name@)
   include("${CMAKE_CURRENT_LIST_DIR}/@target_output_filename@")
+
+  # Create a simplified imported target name for the core library.
+  # You can link to this target instead of the core library.
+  add_library(@simple_import_name@ INTERFACE IMPORTED)
+  target_link_libraries(@simple_import_name@ INTERFACE @import_target_name@)
+  # Note: In a future version of cmake, we can replace this with an ALIAS target
+
 endif()
+
+# Create the "all" target if it does not already exist
+if(NOT TARGET @ign_namespace@all)
+  add_library(@ign_namespace@all INTERFACE IMPORTED)
+endif()
+
+# Link the core library to the "all" target
+target_link_libraries(@ign_namespace@all INTERFACE @import_target_name@)
 
 # On windows we produce .dll libraries with no prefix
 if(WIN32)
@@ -94,10 +119,10 @@ if(WIN32)
   set(CMAKE_FIND_LIBRARY_SUFFIXES ".lib" ".dll")
 endif()
 
-# Package variables. Note that @PKG_NAME@_LIBRARIES merely contains an imported
-# target for the library, so it is sufficient to simply link to
-# @PKG_NAME@_LIBRARIES. None of the other package variables are needed.
-set(@PKG_NAME@_LIBRARIES @import_target_name@)
+# Package variables. Note that @PKG_NAME@_LIBRARIES and @PKG_NAME@_CORE_LIBRARY
+# contain imported targets, so @PKG_NAME@_INCLUDE_DIRS is never needed.
+set(@PKG_NAME@_CORE_LIBRARY @simple_import_name@)
+set(@PKG_NAME@_LIBRARIES @ign_namespace@all)
 set_and_check(@PKG_NAME@_INCLUDE_DIRS "@PACKAGE_IGN_INCLUDE_INSTALL_DIR_FULL@")
 
 # Backwards compatibility variables

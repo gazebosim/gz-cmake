@@ -165,7 +165,7 @@ endmacro()
 # If the target is a component, pass in the COMPONENT argument followed by the
 # component's name.
 #
-# NOTE: This will be called automatically by ign_create_main_library(~) and
+# NOTE: This will be called automatically by ign_create_core_library(~) and
 #       ign_add_component(~), so users of ignition-cmake should not call this
 #       function.
 #
@@ -214,7 +214,7 @@ endfunction()
 # target is a component, pass in the COMPONENT argument followed by the
 # component's name.
 #
-# NOTE: This will be called automatically by ign_create_main_library(~) and
+# NOTE: This will be called automatically by ign_create_core_library(~) and
 #       ign_add_component(~), so users of ignition-cmake should not call this
 #       function.
 #
@@ -245,11 +245,13 @@ function(_ign_create_cmake_package)
     set(component ${_ign_create_cmake_package_COMPONENT})
     set(target_name ${PROJECT_LIBRARY_TARGET_NAME}-${component})
     set(ign_config_input "${IGNITION_CMAKE_DIR}/ignition-component-config.cmake.in")
+    set(simple_import_name ${component})
 
   else()
 
     set(target_name ${PROJECT_LIBRARY_TARGET_NAME})
     set(ign_config_input "${IGNITION_CMAKE_DIR}/ignition-config.cmake.in")
+    set(simple_import_name core)
 
   endif()
 
@@ -267,6 +269,7 @@ function(_ign_create_cmake_package)
   set(ign_namespace ${PROJECT_LIBRARY_TARGET_NAME}::)
 
   set(import_target_name ${ign_namespace}${target_name})
+  set(simple_import_name ${ign_namespace}${simple_import_name})
 
   # Configure the package config file. It will be installed to
   # "[lib]/cmake/ignition-<project><major_version>/" where [lib] is the library
