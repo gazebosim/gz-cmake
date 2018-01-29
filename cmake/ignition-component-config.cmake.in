@@ -9,7 +9,7 @@
 #
 #   Component library target                - @import_target_name@
 #   Alternative target name                 - @simple_import_name@
-#   Core library + all requested components - @ign_namespace@all
+#   Core library + all requested components - @ign_namespace@requested
 #
 # Use target_link_libraries() to link your library or executable to one of the
 # above targets.
@@ -86,18 +86,26 @@ if(NOT TARGET @import_target_name@)
   # Create a simplified imported target name for the @component@ library.
   # You can link to this target instead of the @component@ library.
   add_library(@simple_import_name@ INTERFACE IMPORTED)
-  target_link_libraries(@simple_import_name@ INTERFACE @import_target_name@)
+  set_target_properties(@simple_import_name@ PROPERTIES
+    INTERFACE_LINK_LIBRARIES "@import_target_name@")
   # Note: In a future version of cmake, we can replace this with an ALIAS target
 
 endif()
 
-# Create the "all" target if it does not already exist
-if(NOT TARGET @ign_namespace@all)
-  add_library(@ign_namespace@all INTERFACE IMPORTED)
+# Create the "requested" target if it does not already exist
+if(NOT TARGET @ign_namespace@requested)
+  add_library(@ign_namespace@requested INTERFACE IMPORTED)
 endif()
 
-# Link the @component@ library to the "all" target
-target_link_libraries(@ign_namespace@::all INTERFACE @import_target_name@)
+# Link the @component@ library to the "requested" target
+get_target_property(ign_requested_components @ign_namespace@requested INTERFACE_LINK_LIBRARIES)
+if(NOT ign_requested_components)
+  set_target_properties(@ign_namespace@requested PROPERTIES
+    INTERFACE_LINK_LIBRARIES "@import_target_name@")
+else()
+  set_target_properties(@ign_namespace@requested PROPERTIES
+    INTERFACE_LINK_LIBRARIES "${ign_requested_components};@import_target_name@")
+endif()
 
 set(@component_pkg_name@_LIBRARY @import_target_name@)
 

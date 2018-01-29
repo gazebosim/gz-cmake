@@ -1127,6 +1127,53 @@ function(ign_add_component component_name)
   # Generate and install the pkgconfig information for this component
   _ign_create_pkgconfig(COMPONENT ${component_name})
 
+
+  #------------------------------------
+  # Add this component to the "all" target
+  target_link_libraries(${PROJECT_LIBRARY_TARGET_NAME}-all INTERFACE ${lib_name})
+  get_property(all_known_components TARGET ${PROJECT_LIBRARY_TARGET_NAME}-all
+    PROPERTY INTERFACE_IGN_ALL_KNOWN_COMPONENTS)
+  if(NOT all_known_components)
+    set_property(TARGET ${PROJECT_LIBRARY_TARGET_NAME}-all
+      PROPERTY INTERFACE_IGN_ALL_KNOWN_COMPONENTS "${component_target_name}")
+  else()
+    set_property(TARGET ${PROJECT_LIBRARY_TARGET_NAME}-all
+      PROPERTY INTERFACE_IGN_ALL_KNOWN_COMPONENTS "${all_known_components};${component_target_name}")
+  endif()
+
+endfunction()
+
+#################################################
+function(ign_create_all_target)
+
+  add_library(${PROJECT_LIBRARY_TARGET_NAME}-all INTERFACE)
+
+  install(
+    TARGETS ${PROJECT_LIBRARY_TARGET_NAME}-all
+    EXPORT ${PROJECT_LIBRARY_TARGET_NAME}-all
+    LIBRARY DESTINATION ${IGN_LIB_INSTALL_DIR}
+    ARCHIVE DESTINATION ${IGN_LIB_INSTALL_DIR}
+    RUNTIME DESTINATION ${IGN_BIN_INSTALL_DIR}
+    COMPONENT libraries)
+
+endfunction()
+
+#################################################
+function(ign_export_target_all)
+
+  # find_all_pkg_components is used as a variable in ignition-all-config.cmake.in
+  set(find_all_pkg_components "")
+  get_property(all_known_components TARGET ${PROJECT_LIBRARY_TARGET_NAME}-all
+    PROPERTY INTERFACE_IGN_ALL_KNOWN_COMPONENTS)
+
+  if(all_known_components)
+    foreach(component ${all_known_components})
+      ign_string_append(find_all_pkg_components "find_dependency(${component} ${PROJECT_VERSION_FULL_NO_SUFFIX} EXACT)" DELIM "\n")
+    endforeach()
+  endif()
+
+  _ign_create_cmake_package(ALL)
+
 endfunction()
 
 #################################################

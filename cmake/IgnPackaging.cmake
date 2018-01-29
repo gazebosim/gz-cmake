@@ -230,13 +230,19 @@ function(_ign_create_cmake_package)
 
   #------------------------------------
   # Define the expected arguments
-  set(options)
+  set(options ALL)
   set(oneValueArgs COMPONENT) # Unused
   set(multiValueArgs) # Unused
 
   #------------------------------------
   # Parse the arguments
   cmake_parse_arguments(_ign_create_cmake_package "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+  if(_ign_create_cmake_package_COMPONENT AND _ign_create_cmake_package_ALL)
+    message(FATAL_ERROR
+      "_ign_create_cmake_package was called with both ALL and COMPONENT "
+      "specified. This is not allowed!")
+  endif()
 
   #------------------------------------
   # Set configuration arguments
@@ -246,6 +252,13 @@ function(_ign_create_cmake_package)
     set(target_name ${PROJECT_LIBRARY_TARGET_NAME}-${component})
     set(ign_config_input "${IGNITION_CMAKE_DIR}/ignition-component-config.cmake.in")
     set(simple_import_name ${component})
+
+  elseif(_ign_create_cmake_package_ALL)
+
+    set(ign_config_input "${IGNITION_CMAKE_DIR}/ignition-all-config.cmake.in")
+    set(target_name ${PROJECT_LIBRARY_TARGET_NAME}-all)
+    set(all_pkg_name ${PROJECT_LIBRARY_TARGET_NAME}-all)
+    set(simple_import_name all)
 
   else()
 
