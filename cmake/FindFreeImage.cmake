@@ -37,7 +37,7 @@ if(NOT FreeImage_FOUND)
     message(STATUS "Missing: Unable to find FreeImage.h")
   else(NOT FreeImage_INCLUDE_DIRS)
     # Check the FreeImage header for the right version
-    set(testFreeImageSource ${CMAKE_CURRENT_BINARY_DIR}/CMakeTmp/test_freeimage.cc)
+    set(testFreeImageSource ${CMAKE_CURRENT_BINARY_DIR}/CMakeTmp/test_freeimage.c)
     set(FreeImage_test_output "")
     set(FreeImage_compile_output "")
     file(WRITE ${testFreeImageSource}
