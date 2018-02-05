@@ -131,6 +131,15 @@ macro(ign_configure_project)
   # Initialize the list of <PROJECT_NAME>.pc Libs.private
   set(PROJECT_PKGCONFIG_LIBS_PRIVATE)
 
+
+  #============================================================================
+  # We turn off extensions because (1) we do not ever want to use non-standard
+  # compiler extensions, and (2) this variable is on by default, causing cmake
+  # to choose the flag -std=gnu++14 instead of -std=c++14 when the C++14
+  # features are requested. Explicitly turning this flag off will force cmake to
+  # choose -std=c++14.
+  set(CMAKE_CXX_EXTENSIONS off)
+
 endmacro()
 
 #################################################
