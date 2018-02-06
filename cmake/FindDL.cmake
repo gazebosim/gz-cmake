@@ -39,6 +39,11 @@ if(MSVC)
     set(DL_FOUND false)
   endif()
 
+  # We need to manually specify the pkgconfig entry (and type of entry) for dl,
+  # because ign_pkg_check_modules does not work for it.
+  include(IgnPkgConfig)
+  ign_pkg_config_library_entry(DL dl)
+
   include(FindPackageHandleStandardArgs)
   find_package_handle_standard_args(
     DL
