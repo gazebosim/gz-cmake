@@ -53,7 +53,7 @@ namespace ignition
     template <class T, class Deleter, class Operations>
     ImplPtr<T, Deleter, Operations>::ImplPtr(const ImplPtr &_other)
       // Delegate to the move constructor after cloning
-      : ImplPtr(_other.clone())
+      : ImplPtr(_other.Clone())
     {
       // Do nothing
     }
@@ -73,7 +73,7 @@ namespace ignition
 
     //////////////////////////////////////////////////
     template <class T, class Deleter, class Operations>
-    auto ImplPtr<T, Deleter, Operations>::clone() const -> ImplPtr
+    auto ImplPtr<T, Deleter, Operations>::Clone() const -> ImplPtr
     {
       return ImplPtr(this->ptr ? this->ops.construct(*this->ptr) : nullptr,
                      this->ptr.get_deleter(),
@@ -106,6 +106,27 @@ namespace ignition
     const T *ImplPtr<T, Deleter, Operations>::operator->() const
     {
       return ptr.get();
+    }
+
+    //////////////////////////////////////////////////
+    template <class T, typename... Args>
+    ImplPtr<T> MakeImpl(Args &&..._args)
+    {
+      return ImplPtr<T>(
+            new T{std::forward<Args>(_args)...},
+            &detail::DefaultDelete<T>,
+            detail::CopyMoveDeleteOperations<T>(
+              &detail::DefaultCopyConstruct<T>,
+              &detail::DefaultCopyAssign<T>));
+    }
+
+    //////////////////////////////////////////////////
+    template <class T, typename... Args>
+    UniqueImplPtr<T> MakeUniqueImpl(Args &&...args)
+    {
+      return UniqueImplPtr<T>(
+            new T{std::forward<Args>(args)...},
+            &detail::DefaultDelete<T>);
     }
   }
 }

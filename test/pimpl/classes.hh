@@ -56,7 +56,8 @@ namespace ignition
       class MoveableObject
       {
         /// \brief Constructor
-        public: MoveableObject(int _ivalue, const std::string &_svalue = "");
+        public: MoveableObject(int _ivalue = 0,
+                               const std::string &_svalue = "");
 
         /// \brief Get the int value held by the pimpl
         public: int GetInt() const;

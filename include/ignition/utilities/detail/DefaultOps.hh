@@ -63,6 +63,19 @@ namespace ignition
         VerifyComplete<T>();
         _dest = _source;
       }
+
+      //////////////////////////////////////////////////
+      template <class T,
+                class CopyConstruct = T* (*)(const T&),
+                class CopyAssign = void (*)(T&, const T&)>
+      struct CopyMoveDeleteOperations
+      {
+        public: template <class C, class A>
+        CopyMoveDeleteOperations(C &&_construct, A &&_assign);
+
+        public: CopyConstruct construct;
+        public: CopyAssign assign;
+      };
     }
   }
 }
