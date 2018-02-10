@@ -51,6 +51,20 @@ namespace ignition
     ///
     /// This class was inspired by the following blog post:
     /// http://oliora.github.io/2015/12/29/pimpl-and-rule-of-zero.html
+    ///
+    /// For interface classes that should not be copiable, see the UniqueImplPtr
+    /// class further down in this header.
+    ///
+    /// \note Switching between ImplPtr and UniqueImplPtr is \em NOT ABI-safe.
+    /// This is essentially the same as changing whether or not the class
+    /// provides a copy-constructor and a copy-assignment operator, which is
+    /// bound to result in runtime linking issues at a minimum (but more
+    /// importantly, it changes the binary footprint of the class). If it is not
+    /// obvious whether a class should be copiable, then the safest choice is to
+    /// use a UniqueImplPtr and then manually add the copy constructor/operator
+    /// later if it is deemed acceptable. The next time an ABI update is
+    /// permitted, those manually written functions can be removed and the
+    /// UniqueImplPtr can be replaced with an ImplPtr.
     template <class T,
               class Deleter = void (*)(T*),
               class Operations = detail::CopyMoveDeleteOperations<T> >
