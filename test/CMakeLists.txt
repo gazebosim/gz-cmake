@@ -27,3 +27,4 @@ set(GTEST_MAIN_LIBRARY "${PROJECT_BINARY_DIR}/test/libgtest_main.a")
 
 add_subdirectory(pimpl)
 add_subdirectory(unit)
+add_subdirectory(warnings)
