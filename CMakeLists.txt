@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.5.1 FATAL_ERROR)
 #============================================================================
 # Initialize the project
 #============================================================================
-project(ignition-cmake0 VERSION 0.4.1)
+project(ignition-cmake0 VERSION 0.4.0)
 
 #--------------------------------------
 # Initialize the IGNITION_CMAKE_DIR variable with the location of the cmake
@@ -55,6 +55,42 @@ install(
   DESTINATION ${ign_config_install_dir}
   COMPONENT cmake)
 
+#============================================================================
+# Create and install the utilities component
+#============================================================================
+add_library(${PROJECT_EXPORT_NAME}-utilities INTERFACE)
+target_include_directories(${PROJECT_EXPORT_NAME}-utilities
+  INTERFACE
+    $<INSTALL_INTERFACE:${IGN_INCLUDE_INSTALL_DIR_FULL}>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>)
+
+set(ign_utilities_export ${PROJECT_EXPORT_NAME}-utilities)
+set(ign_utilities_export_output "${ign_utilities_export}-targets.cmake")
+
+# Export and install the interface target
+install(
+  TARGETS ${PROJECT_EXPORT_NAME}-utilities
+  EXPORT ${PROJECT_EXPORT_NAME}-utilities
+  COMPONENT interface)
+
+export(
+  EXPORT ${PROJECT_EXPORT_NAME}-utilities
+  FILE ${ign_utilities_export_output}
+  NAMESPACE ${PROJECT_EXPORT_NAME}::)
+
+install(
+  EXPORT ${ign_utilities_export}
+  DESTINATION ${ign_config_install_dir}
+  FILE ${ign_utilities_export_output}
+  NAMESPACE ${PROJECT_EXPORT_NAME}::)
+
+# Install the header directory
+# Note: The trailing slash after "include" is necessary
+install(
+  DIRECTORY include/
+  DESTINATION ${IGN_INCLUDE_INSTALL_DIR_FULL}
+  COMPONENT headers)
 
 #============================================================================
 # Install the files for this package
