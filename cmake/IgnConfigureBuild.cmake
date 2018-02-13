@@ -218,6 +218,7 @@ macro(ign_set_cxx_feature_flags)
     cxx_variadic_templates)
 
   set(IGN_CXX_14_FEATURES
+    ${IGN_CXX_11_FEATURES}
     cxx_attribute_deprecated
     cxx_binary_literals
     cxx_contextual_conversions

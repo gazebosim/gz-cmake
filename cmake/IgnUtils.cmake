@@ -1474,7 +1474,7 @@ macro(ign_build_tests)
   #------------------------------------
   # Define the expected arguments
   set(options SOURCE) # NOTE: DO NOT USE "SOURCE", we're adding it here to catch typos
-  set(oneValueArgs TYPE)
+  set(oneValueArgs TYPE TEST_LIST)
   set(multiValueArgs SOURCES LIB_DEPS INCLUDE_DIRS)
 
 

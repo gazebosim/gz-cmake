@@ -164,10 +164,9 @@ function(_ign_sort_libraries target_name first_lib)
     # TODO: How does MinGW handle libraries?
     set_target_properties(${target_name} PROPERTIES
       IMPORTED_IMPLIB "${first_lib}")
-  else()
-    set_target_properties(${target_name} PROPERTIES
-      IMPORTED_LOCATION "${first_lib}")
   endif()
+  set_target_properties(${target_name} PROPERTIES
+    IMPORTED_LOCATION "${first_lib}")
 
   foreach(extra_lib ${ARGN})
     set_target_properties(${target_name} PROPERTIES
