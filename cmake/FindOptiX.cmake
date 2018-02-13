@@ -28,6 +28,10 @@
 #
 # Variables defined by this module:
 #
+#  optix::optix              Imported target for optix
+#  optix::optixu             Imported target for optixu
+#  optix::optix_prime        Imported target for optix_prime
+#
 #  OptiX_FOUND               System has OptiX libs/headers
 #  OptiX_LIBRARIES           The OptiX libraries
 #  OptiX_INCLUDE_DIRS        The location of OptiX headers
@@ -137,18 +141,20 @@ function(OptiX_add_imported_library name lib_location dll_lib dependent_libs)
   set(CMAKE_IMPORT_FILE_VERSION 1)
 
   # Create imported target
-  add_library(${name} SHARED IMPORTED)
+  # ign-cmake modification: changed to use ${target_name} instead of ${name}
+  set(target_name optix::${name})
+  add_library(${target_name} SHARED IMPORTED)
 
   # Import target "optix" for configuration "Debug"
   if(WIN32)
-    set_target_properties(${name} PROPERTIES
+    set_target_properties(${target_name} PROPERTIES
       IMPORTED_IMPLIB "${lib_location}"
       #IMPORTED_LINK_INTERFACE_LIBRARIES "glu32;opengl32"
       IMPORTED_LOCATION "${dll_lib}"
       IMPORTED_LINK_INTERFACE_LIBRARIES "${dependent_libs}"
       )
   elseif(UNIX)
-    set_target_properties(${name} PROPERTIES
+    set_target_properties(${target_name} PROPERTIES
       #IMPORTED_LINK_INTERFACE_LIBRARIES "glu32;opengl32"
       IMPORTED_LOCATION "${lib_location}"
       # We don't have versioned filenames for now, and it may not even matter.
@@ -158,7 +164,7 @@ function(OptiX_add_imported_library name lib_location dll_lib dependent_libs)
   else()
     # Unknown system, but at least try and provide the minimum required
     # information.
-    set_target_properties(${name} PROPERTIES
+    set_target_properties(${target_name} PROPERTIES
       IMPORTED_LOCATION "${lib_location}"
       IMPORTED_LINK_INTERFACE_LIBRARIES "${dependent_libs}"
       )
@@ -215,12 +221,6 @@ endif()
 if (OptiX_FOUND)
   set(OptiX_INCLUDE_DIRS ${OptiX_INCLUDE})
   set(OptiX_LIBRARIES ${optix_LIBRARY} ${optixu_LIBRARY} ${optix_prime_LIBRARY})
-
-  include(IgnImportTarget)
-  ign_import_target(OptiX
-    TARGET_NAME OptiX::OptiX
-    LIB_VAR OptiX_LIBRARIES
-    INCLUDE_VAR OptiX_INCLUDE_DIRS)
 endif()
 
 include(FindPackageHandleStandardArgs)
