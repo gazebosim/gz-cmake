@@ -108,4 +108,4 @@ if (BUILD_TESTING)
   add_subdirectory(examples)
 endif()
 
-add_subdirectory(doc)
+# add_subdirectory(doc)
