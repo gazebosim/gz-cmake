@@ -672,12 +672,27 @@ function(ign_install_all_headers)
       set(ign_headers "${ign_headers}#include <ignition/${IGN_DESIGNATION}/${header}>\n")
   endforeach()
 
-  # Define the install directory for the meta headers
-  set(meta_header_install_dir ${IGN_INCLUDE_INSTALL_DIR_FULL}/ignition/${IGN_DESIGNATION})
+  if(ign_install_all_headers_COMPONENT)
 
-  # Define the input/output of the configuration for the "master" header
-  set(master_header_in ${IGNITION_CMAKE_DIR}/ign_auto_headers.hh.in)
-  set(master_header_out ${CMAKE_CURRENT_BINARY_DIR}/../${IGN_DESIGNATION}.hh)
+    set(component_name ${ign_install_all_headers_COMPONENT})
+
+    # Define the install directory for the component meta header
+    set(meta_header_install_dir ${IGN_INCLUDE_INSTALL_DIR_FULL}/ignition/${IGN_DESIGNATION}/${component_name})
+
+    # Define the input/output of the configuration for the component "master" header
+    set(master_header_in ${IGNITION_CMAKE_DIR}/ign_auto_headers.hh.in)
+    set(master_header_out ${CMAKE_CURRENT_BINARY_DIR}/${component_name}.hh)
+
+  else()
+
+    # Define the install directory for the core master meta header
+    set(meta_header_install_dir ${IGN_INCLUDE_INSTALL_DIR_FULL}/ignition/${IGN_DESIGNATION})
+
+    # Define the input/output of the configuration for the core "master" header
+    set(master_header_in ${IGNITION_CMAKE_DIR}/ign_auto_headers.hh.in)
+    set(master_header_out ${CMAKE_CURRENT_BINARY_DIR}/../${IGN_DESIGNATION}.hh)
+
+  endif()
 
   # Generate the "master" header that includes all of the headers
   configure_file(${master_header_in} ${master_header_out})
