@@ -108,10 +108,10 @@ should not be using the CMake cache except to allow human users to set build
 options. For more explanation about why and how we should avoid using the cache,
 see the below section on CMake anti-patterns.
 
-### Replace `ign_add_library(${PROJECT_LIBRARY_TARGET_NAME} ${sources})` with `ign_create_main_library(SOURCES ${sources})`
+### Replace `ign_add_library(${PROJECT_LIBRARY_TARGET_NAME} ${sources})` with `ign_create_core_library(SOURCES ${sources})`
 
 The `ign_add_library(~)` macro has been removed and replaced with the macro
-`ign_create_main_library(~)`. With this new macro, you no longer need to specify
+`ign_create_core_library(~)`. With this new macro, you no longer need to specify
 the library name, because it will be inferred from your project information.
 Instead, you should pass the `SOURCES` argument, followed by the source files
 which will be used to generate your library.
@@ -121,7 +121,7 @@ library requires (current options are 11 or 14). Note that if your library
 requires a certain standard, it MUST be specified directly to this function in
 order to ensure that the requirement gets correctly propagated into the
 project's package information so that dependent libraries will also be aware of
-the requirement. See the documentation of `ign_create_main_library(~)` in
+the requirement. See the documentation of `ign_create_core_library(~)` in
 `ign-cmake/cmake/IgnUtils.cmake` for more details on how to specify your
 library's C++ standard requirement.
 
@@ -220,7 +220,7 @@ can be found in the section on anti-patterns.
 
 ### Remove ign_install_library()
 
-Calling `ign_create_main_library()` will also take care of installing the
+Calling `ign_create_core_library()` will also take care of installing the
 library. Simply remove this function from your cmake script.
 
 ### Replace calls to `#include "ignition/<project>/System.hh"` with `#include "ignition/<project>/Export.hh"`, and delete the file `System.hh`.
@@ -245,7 +245,7 @@ compiler/linker would be misinformed about which symbols to export if two
 different libraries share the same export macro.
 
 Note that component libraries will generate their own visibility macros so that
-they can correctly be compiled alongside their main library. Those macros will
+they can correctly be compiled alongside their core library. Those macros will
 look like `IGNITION_<PROJECT>_<COMPONENT>_<VISIBLE/HIDDEN>`.
 
 ### Move all find-modules in your project's `cmake/` directory to your `ign-cmake` repo, and submit a pull request for them
@@ -264,13 +264,13 @@ about reviewing and approving those PRs.
 ### To add a component library, use `ign_add_component(<component> SOURCES ${sources})`
 
 This new function allows you to create a "component" library which will be
-compiled separately from your main library. It will be packaged as a cmake
-component of your main library, and it will also be packaged as its own
+compiled separately from your core library. It will be packaged as a cmake
+component of your core library, and it will also be packaged as its own
 independent cmake package. For pkg-config, it will packaged as its own
 independent package because pkg-config does not seem to have a concept analogous
 to components.
 
-By default, your component will be publicly linked to your main library. To
+By default, your component will be publicly linked to your core library. To
 change this behavior, you may pass one of the following arguments:
 `INDEPENDENT_FROM_PROJECT_LIB`, `PRIVATELY_DEPENDS_ON_PROJECT_LIB`, or
 `INTERFACE_DEPENDS_ON_PROJECT_LIB`.

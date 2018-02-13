@@ -108,7 +108,12 @@ macro(ign_configure_build)
 
 
     #--------------------------------------
-    # Add the source code directories of the main library
+    # Create the "all" meta-target
+    ign_create_all_target()
+
+
+    #--------------------------------------
+    # Add the source code directories of the core library
     add_subdirectory(src)
     _ign_find_include_script()
     add_subdirectory(test)
@@ -158,6 +163,12 @@ macro(ign_configure_build)
       endif()
 
     endforeach()
+
+
+    #--------------------------------------
+    # Export the "all" meta-target
+    ign_export_target_all()
+
 
     #--------------------------------------
     # If we made it this far, the configuration was successful
