@@ -558,7 +558,7 @@ endfunction()
 #   [EXCLUDE_FILES <excluded_headers>]
 #   [EXCLUDE_DIRS  <dirs>]
 #   [GENERATED_HEADERS <headers>]
-#   [COMPONENT])
+#   [COMPONENT] <component>)
 #
 # From the current directory, install all header files, including files from all
 # subdirectories (recursively). You can optionally specify directories or files
@@ -583,8 +583,8 @@ function(ign_install_all_headers)
 
   #------------------------------------
   # Define the expected arguments
-  set(options COMPONENT)
-  set(oneValueArgs) # We are not using oneValueArgs yet
+  set(options)
+  set(oneValueArgs COMPONENT) # We are not using oneValueArgs yet
   set(multiValueArgs EXCLUDE_FILES EXCLUDE_DIRS GENERATED_HEADERS)
 
   #------------------------------------
