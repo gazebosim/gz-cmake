@@ -80,7 +80,8 @@ else()
   set(bit_dest "")
 endif()
 
-macro(OPTIX_find_api_library name version)
+# ign-cmake modification: added "ign_" prefix to macro name
+macro(ign_OPTIX_find_api_library name version)
   find_library(${name}_LIBRARY
     NAMES ${name}.${version} ${name}
     PATHS "${OptiX_INSTALL_DIR}/lib${bit_dest}"
@@ -101,9 +102,9 @@ macro(OPTIX_find_api_library name version)
   endif()
 endmacro()
 
-OPTIX_find_api_library(optix 1)
-OPTIX_find_api_library(optixu 1)
-OPTIX_find_api_library(optix_prime 1)
+ign_OPTIX_find_api_library(optix 1)
+ign_OPTIX_find_api_library(optixu 1)
+ign_OPTIX_find_api_library(optix_prime 1)
 
 # Include
 find_path(OptiX_INCLUDE
@@ -179,7 +180,8 @@ OptiX_add_imported_library(optix "${optix_LIBRARY}" "${optix_DLL}" "${OPENGL_LIB
 OptiX_add_imported_library(optixu   "${optixu_LIBRARY}"   "${optixu_DLL}"   "")
 OptiX_add_imported_library(optix_prime "${optix_prime_LIBRARY}"  "${optix_prime_DLL}"  "")
 
-macro(OptiX_check_same_path libA libB)
+# ign-cmake modification: added "ign_" prefix to macro name
+macro(ign_OptiX_check_same_path libA libB)
   if(_optix_path_to_${libA})
     if(NOT _optix_path_to_${libA} STREQUAL _optix_path_to_${libB})
       # ${libA} and ${libB} are in different paths.  Make sure there isn't a ${libA} next
@@ -201,10 +203,10 @@ if(APPLE)
     set( _optix_rpath "-Wl,-rpath,${_optix_path_to_optix}" )
   endif()
   get_filename_component(_optix_path_to_optixu "${optixu_LIBRARY}" PATH)
-  OptiX_check_same_path(optixu optix)
+  ign_OptiX_check_same_path(optixu optix)
   get_filename_component(_optix_path_to_optix_prime "${optix_prime_LIBRARY}" PATH)
-  OptiX_check_same_path(optix_prime optix)
-  OptiX_check_same_path(optix_prime optixu)
+  ign_OptiX_check_same_path(optix_prime optix)
+  ign_OptiX_check_same_path(optix_prime optixu)
 
   set( optix_rpath ${_optix_rpath} ${_optixu_rpath} ${_optix_prime_rpath} )
   list(REMOVE_DUPLICATES optix_rpath)
