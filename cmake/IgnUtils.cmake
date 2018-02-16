@@ -1476,32 +1476,6 @@ macro(ign_build_executables)
         ${PROJECT_BINARY_DIR}/include
         ${ign_build_executables_INCLUDE_DIRS})
 
-      if(WIN32 AND NOT ign_build_executables_EXCLUDE_PROJECT_LIB)
-
-        # If we have not installed our project's library yet, then it will not
-        # be visible to the executable when we attempt to run it. Therefore, we
-        # place a copy of our project's library into the directory that contains
-        # the executable. We do not need to do this for any of the test's other
-        # dependencies, because the fact that they were found by the build
-        # system means they are installed and should be visible when the test is
-        # run.
-
-        # Get the full file path to the original dll for this project
-        set(dll_original "$<TARGET_FILE:${PROJECT_LIBRARY_TARGET_NAME}>")
-
-        # Get the full file path for where we need to paste the dll for this project
-        set(dll_target "$<TARGET_FILE_DIR:${BINARY_NAME}>/$<TARGET_FILE_NAME:${PROJECT_LIBRARY_TARGET_NAME}>")
-
-        # Add the copy_if_different command as a custom command that is tied the target
-        # of this test.
-        add_custom_command(
-          TARGET ${BINARY_NAME}
-          COMMAND ${CMAKE_COMMAND}
-          ARGS -E copy_if_different ${dll_original} ${dll_target}
-          VERBATIM)
-
-      endif()
-
   endforeach()
 
 endmacro()
@@ -1590,27 +1564,27 @@ macro(ign_build_tests)
     find_package(PythonInterp QUIET)
 
     # Build all the tests
-    foreach(BINARY_NAME ${test_list})
+    foreach(target_name ${test_list})
 
       if(USE_LOW_MEMORY_TESTS)
-        target_compile_options(${BINARY_NAME} PRIVATE -DUSE_LOW_MEMORY_TESTS=1)
+        target_compile_options(${target_name} PRIVATE -DUSE_LOW_MEMORY_TESTS=1)
       endif()
 
-      add_test(${BINARY_NAME} ${CMAKE_CURRENT_BINARY_DIR}/${BINARY_NAME}
-               --gtest_output=xml:${CMAKE_BINARY_DIR}/test_results/${BINARY_NAME}.xml)
+      add_test(NAME ${target_name} COMMAND
+        ${target_name} --gtest_output=xml:${CMAKE_BINARY_DIR}/test_results/${target_name}.xml)
 
       if(UNIX)
         # gtest requies pthread when compiled on a Unix machine
-        target_link_libraries(${BINARY_NAME} pthread)
+        target_link_libraries(${target_name} pthread)
       endif()
 
-      set_tests_properties(${BINARY_NAME} PROPERTIES TIMEOUT 240)
+      set_tests_properties(${target_name} PROPERTIES TIMEOUT 240)
 
       if(PYTHONINTERP_FOUND)
         # Check that the test produced a result and create a failure if it didn't.
         # Guards against crashed and timed out tests.
-        add_test(check_${BINARY_NAME} ${PYTHON_EXECUTABLE} ${PROJECT_SOURCE_DIR}/tools/check_test_ran.py
-          ${CMAKE_BINARY_DIR}/test_results/${BINARY_NAME}.xml)
+        add_test(check_${target_name} ${PYTHON_EXECUTABLE} ${PROJECT_SOURCE_DIR}/tools/check_test_ran.py
+          ${CMAKE_BINARY_DIR}/test_results/${target_name}.xml)
       endif()
     endforeach()
 

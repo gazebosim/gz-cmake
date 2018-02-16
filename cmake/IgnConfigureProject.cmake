@@ -144,6 +144,17 @@ macro(ign_configure_project)
   # choose -std=c++14.
   set(CMAKE_CXX_EXTENSIONS off)
 
+  #============================================================================
+  # Put all runtime objects (executables and DLLs) into a single directory.
+  # This helps executables (e.g. tests) to run from the build directory on
+  # Windows. The DLLs that we build for this library needs to be available to
+  # the executables that depend on them.
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
+  # Put all libraries (.so or .lib) into a single directory. This is just for
+  # convenience.
+  set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+
 endmacro()
 
 #################################################
