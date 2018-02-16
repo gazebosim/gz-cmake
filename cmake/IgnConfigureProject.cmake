@@ -151,9 +151,13 @@ macro(ign_configure_project)
   # the executables that depend on them.
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-  # Put all libraries (.so or .lib) into a single directory. This is just for
-  # convenience.
+  # Put all libraries (.so, static .lib) into a single directory. This is just
+  # for convenience.
   set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+
+  # Put all archive libraries (export .lib) into the lib directory. This is
+  # just for convenience.
+  set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 endmacro()
 
