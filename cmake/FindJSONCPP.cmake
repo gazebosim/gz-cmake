@@ -39,6 +39,7 @@ else()
     ign_pkg_config_entry(JSONCPP jsoncpp)
   else()
     ign_pkg_check_modules(JSONCPP jsoncpp)
+    set(JSONCPP_TARGET JSONCPP::JSONCPP)
 
     # If that failed, then fall back to manual detection.
     if(NOT JSONCPP_FOUND)
@@ -68,7 +69,6 @@ else()
       if(JSONCPP_FOUND)
         include(IgnImportTarget)
         ign_import_target(JSONCPP)
-        set(JSONCPP_TARGET JSONCPP::JSONCPP)
       endif()
 
       include(FindPackageHandleStandardArgs)
