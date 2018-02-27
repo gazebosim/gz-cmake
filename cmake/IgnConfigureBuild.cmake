@@ -96,6 +96,10 @@ macro(ign_configure_build)
     # also the include directory that's generated in the build folder,
     # ${PROJECT_BINARY_DIR}, so that headers which are generated via cmake will
     # be visible to the compiler.
+    #
+    # TODO: We should consider removing this include_directories(~) command.
+    # If these directories are needed by any targets, then we should specify it
+    # for those targets directly.
     include_directories(
       ${PROJECT_SOURCE_DIR}/include
       ${PROJECT_BINARY_DIR}/include)
@@ -103,6 +107,9 @@ macro(ign_configure_build)
 
     #--------------------------------------
     # Clear the test results directory
+    #
+    # TODO: This should probably be in a CI script instead of our build
+    # configuration script.
     execute_process(COMMAND cmake -E remove_directory ${CMAKE_BINARY_DIR}/test_results)
     execute_process(COMMAND cmake -E make_directory ${CMAKE_BINARY_DIR}/test_results)
 
@@ -114,9 +121,24 @@ macro(ign_configure_build)
 
     #--------------------------------------
     # Add the source code directories of the core library
-    add_subdirectory(src)
-    _ign_find_include_script()
-    add_subdirectory(test)
+    if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/core")
+
+      # If the directory structure has a subdirectory called "core", we will
+      # use that instead of assuming that src, include, and test subdirectories
+      # exist in the root directory.
+      #
+      # We treat "core" the same way as we treat the component subdirectories.
+      # It's inserted into the beginning of the list to make sure that the core
+      # subdirectory is handled before any other.
+      list(INSERT ign_configure_build_COMPONENTS 0 core)
+
+    else()
+
+      add_subdirectory(src)
+      _ign_find_include_script()
+      add_subdirectory(test)
+
+    endif()
 
     #--------------------------------------
     # Add the source code directories of each component if they exist
@@ -124,11 +146,14 @@ macro(ign_configure_build)
 
       if(NOT SKIP_${component})
 
+        set(found_${component}_src FALSE)
+
         if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/${component}/CMakeLists.txt")
 
           # If the component's directory has a top-level CMakeLists.txt, use
           # that.
           add_subdirectory(${component})
+          set(found_${component}_src TRUE)
 
         else()
 
@@ -141,6 +166,7 @@ macro(ign_configure_build)
           # Add the source files
           if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/${component}/src/CMakeLists.txt")
             add_subdirectory(${component}/src)
+            set(found_${component}_src TRUE)
           endif()
 
           _ign_find_include_script(COMPONENT ${component})
@@ -149,6 +175,12 @@ macro(ign_configure_build)
           if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/${component}/test/CMakeLists.txt")
             add_subdirectory(${component}/test)
           endif()
+        endif()
+
+        if(NOT found_${component}_src)
+          message(AUTHOR_WARNING
+            "Could not find a top-level CMakeLists.txt or src/CMakeLists.txt "
+            "for the component [${component}]!")
         endif()
 
       else()
@@ -181,6 +213,10 @@ endmacro()
 macro(ign_set_cxx_feature_flags)
 
   set(IGN_KNOWN_CXX_STANDARDS 11 14)
+
+  # TODO: Once we're using cmake-3.8.2 or higher, we can replace these with
+  # cxx_std_11, cxx_std_14, and cxx_std_17, which will be defined automatically
+  # by cmake in later versions.
 
   set(IGN_CXX_11_FEATURES
     cxx_alias_templates
