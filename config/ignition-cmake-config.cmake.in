@@ -15,6 +15,11 @@
 # of a caller.
 cmake_minimum_required(VERSION 3.5.1 FATAL_ERROR)
 
+if(@PKG_NAME@_CONFIG_INCLUDED)
+  return()
+endif()
+set(@PKG_NAME@_CONFIG_INCLUDED TRUE)
+
 # We should only perform these operations if either
 #  1. ign-cmake has not been included yet, or
 #  2. we need a higher version of ign-cmake than the last one that was included
@@ -34,12 +39,6 @@ if( NOT IGNITION_CMAKE_VERSION_MAJOR
   set(IGNITION_CMAKE_VERSION_MAJOR @PROJECT_VERSION_MAJOR@)
 
   #--------------------------------------
-if(@PKG_NAME@_CONFIG_INCLUDED)
-  return()
-endif()
-set(@PKG_NAME@_CONFIG_INCLUDED TRUE)
-
-#--------------------------------------
   # Initialize the IGNITION_CMAKE_DIR variable with the location of the cmake
   # directory that sits next to this find-module.
   set(IGNITION_CMAKE_DIR "${CMAKE_CURRENT_LIST_DIR}/cmake@PROJECT_VERSION_MAJOR@")
