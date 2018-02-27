@@ -25,7 +25,7 @@ cmake_minimum_required(VERSION 3.5.1 FATAL_ERROR)
 # should be available in newer versions of ign-cmake, so this should not create
 # any conflicts.
 if( NOT IGNITION_CMAKE_VERSION_MAJOR
-    (OR IGNITION_CMAKE_VERSION_MAJOR LESS @PROJECT_VERSION_MAJOR@) )
+    OR (IGNITION_CMAKE_VERSION_MAJOR LESS @PROJECT_VERSION_MAJOR@) )
 
   #--------------------------------------
   # Create a variable to indicate what version of ignition-cmake we are using.
