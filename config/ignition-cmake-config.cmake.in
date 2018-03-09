@@ -15,23 +15,37 @@
 # of a caller.
 cmake_minimum_required(VERSION 3.5.1 FATAL_ERROR)
 
-#--------------------------------------
-# Initialize the IGNITION_CMAKE_DIR variable with the location of the cmake
-# directory that sits next to this find-module.
-set(IGNITION_CMAKE_DIR "${CMAKE_CURRENT_LIST_DIR}/cmake@PROJECT_VERSION_MAJOR@")
+# We should only perform these operations if either
+#  1. ign-cmake has not been included yet, or
+#  2. we need a higher version of ign-cmake than the last one that was included
+#
+# The only time we should need to switch to a higher version of ign-cmake is
+# when importing targets for dependencies, i.e. using the find-modules of
+# ign-cmake. All find-modules that are available in older versions of ign-cmake
+# should be available in newer versions of ign-cmake, so this should not create
+# any conflicts.
+if( NOT IGNITION_CMAKE_VERSION_MAJOR
+    OR (IGNITION_CMAKE_VERSION_MAJOR LESS @PROJECT_VERSION_MAJOR@) )
 
-#--------------------------------------
-# Add the location of this package's cmake directory to the CMAKE_MODULE_PATH
-list(APPEND CMAKE_MODULE_PATH "${IGNITION_CMAKE_DIR}")
+  #--------------------------------------
+  # Create a variable to indicate what version of ignition-cmake we are using.
+  # This variable does not follow the usual cmake naming convention because it
+  # is a non-standard package variable.
+  set(IGNITION_CMAKE_VERSION_MAJOR @PROJECT_VERSION_MAJOR@)
 
-#--------------------------------------
-# include the master IgnCMake module
-include(IgnCMake)
+  #--------------------------------------
+  # Initialize the IGNITION_CMAKE_DIR variable with the location of the cmake
+  # directory that sits next to this find-module.
+  set(IGNITION_CMAKE_DIR "${CMAKE_CURRENT_LIST_DIR}/cmake@PROJECT_VERSION_MAJOR@")
 
-#--------------------------------------
-# Create a variable to indicate what version of ignition-cmake we are using.
-# This variable does not follow the usual cmake naming convention because it is
-# a non-standard package variable.
-set(IGNITION_CMAKE_VERSION_MAJOR @PROJECT_VERSION_MAJOR@)
+  #--------------------------------------
+  # Add the location of this package's cmake directory to the CMAKE_MODULE_PATH
+  list(APPEND CMAKE_MODULE_PATH "${IGNITION_CMAKE_DIR}")
 
-set(IGNITION_CMAKE_DOXYGEN_DIR "@CMAKE_INSTALL_PREFIX@/share/ignition/@PROJECT_NAME_LOWER@/doxygen")
+  #--------------------------------------
+  # include the master IgnCMake module
+  include(IgnCMake)
+
+  set(IGNITION_CMAKE_DOXYGEN_DIR "@CMAKE_INSTALL_PREFIX@/share/ignition/@PROJECT_NAME_LOWER@/doxygen")
+
+endif()
