@@ -94,16 +94,19 @@ FUNCTION(IGN_SETUP_TARGET_FOR_COVERAGE _targetname _testrunner _outputname)
     COMMAND ${CMAKE_COMMAND} -E remove ${_outputname}.info.cleaned
       ${_outputname}.info
     # Capturing lcov counters and generating report
-    COMMAND ${LCOV_PATH} -q --no-checksum --directory ${PROJECT_BINARY_DIR}
-      --capture --output-file ${_outputname}.info 2>/dev/null
+    COMMAND ${LCOV_PATH} --rc lcov_branch_coverage=1 -q --no-checksum
+      --directory ${PROJECT_BINARY_DIR} --capture
+      --output-file ${_outputname}.info 2>/dev/null
     # Remove negative counts
     COMMAND sed -i '/,-/d' ${_outputname}.info
-    COMMAND ${LCOV_PATH} -q --remove ${_outputname}.info
-      'test/*' '/usr/*' '*_TEST*' '*.cxx' 'moc_*.cpp' 'qrc_*.cpp' --output-file ${_outputname}.info.cleaned
-    COMMAND ${GENHTML_PATH} -q --legend -o ${_outputname}
-      ${_outputname}.info.cleaned
+    COMMAND ${LCOV_PATH} --rc lcov_branch_coverage=1 -q
+      --remove ${_outputname}.info 'test/*' '/usr/*' '*_TEST*' '*.cxx' 'moc_*.cpp' 'qrc_*.cpp' --output-file ${_outputname}.info.cleaned
+    COMMAND ${GENHTML_PATH} --rc lcov_branch_coverage=1 -q
+    --legend -o ${_outputname} ${_outputname}.info.cleaned
     COMMAND ${LCOV_PATH} --summary ${_outputname}.info.cleaned 2>&1 | grep "lines" | cut -d ' ' -f 4 | cut -d '%' -f 1 > coverage/lines.txt
     COMMAND ${LCOV_PATH} --summary ${_outputname}.info.cleaned 2>&1 | grep "functions" | cut -d ' ' -f 4 | cut -d '%' -f 1 > coverage/functions.txt
+    COMMAND ${LCOV_PATH} --rc lcov_branch_coverage=1
+      --summary ${_outputname}.info.cleaned 2>&1 | grep "branches" | cut -d ' ' -f 4 | cut -d '%' -f 1 > coverage/branches.txt
     COMMAND ${CMAKE_COMMAND} -E rename ${_outputname}.info.cleaned
       ${_outputname}.info
 
