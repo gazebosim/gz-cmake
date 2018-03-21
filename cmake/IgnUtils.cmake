@@ -464,7 +464,7 @@ macro(ign_string_append output_var val)
     set(delim " ")
   endif()
 
-  if(${output_var} STREQUAL "")
+  if( (NOT ${output_var}) OR (${output_var} STREQUAL "") )
     # If ${output_var} is blank, just set it to equal ${val}
     set(${output_var} "${val}")
   else()

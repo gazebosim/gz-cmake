@@ -119,10 +119,18 @@ macro(ign_configure_build)
     add_subdirectory(test)
 
     #--------------------------------------
+    # Initialize the list of header directories that should be parsed by doxygen
+    set(ign_doxygen_component_input_dirs "${CMAKE_SOURCE_DIR}/include")
+
+    #--------------------------------------
     # Add the source code directories of each component if they exist
     foreach(component ${ign_configure_build_COMPONENTS})
 
       if(NOT SKIP_${component})
+
+        ign_string_append(ign_doxygen_component_input_dirs
+          "${CMAKE_SOURCE_DIR}/${component}/include"
+          DELIM " \\\\\\\\\n  ")
 
         if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/${component}/CMakeLists.txt")
 
@@ -168,6 +176,11 @@ macro(ign_configure_build)
     #--------------------------------------
     # Export the "all" meta-target
     ign_export_target_all()
+
+
+    #--------------------------------------
+    # Create documentation
+    ign_create_docs()
 
 
     #--------------------------------------
