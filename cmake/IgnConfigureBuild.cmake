@@ -128,6 +128,10 @@ macro(ign_configure_build)
 
       if(NOT SKIP_${component})
 
+        # Note: It seems we need to give the delimiter exactly this many
+        # backslashes in order to get a \ plus a newline. This might be
+        # dependent on the implementation of ign_string_append, so be careful
+        # when changing the implementation of that function.
         ign_string_append(ign_doxygen_component_input_dirs
           "${CMAKE_SOURCE_DIR}/${component}/include"
           DELIM " \\\\\\\\\n  ")
