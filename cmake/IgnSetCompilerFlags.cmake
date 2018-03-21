@@ -316,6 +316,10 @@ macro(ign_setup_msvc)
     set(CMAKE_C_FLAGS_MINSIZEREL "${CMAKE_C_FLAGS_MINSIZEREL} ${MSVC_MINIMAL_FLAGS}")
     set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL} ${MSVC_MINIMAL_FLAGS}")
 
+    # cmake provides nothing.
+    set(CMAKE_C_FLAGS_MINSIZEREL "${CMAKE_C_FLAGS_NONE} ${MSVC_MINIMAL_FLAGS}")
+    set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_NONE} ${MSVC_MINIMAL_FLAGS}")
+
     # NOTE: Leave CMAKE_C_FLAGS and CMAKE_CXX_FLAGS blank, because
     # those will be appended to all build configurations.
 
@@ -341,7 +345,7 @@ macro(ign_setup_msvc)
   endif()
 
   if(IGN_USE_STATIC_RUNTIME)
-    foreach(build_type DEBUG RELEASE RELWITHDEBINFO MINSIZEREL)
+    foreach(build_type DEBUG RELEASE RELWITHDEBINFO MINSIZEREL NONE)
       foreach(lang C CXX)
         set(flags_var CMAKE_${lang}_FLAGS_${build_type})
         string(REGEX REPLACE "/MD" "/MT" ${flags_var} "${${flags_var}}")
