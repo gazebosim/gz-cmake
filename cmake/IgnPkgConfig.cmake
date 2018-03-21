@@ -70,7 +70,13 @@ macro(ign_pkg_check_modules_quiet package)
 
   if(PKG_CONFIG_FOUND)
 
-    pkg_check_modules(${package} ${ARGN})
+    if(${package}_FIND_QUIETLY)
+      set(ign_pkg_check_modules_quiet_arg QUIET)
+    else()
+      set(ign_pkg_check_modules_quiet_arg)
+    endif()
+
+    pkg_check_modules(${package} ${ign_pkg_check_modules_quiet_arg} ${ARGN})
 
     # TODO: When we require cmake-3.6+, we should remove this procedure and just
     #       use the plain pkg_check_modules, which provides an option called
@@ -122,7 +128,18 @@ endmacro()
 macro(ign_pkg_config_entry package string)
 
   set(${package}_PKGCONFIG_ENTRY "${string}")
-  set(${package}_PKGCONFIG_TYPE PROJECT_PKGCONFIG_REQUIRES)
+  set(${package}_PKGCONFIG_TYPE PKGCONFIG_REQUIRES)
+
+endmacro()
+
+# This creates variables which inform ign_find_package(~) that your package must
+# be found as a plain library by pkg-config. This should be used in any
+# find-module that handles a library package which does not install a pkg-config
+# <package>.pc file.
+macro(ign_pkg_config_library_entry package lib_name)
+
+  set(${package}_PKGCONFIG_ENTRY "-l${lib_name}")
+  set(${package}_PKGCONFIG_TYPE PKGCONFIG_LIBS)
 
 endmacro()
 

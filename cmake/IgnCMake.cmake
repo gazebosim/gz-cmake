@@ -28,7 +28,8 @@ include(IgnPackaging)
 include(IgnCreateDocs)
 include(IgnSetCompilerFlags)
 include(IgnConfigureBuild)
-
+include(IgnImportTarget)
+include(IgnPkgConfig)
 
 #============================================================================
 # Native cmake modules

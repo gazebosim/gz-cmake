@@ -64,72 +64,76 @@ macro(ign_import_target package)
     set(target_name ${package}::${package})
   endif()
 
-  #------------------------------------
-  # Use default versions of these build variables if custom versions were not
-  # provided.
-  if(NOT ign_import_target_LIB_VAR)
-    set(ign_import_target_LIB_VAR ${package}_LIBRARIES)
-  endif()
+  if(NOT TARGET ${target_name})
 
-  if(NOT ign_import_target_INCLUDE_VAR)
-    set(ign_import_target_INCLUDE_VAR ${package}_INCLUDE_DIRS)
-  endif()
-
-  if(NOT ign_import_target_CFLAGS_VAR)
-    set(ign_import_target_CFLAGS_VAR ${package}_CFLAGS)
-  endif()
-
-  #------------------------------------
-  # Link against this "imported" target by saying
-  # target_link_libraries(mytarget package::package), instead of linking
-  # against the variable package_LIBRARIES with the old-fashioned
-  # target_link_libraries(mytarget ${package_LIBRARIES}
-  if(NOT ign_import_target_INTERFACE)
-    add_library(${target_name} UNKNOWN IMPORTED)
-  else()
-    add_library(${target_name} INTERFACE IMPORTED)
-  endif()
-
-  # Do not bother with the IMPORTED_LOCATION or IMPORTED_IMPLIB variables if it
-  # is an INTERFACE target.
-  if(NOT ign_import_target_INTERFACE)
-
-    if(${ign_import_target_LIB_VAR})
-      _ign_sort_libraries(${target_name} ${${ign_import_target_LIB_VAR}})
+    #------------------------------------
+    # Use default versions of these build variables if custom versions were not
+    # provided.
+    if(NOT ign_import_target_LIB_VAR)
+      set(ign_import_target_LIB_VAR ${package}_LIBRARIES)
     endif()
 
-  endif()
+    if(NOT ign_import_target_INCLUDE_VAR)
+      set(ign_import_target_INCLUDE_VAR ${package}_INCLUDE_DIRS)
+    endif()
 
-  if(${ign_import_target_LIB_VAR})
-    set_target_properties(${target_name} PROPERTIES
-      INTERFACE_LINK_LIBRARIES "${${ign_import_target_LIB_VAR}}")
-  endif()
+    if(NOT ign_import_target_CFLAGS_VAR)
+      set(ign_import_target_CFLAGS_VAR ${package}_CFLAGS)
+    endif()
 
-  if(${ign_import_target_INCLUDE_VAR})
-    # TODO: In a later version of cmake, it should be possible to replace this
-    # with
-    #
-    # target_include_directories(${target_name} INTERFACE ${${ign_import_target_INCLUDE_VAR}})
-    #
-    # But this will not be possible until we are using whichever version of cmake
-    # the PR https://gitlab.kitware.com/cmake/cmake/merge_requests/1264
-    # is available for.
-    set_property(
-      TARGET ${target_name}
-      PROPERTY INTERFACE_INCLUDE_DIRECTORIES
-        ${${ign_import_target_INCLUDE_VAR}})
-  endif()
+    #------------------------------------
+    # Link against this "imported" target by saying
+    # target_link_libraries(mytarget package::package), instead of linking
+    # against the variable package_LIBRARIES with the old-fashioned
+    # target_link_libraries(mytarget ${package_LIBRARIES}
+    if(NOT ign_import_target_INTERFACE)
+      add_library(${target_name} UNKNOWN IMPORTED)
+    else()
+      add_library(${target_name} INTERFACE IMPORTED)
+    endif()
 
-  if(${ign_import_target_CFLAGS_VAR})
-    # TODO: See note above. We should eventually be able to replace this with
-    # target_compile_options(${target_name} INTERFACE ${${ign_import_target_CFLAGS_VAR}})
-    set_property(
-      TARGET ${target_name}
-      PROPERTY INTERFACE_COMPILE_OPTIONS
-        ${${ign_import_target_CFLAGS_VAR}})
-  endif()
+    # Do not bother with the IMPORTED_LOCATION or IMPORTED_IMPLIB variables if it
+    # is an INTERFACE target.
+    if(NOT ign_import_target_INTERFACE)
 
-  # What about linker flags? Is there no target property for that?
+      if(${ign_import_target_LIB_VAR})
+        _ign_sort_libraries(${target_name} ${${ign_import_target_LIB_VAR}})
+      endif()
+
+    endif()
+
+    if(${ign_import_target_LIB_VAR})
+      set_target_properties(${target_name} PROPERTIES
+        INTERFACE_LINK_LIBRARIES "${${ign_import_target_LIB_VAR}}")
+    endif()
+
+    if(${ign_import_target_INCLUDE_VAR})
+      # TODO: In a later version of cmake, it should be possible to replace this
+      # with
+      #
+      # target_include_directories(${target_name} INTERFACE ${${ign_import_target_INCLUDE_VAR}})
+      #
+      # But this will not be possible until we are using whichever version of cmake
+      # the PR https://gitlab.kitware.com/cmake/cmake/merge_requests/1264
+      # is available for.
+      set_property(
+        TARGET ${target_name}
+        PROPERTY INTERFACE_INCLUDE_DIRECTORIES
+          ${${ign_import_target_INCLUDE_VAR}})
+    endif()
+
+    if(${ign_import_target_CFLAGS_VAR})
+      # TODO: See note above. We should eventually be able to replace this with
+      # target_compile_options(${target_name} INTERFACE ${${ign_import_target_CFLAGS_VAR}})
+      set_property(
+        TARGET ${target_name}
+        PROPERTY INTERFACE_COMPILE_OPTIONS
+          ${${ign_import_target_CFLAGS_VAR}})
+    endif()
+
+    # What about linker flags? Is there no target property for that?
+
+  endif()
 
 endmacro()
 
