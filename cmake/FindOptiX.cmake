@@ -209,7 +209,10 @@ if(APPLE)
   ign_OptiX_check_same_path(optix_prime optixu)
 
   set( optix_rpath ${_optix_rpath} ${_optixu_rpath} ${_optix_prime_rpath} )
-  list(REMOVE_DUPLICATES optix_rpath)
+  list(LENGTH optix_rpath optix_rpath_LENGTH)
+  if (optix_rpath_LENGTH GREATER 0)
+    list(REMOVE_DUPLICATES optix_rpath)
+  endif()
 endif()
 
 ########################################
