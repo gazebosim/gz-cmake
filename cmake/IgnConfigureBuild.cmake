@@ -194,6 +194,11 @@ macro(ign_parse_build_type)
     set(CMAKE_BUILD_TYPE "RelWithDebInfo")
   endif()
 
+  # Handle NONE in MSVC as blank and default to RelWithDebInfo
+  if (MSVC AND CMAKE_BUILD_TYPE_UPPERCASE STREQUAL "NONE")
+    set(CMAKE_BUILD_TYPE "RelWithDebInfo")
+  endif()
+
   # Convert to uppercase in order to support arbitrary capitalization
   string(TOUPPER "${CMAKE_BUILD_TYPE}" CMAKE_BUILD_TYPE_UPPERCASE)
 

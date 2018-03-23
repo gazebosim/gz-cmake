@@ -321,10 +321,6 @@ macro(ign_setup_msvc)
     set(CMAKE_C_FLAGS_MINSIZEREL "${CMAKE_C_FLAGS_MINSIZEREL} ${MSVC_MINIMAL_FLAGS}")
     set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL} ${MSVC_MINIMAL_FLAGS}")
 
-    # cmake provides nothing.
-    set(CMAKE_C_FLAGS_NONE "${CMAKE_C_FLAGS_NONE} ${MSVC_MINIMAL_FLAGS}")
-    set(CMAKE_CXX_FLAGS_NONE "${CMAKE_CXX_FLAGS_NONE} ${MSVC_MINIMAL_FLAGS}")
-
     # NOTE: Leave CMAKE_C_FLAGS and CMAKE_CXX_FLAGS blank, because
     # those will be appended to all build configurations.
 
