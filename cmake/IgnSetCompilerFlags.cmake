@@ -210,6 +210,11 @@ macro(ign_setup_gcc_or_clang)
   set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL} ${CUSTOM_ALL_FLAGS} ${CUSTOM_MINSIZEREL_FLAGS}")
 
 
+  # NONE is a custom type used in Debian, not automatically provided by cmake
+  set(CMAKE_C_FLAGS_NONE "${CMAKE_C_FLAGS_NONE} ${CUSTOM_ALL_FLAGS} ${MSVC_MINIMAL_FLAGS}")
+  set(CMAKE_CXX_FLAGS_NONE "${CMAKE_CXX_FLAGS_NONE} ${CUSTOM_ALL_FLAGS} ${MSVC_MINIMAL_FLAGS}")
+
+
   # PROFILE is a custom build type, not automatically provided by cmake
   set(CMAKE_C_FLAGS_PROFILE "${CMAKE_C_FLAGS_PROFILE} ${CUSTOM_ALL_FLAGS} ${CUSTOM_PROFILE_FLAGS}")
   set(CMAKE_CXX_FLAGS_PROFILE "${CMAKE_CXX_FLAGS_PROFILE} ${CUSTOM_ALL_FLAGS} ${CUSTOM_PROFILE_FLAGS}")
@@ -341,7 +346,7 @@ macro(ign_setup_msvc)
   endif()
 
   if(IGN_USE_STATIC_RUNTIME)
-    foreach(build_type DEBUG RELEASE RELWITHDEBINFO MINSIZEREL)
+    foreach(build_type DEBUG RELEASE RELWITHDEBINFO MINSIZEREL NONE)
       foreach(lang C CXX)
         set(flags_var CMAKE_${lang}_FLAGS_${build_type})
         string(REGEX REPLACE "/MD" "/MT" ${flags_var} "${${flags_var}}")
