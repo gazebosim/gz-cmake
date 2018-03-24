@@ -7,7 +7,8 @@
 :: Set configuration variables
 @set build_type=Release
 @if not "%1"=="" set build_type=%1
-@echo Configuring for build type %build_type%
+echo Configuring for build type %build_type%
+echo **********************************************
 
 :: Go to the directory that this file configure.bat file exists in
 cd /d %~dp0
