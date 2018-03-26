@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.5.1 FATAL_ERROR)
 #============================================================================
 # Initialize the project
 #============================================================================
-project(ignition-cmake0 VERSION 0.5.0)
+project(ignition-cmake1 VERSION 1.0.0)
 
 #--------------------------------------
 # Initialize the IGNITION_CMAKE_DIR variable with the location of the cmake
@@ -20,7 +20,14 @@ include(IgnCMake)
 
 #--------------------------------------
 # Set up the project
-ign_configure_project()
+ign_configure_project(VERSION_SUFFIX pre1)
+
+#--------------------------------------
+# Install the ignition documentation files
+# Note: This is not actually creating a doc target for ign-cmake; this is just
+# installing files that are useful for generating the documentation of other
+# ignition projects.
+ign_create_docs()
 
 #============================================================================
 # Configure the package to be installed
@@ -107,5 +114,3 @@ if (BUILD_TESTING)
   endif()
   add_subdirectory(examples)
 endif()
-
-add_subdirectory(doc)

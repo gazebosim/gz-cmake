@@ -15,6 +15,11 @@
 # of a caller.
 cmake_minimum_required(VERSION 3.5.1 FATAL_ERROR)
 
+if(@PKG_NAME@_CONFIG_INCLUDED)
+  return()
+endif()
+set(@PKG_NAME@_CONFIG_INCLUDED TRUE)
+
 # We should only perform these operations if either
 #  1. ign-cmake has not been included yet, or
 #  2. we need a higher version of ign-cmake than the last one that was included
