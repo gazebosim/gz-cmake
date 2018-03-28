@@ -7,13 +7,16 @@ if (NOT WIN32 AND EXAMPLE_LCOV_PATH)
   list(APPEND build_types Coverage)
 endif()
 
-set(example_directories ign_configure_build prerelease)
+set(example_directories
+  ign_configure_build
+  prerelease
+  )
 
 foreach(example ${example_directories})
   if (${example} STREQUAL "ign_configure_build")
     set(example_tarball_name ignition-minimal-0.1.0.tar.bz2)
   elseif (${example} STREQUAL "prerelease")
-    set(example_tarball_name ignition-minimal-0.1.0~pre1.tar.bz2)
+    set(example_tarball_name ignition-minimal-1.0.0~pre1.tar.bz2)
   endif()
 
   foreach (build_type ${build_types})
@@ -36,18 +39,13 @@ foreach(example ${example_directories})
       # See alternate approach in a2113e0997c9 if this becomes too slow
       BUILD_ALWAYS 1
       CMAKE_ARGS
-        "-DCMAKE_PREFIX_PATH=${CMAKE_BINARY_DIR}"
+        "-DCMAKE_PREFIX_PATH=${CMAKE_BINARY_DIR};${CMAKE_BINARY_DIR}/install"
         "-DCMAKE_BUILD_TYPE=${build_type}"
+        "-DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/install"
       TEST_COMMAND
         ${CMAKE_COMMAND} -E copy
         "${CMAKE_CURRENT_BINARY_DIR}/${EXAMPLE_NAME}_pass.xml"
         "${CMAKE_CURRENT_BINARY_DIR}/test_results/${EXAMPLE_NAME}.xml"
-
-      # We explicitly disable the install command to ensure that the examples
-      # do not get installed, and also because some strange behavior on Windows
-      # causes the tests to require administrative privileges to build when this
-      # option is left unset.
-      INSTALL_COMMAND ""
     )
     if (CPACK_GENERATOR)
       ExternalProject_Add_Step(
