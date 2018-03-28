@@ -7,6 +7,7 @@ if (NOT WIN32 AND EXAMPLE_LCOV_PATH)
   list(APPEND build_types Coverage)
 endif()
 
+set(example_INSTALL_DIR ${CMAKE_BINARY_DIR}/install)
 set(example_directories
   ign_configure_build
   prerelease
@@ -47,9 +48,9 @@ foreach(example ${example_directories})
       # See alternate approach in a2113e0997c9 if this becomes too slow
       BUILD_ALWAYS 1
       CMAKE_ARGS
-        "-DCMAKE_PREFIX_PATH=${CMAKE_BINARY_DIR};${CMAKE_BINARY_DIR}/install"
+        "-DCMAKE_PREFIX_PATH=${CMAKE_BINARY_DIR};${example_INSTALL_DIR}"
         "-DCMAKE_BUILD_TYPE=${build_type}"
-        "-DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/install"
+        "-DCMAKE_INSTALL_PREFIX=${example_INSTALL_DIR}"
       TEST_COMMAND
         ${CMAKE_COMMAND} -E copy
         "${CMAKE_CURRENT_BINARY_DIR}/${EXAMPLE_NAME}_pass.xml"
