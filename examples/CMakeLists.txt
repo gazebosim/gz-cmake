@@ -17,18 +17,18 @@ foreach(example ${example_directories})
   endif()
 
   foreach (build_type ${build_types})
-    set(EXAMPLE_NAME ${example}_${build_type})
-    string(TIMESTAMP EXAMPLE_TIME)
+    set(TEST_NAME ${example}_${build_type})
+    string(TIMESTAMP TEST_TIME)
     configure_file(
       "${CMAKE_CURRENT_SOURCE_DIR}/junit_pass.xml.in"
-      "${CMAKE_CURRENT_BINARY_DIR}/${EXAMPLE_NAME}_pass.xml"
+      "${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME}_pass.xml"
       @ONLY)
     configure_file(
       "${CMAKE_CURRENT_SOURCE_DIR}/junit_fail.xml.in"
-      "${CMAKE_CURRENT_BINARY_DIR}/test_results/${EXAMPLE_NAME}.xml"
+      "${CMAKE_CURRENT_BINARY_DIR}/test_results/${TEST_NAME}.xml"
       @ONLY)
     ExternalProject_Add(
-      ${EXAMPLE_NAME}
+      ${TEST_NAME}
 
       SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/${example}"
       # BUILD_ALWAYS needed since cmake doesn't notice when
@@ -40,8 +40,8 @@ foreach(example ${example_directories})
         "-DCMAKE_BUILD_TYPE=${build_type}"
       TEST_COMMAND
         ${CMAKE_COMMAND} -E copy
-        "${CMAKE_CURRENT_BINARY_DIR}/${EXAMPLE_NAME}_pass.xml"
-        "${CMAKE_CURRENT_BINARY_DIR}/test_results/${EXAMPLE_NAME}.xml"
+        "${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME}_pass.xml"
+        "${CMAKE_CURRENT_BINARY_DIR}/test_results/${TEST_NAME}.xml"
 
       # We explicitly disable the install command to ensure that the examples
       # do not get installed, and also because some strange behavior on Windows
@@ -51,7 +51,7 @@ foreach(example ${example_directories})
     )
     if (CPACK_GENERATOR)
       ExternalProject_Add_Step(
-        ${EXAMPLE_NAME}
+        ${TEST_NAME}
         package_source
         COMMAND
           ${CMAKE_COMMAND} --build <BINARY_DIR> --target package_source
@@ -59,7 +59,7 @@ foreach(example ${example_directories})
           configure
       )
       ExternalProject_Add_Step(
-        ${EXAMPLE_NAME}
+        ${TEST_NAME}
         test_tarball_name
         COMMAND
           ${CMAKE_COMMAND} -E tar tf <BINARY_DIR>/${example_tarball_name}
@@ -70,10 +70,10 @@ foreach(example ${example_directories})
       )
     endif()
     add_test(
-      ${EXAMPLE_NAME}
+      ${TEST_NAME}
       ${CMAKE_COMMAND} -E copy
-      "${CMAKE_CURRENT_BINARY_DIR}/test_results/${EXAMPLE_NAME}.xml"
-      "${CMAKE_BINARY_DIR}/test_results/${EXAMPLE_NAME}.xml"
+      "${CMAKE_CURRENT_BINARY_DIR}/test_results/${TEST_NAME}.xml"
+      "${CMAKE_BINARY_DIR}/test_results/${TEST_NAME}.xml"
     )
   endforeach()
 
