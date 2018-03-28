@@ -11,6 +11,7 @@ set(example_directories
   ign_configure_build
   prerelease
   core_no_deps
+  core_child
   )
 
 foreach(example ${example_directories})
@@ -20,6 +21,8 @@ foreach(example ${example_directories})
     set(example_tarball_name ignition-minimal-1.0.0~pre1.tar.bz2)
   elseif (${example} STREQUAL "core_no_deps")
     set(example_tarball_name ignition-core_no_deps-0.1.0.tar.bz2)
+  elseif (${example} STREQUAL "core_child")
+    set(example_tarball_name ignition-core_child-0.1.0.tar.bz2)
   else()
     set(example_tarball_name)
   endif()
@@ -80,4 +83,11 @@ foreach(example ${example_directories})
     )
   endforeach()
 
+endforeach()
+
+# dependencies between external projects
+# hard to use DEPENDS in ExternalProject_Add because targets
+# need to exist before they can be used there
+foreach (build_type ${build_types})
+  add_dependencies(core_child_${build_type} core_no_deps_${build_type})
 endforeach()
