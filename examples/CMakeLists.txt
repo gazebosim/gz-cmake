@@ -10,7 +10,7 @@ endif()
 set(example_directories
   ign_configure_build
   prerelease
-  core_library_no_depends
+  core_no_deps
   )
 
 foreach(example ${example_directories})
@@ -18,8 +18,8 @@ foreach(example ${example_directories})
     set(example_tarball_name ignition-minimal-0.1.0.tar.bz2)
   elseif (${example} STREQUAL "prerelease")
     set(example_tarball_name ignition-minimal-1.0.0~pre1.tar.bz2)
-  elseif (${example} STREQUAL "core_library_no_depends")
-    set(example_tarball_name ignition-core_library_no_depends-0.1.0.tar.bz2)
+  elseif (${example} STREQUAL "core_no_deps")
+    set(example_tarball_name ignition-core_no_deps-0.1.0.tar.bz2)
   else()
     set(example_tarball_name)
   endif()
