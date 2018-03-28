@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 3.5.1 FATAL_ERROR)
+find_package(ignition-cmake1 REQUIRED)
+project(core_library_no_depends VERSION 0.1.0)
+ign_configure_project()
+ign_configure_build(QUIT_IF_BUILD_ERRORS)
+ign_create_packages()
