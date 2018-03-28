@@ -382,7 +382,7 @@ macro(ign_find_package PACKAGE_NAME)
 
           # Append the entry as a string onto the project-wide variable for
           # whichever requirement type we selected
-          ign_string_append(${PROJECT_${PACKAGE_NAME}_PKGCONFIG_TYPE} ${${PACKAGE_NAME}_PKGCONFIG_ENTRY})
+          ign_string_append(PROJECT_${${PACKAGE_NAME}_PKGCONFIG_TYPE} ${${PACKAGE_NAME}_PKGCONFIG_ENTRY})
 
         endif()
 
