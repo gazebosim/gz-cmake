@@ -92,3 +92,24 @@ endforeach()
 foreach (build_type ${build_types})
   add_dependencies(core_child_${build_type} core_no_deps_${build_type})
 endforeach()
+
+# test that core_child pkg-config file requires core_no_deps
+if (UNIX)
+  set(EXAMPLE_NAME core_child_requires_core_no_deps)
+  string(TIMESTAMP EXAMPLE_TIME)
+  configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/junit_pass.xml.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/${EXAMPLE_NAME}_pass.xml"
+    @ONLY)
+  configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/junit_fail.xml.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/${EXAMPLE_NAME}_fail.xml"
+    @ONLY)
+  set(_env_vars)
+  list(APPEND _env_vars "PKG_CONFIG_PATH=${example_INSTALL_DIR}/lib/pkgconfig:$PKG_CONFIG_PATH")
+  add_test(${EXAMPLE_NAME}
+    ${CMAKE_CURRENT_SOURCE_DIR}/test_core_child_requires_core_no_deps.bash
+  )
+  set_tests_properties(${EXAMPLE_NAME} PROPERTIES
+    ENVIRONMENT "${_env_vars}")
+endif()
