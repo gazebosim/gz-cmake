@@ -7,7 +7,6 @@ if (NOT WIN32 AND EXAMPLE_LCOV_PATH)
   list(APPEND build_types Coverage)
 endif()
 
-set(example_INSTALL_DIR ${CMAKE_BINARY_DIR}/install)
 set(example_directories
   ign_configure_build
   prerelease
@@ -39,6 +38,7 @@ foreach(example ${example_directories})
       "${CMAKE_CURRENT_SOURCE_DIR}/junit_fail.xml.in"
       "${CMAKE_CURRENT_BINARY_DIR}/test_results/${TEST_NAME}.xml"
       @ONLY)
+    set(example_INSTALL_DIR ${CMAKE_BINARY_DIR}/install/${build_type})
     ExternalProject_Add(
       ${TEST_NAME}
 
