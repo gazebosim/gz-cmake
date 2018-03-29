@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5.1 FATAL_ERROR)
-find_package(ignition-cmake1 REQUIRED)
 project(ignition-minimal1 VERSION 1.0.0)
+find_package(ignition-cmake1 REQUIRED)
 ign_configure_project(VERSION_SUFFIX pre1)
 ign_configure_build(QUIT_IF_BUILD_ERRORS)
