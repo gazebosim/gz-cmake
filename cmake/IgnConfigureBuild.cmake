@@ -307,6 +307,11 @@ macro(ign_parse_build_type)
     set(CMAKE_BUILD_TYPE "RelWithDebInfo")
   endif()
 
+  # Handle NONE in MSVC as blank and default to RelWithDebInfo
+  if (MSVC AND CMAKE_BUILD_TYPE_UPPERCASE STREQUAL "NONE")
+    set(CMAKE_BUILD_TYPE "RelWithDebInfo")
+  endif()
+
   # Convert to uppercase in order to support arbitrary capitalization
   string(TOUPPER "${CMAKE_BUILD_TYPE}" CMAKE_BUILD_TYPE_UPPERCASE)
 
@@ -316,6 +321,7 @@ macro(ign_parse_build_type)
   set(BUILD_TYPE_RELEASE FALSE)
   set(BUILD_TYPE_RELWITHDEBINFO FALSE)
   set(BUILD_TYPE_MINSIZEREL FALSE)
+  set(BUILD_TYPE_NONE FALSE)
   set(BUILD_TYPE_DEBUG FALSE)
 
   if("${CMAKE_BUILD_TYPE_UPPERCASE}" STREQUAL "DEBUG")
@@ -326,6 +332,8 @@ macro(ign_parse_build_type)
     set(BUILD_TYPE_RELWITHDEBINFO TRUE)
   elseif("${CMAKE_BUILD_TYPE_UPPERCASE}" STREQUAL "MINSIZEREL")
     set(BUILD_TYPE_MINSIZEREL TRUE)
+  elseif("${CMAKE_BUILD_TYPE_UPPERCASE}" STREQUAL "NONE")
+    set(BUILD_TYPE_NONE TRUE)
   elseif("${CMAKE_BUILD_TYPE_UPPERCASE}" STREQUAL "COVERAGE")
     include(IgnCodeCoverage)
     set(BUILD_TYPE_DEBUG TRUE)
