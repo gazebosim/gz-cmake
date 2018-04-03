@@ -16,7 +16,7 @@
 ########################################
 # Find SQLite3
 
-ign_pkg_check_modules_quiet(SQLite3 "sqlite3>=3.7.13")
+ign_pkg_check_modules_quiet(SQLite3 "sqlite3 >= 3.7.13")
 
 if(MSVC)
 
