@@ -41,8 +41,3 @@ if(MSVC)
   ign_import_target(SQLite3)
 
 endif()
-
-include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(
-  SQLite3
-  REQUIRED_VARS SQLite3_FOUND)
