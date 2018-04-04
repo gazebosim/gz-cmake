@@ -1,22 +1,24 @@
-find_program(CPPCHECK_PATH cppcheck)
-find_program(PYTHON_PATH python)
-find_program(FIND_PATH find)
-
-if(NOT CPPCHECK_PATH)
-  message(FATAL_ERROR "cppcheck not found! Aborting...")
-endif()
-
-if(NOT PYTHON_PATH)
-  message(FATAL_ERROR "python not found! Aborting...")
-endif()
-
-if(NOT FIND_PATH)
-  message(FATAL_ERROR "find not found! Aborting...")
-endif()
-
-
 # Setup the codecheck target, which will run cppcheck and cppplint.
 function(IGN_SETUP_TARGET_FOR_CODECHECK)
+
+  find_program(CPPCHECK_PATH cppcheck)
+  find_program(PYTHON_PATH python)
+  find_program(FIND_PATH find)
+  
+  if(NOT CPPCHECK_PATH)
+    message(SEND_ERROR "cppcheck not found! Aborting codecheck setup")
+    return()
+  endif()
+  
+  if(NOT PYTHON_PATH)
+    message(SEND_ERROR "python not found! Aborting codecheck setup.")
+    return()
+  endif()
+  
+  if(NOT FIND_PATH)
+    message(SEND_ERROR "find not found! Aborting codecheck setup.")
+    return()
+  endif()
 
   # Base set of cppcheck option
   set (CPPCHECK_BASE -q --inline-suppr -j 4)
@@ -46,6 +48,6 @@ function(IGN_SETUP_TARGET_FOR_CODECHECK)
     COMMAND ${CPPCHECK_PATH} ${CPPCHECK_BASE} --enable=missingInclude `${CPPCHECK_FIND}` ${CPPCHECK_INCLUDES}
 
     # cpplint cppcheck
-    COMMAND ${CPPCHECK_FIND} | xargs python /home/nkoenig/local/share/ignition/ignition-cmake1/codecheck/cpplint.py --extensions=cc,hh --quiet)
+    COMMAND ${CPPCHECK_FIND} | xargs python ${IGNITION_CMAKE_CODECHECK_DIR}/cpplint.py --extensions=cc,hh --quiet)
 
 endfunction()
