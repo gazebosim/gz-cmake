@@ -20,7 +20,14 @@ include(IgnCMake)
 
 #--------------------------------------
 # Set up the project
-ign_configure_project()
+ign_configure_project(VERSION_SUFFIX pre1)
+
+#--------------------------------------
+# Install the ignition documentation files
+# Note: This is not actually creating a doc target for ign-cmake; this is just
+# installing files that are useful for generating the documentation of other
+# ignition projects.
+ign_create_docs()
 
 #============================================================================
 # Configure the package to be installed

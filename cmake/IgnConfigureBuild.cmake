@@ -134,11 +134,15 @@ macro(ign_configure_build)
 
     else()
 
-      add_subdirectory(src)
-      _ign_find_include_script()
-      add_subdirectory(test)
+    add_subdirectory(src)
+    _ign_find_include_script()
+    add_subdirectory(test)
 
     endif()
+
+    #--------------------------------------
+    # Initialize the list of header directories that should be parsed by doxygen
+    set(ign_doxygen_component_input_dirs "${CMAKE_SOURCE_DIR}/include")
 
     #--------------------------------------
     # Add the source code directories of each component if they exist
@@ -147,6 +151,14 @@ macro(ign_configure_build)
       if(NOT SKIP_${component})
 
         set(found_${component}_src FALSE)
+
+        # Note: It seems we need to give the delimiter exactly this many
+        # backslashes in order to get a \ plus a newline. This might be
+        # dependent on the implementation of ign_string_append, so be careful
+        # when changing the implementation of that function.
+        ign_string_append(ign_doxygen_component_input_dirs
+          "${CMAKE_SOURCE_DIR}/${component}/include"
+          DELIM " \\\\\\\\\n  ")
 
         if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/${component}/CMakeLists.txt")
 
@@ -200,6 +212,11 @@ macro(ign_configure_build)
     #--------------------------------------
     # Export the "all" meta-target
     ign_export_target_all()
+
+
+    #--------------------------------------
+    # Create documentation
+    ign_create_docs()
 
 
     #--------------------------------------
@@ -326,6 +343,11 @@ macro(ign_parse_build_type)
     set(CMAKE_BUILD_TYPE "RelWithDebInfo")
   endif()
 
+  # Handle NONE in MSVC as blank and default to RelWithDebInfo
+  if (MSVC AND CMAKE_BUILD_TYPE_UPPERCASE STREQUAL "NONE")
+    set(CMAKE_BUILD_TYPE "RelWithDebInfo")
+  endif()
+
   # Convert to uppercase in order to support arbitrary capitalization
   string(TOUPPER "${CMAKE_BUILD_TYPE}" CMAKE_BUILD_TYPE_UPPERCASE)
 
@@ -335,6 +357,7 @@ macro(ign_parse_build_type)
   set(BUILD_TYPE_RELEASE FALSE)
   set(BUILD_TYPE_RELWITHDEBINFO FALSE)
   set(BUILD_TYPE_MINSIZEREL FALSE)
+  set(BUILD_TYPE_NONE FALSE)
   set(BUILD_TYPE_DEBUG FALSE)
 
   if("${CMAKE_BUILD_TYPE_UPPERCASE}" STREQUAL "DEBUG")
@@ -345,6 +368,8 @@ macro(ign_parse_build_type)
     set(BUILD_TYPE_RELWITHDEBINFO TRUE)
   elseif("${CMAKE_BUILD_TYPE_UPPERCASE}" STREQUAL "MINSIZEREL")
     set(BUILD_TYPE_MINSIZEREL TRUE)
+  elseif("${CMAKE_BUILD_TYPE_UPPERCASE}" STREQUAL "NONE")
+    set(BUILD_TYPE_NONE TRUE)
   elseif("${CMAKE_BUILD_TYPE_UPPERCASE}" STREQUAL "COVERAGE")
     include(IgnCodeCoverage)
     set(BUILD_TYPE_DEBUG TRUE)
