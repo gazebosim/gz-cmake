@@ -29,6 +29,10 @@ ign_configure_project(VERSION_SUFFIX pre1)
 # ignition projects.
 ign_create_docs()
 
+#--------------------------------------
+# Install the codecheck files
+add_subdirectory(codecheck)
+
 #============================================================================
 # Configure the package to be installed
 #============================================================================

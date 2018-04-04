@@ -186,6 +186,10 @@ macro(ign_configure_build)
     # Create documentation
     ign_create_docs()
 
+    #--------------------------------------
+    # Create codecheck target
+    include(IgnCodeCheck)
+    ign_setup_target_for_codecheck()
 
     #--------------------------------------
     # If we made it this far, the configuration was successful
