@@ -6,17 +6,17 @@ function(IGN_SETUP_TARGET_FOR_CODECHECK)
   find_program(FIND_PATH find)
   
   if(NOT CPPCHECK_PATH)
-    message(SEND_ERROR "cppcheck not found! Aborting codecheck setup")
+    message(WARNING "cppcheck not found! Aborting codecheck setup")
     return()
   endif()
   
   if(NOT PYTHON_PATH)
-    message(SEND_ERROR "python not found! Aborting codecheck setup.")
+    message(WARNING "python not found! Aborting codecheck setup.")
     return()
   endif()
   
   if(NOT FIND_PATH)
-    message(SEND_ERROR "find not found! Aborting codecheck setup.")
+    message(WARNING "find not found! Aborting codecheck setup.")
     return()
   endif()
 
