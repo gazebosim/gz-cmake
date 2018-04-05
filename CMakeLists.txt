@@ -46,6 +46,7 @@ configure_package_config_file(
   ${ign_config_input}
   ${ign_config_output}
   INSTALL_DESTINATION ${ign_config_install_dir}
+  PATH_VARS IGN_SHARE_INSTALL_DIR
   NO_CHECK_REQUIRED_COMPONENTS_MACRO)
 
 #--------------------------------------

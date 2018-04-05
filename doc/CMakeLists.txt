@@ -10,5 +10,5 @@ set (files
 
 
 install(FILES ${files}
-        DESTINATION ${CMAKE_INSTALL_PREFIX}/share/ignition/${PROJECT_NAME_LOWER}/doxygen)
+        DESTINATION ${IGN_SHARE_INSTALL_DIR}/doxygen)
 
