@@ -15,6 +15,15 @@
 #
 ########################################
 # Find SQLite3
+#
+# Usage of this module is as follows:
+#
+#     find_package(SQLite3 [VERSION <major>[.<minor>[.<patch>]]])
+#
+# Variables defined by this module:
+#
+# SQLite3::SQLite3          Imported target for sqlite3
+# SQLite3_FOUND             System has sqlite3 library and headers
 
 if(SQLite3_FIND_VERSION)
   ign_pkg_check_modules_quiet(SQLite3 "sqlite3 >= ${SQLite3_FIND_VERSION}")
