@@ -48,3 +48,34 @@ macro(ign_create_docs)
   ign_add_manpage_target()
 
 endmacro()
+
+
+#################################################
+# ign_doxygen
+macro(ign_doxygen ignition_doxygen_tagfiles)
+
+  find_package(Doxygen)
+
+  set(IGNITION_DOXYGEN_TAGFILES ${ignition_doxygen_tagfiles})
+
+  if (DOXYGEN_FOUND)
+    configure_file(${IGNITION_CMAKE_DOXYGEN_DIR}/api.in
+                   ${CMAKE_BINARY_DIR}/api.dox @ONLY)
+
+    configure_file(${IGNITION_CMAKE_DOXYGEN_DIR}/tutorials.in
+                   ${CMAKE_BINARY_DIR}/tutorials.dox @ONLY)
+
+    add_custom_target(doc ALL
+      # Generate the API documentation
+      ${DOXYGEN_EXECUTABLE} ${CMAKE_BINARY_DIR}/api.dox
+      WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+
+      COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_BINARY_DIR}/tutorials.dox
+
+      COMMENT "Generating API documentation with Doxygen" VERBATIM)
+
+    install(FILES ${CMAKE_BINARY_DIR}/doc/${PROJECT_NAME_LOWER}.tag.xml
+      DESTINATION ${IGN_SHARE_INSTALL_DIR}_${PROJECT_VERSION_MINOR})
+  endif()
+
+endmacro()
