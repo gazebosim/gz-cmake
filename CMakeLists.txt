@@ -93,24 +93,36 @@ if (BUILD_TESTING)
   #============================================================================
   # Build examples
   #============================================================================
-  # find_package expects cmakeN (e.g. cmake0, cmake1, ... depending on the major version of ign-cmake)
-  # to be in the build folder because that is where the ignition-cmake-config.cmake file is located
-  # before it is installed
+  # Do a fake install of ign-cmake in order to test the examples.
+  # Copy or symlink the config.cmake files and cmake folder
+  set(FAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install/fake")
+  set(FAKE_CMAKE_INSTALL_DIR "${FAKE_INSTALL_PREFIX}/${ign_config_install_dir}")
   if (UNIX)
-    # make a symlink on unix
+    # make symlinks on unix
     execute_process(
       COMMAND
-        ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/cmake ${CMAKE_BINARY_DIR}/cmake${PROJECT_VERSION_MAJOR})
+        ${CMAKE_COMMAND} -E make_directory ${FAKE_CMAKE_INSTALL_DIR})
+    execute_process(
+      COMMAND
+        ${CMAKE_COMMAND} -E create_symlink ${CMAKE_BINARY_DIR}/${ign_config_output} ${FAKE_CMAKE_INSTALL_DIR}/${ign_config_output})
+    execute_process(
+      COMMAND
+        ${CMAKE_COMMAND} -E create_symlink ${CMAKE_BINARY_DIR}/${ign_version_output} ${FAKE_CMAKE_INSTALL_DIR}/${ign_version_output})
+    execute_process(
+      COMMAND
+        ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/cmake ${FAKE_CMAKE_INSTALL_DIR}/cmake${PROJECT_VERSION_MAJOR})
   else()
     # otherwise copy the files one by one
     # use configure_file(... COPYONLY) since it will run again if files change
+    configure_file(${CMAKE_BINARY_DIR}/${ign_config_output} ${FAKE_CMAKE_INSTALL_DIR}/${ign_config_output} COPYONLY)
+    configure_file(${CMAKE_BINARY_DIR}/${ign_version_output} ${FAKE_CMAKE_INSTALL_DIR}/${ign_version_output} COPYONLY)
     foreach (filename ${modules} ${templates})
       get_filename_component(file ${filename} NAME)
-      configure_file(${filename} ${CMAKE_BINARY_DIR}/cmake${PROJECT_VERSION_MAJOR}/${file} COPYONLY)
+      configure_file(${filename} ${FAKE_CMAKE_INSTALL_DIR}/cmake${PROJECT_VERSION_MAJOR}/${file} COPYONLY)
     endforeach()
     foreach (filename ${pkgconfig_templates})
       get_filename_component(file ${filename} NAME)
-      configure_file(${filename} ${CMAKE_BINARY_DIR}/cmake${PROJECT_VERSION_MAJOR}/pkgconfig/${file} COPYONLY)
+      configure_file(${filename} ${FAKE_CMAKE_INSTALL_DIR}/cmake${PROJECT_VERSION_MAJOR}/pkgconfig/${file} COPYONLY)
     endforeach()
   endif()
   add_subdirectory(examples)
