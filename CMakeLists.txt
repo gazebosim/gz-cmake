@@ -38,7 +38,7 @@ ign_create_docs()
 set(ign_config_input  "${CMAKE_CURRENT_SOURCE_DIR}/config/ignition-cmake-config.cmake.in")
 set(ign_config_output "${PROJECT_NAME_LOWER}-config.cmake")
 set(ign_version_output "${PROJECT_NAME_LOWER}-config-version.cmake")
-set(ign_config_install_dir "${IGN_DATAROOT_INSTALL_DIR}/cmake/${PROJECT_NAME_LOWER}")
+set(ign_config_install_dir "${CMAKE_INSTALL_DATAROOTDIR}/cmake/${PROJECT_NAME_LOWER}")
 
 #--------------------------------------
 # Configure and install the config file
@@ -46,7 +46,7 @@ configure_package_config_file(
   ${ign_config_input}
   ${ign_config_output}
   INSTALL_DESTINATION ${ign_config_install_dir}
-  PATH_VARS IGN_SHARE_INSTALL_DIR
+  PATH_VARS IGN_DATA_INSTALL_DIR
   NO_CHECK_REQUIRED_COMPONENTS_MACRO)
 
 #--------------------------------------

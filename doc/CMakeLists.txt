@@ -10,5 +10,5 @@ set (files
 
 
 install(FILES ${files}
-        DESTINATION ${IGN_SHARE_INSTALL_DIR}/doxygen)
+        DESTINATION ${IGN_DATA_INSTALL_DIR}/doxygen)
 
