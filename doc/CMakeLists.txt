@@ -1,4 +1,4 @@
 
 install(DIRECTORY doxygen/
-        DESTINATION ${IGN_SHARE_INSTALL_DIR}/doxygen)
+        DESTINATION ${IGN_DATA_INSTALL_DIR}/doxygen)
 

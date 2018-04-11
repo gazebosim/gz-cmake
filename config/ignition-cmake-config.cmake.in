@@ -53,6 +53,6 @@ if( NOT IGNITION_CMAKE_VERSION_MAJOR
   # include the master IgnCMake module
   include(IgnCMake)
 
-  set(IGNITION_CMAKE_DOXYGEN_DIR "@PACKAGE_IGN_SHARE_INSTALL_DIR@/doxygen")
+  set(IGNITION_CMAKE_DOXYGEN_DIR "@PACKAGE_IGN_DATA_INSTALL_DIR@/doxygen")
 
 endif()
