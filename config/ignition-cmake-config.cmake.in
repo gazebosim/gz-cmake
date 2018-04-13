@@ -20,6 +20,8 @@ if(@PKG_NAME@_CONFIG_INCLUDED)
 endif()
 set(@PKG_NAME@_CONFIG_INCLUDED TRUE)
 
+@PACKAGE_INIT@
+
 # We should only perform these operations if either
 #  1. ign-cmake has not been included yet, or
 #  2. we need a higher version of ign-cmake than the last one that was included
@@ -51,8 +53,7 @@ if( NOT IGNITION_CMAKE_VERSION_MAJOR
   # include the master IgnCMake module
   include(IgnCMake)
 
-  set(IGNITION_CMAKE_SHARE_DIR "@CMAKE_INSTALL_PREFIX@/share/ignition/@PROJECT_NAME_LOWER@")
-  set(IGNITION_CMAKE_DOXYGEN_DIR "${IGNITION_CMAKE_SHARE_DIR}/doxygen")
-  set(IGNITION_CMAKE_CODECHECK_DIR "${IGNITION_CMAKE_SHARE_DIR}/codecheck")
+  set(IGNITION_CMAKE_DOXYGEN_DIR "@PACKAGE_IGN_DATA_INSTALL_DIR@/doxygen")
+  set(IGNITION_CMAKE_CODECHECK_DIR "@PACKAGE_IGN_DATA_INSTALL_DIR@/codecheck")
 
 endif()
