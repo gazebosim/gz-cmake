@@ -31,7 +31,9 @@ ign_create_docs()
 
 #--------------------------------------
 # Install the codecheck files
-add_subdirectory(codecheck)
+install(DIRECTORY codecheck/
+        DESTINATION ${IGN_DATA_INSTALL_DIR}/codecheck)
+
 
 #============================================================================
 # Configure the package to be installed
