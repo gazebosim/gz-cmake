@@ -119,6 +119,27 @@ macro(ign_configure_build)
     add_subdirectory(test)
 
     #--------------------------------------
+    # Add the source, include, and test directories to the cppcheck dirs.
+    # CPPCHECK_DIRS is used in IgnCodeCheck. The variable specifies the
+    # directories static code analyzers should check. Additional directories
+    # are added for each component.
+    set (CPPCHECK_DIRS
+      ${CMAKE_SOURCE_DIR}/src
+      ${CMAKE_SOURCE_DIR}/include
+      ${CMAKE_SOURCE_DIR}/test/integration
+      ${CMAKE_SOURCE_DIR}/test/regression
+      ${CMAKE_SOURCE_DIR}/test/performance)
+
+    # Includes for cppcheck. This sets include paths for cppcheck. Additional
+    # directories are added for each component.
+    set (CPPCHECK_INCLUDE_DIRS
+      ${CMAKE_BINARY_DIR}
+      ${CMAKE_SOURCE_DIR}/include/ignition/${IGN_DESIGNATION}
+      ${CMAKE_SOURCE_DIR}/test/integration
+      ${CMAKE_SOURCE_DIR}/test/regression
+      ${CMAKE_SOURCE_DIR}/test/performance)
+
+    #--------------------------------------
     # Initialize the list of header directories that should be parsed by doxygen
     set(ign_doxygen_component_input_dirs "${CMAKE_SOURCE_DIR}/include")
 
@@ -127,6 +148,12 @@ macro(ign_configure_build)
     foreach(component ${ign_configure_build_COMPONENTS})
 
       if(NOT SKIP_${component})
+
+        # Append the component's include directory to both CPPCHECK_DIRS and
+        # CPPCHECK_INCLUDE_DIRS
+        list(APPEND CPPCHECK_DIRS ${CMAKE_SOURCE_DIR}/${component}/include)
+        list(APPEND CPPCHECK_INCLUDE_DIRS
+          ${CMAKE_SOURCE_DIR}/${component}/include)
 
         # Note: It seems we need to give the delimiter exactly this many
         # backslashes in order to get a \ plus a newline. This might be
@@ -153,6 +180,9 @@ macro(ign_configure_build)
           # Add the source files
           if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/${component}/src/CMakeLists.txt")
             add_subdirectory(${component}/src)
+
+            # Append the component's source directory to CPPCHECK_DIRS.
+            list(APPEND CPPCHECK_DIRS ${CMAKE_SOURCE_DIR}/${component}/src)
           endif()
 
           _ign_find_include_script(COMPONENT ${component})
