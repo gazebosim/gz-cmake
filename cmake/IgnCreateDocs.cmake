@@ -52,12 +52,21 @@ endmacro()
 
 #################################################
 # ign_doxygen
-macro(ign_doxygen ignition_doxygen_tagfiles)
+function(ign_doxygen)
+
+  #------------------------------------
+  # Define the expected arguments
+  set(options)
+  set(oneValueArgs "TAGFILES")
+  set(multiValueArgs)
+
+  #------------------------------------
+  # Parse the arguments
+  _ign_cmake_parse_arguments(ign_doxygen "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+  set(IGNITION_DOXYGEN_TAGFILES ${ign_doxygen_TAGFILES})
 
   find_package(Doxygen)
-
-  set(IGNITION_DOXYGEN_TAGFILES ${ignition_doxygen_tagfiles})
-
   if (DOXYGEN_FOUND)
     configure_file(${IGNITION_CMAKE_DOXYGEN_DIR}/api.in
                    ${CMAKE_BINARY_DIR}/api.dox @ONLY)
@@ -78,4 +87,4 @@ macro(ign_doxygen ignition_doxygen_tagfiles)
       DESTINATION ${IGN_DATA_INSTALL_DIR}_${PROJECT_VERSION_MINOR})
   endif()
 
-endmacro()
+endfunction()

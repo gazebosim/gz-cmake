@@ -1,3 +1,3 @@
 
-ign_doxygen("")
+ign_doxygen()
 
