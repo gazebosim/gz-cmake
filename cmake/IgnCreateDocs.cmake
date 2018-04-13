@@ -51,7 +51,13 @@ endmacro()
 
 
 #################################################
-# ign_doxygen
+# ign_doxygen(
+#     [TAGFILES <tagfile_string>])
+#
+# This function will configure doxygen templates and install them.
+#
+# TAGFILES: Optional. Specify tagfiles for doxygen to use. It should have form like:
+#           "\"${IGNITION-<DESIGNATION>_DOXYGEN_TAGFILE} = ${IGNITION-<DESIGNATION>_API_URL}\""
 function(ign_doxygen)
 
   #------------------------------------
