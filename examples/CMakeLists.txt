@@ -48,7 +48,7 @@ foreach(example ${example_directories})
       # See alternate approach in a2113e0997c9 if this becomes too slow
       BUILD_ALWAYS 1
       CMAKE_ARGS
-        "-DCMAKE_PREFIX_PATH=${CMAKE_BINARY_DIR};${example_INSTALL_DIR}"
+        "-DCMAKE_PREFIX_PATH=${FAKE_INSTALL_PREFIX};${example_INSTALL_DIR}"
         "-DCMAKE_BUILD_TYPE=${build_type}"
         "-DCMAKE_INSTALL_PREFIX=${example_INSTALL_DIR}"
       TEST_COMMAND
