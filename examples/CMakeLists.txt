@@ -56,6 +56,14 @@ foreach(example ${example_directories})
         "${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME}_pass.xml"
         "${CMAKE_CURRENT_BINARY_DIR}/test_results/${TEST_NAME}.xml"
     )
+    ExternalProject_Add_Step(
+      ${TEST_NAME}
+      codecheck
+      COMMAND
+        ${CMAKE_COMMAND} --build <BINARY_DIR> --target codecheck
+      DEPENDEES
+        configure
+    )
     if (CPACK_GENERATOR)
       ExternalProject_Add_Step(
         ${TEST_NAME}
