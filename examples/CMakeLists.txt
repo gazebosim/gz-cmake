@@ -106,7 +106,7 @@ if (UNIX)
     "${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME}_fail.xml"
     @ONLY)
   set(_env_vars)
-  list(APPEND _env_vars "PKG_CONFIG_PATH=${example_INSTALL_DIR}/lib/pkgconfig:$PKG_CONFIG_PATH")
+  list(APPEND _env_vars "PKG_CONFIG_PATH=${example_INSTALL_DIR}/${CMAKE_INSTALL_LIBDIR}/pkgconfig:$PKG_CONFIG_PATH")
   add_test(${TEST_NAME}
     ${CMAKE_CURRENT_SOURCE_DIR}/test_core_child_requires_core_no_deps.bash
   )
