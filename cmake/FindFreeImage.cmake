@@ -60,6 +60,7 @@ if(NOT FreeImage_FOUND)
       message(STATUS "Invalid FreeImage Version. Requires ${major_version}.${minor_version}")
     endif(NOT FREEIMAGE_RUNS)
   endif(NOT FreeImage_INCLUDE_DIRS)
+  mark_as_advanced(FreeImage_INCLUDE_DIRS)
 
   find_library(FreeImage_LIBRARIES freeimage)
   if(FreeImage_LIBRARIES)
@@ -68,6 +69,7 @@ if(NOT FreeImage_FOUND)
     set("Looking for libfreeimage - not found")
     message(STATUS "Missing: Unable to find libfreeimage")
   endif(FreeImage_LIBRARIES)
+  mark_as_advanced(FreeImage_LIBRARIES)
 
   if(FreeImage_FOUND)
     # Create the imported target for FreeImage if we found it
