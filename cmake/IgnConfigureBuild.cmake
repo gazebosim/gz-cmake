@@ -123,21 +123,33 @@ macro(ign_configure_build)
     # CPPCHECK_DIRS is used in IgnCodeCheck. The variable specifies the
     # directories static code analyzers should check. Additional directories
     # are added for each component.
-    set (CPPCHECK_DIRS
+    set (CPPCHECK_DIRS)
+    set (potential_cppcheck_dirs 
       ${CMAKE_SOURCE_DIR}/src
       ${CMAKE_SOURCE_DIR}/include
       ${CMAKE_SOURCE_DIR}/test/integration
       ${CMAKE_SOURCE_DIR}/test/regression
       ${CMAKE_SOURCE_DIR}/test/performance)
+    foreach (dir ${potential_cppcheck_dirs})
+      if (EXISTS ${dir})
+        list (APPEND CPPCHECK_DIRS ${dir})
+      endif()
+    endforeach()
 
     # Includes for cppcheck. This sets include paths for cppcheck. Additional
     # directories are added for each component.
-    set (CPPCHECK_INCLUDE_DIRS
+    set (CPPCHECK_INCLUDE_DIRS)
+    set (potential_cppcheck_include_dirs
       ${CMAKE_BINARY_DIR}
       ${CMAKE_SOURCE_DIR}/include/ignition/${IGN_DESIGNATION}
       ${CMAKE_SOURCE_DIR}/test/integration
       ${CMAKE_SOURCE_DIR}/test/regression
       ${CMAKE_SOURCE_DIR}/test/performance)
+    foreach (dir ${potential_cppcheck_include_dirs})
+      if (EXISTS ${dir})
+        list (APPEND CPPCHECK_INCLUDE_DIRS ${dir})
+      endif()
+    endforeach()
 
     #--------------------------------------
     # Initialize the list of header directories that should be parsed by doxygen
