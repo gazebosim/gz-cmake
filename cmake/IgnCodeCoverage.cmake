@@ -61,20 +61,45 @@ IF ( NOT (CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "Covera
 ENDIF() # NOT CMAKE_BUILD_TYPE STREQUAL "Debug"
 
 
-# Param _targetname     The name of new the custom make target
-# Param _testrunner     The name of the target which runs the tests.
-#						MUST return ZERO always, even on errors.
-#						If not, no coverage report will be created!
-# Param _outputname     lcov output is generated as _outputname.info
-#                       HTML report is generated in _outputname/index.html
-# Optional fourth parameter is passed as arguments to _testrunner
-#   Pass them in list form, e.g.: "-j;2" for -j 2
+#################################################
+# ign_setup_target_for_coverage(
+#     [OUTPUT_NAME <output_name>]
+#     [TARGET_NAME <target_name>]
+#     [TEST_RUNNER <test_runner>])
+#
+# This function will create custom coverage targets with the specified options.
 #
 # Coverage is not run for files in the following formats:
 #
 # *.cxx : We assume these files are created by swig.
 # moc_*.cpp and qrc_*.cpp : We assume these files are created by Qt's meta-object compiler.
-FUNCTION(IGN_SETUP_TARGET_FOR_COVERAGE _targetname _testrunner _outputname)
+#
+# OUTPUT_NAME:  Required.
+#               lcov output is generated as _outputname.info
+#               HTML report is generated in _outputname/index.html
+# TARGET_NAME:  The name of new the custom make target.
+# TEST_RUNNER:  The name of the target which runs the tests.
+#						    MUST return ZERO always, even on errors.
+#						    If not, no coverage report will be created!
+
+# Optional fourth parameter is passed as arguments to _testrunner
+#   Pass them in list form, e.g.: "-j;2" for -j 2
+#
+FUNCTION(ign_setup_target_for_coverage)
+
+  #------------------------------------
+  # Define the expected arguments
+  set(options)
+  set(oneValueArgs "OUTPUT_NAME" "TARGET_NAME" "TEST_RUNNER")
+  set(multiValueArgs)
+
+  #------------------------------------
+  # Parse the arguments
+  _ign_cmake_parse_arguments(ign_coverage "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+  set(_outputname ${ign_coverage_OUTPUT_NAME})
+  set(_targetname ${ign_coverage_TARGET_NAME})
+  set(_testrunner ${ign_coverage_TEST_RUNNER})
 
   IF(NOT LCOV_PATH)
     MESSAGE(FATAL_ERROR "lcov not found! Aborting...")
