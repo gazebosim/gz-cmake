@@ -43,5 +43,6 @@ function(IGN_SETUP_TARGET_FOR_CODECHECK)
 
     # cpplint cppcheck
     COMMAND python ${IGNITION_CMAKE_CODECHECK_DIR}/cpplint.py --extensions=cc,hh --quiet `${CPPCHECK_FIND}`
+  )
 
 endfunction()
