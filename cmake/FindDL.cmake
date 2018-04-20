@@ -61,6 +61,7 @@ else(DL_INCLUDE_DIRS)
   message(STATUS "Looking for dlfcn.h - not found")
   set(DL_FOUND false)
 endif()
+mark_as_advanced(DL_INCLUDE_DIRS)
 
 # Search for the library
 find_library(DL_LIBRARIES dl)
@@ -70,6 +71,7 @@ else(DL_LIBRARIES)
   message(STATUS "Looking for libdl - not found")
   set(DL_FOUND false)
 endif()
+mark_as_advanced(DL_LIBRARIES)
 
 if(DL_FOUND)
   include(IgnImportTarget)
