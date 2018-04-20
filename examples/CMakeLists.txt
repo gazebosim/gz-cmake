@@ -14,6 +14,10 @@ set(example_directories
   core_child
   )
 
+# test to see if we have programs necessary to run codecheck
+include(IgnCodeCheck)
+ign_setup_target_for_codecheck()
+
 foreach(example ${example_directories})
   set(run_codecheck false)
   if (${example} STREQUAL "ign_configure_build")
@@ -59,7 +63,7 @@ foreach(example ${example_directories})
         "${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME}_pass.xml"
         "${CMAKE_CURRENT_BINARY_DIR}/test_results/${TEST_NAME}.xml"
     )
-    if (${run_codecheck})
+    if (${run_codecheck} AND TARGET codecheck)
       ExternalProject_Add_Step(
         ${TEST_NAME}
         codecheck
