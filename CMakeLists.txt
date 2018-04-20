@@ -34,7 +34,6 @@ ign_create_docs()
 install(DIRECTORY codecheck/
         DESTINATION ${IGN_DATA_INSTALL_DIR}/codecheck)
 
-
 #============================================================================
 # Configure the package to be installed
 #============================================================================
@@ -103,11 +102,12 @@ if (BUILD_TESTING)
   # Copy or symlink the config.cmake files and cmake folder
   set(FAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install/fake")
   set(FAKE_CMAKE_INSTALL_DIR "${FAKE_INSTALL_PREFIX}/${ign_config_install_dir}")
+  set(FAKE_DATA_INSTALL_DIR "${FAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATAROOTDIR}/${IGN_DATA_INSTALL_DIR_POSTFIX}")
   if (UNIX)
     # make symlinks on unix
     execute_process(
       COMMAND
-        ${CMAKE_COMMAND} -E make_directory ${FAKE_CMAKE_INSTALL_DIR})
+        ${CMAKE_COMMAND} -E make_directory ${FAKE_CMAKE_INSTALL_DIR} ${FAKE_DATA_INSTALL_DIR})
     execute_process(
       COMMAND
         ${CMAKE_COMMAND} -E create_symlink ${CMAKE_BINARY_DIR}/${ign_config_output} ${FAKE_CMAKE_INSTALL_DIR}/${ign_config_output})
@@ -117,6 +117,9 @@ if (BUILD_TESTING)
     execute_process(
       COMMAND
         ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/cmake ${FAKE_CMAKE_INSTALL_DIR}/cmake${PROJECT_VERSION_MAJOR})
+    execute_process(
+      COMMAND
+        ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/codecheck ${FAKE_DATA_INSTALL_DIR}/codecheck)
   else()
     # otherwise copy the files one by one
     # use configure_file(... COPYONLY) since it will run again if files change
@@ -129,6 +132,11 @@ if (BUILD_TESTING)
     foreach (filename ${pkgconfig_templates})
       get_filename_component(file ${filename} NAME)
       configure_file(${filename} ${FAKE_CMAKE_INSTALL_DIR}/cmake${PROJECT_VERSION_MAJOR}/pkgconfig/${file} COPYONLY)
+    endforeach()
+    file(GLOB codecheck_files "codecheck/*")
+    foreach (filename ${codecheck_files})
+      get_filename_component(file ${filename} NAME)
+      configure_file(${filename} ${FAKE_DATA_INSTALL_DIR}/codecheck/${file} COPYONLY)
     endforeach()
   endif()
   add_subdirectory(examples)
