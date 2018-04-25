@@ -46,7 +46,7 @@ macro(ign_create_docs)
     "doxygen/html/namespacemembers_eval.html"
   )
 
-  # Add an html file for each required_html_files, whic guarantees that
+  # Add an html file for each required_html_files, which guarantees that
   # all the links in header.html are valid. This is needed because
   # doxygen does not generate an html file if the necessary content is not
   # present in a project. For example, the "hierarchy.html" may not be
