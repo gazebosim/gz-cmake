@@ -85,8 +85,8 @@ ENDIF() # NOT CMAKE_BUILD_TYPE STREQUAL "Debug"
 # TARGET_NAME:  The name of new the custom make target.
 #
 # TEST_RUNNER:  The name of the target which runs the tests.
-#						    MUST return ZERO always, even on errors.
-#						    If not, no coverage report will be created!
+#               MUST return ZERO always, even on errors.
+#               If not, no coverage report will be created!
 #
 FUNCTION(ign_setup_target_for_coverage)
 
