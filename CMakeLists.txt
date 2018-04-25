@@ -102,7 +102,7 @@ if (BUILD_TESTING)
   # Copy or symlink the config.cmake files and cmake folder
   set(FAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install/fake")
   set(FAKE_CMAKE_INSTALL_DIR "${FAKE_INSTALL_PREFIX}/${ign_config_install_dir}")
-  set(FAKE_DATA_INSTALL_DIR "${FAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATAROOTDIR}/${IGN_DATA_INSTALL_DIR_POSTFIX}")
+  set(FAKE_DATA_INSTALL_DIR "${FAKE_INSTALL_PREFIX}/${IGN_DATA_INSTALL_DIR}")
   if (UNIX)
     # make symlinks on unix
     execute_process(

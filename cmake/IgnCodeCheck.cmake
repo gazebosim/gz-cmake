@@ -1,22 +1,22 @@
 # Setup the codecheck target, which will run cppcheck and cppplint.
-function(IGN_SETUP_TARGET_FOR_CODECHECK)
+function(ign_setup_target_for_codecheck)
 
   find_program(CPPCHECK_PATH cppcheck)
   find_program(PYTHON_PATH python)
   find_program(FIND_PATH find)
   
   if(NOT CPPCHECK_PATH)
-    message(WARNING "cppcheck not found! Aborting codecheck setup")
+    message(STATUS "The program [cppcheck] was not found! Skipping codecheck setup")
     return()
   endif()
   
   if(NOT PYTHON_PATH)
-    message(WARNING "python not found! Aborting codecheck setup.")
+    message(STATUS "python not found! Skipping codecheck setup.")
     return()
   endif()
   
   if(NOT FIND_PATH)
-    message(WARNING "find not found! Aborting codecheck setup.")
+    message(STATUS "The program [find] was not found! Skipping codecheck setup.")
     return()
   endif()
 
