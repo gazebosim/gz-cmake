@@ -32,6 +32,7 @@ macro(ign_create_docs)
   set(required_html_files
     "doxygen/html/annotated.html"
     "doxygen/html/hierarchy.html"
+    "doxygen/html/index.html"
     "doxygen/html/functions.html"
     "doxygen/html/functions_func.html"
     "doxygen/html/functions_vars.html"
