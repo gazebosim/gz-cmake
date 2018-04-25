@@ -1,0 +1,4 @@
+ign_get_libsources_and_unittests(sources gtest_sources)
+ign_add_library(${PROJECT_LIBRARY_TARGET_NAME} ${sources})
+ign_install_library()
+ign_build_tests(TYPE UNIT SOURCES ${gtest_sources})

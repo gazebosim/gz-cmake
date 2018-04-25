@@ -13,6 +13,13 @@ set(example_directories
   core_no_deps
   core_child
   )
+find_package(ignition-cmake0)
+if (ignition-cmake0_FOUND)
+  list(APPEND example_directories
+    core01_no_deps
+    core01_child
+    )
+endif()
 
 foreach(example ${example_directories})
   if (${example} STREQUAL "ign_configure_build")
@@ -23,6 +30,10 @@ foreach(example ${example_directories})
     set(example_tarball_name ignition-core_no_deps-0.1.0.tar.bz2)
   elseif (${example} STREQUAL "core_child")
     set(example_tarball_name ignition-core_child-0.1.0.tar.bz2)
+  elseif (${example} STREQUAL "core01_no_deps")
+    set(example_tarball_name ignition-core01_no_deps-0.1.0.tar.bz2)
+  elseif (${example} STREQUAL "core01_child")
+    set(example_tarball_name ignition-core01_child-0.1.0.tar.bz2)
   else()
     set(example_tarball_name)
   endif()
@@ -91,25 +102,33 @@ endforeach()
 # need to exist before they can be used there
 foreach (build_type ${build_types})
   add_dependencies(core_child_${build_type} core_no_deps_${build_type})
+  add_dependencies(core01_child_${build_type} core01_no_deps_${build_type})
 endforeach()
 
 # test that core_child pkg-config file requires core_no_deps
 if (UNIX)
-  set(TEST_NAME core_child_requires_core_no_deps)
-  string(TIMESTAMP TEST_TIME)
-  configure_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/junit_pass.xml.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME}_pass.xml"
-    @ONLY)
-  configure_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/junit_fail.xml.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME}_fail.xml"
-    @ONLY)
-  set(_env_vars)
-  list(APPEND _env_vars "PKG_CONFIG_PATH=${example_INSTALL_DIR}/lib/pkgconfig:$PKG_CONFIG_PATH")
-  add_test(${TEST_NAME}
-    ${CMAKE_CURRENT_SOURCE_DIR}/test_core_child_requires_core_no_deps.bash
-  )
-  set_tests_properties(${TEST_NAME} PROPERTIES
-    ENVIRONMENT "${_env_vars}")
+  set(requires_test_prefixes core core01)
+  foreach(test_prefix ${requires_test_prefixes})
+    set(child_name "${test_prefix}_child")
+    set(no_deps_name "${test_prefix}_no_deps")
+    set(TEST_NAME ${child_name}_requires_${no_deps_name})
+    string(TIMESTAMP TEST_TIME)
+    configure_file(
+      "${CMAKE_CURRENT_SOURCE_DIR}/junit_pass.xml.in"
+      "${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME}_pass.xml"
+      @ONLY)
+    configure_file(
+      "${CMAKE_CURRENT_SOURCE_DIR}/junit_fail.xml.in"
+      "${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME}_fail.xml"
+      @ONLY)
+    set(_env_vars)
+    list(APPEND _env_vars "PKG_CONFIG_PATH=${example_INSTALL_DIR}/lib/pkgconfig:$PKG_CONFIG_PATH")
+    add_test(${TEST_NAME}
+      ${CMAKE_CURRENT_SOURCE_DIR}/test_core_child_requires_core_no_deps.bash
+      ${no_deps_name}
+      ${child_name}
+    )
+    set_tests_properties(${TEST_NAME} PROPERTIES
+      ENVIRONMENT "${_env_vars}")
+  endforeach()
 endif()
