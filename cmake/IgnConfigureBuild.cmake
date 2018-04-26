@@ -163,17 +163,22 @@ macro(ign_configure_build)
 
         # Append the component's include directory to both CPPCHECK_DIRS and
         # CPPCHECK_INCLUDE_DIRS
-        list(APPEND CPPCHECK_DIRS ${CMAKE_SOURCE_DIR}/${component}/include)
+        list(APPEND CPPCHECK_DIRS ${CMAKE_CURRENT_LIST_DIR}/${component}/include)
         list(APPEND CPPCHECK_INCLUDE_DIRS
-          ${CMAKE_SOURCE_DIR}/${component}/include)
+          ${CMAKE_CURRENT_LIST_DIR}/${component}/include)
 
         # Note: It seems we need to give the delimiter exactly this many
         # backslashes in order to get a \ plus a newline. This might be
         # dependent on the implementation of ign_string_append, so be careful
         # when changing the implementation of that function.
         ign_string_append(ign_doxygen_component_input_dirs
-          "${CMAKE_SOURCE_DIR}/${component}/include"
+          "${CMAKE_CURRENT_LIST_DIR}/${component}/include"
           DELIM " \\\\\\\\\n  ")
+
+        # Append the component's source directory to CPPCHECK_DIRS.
+        if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/${component}/src")
+          list(APPEND CPPCHECK_DIRS ${CMAKE_CURRENT_LIST_DIR}/${component}/src)
+        endif()
 
         if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/${component}/CMakeLists.txt")
 
@@ -192,9 +197,6 @@ macro(ign_configure_build)
           # Add the source files
           if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/${component}/src/CMakeLists.txt")
             add_subdirectory(${component}/src)
-
-            # Append the component's source directory to CPPCHECK_DIRS.
-            list(APPEND CPPCHECK_DIRS ${CMAKE_SOURCE_DIR}/${component}/src)
           endif()
 
           _ign_find_include_script(COMPONENT ${component})

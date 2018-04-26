@@ -32,6 +32,8 @@ function(ign_setup_target_for_codecheck)
   # The find command
   set (CPPCHECK_FIND ${FIND_PATH} ${CPPCHECK_DIRS} -name '*.cc' -o -name '*.hh' -o -name '*.c' -o -name '*.h')
 
+  message(STATUS "Adding codecheck target")
+
   # Setup the codecheck target
   add_custom_target(codecheck
 
