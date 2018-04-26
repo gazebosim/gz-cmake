@@ -22,43 +22,14 @@
 # limitations under the License.
 
 #################################################
-# Create documentation information
-macro(ign_create_docs)
-
-  #--------------------------------------
-  # Traverse the doc directory
-  add_subdirectory(doc)
-
-  #--------------------------------------
-  # Configure documentation uploader
-  configure_file("${IGNITION_CMAKE_DIR}/upload_doc.sh.in"
-    ${CMAKE_BINARY_DIR}/upload_doc.sh @ONLY)
-
-  #--------------------------------------
-  # If we're configuring only to build docs, stop here
-  if (DOC_ONLY)
-    message(WARNING "Configuration was done in DOC_ONLY mode."
-    " You can build documentation (make doc), but nothing else.")
-    return()
-  endif()
-
-  #--------------------------------------
-  # Create man pages
-  include(IgnRonn2Man)
-  ign_add_manpage_target()
-
-endmacro()
-
-
-#################################################
-# ign_doxygen(
+# ign_create_docs(
 #     [TAGFILES <tagfile_string>])
 #
 # This function will configure doxygen templates and install them.
 #
 # TAGFILES: Optional. Specify tagfiles for doxygen to use. It should have form like:
 #           "\"${IGNITION-<DESIGNATION>_DOXYGEN_TAGFILE} = ${IGNITION-<DESIGNATION>_API_URL}\""
-function(ign_doxygen)
+function(ign_create_docs)
 
   #------------------------------------
   # Define the expected arguments
@@ -70,10 +41,21 @@ function(ign_doxygen)
   # Parse the arguments
   _ign_cmake_parse_arguments(ign_doxygen "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
+  #--------------------------------------
+  # Configure documentation uploader
+  configure_file("${IGNITION_CMAKE_DIR}/upload_doc.sh.in"
+    ${CMAKE_BINARY_DIR}/upload_doc.sh @ONLY)
+
+  #--------------------------------------
+  # Create man pages
+  include(IgnRonn2Man)
+  ign_add_manpage_target()
+
   set(IGNITION_DOXYGEN_TAGFILES ${ign_doxygen_TAGFILES})
 
   find_package(Doxygen)
-  if (DOXYGEN_FOUND)
+  if (DOXYGEN_FOUND AND EXISTS ${IGNITION_CMAKE_DOXYGEN_DIR}/api.in AND
+      EXISTS ${IGNITION_CMAKE_DOXYGEN_DIR}/tutorials.in)
     configure_file(${IGNITION_CMAKE_DOXYGEN_DIR}/api.in
                    ${CMAKE_BINARY_DIR}/api.dox @ONLY)
 
@@ -91,6 +73,14 @@ function(ign_doxygen)
 
     install(FILES ${CMAKE_BINARY_DIR}/doc/${PROJECT_NAME_LOWER}.tag.xml
       DESTINATION ${IGN_DATA_INSTALL_DIR}_${PROJECT_VERSION_MINOR})
+  endif()
+
+  #--------------------------------------
+  # If we're configuring only to build docs, stop here
+  if (DOC_ONLY)
+    message(WARNING "Configuration was done in DOC_ONLY mode."
+    " You can build documentation (make doc), but nothing else.")
+    return()
   endif()
 
 endfunction()

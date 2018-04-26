@@ -176,16 +176,9 @@ macro(ign_configure_build)
 
     endforeach()
 
-
     #--------------------------------------
     # Export the "all" meta-target
     ign_export_target_all()
-
-
-    #--------------------------------------
-    # Create documentation
-    ign_create_docs()
-
 
     #--------------------------------------
     # If we made it this far, the configuration was successful
