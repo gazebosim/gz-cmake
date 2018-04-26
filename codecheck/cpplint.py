@@ -6087,8 +6087,8 @@ def ProcessFile(filename, vlevel, extra_check_functions=[]):
 
   # Suppress printing anything if --quiet was passed unless the error
   # count has increased after processing this file.
-  if not _cpplint_state.quiet or old_errors != _cpplint_state.error_count:
-    sys.stdout.write('Done processing %s\n' % filename)
+  # if not _cpplint_state.quiet or old_errors != _cpplint_state.error_count:
+  #   sys.stdout.write('Done processing %s\n' % filename)
   _RestoreFilters()
 
 
