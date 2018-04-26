@@ -39,7 +39,7 @@ function(ign_create_docs)
 
   #------------------------------------
   # Parse the arguments
-  _ign_cmake_parse_arguments(ign_doxygen "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  _ign_cmake_parse_arguments(ign_create_docs "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   #--------------------------------------
   # Configure documentation uploader
@@ -51,7 +51,7 @@ function(ign_create_docs)
   include(IgnRonn2Man)
   ign_add_manpage_target()
 
-  set(IGNITION_DOXYGEN_TAGFILES ${ign_doxygen_TAGFILES})
+  set(IGNITION_DOXYGEN_TAGFILES ${ign_create_docs_TAGFILES})
 
   find_package(Doxygen)
   if (DOXYGEN_FOUND AND EXISTS ${IGNITION_CMAKE_DOXYGEN_DIR}/api.in AND
