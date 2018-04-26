@@ -14,15 +14,22 @@ set(example_directories
   core_child
   )
 
+# test to see if we have programs necessary to run codecheck
+include(IgnCodeCheck)
+ign_setup_target_for_codecheck()
+
 foreach(example ${example_directories})
+  set(run_codecheck false)
   if (${example} STREQUAL "ign_configure_build")
     set(example_tarball_name ignition-minimal-0.1.0.tar.bz2)
   elseif (${example} STREQUAL "prerelease")
     set(example_tarball_name ignition-minimal-1.0.0~pre1.tar.bz2)
   elseif (${example} STREQUAL "core_no_deps")
     set(example_tarball_name ignition-core_no_deps-0.1.0.tar.bz2)
+    set(run_codecheck true)
   elseif (${example} STREQUAL "core_child")
     set(example_tarball_name ignition-core_child-0.1.0.tar.bz2)
+    set(run_codecheck true)
   else()
     set(example_tarball_name)
   endif()
@@ -56,6 +63,16 @@ foreach(example ${example_directories})
         "${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME}_pass.xml"
         "${CMAKE_CURRENT_BINARY_DIR}/test_results/${TEST_NAME}.xml"
     )
+    if (${run_codecheck} AND TARGET codecheck)
+      ExternalProject_Add_Step(
+        ${TEST_NAME}
+        codecheck
+        COMMAND
+          ${CMAKE_COMMAND} --build <BINARY_DIR> --target codecheck
+        DEPENDEES
+          configure
+      )
+    endif()
     if (CPACK_GENERATOR)
       ExternalProject_Add_Step(
         ${TEST_NAME}
