@@ -119,6 +119,39 @@ macro(ign_configure_build)
     add_subdirectory(test)
 
     #--------------------------------------
+    # Add the source, include, and test directories to the cppcheck dirs.
+    # CPPCHECK_DIRS is used in IgnCodeCheck. The variable specifies the
+    # directories static code analyzers should check. Additional directories
+    # are added for each component.
+    set (CPPCHECK_DIRS)
+    set (potential_cppcheck_dirs 
+      ${CMAKE_SOURCE_DIR}/src
+      ${CMAKE_SOURCE_DIR}/include
+      ${CMAKE_SOURCE_DIR}/test/integration
+      ${CMAKE_SOURCE_DIR}/test/regression
+      ${CMAKE_SOURCE_DIR}/test/performance)
+    foreach (dir ${potential_cppcheck_dirs})
+      if (EXISTS ${dir})
+        list (APPEND CPPCHECK_DIRS ${dir})
+      endif()
+    endforeach()
+
+    # Includes for cppcheck. This sets include paths for cppcheck. Additional
+    # directories are added for each component.
+    set (CPPCHECK_INCLUDE_DIRS)
+    set (potential_cppcheck_include_dirs
+      ${CMAKE_BINARY_DIR}
+      ${CMAKE_SOURCE_DIR}/include/ignition/${IGN_DESIGNATION}
+      ${CMAKE_SOURCE_DIR}/test/integration
+      ${CMAKE_SOURCE_DIR}/test/regression
+      ${CMAKE_SOURCE_DIR}/test/performance)
+    foreach (dir ${potential_cppcheck_include_dirs})
+      if (EXISTS ${dir})
+        list (APPEND CPPCHECK_INCLUDE_DIRS ${dir})
+      endif()
+    endforeach()
+
+    #--------------------------------------
     # Initialize the list of header directories that should be parsed by doxygen
     set(ign_doxygen_component_input_dirs "${CMAKE_SOURCE_DIR}/include")
 
@@ -128,13 +161,24 @@ macro(ign_configure_build)
 
       if(NOT SKIP_${component})
 
+        # Append the component's include directory to both CPPCHECK_DIRS and
+        # CPPCHECK_INCLUDE_DIRS
+        list(APPEND CPPCHECK_DIRS ${CMAKE_CURRENT_LIST_DIR}/${component}/include)
+        list(APPEND CPPCHECK_INCLUDE_DIRS
+          ${CMAKE_CURRENT_LIST_DIR}/${component}/include)
+
         # Note: It seems we need to give the delimiter exactly this many
         # backslashes in order to get a \ plus a newline. This might be
         # dependent on the implementation of ign_string_append, so be careful
         # when changing the implementation of that function.
         ign_string_append(ign_doxygen_component_input_dirs
-          "${CMAKE_SOURCE_DIR}/${component}/include"
+          "${CMAKE_CURRENT_LIST_DIR}/${component}/include"
           DELIM " \\\\\\\\\n  ")
+
+        # Append the component's source directory to CPPCHECK_DIRS.
+        if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/${component}/src")
+          list(APPEND CPPCHECK_DIRS ${CMAKE_CURRENT_LIST_DIR}/${component}/src)
+        endif()
 
         if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/${component}/CMakeLists.txt")
 
@@ -179,6 +223,11 @@ macro(ign_configure_build)
     #--------------------------------------
     # Export the "all" meta-target
     ign_export_target_all()
+
+    #--------------------------------------
+    # Create codecheck target
+    include(IgnCodeCheck)
+    ign_setup_target_for_codecheck()
 
     #--------------------------------------
     # If we made it this far, the configuration was successful
@@ -330,7 +379,15 @@ macro(ign_parse_build_type)
   elseif("${CMAKE_BUILD_TYPE_UPPERCASE}" STREQUAL "COVERAGE")
     include(IgnCodeCoverage)
     set(BUILD_TYPE_DEBUG TRUE)
-    ign_setup_target_for_coverage(coverage ctest coverage)
+    ign_setup_target_for_coverage(
+      OUTPUT_NAME coverage
+      TARGET_NAME coverage
+      TEST_RUNNER ctest)
+    ign_setup_target_for_coverage(
+      BRANCH_COVERAGE
+      OUTPUT_NAME coverage-branch
+      TARGET_NAME coverage-branch
+      TEST_RUNNER ctest)
   elseif("${CMAKE_BUILD_TYPE_UPPERCASE}" STREQUAL "PROFILE")
     set(BUILD_TYPE_PROFILE TRUE)
   else()
