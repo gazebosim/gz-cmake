@@ -421,7 +421,15 @@ macro(ign_parse_build_type)
   elseif("${CMAKE_BUILD_TYPE_UPPERCASE}" STREQUAL "COVERAGE")
     include(IgnCodeCoverage)
     set(BUILD_TYPE_DEBUG TRUE)
-    ign_setup_target_for_coverage(coverage ctest coverage)
+    ign_setup_target_for_coverage(
+      OUTPUT_NAME coverage
+      TARGET_NAME coverage
+      TEST_RUNNER ctest)
+    ign_setup_target_for_coverage(
+      BRANCH_COVERAGE
+      OUTPUT_NAME coverage-branch
+      TARGET_NAME coverage-branch
+      TEST_RUNNER ctest)
   elseif("${CMAKE_BUILD_TYPE_UPPERCASE}" STREQUAL "PROFILE")
     set(BUILD_TYPE_PROFILE TRUE)
   else()
