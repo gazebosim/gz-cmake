@@ -54,7 +54,7 @@ function(ign_create_docs)
   set(IGNITION_DOXYGEN_TAGFILES " ")
 
   foreach(tagfile ${ign_create_docs_TAGFILES})
-    ign_string_append(IGNITION_DOXYGEN_TAGFILES "${tagfile}" DELIM " \\\\\\\\\n    ")
+    ign_string_append(IGNITION_DOXYGEN_TAGFILES "\"${tagfile}\"" DELIM " \\\\\\\\\n    ")
   endforeach()
 
   find_package(Doxygen)
