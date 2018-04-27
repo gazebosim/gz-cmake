@@ -71,7 +71,7 @@ function(ign_create_docs)
 
       COMMENT "Generating API documentation with Doxygen" VERBATIM)
 
-    install(FILES ${CMAKE_BINARY_DIR}/doc/${PROJECT_NAME_LOWER}.tag.xml
+    install(FILES ${CMAKE_BINARY_DIR}/${PROJECT_NAME_LOWER}.tag.xml
       DESTINATION ${IGN_DATA_INSTALL_DIR}_${PROJECT_VERSION_MINOR})
   endif()
 
