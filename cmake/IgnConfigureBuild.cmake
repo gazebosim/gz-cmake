@@ -134,9 +134,9 @@ macro(ign_configure_build)
 
     else()
 
-    add_subdirectory(src)
-    _ign_find_include_script()
-    add_subdirectory(test)
+      add_subdirectory(src)
+      _ign_find_include_script()
+      add_subdirectory(test)
 
     endif()
 
