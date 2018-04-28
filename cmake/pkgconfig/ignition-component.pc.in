@@ -7,6 +7,6 @@ Description: A set of @IGN_DESIGNATION@ @component_name@ classes for robot appli
 Version: @PROJECT_VERSION_FULL_NO_SUFFIX@
 Requires: @component_pkgconfig_requires@
 Requires.private: @component_pkgconfig_requires_private@
-Libs: -L${libdir} -l@component_pkg_name@ @component_pkgconfig_libs@
-Libs.private: @component_pkgconfig_libs_private@
+Libs: -L${libdir} @component_pkgconfig_lib@ @component_pkgconfig_lib_deps@
+Libs.private: @component_pkgconfig_lib_deps_private@
 CFLags: -I${includedir} @component_pkgconfig_cflags@

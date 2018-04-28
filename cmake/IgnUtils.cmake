@@ -884,7 +884,7 @@ function(ign_create_core_library)
 
   #------------------------------------
   # Define the expected arguments
-  set(options) # Not using options yet
+  set(options INTERFACE)
   set(oneValueArgs INCLUDE_SUBDIR CXX_STANDARD PRIVATE_CXX_STANDARD INTERFACE_CXX_STANDARD GET_TARGET_NAME)
   set(multiValueArgs SOURCES)
 
@@ -898,13 +898,21 @@ function(ign_create_core_library)
     message(FATAL_ERROR "You must specify SOURCES for ign_create_core_library(~)!")
   endif()
 
+  if(ign_create_core_library_INTERFACE)
+    set(interface_option INTERFACE)
+  else()
+    # Leave this blank if the caller did not specify INTERFACE
+    set(interface_option)
+  endif()
+
   #------------------------------------
   # Create the target for the core library, and configure it to be installed
   _ign_add_library_or_component(
     LIB_NAME ${PROJECT_LIBRARY_TARGET_NAME}
     INCLUDE_DIR "ignition/${IGN_DESIGNATION_LOWER}"
     EXPORT_BASE IGNITION_${IGN_DESIGNATION_UPPER}
-    SOURCES ${sources})
+    SOURCES ${sources}
+    ${interface_option})
 
   # This generator expression is necessary for multi-configuration generators,
   # such as MSVC on Windows, and also to ensure that our target exports the
@@ -930,6 +938,11 @@ function(ign_create_core_library)
 
   #------------------------------------
   # Handle cmake and pkgconfig packaging
+  if(ign_create_core_library_INTERFACE)
+    set(project_pkgconfig_core_lib) # Intentionally blank
+  else()
+    set(project_pkgconfig_core_lib "-l${PROJECT_NAME_LOWER}")
+  endif()
 
   # Export and install the core library's cmake target and package information
   _ign_create_cmake_package()
@@ -1021,6 +1034,12 @@ function(ign_add_component component_name)
     set(include_subdir ${component_name})
   endif()
 
+  if(ign_add_component_INTERFACE)
+    set(interface_option INTERFACE)
+  else()
+    set(interface_option) # Intentionally blank
+  endif()
+
   # Set the name of the component's target
   set(component_target_name ${PROJECT_LIBRARY_TARGET_NAME}-${component_name})
 
@@ -1039,7 +1058,8 @@ function(ign_add_component component_name)
     LIB_NAME ${component_target_name}
     INCLUDE_DIR "ignition/${IGN_DESIGNATION_LOWER}/${include_subdir}"
     EXPORT_BASE IGNITION_${IGN_DESIGNATION_UPPER}_${component_name_upper}
-    SOURCES ${sources})
+    SOURCES ${sources}
+    ${interface_option})
 
   if(ign_add_component_INDEPENDENT_FROM_PROJECT_LIB  OR
      ign_add_component_PRIVATELY_DEPENDS_ON_PROJECT_LIB)
@@ -1124,6 +1144,11 @@ function(ign_add_component component_name)
   #------------------------------------
   # Set variables that are needed by cmake/ignition-component-config.cmake.in
   set(component_pkg_name ${component_target_name})
+  if(ign_add_component_INTERFACE)
+    set(component_pkgconfig_lib)
+  else()
+    set(component_pkgconfig_lib "-l${component_pkg_name}")
+  endif()
   set(component_cmake_dependencies ${${component_name}_CMAKE_DEPENDENCIES})
   # This next set is redundant, but it serves as a reminder that this input
   # variable is used in config files
@@ -1132,8 +1157,8 @@ function(ign_add_component component_name)
   # ... and by cmake/pkgconfig/ignition-component.pc.in
   set(component_pkgconfig_requires ${${component_name}_PKGCONFIG_REQUIRES})
   set(component_pkgconfig_requires_private ${${component_name}_PKGCONFIG_REQUIRES_PRIVATE})
-  set(component_pkgconfig_libs ${${component_name}_PKGCONFIG_LIBS})
-  set(component_pkgconfig_libs_private ${${component_name}_PKGCONFIG_LIBS_PRIVATE})
+  set(component_pkgconfig_lib_deps ${${component_name}_PKGCONFIG_LIBS})
+  set(component_pkgconfig_lib_deps_private ${${component_name}_PKGCONFIG_LIBS_PRIVATE})
   set(component_pkgconfig_cflags ${${component_name}_PKGCONFIG_CFLAGS})
 
   # Export and install the cmake target and package information
@@ -1220,7 +1245,7 @@ macro(_ign_add_library_or_component)
 
   #------------------------------------
   # Define the expected arguments
-  set(options) # We are not using options yet
+  set(options INTERFACE)
   set(oneValueArgs LIB_NAME INCLUDE_DIR EXPORT_BASE)
   set(multiValueArgs SOURCES)
 
@@ -1257,7 +1282,11 @@ macro(_ign_add_library_or_component)
 
   message(STATUS "Configuring library: ${lib_name}")
 
-  add_library(${lib_name} ${sources})
+  if(_ign_add_library_INTERFACE)
+    add_library(${lib_name} INTERFACE)
+  else()
+    add_library(${lib_name} ${sources})
+  endif()
 
   #------------------------------------
   # Add fPIC if we are supposed to
@@ -1265,64 +1294,69 @@ macro(_ign_add_library_or_component)
     target_compile_options(${lib_name} PRIVATE -fPIC)
   endif()
 
-  #------------------------------------
-  # Generate export macro headers
-  set(binary_include_dir
-    "${CMAKE_BINARY_DIR}/include/${include_dir}")
+  if(NOT _ign_add_library_INTERFACE)
 
-  set(implementation_file_name "${binary_include_dir}/detail/Export.hh")
+    #------------------------------------
+    # Generate export macro headers
+    # Note: INTERFACE libraries do not need the export header
+    set(binary_include_dir
+      "${CMAKE_BINARY_DIR}/include/${include_dir}")
 
-  include(GenerateExportHeader)
-  # This macro will generate a header called detail/Export.hh which implements
-  # some C-macros that are useful for exporting our libraries. The
-  # implementation header does not provide any commentary or explanation for its
-  # macros, so we tuck it away in the detail/ subdirectory, and then provide a
-  # public-facing header that provides commentary for the macros.
-  generate_export_header(${lib_name}
-    BASE_NAME ${export_base}
-    EXPORT_FILE_NAME ${implementation_file_name}
-    EXPORT_MACRO_NAME DETAIL_${export_base}_VISIBLE
-    NO_EXPORT_MACRO_NAME DETAIL_${export_base}_HIDDEN
-    DEPRECATED_MACRO_NAME IGN_DEPRECATED_ALL_VERSIONS)
+    set(implementation_file_name "${binary_include_dir}/detail/Export.hh")
 
-  set(install_include_dir
-    "${IGN_INCLUDE_INSTALL_DIR_FULL}/${include_dir}")
+    include(GenerateExportHeader)
+    # This macro will generate a header called detail/Export.hh which implements
+    # some C-macros that are useful for exporting our libraries. The
+    # implementation header does not provide any commentary or explanation for its
+    # macros, so we tuck it away in the detail/ subdirectory, and then provide a
+    # public-facing header that provides commentary for the macros.
+    generate_export_header(${lib_name}
+      BASE_NAME ${export_base}
+      EXPORT_FILE_NAME ${implementation_file_name}
+      EXPORT_MACRO_NAME DETAIL_${export_base}_VISIBLE
+      NO_EXPORT_MACRO_NAME DETAIL_${export_base}_HIDDEN
+      DEPRECATED_MACRO_NAME IGN_DEPRECATED_ALL_VERSIONS)
 
-  # Configure the installation of the automatically generated file.
-  install(
-    FILES "${implementation_file_name}"
-    DESTINATION "${install_include_dir}/detail"
-    COMPONENT headers)
+    set(install_include_dir
+      "${IGN_INCLUDE_INSTALL_DIR_FULL}/${include_dir}")
 
-  # Configure the public-facing header for exporting and deprecating. This
-  # header provides commentary for the macros so that developers can know their
-  # purpose.
-  configure_file(
-    "${IGNITION_CMAKE_DIR}/Export.hh.in"
-    "${binary_include_dir}/Export.hh")
+    # Configure the installation of the automatically generated file.
+    install(
+      FILES "${implementation_file_name}"
+      DESTINATION "${install_include_dir}/detail"
+      COMPONENT headers)
 
-  # Configure the installation of the public-facing header.
-  install(
-    FILES "${binary_include_dir}/Export.hh"
-    DESTINATION "${install_include_dir}"
-    COMPONENT headers)
+    # Configure the public-facing header for exporting and deprecating. This
+    # header provides commentary for the macros so that developers can know their
+    # purpose.
+    configure_file(
+      "${IGNITION_CMAKE_DIR}/Export.hh.in"
+      "${binary_include_dir}/Export.hh")
 
+    # Configure the installation of the public-facing header.
+    install(
+      FILES "${binary_include_dir}/Export.hh"
+      DESTINATION "${install_include_dir}"
+      COMPONENT headers)
 
-  #------------------------------------
-  # Configure the installation of the target
-  set_target_properties(
-    ${lib_name}
-    PROPERTIES
-      SOVERSION ${PROJECT_VERSION_MAJOR}
-      VERSION ${PROJECT_VERSION_FULL})
+    #------------------------------------
+    # Configure the installation of the target
+    # Note: INTERFACE libraries do not need to install a library
+    set_target_properties(
+      ${lib_name}
+      PROPERTIES
+        SOVERSION ${PROJECT_VERSION_MAJOR}
+        VERSION ${PROJECT_VERSION_FULL})
 
-  install(
-    TARGETS ${lib_name}
-    EXPORT ${lib_name}
-    LIBRARY DESTINATION ${IGN_LIB_INSTALL_DIR}
-    ARCHIVE DESTINATION ${IGN_LIB_INSTALL_DIR}
-    RUNTIME DESTINATION ${IGN_BIN_INSTALL_DIR}
-    COMPONENT libraries)
+    install(
+      TARGETS ${lib_name}
+      EXPORT ${lib_name}
+      LIBRARY DESTINATION ${IGN_LIB_INSTALL_DIR}
+      ARCHIVE DESTINATION ${IGN_LIB_INSTALL_DIR}
+      RUNTIME DESTINATION ${IGN_BIN_INSTALL_DIR}
+      COMPONENT libraries)
+
+  endif()
 
 endmacro()
 
