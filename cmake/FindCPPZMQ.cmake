@@ -42,6 +42,7 @@ find_path(CPPZMQ_INCLUDE_DIRS zmq.hpp
           PATHS
             ${ZeroMQ_INCLUDE_DIRS}
             ${CPPZMQ_HEADER_PATH})
+mark_as_advanced(CPPZMQ_INCLUDE_DIRS)
 
 if(NOT CPPZMQ_INCLUDE_DIRS)
   set(CPPZMQ_FOUND false)

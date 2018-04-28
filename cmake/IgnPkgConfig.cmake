@@ -180,6 +180,7 @@ function(_ign_pkgconfig_find_libraries output_var package library_names library_
       ${package}_LIBRARY_${libname}
       ${libname}
       PATHS ${library_dirs})
+    mark_as_advanced(${package}_LIBRARY_${libname})
 
     list(APPEND library_paths "${${package}_LIBRARY_${libname}}")
 
