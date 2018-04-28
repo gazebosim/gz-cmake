@@ -40,9 +40,9 @@
 #       Without the version comparison, the quotes and spacing are irrelevant.
 #       This usage note applies to ign_pkg_check_modules_quiet(~) as well.
 #
-macro(ign_pkg_check_modules package)
+macro(ign_pkg_check_modules package signature)
 
-  ign_pkg_check_modules_quiet(${package} ${ARGN})
+  ign_pkg_check_modules_quiet(${package} "${signature}" ${ARGN})
 
   if(NOT PKG_CONFIG_FOUND)
     message(WARNING "The package [${package}] requires pkg-config in order to be found. "
@@ -62,11 +62,27 @@ endmacro()
 # variables for you, whether or not pkg-config is available.
 #
 # For usage instructions, see ign_pkg_check_modules(~) above.
-macro(ign_pkg_check_modules_quiet package)
+macro(ign_pkg_check_modules_quiet package signature)
+
+  #------------------------------------
+  # Define the expected arguments
+  set(options INTERFACE)
+  set(oneValueArgs)
+  set(multiValueArgs)
+
+  #------------------------------------
+  # Parse the arguments
+  _ign_cmake_parse_arguments(ign_pkg_check_modules "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+  if(ign_pkg_check_modules_INTERFACE)
+    set(_ign_pkg_check_modules_interface_option INTERFACE)
+  else()
+    set(_ign_pkg_check_modules_interface_option) # Intentionally blank
+  endif()
 
   find_package(PkgConfig QUIET)
 
-  ign_pkg_config_entry(${package} "${ARGN}")
+  ign_pkg_config_entry(${package} "${signature}")
 
   if(PKG_CONFIG_FOUND)
 
@@ -111,7 +127,7 @@ macro(ign_pkg_check_modules_quiet package)
         "${${package}_LIBRARY_DIRS}")
 
       include(IgnImportTarget)
-      ign_import_target(${package})
+      ign_import_target(${package} ${_ign_pkg_check_modules_interface_option})
 
     endif()
 
