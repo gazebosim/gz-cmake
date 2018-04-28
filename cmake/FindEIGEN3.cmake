@@ -26,9 +26,9 @@
 # EIGEN3_FOUND             System has eigen3 library and headers
 
 if(EIGEN3_FIND_VERSION)
-  ign_pkg_check_modules_quiet(EIGEN3 "eigen3 >= ${EIGEN3_FIND_VERSION}")
+  ign_pkg_check_modules_quiet(EIGEN3 "eigen3 >= ${EIGEN3_FIND_VERSION}" INTERFACE)
 else()
-  ign_pkg_check_modules_quiet(EIGEN3 "eigen3")
+  ign_pkg_check_modules_quiet(EIGEN3 "eigen3" INTERFACE)
 endif()
 
 if(MSVC)
@@ -43,6 +43,6 @@ if(MSVC)
     endif()
   endif()
 
-endif()
+  ign_import_target(EIGEN3 INTERFACE)
 
-ign_import_target(EIGEN3)
+endif()
