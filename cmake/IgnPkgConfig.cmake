@@ -92,7 +92,7 @@ macro(ign_pkg_check_modules_quiet package signature)
       set(ign_pkg_check_modules_quiet_arg)
     endif()
 
-    pkg_check_modules(${package} ${ign_pkg_check_modules_quiet_arg} ${ARGN})
+    pkg_check_modules(${package} ${ign_pkg_check_modules_quiet_arg} ${signature})
 
     # TODO: When we require cmake-3.6+, we should remove this procedure and just
     #       use the plain pkg_check_modules, which provides an option called
