@@ -900,9 +900,10 @@ function(ign_create_core_library)
 
   if(ign_create_core_library_INTERFACE)
     set(interface_option INTERFACE)
+    set(property_type INTERFACE)
   else()
-    # Leave this blank if the caller did not specify INTERFACE
-    set(interface_option)
+    set(interface_option) # Intentionally blank
+    set(property_type PUBLIC)
   endif()
 
   #------------------------------------
@@ -918,7 +919,7 @@ function(ign_create_core_library)
   # such as MSVC on Windows, and also to ensure that our target exports the
   # headers correctly
   target_include_directories(${PROJECT_LIBRARY_TARGET_NAME}
-    PUBLIC
+    ${property_type}
       # This is the publicly installed ignition/math headers directory.
       $<INSTALL_INTERFACE:${IGN_INCLUDE_INSTALL_DIR_FULL}>
       # This is the build directory version of the headers. When exporting the
@@ -1036,8 +1037,10 @@ function(ign_add_component component_name)
 
   if(ign_add_component_INTERFACE)
     set(interface_option INTERFACE)
+    set(property_type INTERFACE)
   else()
     set(interface_option) # Intentionally blank
+    set(property_type PUBLIC)
   endif()
 
   # Set the name of the component's target
@@ -1069,7 +1072,7 @@ function(ign_add_component component_name)
     # not needed if we link to the core library, because that will pull in these
     # include directories automatically.
     target_include_directories(${component_target_name}
-      PUBLIC
+      ${property_type}
         # This is the publicly installed ignition/math headers directory.
         $<INSTALL_INTERFACE:${IGN_INCLUDE_INSTALL_DIR_FULL}>
         # This is the in-build version of the core library's headers directory.
@@ -1080,7 +1083,7 @@ function(ign_add_component component_name)
   endif()
 
   target_include_directories(${component_target_name}
-    PUBLIC
+    ${property_type}
       # This is the in-source version of the component-specific headers
       # directory. When exporting the target, this will not be included,
       # because it is tied to the build interface instead of the install
@@ -1118,7 +1121,7 @@ function(ign_add_component component_name)
      NOT ign_add_component_INTERFACE_DEPENDS_ON_PROJECT_LIB)
 
     target_link_libraries(${component_target_name}
-      PUBLIC ${PROJECT_LIBRARY_TARGET_NAME})
+      ${property_type} ${PROJECT_LIBRARY_TARGET_NAME})
 
   endif()
 
@@ -1259,10 +1262,14 @@ macro(_ign_add_library_or_component)
     _ign_add_library_or_component_arg_error(LIB_NAME)
   endif()
 
-  if(_ign_add_library_SOURCES)
-    set(sources ${_ign_add_library_SOURCES})
+  if(NOT _ign_add_library_INTERFACE)
+    if(_ign_add_library_SOURCES)
+      set(sources ${_ign_add_library_SOURCES})
+    else()
+      _ign_add_library_or_component_arg_error(SOURCES)
+    endif()
   else()
-    _ign_add_library_or_component_arg_error(SOURCES)
+    set(sources)
   endif()
 
   if(_ign_add_library_INCLUDE_DIR)
@@ -1290,7 +1297,7 @@ macro(_ign_add_library_or_component)
 
   #------------------------------------
   # Add fPIC if we are supposed to
-  if(IGN_ADD_fPIC_TO_LIBRARIES)
+  if(IGN_ADD_fPIC_TO_LIBRARIES AND NOT _ign_add_library_INTERFACE)
     target_compile_options(${lib_name} PRIVATE -fPIC)
   endif()
 
@@ -1339,24 +1346,24 @@ macro(_ign_add_library_or_component)
       DESTINATION "${install_include_dir}"
       COMPONENT headers)
 
-    #------------------------------------
-    # Configure the installation of the target
-    # Note: INTERFACE libraries do not need to install a library
     set_target_properties(
       ${lib_name}
       PROPERTIES
         SOVERSION ${PROJECT_VERSION_MAJOR}
         VERSION ${PROJECT_VERSION_FULL})
 
-    install(
-      TARGETS ${lib_name}
-      EXPORT ${lib_name}
-      LIBRARY DESTINATION ${IGN_LIB_INSTALL_DIR}
-      ARCHIVE DESTINATION ${IGN_LIB_INSTALL_DIR}
-      RUNTIME DESTINATION ${IGN_BIN_INSTALL_DIR}
-      COMPONENT libraries)
-
   endif()
+
+  #------------------------------------
+  # Configure the installation of the target
+
+  install(
+    TARGETS ${lib_name}
+    EXPORT ${lib_name}
+    LIBRARY DESTINATION ${IGN_LIB_INSTALL_DIR}
+    ARCHIVE DESTINATION ${IGN_LIB_INSTALL_DIR}
+    RUNTIME DESTINATION ${IGN_BIN_INSTALL_DIR}
+    COMPONENT libraries)
 
 endmacro()
 
