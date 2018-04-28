@@ -894,7 +894,7 @@ function(ign_create_core_library)
 
   if(ign_create_core_library_SOURCES)
     set(sources ${ign_create_core_library_SOURCES})
-  else()
+  elseif(NOT ign_create_core_library_INTERFACE)
     message(FATAL_ERROR "You must specify SOURCES for ign_create_core_library(~)!")
   endif()
 
@@ -1024,7 +1024,7 @@ function(ign_add_component component_name)
 
   if(ign_add_component_SOURCES)
     set(sources ${ign_add_component_SOURCES})
-  else()
+  elseif(NOT ign_add_component_INTERFACE)
     message(FATAL_ERROR "You must specify SOURCES for ign_add_component(~)!")
   endif()
 
