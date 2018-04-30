@@ -34,8 +34,8 @@ function(ign_create_docs)
   #------------------------------------
   # Define the expected arguments
   set(options)
-  set(oneValueArgs "TAGFILES")
-  set(multiValueArgs)
+  set(oneValueArgs)
+  set(multiValueArgs "TAGFILES")
 
   #------------------------------------
   # Parse the arguments
@@ -51,7 +51,11 @@ function(ign_create_docs)
   include(IgnRonn2Man)
   ign_add_manpage_target()
 
-  set(IGNITION_DOXYGEN_TAGFILES ${ign_create_docs_TAGFILES})
+  set(IGNITION_DOXYGEN_TAGFILES " ")
+
+  foreach(tagfile ${ign_create_docs_TAGFILES})
+    ign_string_append(IGNITION_DOXYGEN_TAGFILES "\"${tagfile}\"" DELIM " \\\\\\\\\n    ")
+  endforeach()
 
   find_package(Doxygen)
   if (DOXYGEN_FOUND AND EXISTS ${IGNITION_CMAKE_DOXYGEN_DIR}/api.in AND
