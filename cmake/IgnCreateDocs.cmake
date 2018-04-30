@@ -23,12 +23,12 @@
 
 #################################################
 # ign_create_docs(
-#     [TAGFILES <tagfile_string>])
+#     [TAGFILES <tagfile_list>])
 #
 # This function will configure doxygen templates and install them.
 #
-# TAGFILES: Optional. Specify tagfiles for doxygen to use. It should have form like:
-#           "\"${IGNITION-<DESIGNATION>_DOXYGEN_TAGFILE} = ${IGNITION-<DESIGNATION>_API_URL}\""
+# TAGFILES: Optional. Specify tagfiles for doxygen to use. It should be a list of strings like:
+#           "${IGNITION-<DESIGNATION>_DOXYGEN_TAGFILE} = ${IGNITION-<DESIGNATION>_API_URL}"
 function(ign_create_docs)
 
   #------------------------------------
