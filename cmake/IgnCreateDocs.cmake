@@ -22,17 +22,62 @@
 # limitations under the License.
 
 #################################################
-# Create documentation information
-macro(ign_create_docs)
+# ign_create_docs(
+#     [TAGFILES <tagfile_list>])
+#
+# This function will configure doxygen templates and install them.
+#
+# TAGFILES: Optional. Specify tagfiles for doxygen to use. It should be a list of strings like:
+#           "${IGNITION-<DESIGNATION>_DOXYGEN_TAGFILE} = ${IGNITION-<DESIGNATION>_API_URL}"
+function(ign_create_docs)
 
-  #--------------------------------------
-  # Traverse the doc directory
-  add_subdirectory(doc)
+  #------------------------------------
+  # Define the expected arguments
+  set(options)
+  set(oneValueArgs)
+  set(multiValueArgs "TAGFILES")
+
+  #------------------------------------
+  # Parse the arguments
+  _ign_cmake_parse_arguments(ign_create_docs "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   #--------------------------------------
   # Configure documentation uploader
   configure_file("${IGNITION_CMAKE_DIR}/upload_doc.sh.in"
     ${CMAKE_BINARY_DIR}/upload_doc.sh @ONLY)
+
+  #--------------------------------------
+  # Create man pages
+  include(IgnRonn2Man)
+  ign_add_manpage_target()
+
+  set(IGNITION_DOXYGEN_TAGFILES " ")
+
+  foreach(tagfile ${ign_create_docs_TAGFILES})
+    ign_string_append(IGNITION_DOXYGEN_TAGFILES "\"${tagfile}\"" DELIM " \\\\\\\\\n    ")
+  endforeach()
+
+  find_package(Doxygen)
+  if (DOXYGEN_FOUND AND EXISTS ${IGNITION_CMAKE_DOXYGEN_DIR}/api.in AND
+      EXISTS ${IGNITION_CMAKE_DOXYGEN_DIR}/tutorials.in)
+    configure_file(${IGNITION_CMAKE_DOXYGEN_DIR}/api.in
+                   ${CMAKE_BINARY_DIR}/api.dox @ONLY)
+
+    configure_file(${IGNITION_CMAKE_DOXYGEN_DIR}/tutorials.in
+                   ${CMAKE_BINARY_DIR}/tutorials.dox @ONLY)
+
+    add_custom_target(doc ALL
+      # Generate the API documentation
+      ${DOXYGEN_EXECUTABLE} ${CMAKE_BINARY_DIR}/api.dox
+      WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+
+      COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_BINARY_DIR}/tutorials.dox
+
+      COMMENT "Generating API documentation with Doxygen" VERBATIM)
+
+    install(FILES ${CMAKE_BINARY_DIR}/${PROJECT_NAME_LOWER}.tag.xml
+      DESTINATION ${IGN_DATA_INSTALL_DIR}_${PROJECT_VERSION_MINOR})
+  endif()
 
   #--------------------------------------
   # If we're configuring only to build docs, stop here
@@ -42,9 +87,4 @@ macro(ign_create_docs)
     return()
   endif()
 
-  #--------------------------------------
-  # Create man pages
-  include(IgnRonn2Man)
-  ign_add_manpage_target()
-
-endmacro()
+endfunction()
