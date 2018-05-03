@@ -22,13 +22,17 @@
 #
 # Variables defined by this module:
 #
-# EIGEN3::EIGEN3          Imported target for eigen3
+# Eigen3::Eigen          Imported target for eigen3
 # EIGEN3_FOUND             System has eigen3 library and headers
 
 if(EIGEN3_FIND_VERSION)
-  ign_pkg_check_modules_quiet(EIGEN3 "eigen3 >= ${EIGEN3_FIND_VERSION}" INTERFACE)
+  ign_pkg_check_modules_quiet(EIGEN3 "eigen3 >= ${EIGEN3_FIND_VERSION}"
+    INTERFACE
+    TARGET_NAME Eigen3::Eigen)
 else()
-  ign_pkg_check_modules_quiet(EIGEN3 "eigen3" INTERFACE)
+  ign_pkg_check_modules_quiet(EIGEN3 "eigen3"
+    INTERFACE
+    TARGET_NAME Eigen3::Eigen)
 endif()
 
 if(MSVC)
@@ -43,6 +47,7 @@ if(MSVC)
     endif()
   endif()
 
-  ign_import_target(EIGEN3 INTERFACE)
+  ign_import_target(EIGEN3 INTERFACE
+    TARGET_NAME Eigen3::Eigen)
 
 endif()
