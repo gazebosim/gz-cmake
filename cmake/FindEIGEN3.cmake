@@ -25,6 +25,23 @@
 # Eigen3::Eigen            Imported target for eigen3
 # EIGEN3_FOUND             System has eigen3 library and headers
 
+find_package(Eigen3 ${EIGEN3_FIND_VERSION} CONFIG)
+
+if(EIGEN3_FOUND)
+  # We found an old version of Eigen, so we just need to make the
+  # imported target.
+  ign_import_target(EIGEN3 INTERFACE
+    TARGET_NAME Eigen3::Eigen)
+  return()
+endif()
+
+if(TARGET Eigen3::Eigen)
+  # We found a newer version of Eigen that imports its target,
+  # so we only need to set the EIGEN3_FOUND variable.
+  set(EIGEN3_FOUND TRUE)
+  return()
+endif()
+
 if(EIGEN3_FIND_VERSION)
   ign_pkg_check_modules_quiet(EIGEN3 "eigen3 >= ${EIGEN3_FIND_VERSION}"
     INTERFACE
