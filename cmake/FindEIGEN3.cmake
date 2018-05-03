@@ -22,7 +22,7 @@
 #
 # Variables defined by this module:
 #
-# Eigen3::Eigen          Imported target for eigen3
+# Eigen3::Eigen            Imported target for eigen3
 # EIGEN3_FOUND             System has eigen3 library and headers
 
 if(EIGEN3_FIND_VERSION)
