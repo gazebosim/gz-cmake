@@ -67,7 +67,7 @@ macro(ign_pkg_check_modules_quiet package signature)
   #------------------------------------
   # Define the expected arguments
   set(options INTERFACE)
-  set(oneValueArgs)
+  set(oneValueArgs "TARGET_NAME")
   set(multiValueArgs)
 
   #------------------------------------
@@ -78,6 +78,10 @@ macro(ign_pkg_check_modules_quiet package signature)
     set(_ign_pkg_check_modules_interface_option INTERFACE)
   else()
     set(_ign_pkg_check_modules_interface_option) # Intentionally blank
+  endif()
+
+  if(NOT ign_pkg_check_modules_TARGET_NAME)
+    set(ign_pkg_check_modules_TARGET_NAME "${package}::${package}")
   endif()
 
   find_package(PkgConfig QUIET)
@@ -98,7 +102,7 @@ macro(ign_pkg_check_modules_quiet package signature)
     #       use the plain pkg_check_modules, which provides an option called
     #       IMPORTED_TARGET that will create the imported targets the way we do
     #       here.
-    if(${package}_FOUND AND NOT TARGET ${package}::${package})
+    if(${package}_FOUND AND NOT TARGET ${ign_pkg_check_modules_TARGET_NAME})
 
       # pkg_check_modules will put ${package}_FOUND into the CACHE, which would
       # prevent our FindXXX.cmake script from being entered the next time cmake
@@ -127,7 +131,8 @@ macro(ign_pkg_check_modules_quiet package signature)
         "${${package}_LIBRARY_DIRS}")
 
       include(IgnImportTarget)
-      ign_import_target(${package} ${_ign_pkg_check_modules_interface_option})
+      ign_import_target(${package} ${_ign_pkg_check_modules_interface_option}
+        TARGET_NAME ${ign_pkg_check_modules_TARGET_NAME})
 
     endif()
 
