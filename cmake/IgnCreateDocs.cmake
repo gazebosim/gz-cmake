@@ -54,20 +54,15 @@ macro(ign_create_docs)
   # all the links in header.html are valid. This is needed because
   # doxygen does not generate an html file if the necessary content is not
   # present in a project. For example, the "hierarchy.html" may not be
-  # generated in a project that has no class hierarchy. 
-  if (DEFINED IGNITION_CMAKE_DOXYGEN_DIR)
-    file(READ "${IGNITION_CMAKE_DOXYGEN_DIR}/header.html" doxygen_header)
-    file(READ "${IGNITION_CMAKE_DOXYGEN_DIR}/footer.html" doxygen_footer)
-    string(REGEX REPLACE "\\$projectname" "Ignition ${IGN_DESIGNATION_CAP}"
-      doxygen_header ${doxygen_header})
-    string(REGEX REPLACE "\\$projectnumber" "${PROJECT_VERSION_FULL}"
-      doxygen_header ${doxygen_header})
-    string(REGEX REPLACE "\\$title" "404"
-      doxygen_header ${doxygen_header})
-  elseif()
-    set (doxygen_header "<html><body>")
-    set (doxygen_footer "</body></html>")
-  endif()
+  # generated in a project that has no class hierarchy.
+  file(READ "${IGNITION_CMAKE_DOXYGEN_DIR}/header.html" doxygen_header)
+  file(READ "${IGNITION_CMAKE_DOXYGEN_DIR}/footer.html" doxygen_footer)
+  string(REGEX REPLACE "\\$projectname" "Ignition ${IGN_DESIGNATION_CAP}"
+    doxygen_header ${doxygen_header})
+  string(REGEX REPLACE "\\$projectnumber" "${PROJECT_VERSION_FULL}"
+    doxygen_header ${doxygen_header})
+  string(REGEX REPLACE "\\$title" "404"
+    doxygen_header ${doxygen_header})
 
   foreach(required_file ${required_html_files})
     file(WRITE ${CMAKE_BINARY_DIR}/${required_file} ${doxygen_header})
