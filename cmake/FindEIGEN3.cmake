@@ -27,18 +27,19 @@
 
 find_package(Eigen3 ${EIGEN3_FIND_VERSION} CONFIG)
 
-if(EIGEN3_FOUND)
-  # We found an old version of Eigen, so we just need to make the
-  # imported target.
-  ign_import_target(EIGEN3 INTERFACE
-    TARGET_NAME Eigen3::Eigen)
+if(TARGET Eigen3::Eigen)
+  # We found a newer version of Eigen that imports its target,
+  # so we only need to make sure the EIGEN3_FOUND variable is set to true
+  # (just in case they change to Eigen3_FOUND in the future).
+  set(EIGEN3_FOUND TRUE)
   return()
 endif()
 
-if(TARGET Eigen3::Eigen)
-  # We found a newer version of Eigen that imports its target,
-  # so we only need to set the EIGEN3_FOUND variable.
-  set(EIGEN3_FOUND TRUE)
+if(EIGEN3_FOUND)
+  # We found an old version of Eigen that doesn't import a target,
+  # so we just need to make the imported target.
+  ign_import_target(EIGEN3 INTERFACE
+    TARGET_NAME Eigen3::Eigen)
   return()
 endif()
 
@@ -57,6 +58,7 @@ if(MSVC)
   set(EIGEN3_FOUND TRUE)
 
   find_path(EIGEN3_INCLUDE_DIRS signature_of_eigen3_matrix_library)
+  mark_as_advanced(EIGEN3_INCLUDE_DIRS)
   if(NOT EIGEN3_INCLUDE_DIRS)
     set(EIGEN3_FOUND FALSE)
     if(NOT EIGEN3_FIND_QUIETLY)
