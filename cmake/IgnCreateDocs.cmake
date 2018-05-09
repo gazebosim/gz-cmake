@@ -41,6 +41,60 @@ function(ign_create_docs)
   # Parse the arguments
   _ign_cmake_parse_arguments(ign_create_docs "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
+  set(required_html_files
+    "doxygen/html/annotated.html"
+    "doxygen/html/classes.html"
+    "doxygen/html/files.html"
+    "doxygen/html/functions.html"
+    "doxygen/html/functions_func.html"
+    "doxygen/html/functions_vars.html"
+    "doxygen/html/functions_type.html"
+    "doxygen/html/functions_enum.html"
+    "doxygen/html/functions_eval.html"
+    "doxygen/html/hierarchy.html"
+    "doxygen/html/index.html"
+    "doxygen/html/namespaces.html"
+    "doxygen/html/namespacemembers.html"
+    "doxygen/html/namespacemembers_func.html"
+    "doxygen/html/namespacemembers_type.html"
+    "doxygen/html/namespacemembers_vars.html"
+    "doxygen/html/namespacemembers_enum.html"
+    "doxygen/html/namespacemembers_eval.html"
+  )
+
+  # Add an html file for each required_html_files, which guarantees that
+  # all the links in header.html are valid. This is needed because
+  # doxygen does not generate an html file if the necessary content is not
+  # present in a project. For example, the "hierarchy.html" may not be
+  # generated in a project that has no class hierarchy. 
+  if (DEFINED IGNITION_CMAKE_DOXYGEN_DIR)
+    file(READ "${IGNITION_CMAKE_DOXYGEN_DIR}/header.html" doxygen_header)
+    file(READ "${IGNITION_CMAKE_DOXYGEN_DIR}/footer.html" doxygen_footer)
+    string(REGEX REPLACE "\\$projectname" "Ignition ${IGN_DESIGNATION_CAP}"
+      doxygen_header ${doxygen_header})
+    string(REGEX REPLACE "\\$projectnumber" "${PROJECT_VERSION_FULL}"
+      doxygen_header ${doxygen_header})
+    string(REGEX REPLACE "\\$title" "404"
+      doxygen_header ${doxygen_header})
+  elseif()
+    set (doxygen_header "<html><body>")
+    set (doxygen_footer "</body></html>")
+  endif()
+
+  foreach(required_file ${required_html_files})
+    file(WRITE ${CMAKE_BINARY_DIR}/${required_file} ${doxygen_header})
+    file(APPEND ${CMAKE_BINARY_DIR}/${required_file} 
+      "<div class='header'><div class='headertitle'>
+       <div class='title'>No Documentation</div>
+       </div></div>
+       <div class='contents'>
+       <p>This library does not contain the selected type of documentation.</p>
+       <p><a href='#' onClick='history.go(-1);return true;'>Back</a></p>
+       </div>")
+
+    file(APPEND ${CMAKE_BINARY_DIR}/${required_file} ${doxygen_footer})
+  endforeach()
+
   #--------------------------------------
   # Configure documentation uploader
   configure_file("${IGNITION_CMAKE_DIR}/upload_doc.sh.in"
