@@ -17,6 +17,7 @@
 # Find GNU Triangulation Surface Library
 
 if (WIN32)
+  message(DEBUG "***************** looking for GTS")
   find_package(GTS)
 else()
   include(IgnPkgConfig)
