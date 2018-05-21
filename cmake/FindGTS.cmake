@@ -15,5 +15,46 @@
 #
 ########################################
 # Find GNU Triangulation Surface Library
-include(IgnPkgConfig)
-ign_pkg_check_modules(GTS gts)
+
+if (NOT WIN32)
+  include(IgnPkgConfig)
+  ign_pkg_check_modules(GTS gts)
+else
+  # JW tested with gsl-1.8, Windows XP, MSVS 7.1, MSVS 8.0
+  SET(GTS_POSSIBLE_ROOT_DIRS
+    ${GTS_ROOT_DIR}
+    $ENV{GTS_ROOT_DIR}
+    ${GTS_DIR}
+    ${GTS_HOME}
+    $ENV{GTS_DIR}
+    $ENV{GTS_HOME}
+    $ENV{EXTERN_LIBS_DIR}/gts
+    $ENV{EXTRA}
+    # "C:/home/arm2arm/SOFTWARE/gts-0.7.6"
+    )
+  FIND_PATH(GTS_INCLUDE_DIR
+    NAMES gts.h gtsconfig.h
+    PATHS ${GTS_POSSIBLE_ROOT_DIRS}
+    PATH_SUFFIXES include
+    DOC "GTS header include dir"
+    )
+
+  FIND_LIBRARY(GTS_GTS_LIBRARY
+    NAMES gts libgts
+    PATHS  ${GTS_POSSIBLE_ROOT_DIRS}
+    PATH_SUFFIXES lib
+    DOC "GTS library dir" )
+
+#  FIND_LIBRARY(GTS_GLIB_LIBRARY
+#    NAMES glib libgslcblas
+#    PATHS  ${GSL_POSSIBLE_ROOT_DIRS}
+#    PATH_SUFFIXES lib
+#    DOC "GSL cblas library dir" )
+
+  SET(GTS_LIBRARIES ${GTS_GTS_LIBRARY})
+
+  #MESSAGE("DBG\n"
+    #  "GSL_GSL_LIBRARY=${GSL_GSL_LIBRARY}\n"
+    #  "GSL_GSLCBLAS_LIBRARY=${GSL_GSLCBLAS_LIBRARY}\n"
+    #  "GSL_LIBRARIES=${GSL_LIBRARIES}")
+endif()
