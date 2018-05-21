@@ -19,7 +19,7 @@
 if (NOT WIN32)
   include(IgnPkgConfig)
   ign_pkg_check_modules(GTS gts)
-else
+else()
   # JW tested with gsl-1.8, Windows XP, MSVS 7.1, MSVS 8.0
   SET(GTS_POSSIBLE_ROOT_DIRS
     ${GTS_ROOT_DIR}
