@@ -16,10 +16,9 @@
 ########################################
 # Find GNU Triangulation Surface Library
 
-if (NOT WIN32)
+if (WIN32)
+  ign_find_package(GTS)
+else()
   include(IgnPkgConfig)
   ign_pkg_check_modules(GTS gts)
-else()
-  ign_find_package(GTS)
 endif()
-
