@@ -773,7 +773,7 @@ macro(ign_add_library lib_target_name)
 endmacro()
 
 #################################################
-# _ign_check_known_cxx_standards(<11|14|...>)
+# _ign_check_known_cxx_standards(<11|14|17|...>)
 #
 # Creates a fatal error if the variable passed in does not represent a supported
 # version of the C++ standard.

@@ -239,7 +239,7 @@ endmacro()
 
 macro(ign_set_cxx_feature_flags)
 
-  set(IGN_KNOWN_CXX_STANDARDS 11 14)
+  set(IGN_KNOWN_CXX_STANDARDS 11 14 17)
 
   set(IGN_CXX_11_FEATURES
     cxx_alias_templates
@@ -300,6 +300,8 @@ macro(ign_set_cxx_feature_flags)
     cxx_return_type_deduction
     cxx_variable_templates)
 
+  set(IGN_CXX_17_FEATURES
+    ${IGN_CXX_14_FEATURES})
 
 endmacro()
 
