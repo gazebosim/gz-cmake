@@ -17,8 +17,36 @@
 # Find GNU Triangulation Surface Library
 
 if (WIN32)
-  message(DEBUG "***************** looking for GTS")
-  find_package(GTS)
+  SET(GTS_POSSIBLE_ROOT_DIRS
+    ${_VCPKG_INSTALLED_DIR} # vcpkg support
+    ${GTS_ROOT_DIR}
+    $ENV{GTS_ROOT_DIR}
+    ${GTS_DIR}
+    ${GTS_HOME}
+    $ENV{GTS_DIR}
+    $ENV{GTS_HOME}
+    $ENV{EXTERN_LIBS_DIR}/gts
+    $ENV{EXTRA}
+    )
+
+  FIND_PATH(GTS_INCLUDE_DIR
+    NAMES gts.h gtsconfig.h
+    PATHS ${GTS_POSSIBLE_ROOT_DIRS}
+    PATH_SUFFIXES include
+    DOC "GTS header include dir"
+    )
+
+  FIND_LIBRARY(GTS_GTS_LIBRARY
+    NAMES gts libgts
+    PATHS  ${GTS_POSSIBLE_ROOT_DIRS}
+    PATH_SUFFIXES lib
+    DOC "GTS library dir" )
+
+  SET(GTS_LIBRARIES ${GTS_GTS_LIBRARY})
+
+  MESSAGE("DBG\n"
+      "GSL_GSL_LIBRARY=${GSL_GSL_LIBRARY}\n"
+      "GSL_LIBRARIES=${GSL_LIBRARIES}")
 else()
   include(IgnPkgConfig)
   ign_pkg_check_modules(GTS gts)
