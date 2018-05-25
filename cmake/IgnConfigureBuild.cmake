@@ -301,7 +301,8 @@ macro(ign_set_cxx_feature_flags)
     cxx_variable_templates)
 
   set(IGN_CXX_17_FEATURES
-    ${IGN_CXX_14_FEATURES})
+    ${IGN_CXX_14_FEATURES}
+    cxx_std_17)
 
 endmacro()
 

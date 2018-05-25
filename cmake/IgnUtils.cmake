@@ -843,9 +843,9 @@ endmacro()
 
 #################################################
 # ign_create_core_library(SOURCES <sources>
-#                         [CXX_STANDARD <11|14|...>]
-#                         [PRIVATE_CXX_STANDARD <11|14|...>]
-#                         [INTERFACE_CXX_STANDARD <11|14|...>]
+#                         [CXX_STANDARD <11|14|17|...>]
+#                         [PRIVATE_CXX_STANDARD <11|14|17|...>]
+#                         [INTERFACE_CXX_STANDARD <11|14|17|...>]
 #                         [GET_TARGET_NAME <output_var>])
 #
 # This function will produce the "core" library for your project. There is no
@@ -1597,7 +1597,7 @@ macro(ign_build_tests)
 endmacro()
 
 #################################################
-# ign_set_target_public_cxx_standard(<11|14>)
+# ign_set_target_public_cxx_standard(<11|14|17>)
 #
 # NOTE: This was a temporary workaround for an earlier prerelease and is
 #       deprecated as of the "Components" pull request.
