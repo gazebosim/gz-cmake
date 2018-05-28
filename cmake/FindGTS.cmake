@@ -84,9 +84,9 @@ if (WIN32)
       path ${GTS_POSSIBLE_ROOT_DIRS}
       PATH_SUFFIXES lib
       DOC "Glib library dir")
-
+  
   set(GTS_LIBRARIES ${GTS_GTS_LIBRARY})
-  list(APPEND GTS_LIBRARIES GLIB_LIBRARY)
+  list(APPEND GTS_LIBRARIES "${GLIB_LIBRARY}")
   mark_as_advanced(GTS_LIBRARIES)
 
   if (GTS_FOUND)
