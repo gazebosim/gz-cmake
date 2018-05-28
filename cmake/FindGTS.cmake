@@ -17,8 +17,15 @@
 # Find GNU Triangulation Surface Library
 
 if (WIN32)
+    if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+    set(VCPKG_LIB_PATH "debug")
+  else
+    set(VCPKG_LIB_PATH "lib")
+  endif()
+
   set(GTS_POSSIBLE_ROOT_DIRS
-    ${_VCPKG_INSTALLED_DIR} # vcpkg support
+    ${_VCPKG_INSTALLED_DIR}/include # vcpkg support
+    ${_VCPKG_INSTALLED_DIR}/${VCPKG_LIB_PATH}
     ${GTS_ROOT_DIR}
     $ENV{GTS_ROOT_DIR}
     ${GTS_DIR}
