@@ -17,9 +17,9 @@
 # Find GNU Triangulation Surface Library
 
 if (WIN32)
-    if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+  if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(VCPKG_LIB_PATH "debug")
-  else
+  else()
     set(VCPKG_LIB_PATH "lib")
   endif()
 
