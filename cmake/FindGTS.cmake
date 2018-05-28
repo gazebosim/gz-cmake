@@ -17,7 +17,7 @@
 # Find GNU Triangulation Surface Library
 
 if (WIN32)
-  SET(GTS_POSSIBLE_ROOT_DIRS
+  set(GTS_POSSIBLE_ROOT_DIRS
     ${_VCPKG_INSTALLED_DIR} # vcpkg support
     ${GTS_ROOT_DIR}
     $ENV{GTS_ROOT_DIR}
@@ -29,25 +29,55 @@ if (WIN32)
     $ENV{EXTRA}
     )
 
-  FIND_PATH(GTS_INCLUDE_DIR
-    NAMES gts.h gtsconfig.h
-    PATHS ${GTS_POSSIBLE_ROOT_DIRS}
-    PATH_SUFFIXES include
-    DOC "GTS header include dir"
-    )
+  # true by default, change to false when a failure appears
+  set(GTS_FOUND true)
 
-  FIND_LIBRARY(GTS_GTS_LIBRARY
-    NAMES gts libgts
-    PATHS  ${GTS_POSSIBLE_ROOT_DIRS}
+  # 1. look for GTS headers
+  find_path(GTS_INCLUDE_DIR
+    names gts.h gtsconfig.h
+    paths ${GTS_POSSIBLE_ROOT_DIRS}
+    PATH_SUFFIXES include
+    doc "GTS header include dir")
+
+  if (GTS_INCLUDE_DIR)
+    if(NOT GTS_FIND_QUIETLY)
+      message(STATUS "Looking for gts.h gtsconfig.h - found")
+    endif()
+  else()
+    if(NOT GTS_FIND_QUIETLY)
+      message(STATUS "Looking for gts.h gtsconfig.h - not found")
+    endif()
+
+    set(GTS_FOUND false)
+  endif()
+  mark_as_advanced(GTS_INCLUDE_DIR)
+
+  # 2. look for GTS library
+  find_library(GTS_GTS_LIBRARY
+    names gts libgts
+    paths ${GTS_POSSIBLE_ROOT_DIRS}
     PATH_SUFFIXES lib
     DOC "GTS library dir" )
 
-  SET(GTS_LIBRARIES ${GTS_GTS_LIBRARY})
+  if (GTS_GTS_LIBRARY)
+    if(NOT GTS_FIND_QUIETLY)
+      message(STATUS "Looking for gts and libgts libraries - found")
+    endif()
+  else()
+    if(NOT GTS_FIND_QUIETLY)
+      message(STATUS "Looking for gts and libgts libraries - not found")
+    endif()
+
+    set (GTS_FOUND false)
+  endif()
+
+  set(GTS_LIBRARIES ${GTS_GTS_LIBRARY})
+  mark_as_advanced(GTS_LIBRARIES)
 
   MESSAGE("DBG\n"
-      "VCPKG_PATH=${_VCPKG_INSTALLED_DIR}\n"
-      "GSL_GSL_LIBRARY=${GSL_GSL_LIBRARY}\n"
-      "GSL_LIBRARIES=${GSL_LIBRARIES}")
+      "GTS_INCLUDE_DIR=${GTS_INCLUDE_DIR}\n"
+      "GTS_GTS_LIBRARY=${GTS_GTS_LIBRARY}\n"
+      "GTS_LIBRARIES=${GTS_LIBRARIES}")
 else()
   include(IgnPkgConfig)
   ign_pkg_check_modules(GTS gts)
