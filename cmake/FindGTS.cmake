@@ -40,13 +40,13 @@ if (WIN32)
   set(GTS_FOUND true)
 
   # 1. look for GTS headers
-  find_path(GTS_INCLUDE_DIR
+  find_path(GTS_INCLUDE_DIRS
     names gts.h gtsconfig.h
     paths ${GTS_POSSIBLE_ROOT_DIRS}
     PATH_SUFFIXES include
     doc "GTS header include dir")
 
-  if (GTS_INCLUDE_DIR)
+  if (GTS_INCLUDE_DIRS)
     if(NOT GTS_FIND_QUIETLY)
       message(STATUS "Looking for gts.h gtsconfig.h - found")
     endif()
@@ -57,7 +57,7 @@ if (WIN32)
 
     set(GTS_FOUND false)
   endif()
-  mark_as_advanced(GTS_INCLUDE_DIR)
+  mark_as_advanced(GTS_INCLUDE_DIRS)
 
   # 2. look for GTS library
   find_library(GTS_GTS_LIBRARY
@@ -81,10 +81,12 @@ if (WIN32)
   set(GTS_LIBRARIES ${GTS_GTS_LIBRARY})
   mark_as_advanced(GTS_LIBRARIES)
 
-  MESSAGE("DBG\n"
-      "GTS_INCLUDE_DIR=${GTS_INCLUDE_DIR}\n"
-      "GTS_GTS_LIBRARY=${GTS_GTS_LIBRARY}\n"
-      "GTS_LIBRARIES=${GTS_LIBRARIES}")
+  if (GTS_FOUND)
+    include(IgnPkgConfig)
+    ign_pkg_config_entry(IgnGTS "libgts")
+    include(IgnImportTarget)
+    ign_import_target(GTS)
+  endif()
 else()
   include(IgnPkgConfig)
   ign_pkg_check_modules(GTS gts)
