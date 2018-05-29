@@ -26,15 +26,9 @@ if (WIN32)
   set(GTS_POSSIBLE_ROOT_DIRS
     ${_VCPKG_INSTALLED_DIR}/include # vcpkg support
     ${_VCPKG_INSTALLED_DIR}/${VCPKG_LIB_PATH}
-    ${GTS_ROOT_DIR}
-    $ENV{GTS_ROOT_DIR}
-    ${GTS_DIR}
-    ${GTS_HOME}
-    $ENV{GTS_DIR}
-    $ENV{GTS_HOME}
-    $ENV{EXTERN_LIBS_DIR}/gts
-    $ENV{EXTRA}
-    )
+    # ${GTS_ROOT_DIR}
+    # $ENV{GTS_ROOT_DIR}
+  )
 
   # true by default, change to false when a failure appears
   set(GTS_FOUND true)
@@ -93,7 +87,7 @@ if (WIN32)
   message(STATUS "GLIB_LIBRARY=${GLIB_LIBRARY}")
   message(STATUS "CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}")
   message(STATUS "BUILD_TYPE=${BUILD_TYPE}")
-  message(STATUS "VCPKG_LIB_PATH=${VCPKG_LIB_PATH}")
+  message(STATUS "VCPKG_LIB_PATH=${_VCPKG_INSTALLED_DIR}/${VCPKG_LIB_PATH}")
 
   if (GTS_FOUND)
     include(IgnPkgConfig)
