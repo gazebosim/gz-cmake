@@ -80,7 +80,7 @@ if (WIN32)
 
   # 3. Need glib library
   find_library(GLIB_LIBRARY
-      names glib libglib
+      names glib-2
       path ${GTS_POSSIBLE_ROOT_DIRS}
       PATH_SUFFIXES lib
       DOC "Glib library dir")
