@@ -34,6 +34,45 @@ if (WIN32)
   # true by default, change to false when a failure appears
   set(GTS_FOUND true)
 
+  FIND_LIBRARY(FOO_LIBRARY_RELEASE
+        NAMES
+            libgts
+        HINTS
+            ${CMAKE_FIND_ROOT_PATH}
+        PATHS
+            ${CMAKE_FIND_ROOT_PATH}
+        PATH_SUFFIXES
+            "lib"
+            "local/lib"
+    ) 
+
+    FIND_LIBRARY(FOO_LIBRARY_DEBUG
+        NAMES
+            libgts
+        HINTS
+            ${CMAKE_FIND_ROOT_PATH}
+        PATHS
+            ${CMAKE_FIND_ROOT_PATH}
+        PATH_SUFFIXES
+            "debug/lib"
+            "lib"
+            "local/lib"
+    ) 
+
+
+    #fix debug/release libraries mismatch for vcpkg
+    if(DEFINED VCPKG_TARGET_TRIPLET)
+        set(FOO_LIBRARY_RELEASE ${FOO_LIBRARY_DEBUG}/../../../lib/libgsl.lib)
+        get_filename_component(FOO_LIBRARY_RELEASE ${FOO_LIBRARY_RELEASE} REALPATH)
+    endif()
+
+    include(SelectLibraryConfigurations)
+    select_library_configurations(FOO)
+
+  message(STATUS "FOO_LIBRARY_RELEASE=${FOO_LIBRARY_RELEASE}")
+  message(STATUS "FOO_LIBRARIES=${FOO_LIBRARIES}")
+  message(STATUS "FOO_LIBRARY=${FOO_LIBRARY}")
+
   # 1. look for GTS headers
   find_path(GTS_INCLUDE_DIRS
     names gts.h gtsconfig.h
