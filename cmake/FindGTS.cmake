@@ -43,8 +43,8 @@ if (WIN32)
   find_path(GTS_INCLUDE_DIRS
     names gts.h gtsconfig.h
     paths ${GTS_POSSIBLE_ROOT_DIRS}
-    PATH_SUFFIXES include
-    doc "GTS header include dir")
+    doc "GTS header include dir"
+    no_default_path)
 
   if (GTS_INCLUDE_DIRS)
     if(NOT GTS_FIND_QUIETLY)
@@ -63,8 +63,8 @@ if (WIN32)
   find_library(GTS_GTS_LIBRARY
     names gts libgts
     paths ${GTS_POSSIBLE_ROOT_DIRS}
-    PATH_SUFFIXES lib
-    DOC "GTS library dir" )
+    DOC "GTS library dir"
+    no_default_path)
 
   if (GTS_GTS_LIBRARY)
     if(NOT GTS_FIND_QUIETLY)
@@ -82,7 +82,6 @@ if (WIN32)
   find_library(GLIB_LIBRARY
       names glib-2.0
       path ${GTS_POSSIBLE_ROOT_DIRS}
-      PATH_SUFFIXES lib
       DOC "Glib library dir")
   
   set(GTS_LIBRARIES ${GTS_GTS_LIBRARY})
@@ -94,6 +93,7 @@ if (WIN32)
   message(STATUS "GLIB_LIBRARY=${GLIB_LIBRARY}")
   message(STATUS "CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}")
   message(STATUS "BUILD_TYPE=${BUILD_TYPE}")
+  message(STATUS "VCPKG_LIB_PATH=${VCPKG_LIB_PATH}")
 
   if (GTS_FOUND)
     include(IgnPkgConfig)
