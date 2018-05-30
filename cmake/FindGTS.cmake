@@ -47,7 +47,7 @@ else()
   # 2. look for GTS libraries
   find_library(GTS_LIBRARY_RELEASE
     names
-      libgts
+      gts
     hints
       ${CMAKE_FIND_ROOT_PATH}
     paths
@@ -59,7 +59,7 @@ else()
 
   find_library(GTS_LIBRARY_DEBUG
     names
-      libgts
+      gts
     hints
       ${CMAKE_FIND_ROOT_PATH}
     paths
@@ -81,11 +81,11 @@ else()
 
   if (GTS_LIBRARIES)
     if(NOT GTS_FIND_QUIETLY)
-      message(STATUS "Looking for libgts library - found")
+      message(STATUS "Looking for gts library - found")
     endif()
   else()
     if(NOT GTS_FIND_QUIETLY)
-      message(STATUS "Looking for libgts library - not found")
+      message(STATUS "Looking for gts library - not found")
     endif()
 
     set (GTS_FOUND false)
@@ -137,7 +137,7 @@ else()
 
   if (GTS_FOUND)
     include(IgnPkgConfig)
-    ign_pkg_check_modules(GTS "libgts")
+    ign_pkg_check_modules(GTS "gts")
     include(IgnImportTarget)
     ign_import_target(GTS)
   endif()
