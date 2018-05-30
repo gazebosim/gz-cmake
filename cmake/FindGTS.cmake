@@ -24,24 +24,6 @@ else()
   # true by default, change to false when a failure appears
   set(GTS_FOUND true)
 
-  if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-    set(VCPKG_LIB_PATH "debug")
-  else()
-    set(VCPKG_LIB_PATH "lib")
-  endif()
-
-  # vcpkg support
-  set(GTS_POSSIBLE_ROOT_DIRS
-    ${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/include 
-    ${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/${VCPKG_LIB_PATH}
-  )
-
- find_library(GTS_GTS_LIBRARY
-    names gts libgts
-    paths ${GTS_POSSIBLE_ROOT_DIRS}
-    DOC "GTS library dir"
-    no_default_path)
-
   # 1. look for GTS headers
   find_path(GTS_INCLUDE_DIRS
     names 
@@ -108,7 +90,7 @@ else()
 
   #fix debug/release libraries mismatch for vcpkg
   if(DEFINED VCPKG_TARGET_TRIPLET)
-    set(GTS_LIBRARY_RELEASE ${GTS_LIBRARY_DEBUG}/../../../lib/libgsl.lib)
+    set(GTS_LIBRARY_RELEASE ${GTS_LIBRARY_DEBUG}/../../../lib/gts.lib)
     get_filename_component(GTS_LIBRARY_RELEASE ${GTS_LIBRARY_RELEASE} REALPATH)
   endif()
 
@@ -153,7 +135,6 @@ else()
   list(APPEND GTS_LIBRARIES "${GLIB_LIBRARIES}")
   mark_as_advanced(GTS_LIBRARIES)
 
-  message(STATUS "GTS_GTS_LIBRARY=${GTS_GTS_LIBRARY}")
   message(STATUS "GTS_LIBRARIES=${GTS_LIBRARIES}")
   message(STATUS "GTS_LIBRARY=${GTS_LIBRARY}")
   message(STATUS "GLIB_LIBRARIES=${GLIB_LIBRARY}")
