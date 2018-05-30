@@ -94,16 +94,7 @@ else()
       "local/lib"
   )
 
-  #fix debug/release libraries mismatch for vcpkg
-  if(DEFINED VCPKG_TARGET_TRIPLET)
-    set(GTS_LIBRARY_RELEASE ${GTS_LIBRARY_DEBUG}/../../../lib/libgsl.lib)
-    get_filename_component(GTS_LIBRARY_RELEASE ${GTS_LIBRARY_RELEASE} REALPATH)
-  endif()
-
-  include(SelectLibraryConfigurations)
-  select_library_configurations(GTS)
-
-  if (GTS_LIBRARIES)
+  if (GTS_LIBRARY_RELEASE AND GTS_LIBRARY_DEBUG)
     if(NOT GTS_FIND_QUIETLY)
       message(STATUS "Looking for gts library - found")
     endif()
@@ -114,6 +105,15 @@ else()
 
     set (GTS_FOUND false)
   endif()
+
+  #fix debug/release libraries mismatch for vcpkg
+  if(DEFINED VCPKG_TARGET_TRIPLET)
+    set(GTS_LIBRARY_RELEASE ${GTS_LIBRARY_DEBUG}/../../../lib/libgsl.lib)
+    get_filename_component(GTS_LIBRARY_RELEASE ${GTS_LIBRARY_RELEASE} REALPATH)
+  endif()
+
+  include(SelectLibraryConfigurations)
+  select_library_configurations(GTS)
 
   # 2.1 Need glib library
   find_library(GLIB_LIBRARY_RELEASE
