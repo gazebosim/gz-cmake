@@ -16,62 +16,13 @@
 ########################################
 # Find GNU Triangulation Surface Library
 
-if (WIN32)
-  if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-    set(VCPKG_LIB_PATH "debug")
-  else()
-    set(VCPKG_LIB_PATH "lib")
-  endif()
-
-  # vcpkg support
-  set(GTS_POSSIBLE_ROOT_DIRS
-    ${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/include 
-    ${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/${VCPKG_LIB_PATH}
-    # ${GTS_ROOT_DIR}
-    # $ENV{GTS_ROOT_DIR}
-  )
-
+if (NOT WIN32)
+  # Configuration using pkg-config modules
+  include(IgnPkgConfig)
+  ign_pkg_check_modules(GTS gts)
+else()
   # true by default, change to false when a failure appears
   set(GTS_FOUND true)
-
-  FIND_LIBRARY(FOO_LIBRARY_RELEASE
-        NAMES
-            libgts
-        HINTS
-            ${CMAKE_FIND_ROOT_PATH}
-        PATHS
-            ${CMAKE_FIND_ROOT_PATH}
-        PATH_SUFFIXES
-            "lib"
-            "local/lib"
-    ) 
-
-    FIND_LIBRARY(FOO_LIBRARY_DEBUG
-        NAMES
-            libgts
-        HINTS
-            ${CMAKE_FIND_ROOT_PATH}
-        PATHS
-            ${CMAKE_FIND_ROOT_PATH}
-        PATH_SUFFIXES
-            "debug/lib"
-            "lib"
-            "local/lib"
-    ) 
-
-
-    #fix debug/release libraries mismatch for vcpkg
-    if(DEFINED VCPKG_TARGET_TRIPLET)
-        set(FOO_LIBRARY_RELEASE ${FOO_LIBRARY_DEBUG}/../../../lib/libgsl.lib)
-        get_filename_component(FOO_LIBRARY_RELEASE ${FOO_LIBRARY_RELEASE} REALPATH)
-    endif()
-
-    include(SelectLibraryConfigurations)
-    select_library_configurations(FOO)
-
-  message(STATUS "FOO_LIBRARY_RELEASE=${FOO_LIBRARY_RELEASE}")
-  message(STATUS "FOO_LIBRARIES=${FOO_LIBRARIES}")
-  message(STATUS "FOO_LIBRARY=${FOO_LIBRARY}")
 
   # 1. look for GTS headers
   find_path(GTS_INCLUDE_DIRS
@@ -93,42 +44,95 @@ if (WIN32)
   endif()
   mark_as_advanced(GTS_INCLUDE_DIRS)
 
-  # 2. look for GTS library
-  find_library(GTS_GTS_LIBRARY
-    names gts libgts
-    paths ${GTS_POSSIBLE_ROOT_DIRS}
-    DOC "GTS library dir"
-    no_default_path)
+  # 2. look for GTS libraries
+  find_library(GTS_LIBRARY_RELEASE
+    names
+      libgts
+    hints
+      ${CMAKE_FIND_ROOT_PATH}
+    paths
+      ${CMAKE_FIND_ROOT_PATH}
+    path_suffixes
+      "lib"
+      "local/lib"
+  ) 
 
-  if (GTS_GTS_LIBRARY)
+  find_library(GTS_LIBRARY_DEBUG
+    names
+      libgts
+    hints
+      ${CMAKE_FIND_ROOT_PATH}
+    paths
+      ${CMAKE_FIND_ROOT_PATH}
+    path_suffixes
+      "debug/lib"
+      "lib"
+      "local/lib"
+  )
+
+  #fix debug/release libraries mismatch for vcpkg
+  if(defined VCPKG_TARGET_TRIPLET)
+    set(GTS_LIBRARY_RELEASE ${GTS_LIBRARY_DEBUG}/../../../lib/libgsl.lib)
+    get_filename_component(GST_LIBRARY_RELEASE ${GTS_LIBRARY_RELEASE} REALPATH)
+  endif()
+
+  include(SelectLibraryConfigurations)
+  select_library_configurations(GTS)
+
+  if (GTS_LIBRARIES)
     if(NOT GTS_FIND_QUIETLY)
-      message(STATUS "Looking for gts and libgts libraries - found")
+      message(STATUS "Looking for libgts library - found")
     endif()
   else()
     if(NOT GTS_FIND_QUIETLY)
-      message(STATUS "Looking for gts and libgts libraries - not found")
+      message(STATUS "Looking for libgts library - not found")
     endif()
 
     set (GTS_FOUND false)
   endif()
 
-  # 3. Need glib library
-  find_library(GLIB_LIBRARY
-      names glib-2.0
-      path ${GTS_POSSIBLE_ROOT_DIRS}
-      DOC "Glib library dir")
-  
-  set(GTS_LIBRARIES ${GTS_GTS_LIBRARY})
-  list(APPEND GTS_LIBRARIES "${GLIB_LIBRARY}")
+  # 2.1 Need glib library
+  find_library(GLIB_LIBRARY_RELEASE
+    names
+      glib-2.0
+    hints
+      ${CMAKE_FIND_ROOT_PATH}
+    paths
+      ${CMAKE_FIND_ROOT_PATH}
+    path_suffixes
+      "lib"
+      "local/lib"
+  ) 
+
+  find_library(GLIB_LIBRARY_DEBUG
+    names
+      glib-2.0
+    hints
+      ${CMAKE_FIND_ROOT_PATH}
+    paths
+      ${CMAKE_FIND_ROOT_PATH}
+    path_suffixes
+      "debug/lib"
+      "lib"
+      "local/lib"
+  )
+
+  #fix debug/release libraries mismatch for vcpkg
+  if(defined VCPKG_TARGET_TRIPLET)
+    set(GLIB_LIBRARY_RELEASE ${GLIB_LIBRARY_DEBUG}/../../../lib/glib-2.0.lib)
+    get_filename_component(GLIB_LIBRARY_RELEASE ${GLIB_LIBRARY_RELEASE} REALPATH)
+  endif()
+
+  include(SelectLibraryConfigurations)
+  select_library_configurations(GLIB)
+
+  list(APPEND GTS_LIBRARIES "${GLIB_LIBRARIES}")
   mark_as_advanced(GTS_LIBRARIES)
 
   message(STATUS "GTS_LIBRARIES=${GTS_LIBRARIES}")
-  message(STATUS "GTS_GTS_LIBRARY=${GTS_GTS_LIBRARY}")
-  message(STATUS "GLIB_LIBRARY=${GLIB_LIBRARY}")
+  message(STATUS "GLIB_LIBRARIES=${GLIB_LIBRARY}")
   message(STATUS "CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}")
-  message(STATUS "BUILD_TYPE=${BUILD_TYPE}")
-  message(STATUS "VCPKG_LIB_PATH=${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/${VCPKG_LIB_PATH}")
-  message(STATUS "CMAKE_LIBRARY_PATH=${CMAKE_LIBRARY_PATH}")
+  message(STATUS "CMAKE_FIND_ROOT_PATH=${CMAKE_FIND_ROOT_PATH}")
 
   if (GTS_FOUND)
     include(IgnPkgConfig)
@@ -136,7 +140,4 @@ if (WIN32)
     include(IgnImportTarget)
     ign_import_target(GTS)
   endif()
-else()
-  include(IgnPkgConfig)
-  ign_pkg_check_modules(GTS gts)
 endif()
