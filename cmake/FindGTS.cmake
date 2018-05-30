@@ -73,7 +73,7 @@ else()
   #fix debug/release libraries mismatch for vcpkg
   if(DEFINED VCPKG_TARGET_TRIPLET)
     set(GTS_LIBRARY_RELEASE ${GTS_LIBRARY_DEBUG}/../../../lib/libgsl.lib)
-    get_filename_component(GST_LIBRARY_RELEASE ${GTS_LIBRARY_RELEASE} REALPATH)
+    get_filename_component(GTS_LIBRARY_RELEASE ${GTS_LIBRARY_RELEASE} REALPATH)
   endif()
 
   include(SelectLibraryConfigurations)
