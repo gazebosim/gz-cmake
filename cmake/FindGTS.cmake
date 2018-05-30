@@ -26,10 +26,16 @@ else()
 
   # 1. look for GTS headers
   find_path(GTS_INCLUDE_DIRS
-    names gts.h gtsconfig.h
-    paths ${GTS_POSSIBLE_ROOT_DIRS}
+    names 
+      gts.h gtsconfig.h
+    hints
+      ${CMAKE_FIND_ROOT_PATH}
+    paths
+      ${CMAKE_FIND_ROOT_PATH}
     doc "GTS header include dir"
-    no_default_path)
+    path_suffixes
+      include
+  )
 
   if (GTS_INCLUDE_DIRS)
     if(NOT GTS_FIND_QUIETLY)
