@@ -25,9 +25,7 @@ else()
   set(GTS_FOUND true)
 
   # 1. look for GTS headers
-  find_path(GTS_INCLUDE_DIRS
-    names 
-      gts.h gtsconfig.h
+  find_path(GTS_INCLUDE_DIRS gts.h 
     hints
       ${CMAKE_FIND_ROOT_PATH}
     paths
@@ -51,35 +49,10 @@ else()
   mark_as_advanced(GTS_INCLUDE_DIRS)
 
   # 2. look for GTS libraries
-  find_library(GTS_LIBRARY_RELEASE
-    names
-      gts
-    hints
-      ${CMAKE_FIND_ROOT_PATH}
-    paths
-      ${CMAKE_FIND_ROOT_PATH}
-    path_suffixes
-      "lib"
-      "local/lib"
-  ) 
+  find_library(GTS_LIBRARY gts)
+  mark_as_advanced(GTS_LIBRARY)
   
-  message(STATUS "GTS_LIBRARY_RELEASE=${GTS_LIBRARY_RELEASE}")
-
-  find_library(GTS_LIBRARY_DEBUG
-    names
-      gts
-    hints
-      ${CMAKE_FIND_ROOT_PATH}
-    paths
-      ${CMAKE_FIND_ROOT_PATH}
-    path_suffixes
-      "debug/lib"
-      "lib"
-      "local/lib"
-  )
-  message(STATUS "GTS_LIBRARY_DEBUG=${GTS_LIBRARY_DEBUG}")
-
-  if (GTS_LIBRARY_RELEASE AND GTS_LIBRARY_DEBUG)
+  if (GTS_LIBRARY)
     if(NOT GTS_FIND_QUIETLY)
       message(STATUS "Looking for gts library - found")
     endif()
@@ -91,58 +64,11 @@ else()
     set (GTS_FOUND false)
   endif()
 
-  #fix debug/release libraries mismatch for vcpkg
-  if(DEFINED VCPKG_TARGET_TRIPLET)
-    set(GTS_LIBRARY_RELEASE ${GTS_LIBRARY_DEBUG}/../../../lib/gts.lib)
-    get_filename_component(GTS_LIBRARY_RELEASE ${GTS_LIBRARY_RELEASE} REALPATH)
-  endif()
-
-  include(SelectLibraryConfigurations)
-  select_library_configurations(GTS)
-
   # 2.1 Need glib library
-  find_library(GLIB_LIBRARY_RELEASE
-    names
-      glib-2.0
-    hints
-      ${CMAKE_FIND_ROOT_PATH}
-    paths
-      ${CMAKE_FIND_ROOT_PATH}
-    path_suffixes
-      "lib"
-      "local/lib"
-  ) 
+  find_library(GLIB_LIBRARY glib-2.0)
+  list(APPEND GTS_LIBRARY "${GLIB_LIBRARIES}")
 
-  find_library(GLIB_LIBRARY_DEBUG
-    names
-      glib-2.0
-    hints
-      ${CMAKE_FIND_ROOT_PATH}
-    paths
-      ${CMAKE_FIND_ROOT_PATH}
-    path_suffixes
-      "debug/lib"
-      "lib"
-      "local/lib"
-  )
-
-  #fix debug/release libraries mismatch for vcpkg
-  if(DEFINED VCPKG_TARGET_TRIPLET)
-    set(GLIB_LIBRARY_RELEASE ${GLIB_LIBRARY_DEBUG}/../../../lib/glib-2.0.lib)
-    get_filename_component(GLIB_LIBRARY_RELEASE ${GLIB_LIBRARY_RELEASE} REALPATH)
-  endif()
-
-  include(SelectLibraryConfigurations)
-  select_library_configurations(GLIB)
-
-  list(APPEND GTS_LIBRARIES "${GLIB_LIBRARIES}")
-  mark_as_advanced(GTS_LIBRARIES)
-
-  message(STATUS "GTS_LIBRARIES=${GTS_LIBRARIES}")
   message(STATUS "GTS_LIBRARY=${GTS_LIBRARY}")
-  message(STATUS "GLIB_LIBRARIES=${GLIB_LIBRARY}")
-  message(STATUS "CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}")
-  message(STATUS "CMAKE_FIND_ROOT_PATH=${CMAKE_FIND_ROOT_PATH}")
 
   if (GTS_FOUND)
     include(IgnPkgConfig)
