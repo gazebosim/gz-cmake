@@ -66,7 +66,7 @@ else()
 
   # 2.1 Need glib library
   find_library(GLIB_LIBRARY glib-2.0)
-  list(APPEND GTS_LIBRARIES "${GLIB_LIBRARIES}")
+  list(APPEND GTS_LIBRARIES "${GLIB_LIBRARY}")
 
   if (GTS_FOUND)
     include(IgnPkgConfig)
