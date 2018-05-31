@@ -49,10 +49,10 @@ else()
   mark_as_advanced(GTS_INCLUDE_DIRS)
 
   # 2. look for GTS libraries
-  find_library(GTS_LIBRARY gts)
-  mark_as_advanced(GTS_LIBRARY)
+  find_library(GTS_LIBRARIES gts)
+  mark_as_advanced(GTS_LIBRARIES)
   
-  if (GTS_LIBRARY)
+  if (GTS_LIBRARIES)
     if(NOT GTS_FIND_QUIETLY)
       message(STATUS "Looking for gts library - found")
     endif()
@@ -66,9 +66,7 @@ else()
 
   # 2.1 Need glib library
   find_library(GLIB_LIBRARY glib-2.0)
-  list(APPEND GTS_LIBRARY "${GLIB_LIBRARIES}")
-
-  message(STATUS "GTS_LIBRARY=${GTS_LIBRARY}")
+  list(APPEND GTS_LIBRARIES "${GLIB_LIBRARIES}")
 
   if (GTS_FOUND)
     include(IgnPkgConfig)
