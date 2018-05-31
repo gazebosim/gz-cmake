@@ -62,6 +62,8 @@ else()
       "lib"
       "local/lib"
   ) 
+  
+  message(STATUS "GTS_LIBRARY_RELEASE=${GTS_LIBRARY_RELEASE}")
 
   find_library(GTS_LIBRARY_DEBUG
     names
@@ -75,6 +77,7 @@ else()
       "lib"
       "local/lib"
   )
+  message(STATUS "GTS_LIBRARY_DEBUG=${GTS_LIBRARY_DEBUG}")
 
   if (GTS_LIBRARY_RELEASE AND GTS_LIBRARY_DEBUG)
     if(NOT GTS_FIND_QUIETLY)
