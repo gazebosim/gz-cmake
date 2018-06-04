@@ -53,7 +53,6 @@ set(full_version ${major_version}.${minor_version})
 
 if (WIN32)
   find_package(OGRE ${full_version} COMPONENTS ${OGRE_FIND_COMPONENTS})
-  message(FATAL_ERROR "OGRE_INCLUDE_DIRS ${OGRE_INCLUDE_DIRS}")
 else()
   include(IgnPkgConfig)
   ign_pkg_check_modules_quiet(OGRE "OGRE >= ${full_version}")
