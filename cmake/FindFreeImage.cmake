@@ -23,13 +23,11 @@ set(minor_version ${FreeImage_FIND_VERSION_MINOR})
 # Set the full version number
 set(full_version ${major_version}.${minor_version})
 
-include(IgnPkgConfig)
-ign_pkg_config_library_entry(FreeImage freeimage)
-
 if (WIN32)
   find_package(FreeImage ${full_version})
 else()
-  ign_pkg_check_modules_quiet(FreeImage "FreeImage >= ${full_version}")
+  include(IgnPkgConfig)
+  ign_pkg_config_library_entry(FreeImage freeimage)
 
   # If we don't have PkgConfig, or if PkgConfig failed, then do a manual search
   if(NOT FreeImage_FOUND)
@@ -87,15 +85,17 @@ else()
     endif(FreeImage_LIBRARIES)
     mark_as_advanced(FreeImage_LIBRARIES)
 
-    if(FreeImage_FOUND)
-      # Create the imported target for FreeImage if we found it
-      include(IgnImportTarget)
-      ign_import_target(FreeImage)
-    endif()
-
-    include(FindPackageHandleStandardArgs)
-    find_package_handle_standard_args(
-      FreeImage
-      REQUIRED_VARS FreeImage_FOUND)
   endif()
+
+  if(FreeImage_FOUND)
+    # Create the imported target for FreeImage if we found it
+    include(IgnImportTarget)
+    ign_import_target(FreeImage)
+  endif()
+
+  include(FindPackageHandleStandardArgs)
+  find_package_handle_standard_args(
+    FreeImage
+    REQUIRED_VARS FreeImage_FOUND)
+
 endif()
