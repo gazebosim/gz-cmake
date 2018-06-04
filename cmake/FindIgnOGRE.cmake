@@ -45,14 +45,14 @@
 #                      COMPONENTS RTShaderSystem Terrain Overlay)
 
 # Grab the version numbers requested by the call to find_package(~)
-set(major_version ${OGRE_FIND_VERSION_MAJOR})
-set(minor_version ${OGRE_FIND_VERSION_MINOR})
+set(major_version ${IgnOGRE_FIND_VERSION_MAJOR})
+set(minor_version ${IgnOGRE_FIND_VERSION_MINOR})
 
 # Set the full version number
 set(full_version ${major_version}.${minor_version})
 
 if (WIN32)
-  find_package(OGRE ${full_version} COMPONENTS ${OGRE_FIND_COMPONENTS})
+  find_package(OGRE ${full_version} COMPONENTS ${IgnOGRE_FIND_COMPONENTS})
 else()
   include(IgnPkgConfig)
   ign_pkg_check_modules_quiet(OGRE "OGRE >= ${full_version}")
@@ -67,12 +67,12 @@ else()
             OGRE_VERSION_PATCH ${OGRE_VERSION})
 
     # find ogre components
-    foreach(component ${OGRE_FIND_COMPONENTS})
+    foreach(component ${IgnOGRE_FIND_COMPONENTS})
       ign_pkg_check_modules_quiet(OGRE-${component} "OGRE-${component} >= ${full_version}")
       if(OGRE-${component}_FOUND)
         list(APPEND OGRE_LIBRARIES OGRE-${component}::OGRE-${component})
-      elseif(OGRE_FIND_REQUIRED_${component})
-        set(OGRE_FOUND false)
+      elseif(IgnOGRE_FIND_REQUIRED_${component})
+         set(OGRE_FOUND false)
       endif()
     endforeach()
 
