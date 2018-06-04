@@ -17,14 +17,19 @@
 # Find FreeImage
 
 # Grab the version numbers requested by the call to find_package(~)
-set(major_version ${FreeImage_FIND_VERSION_MAJOR})
-set(minor_version ${FreeImage_FIND_VERSION_MINOR})
+set(major_version ${IgnFreeImage_FIND_VERSION_MAJOR})
+set(minor_version ${IgnFreeImage_FIND_VERSION_MINOR})
 
 # Set the full version number
 set(full_version ${major_version}.${minor_version})
 
 if (WIN32)
-  find_package(FreeImage ${full_version})
+    if (IgnFreeImage_FIND_QUIELTY)
+       set(find_options "${find_options} QUIET")
+    endif()
+    
+    find_package(FreeImage VERSION ${full_version}
+	         ${find_options})
 else()
   include(IgnPkgConfig)
   ign_pkg_config_library_entry(FreeImage freeimage)
@@ -35,7 +40,7 @@ else()
     find_path(FreeImage_INCLUDE_DIRS FreeImage.h)
     if(NOT FreeImage_INCLUDE_DIRS)
 
-      if(NOT FreeImage_FIND_QUIETLY)
+      if(NOT IgnFreeImage_FIND_QUIETLY)
         message(STATUS "Looking for FreeImage.h - not found")
         message(STATUS "Missing: Unable to find FreeImage.h")
       endif()
@@ -58,7 +63,7 @@ else()
 
       if(NOT FREEIMAGE_COMPILES)
 
-        if(NOT FreeImage_FIND_QUIETLY)
+        if(NOT IgnFreeImage_FIND_QUIETLY)
           message(STATUS "FreeImage test failed to compile - This may indicate a build system bug")
         endif()
 
@@ -67,7 +72,7 @@ else()
       endif(NOT FREEIMAGE_COMPILES)
 
       if(NOT FREEIMAGE_RUNS)
-        if(NOT FreeImage_FIND_QUIETLY)
+        if(NOT IgnFreeImage_FIND_QUIETLY)
           message(STATUS "Invalid FreeImage Version. Requires ${major_version}.${minor_version}")
         endif()
       endif(NOT FREEIMAGE_RUNS)
@@ -79,7 +84,7 @@ else()
     if(FreeImage_LIBRARIES)
       set(FreeImage_FOUND true)
     else()
-      if(NOT FreeImage_FIND_QUIELTY)
+      if(NOT IgnFreeImage_FIND_QUIELTY)
         message(STATUS "Missing: Unable to find libfreeimage")
       endif()
     endif(FreeImage_LIBRARIES)
