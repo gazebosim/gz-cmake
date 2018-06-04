@@ -20,7 +20,7 @@
 #
 # Usage of this module as follows:
 #
-#     ign_find_package(OGRE)
+#     ign_find_package(IgnOGRE)
 #
 # Variables defined by this module:
 #
@@ -40,7 +40,7 @@
 #
 # Example usage:
 #
-#     ign_find_package(OGRE
+#     ign_find_package(IgnOGRE
 #                      VERSION 1.8.0
 #                      COMPONENTS RTShaderSystem Terrain Overlay)
 
