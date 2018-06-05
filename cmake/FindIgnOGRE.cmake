@@ -52,7 +52,8 @@ set(minor_version ${IgnOGRE_FIND_VERSION_MINOR})
 set(full_version ${major_version}.${minor_version})
 
 if (WIN32)
-  find_package(OGRE ${full_version} COMPONENTS ${IgnOGRE_FIND_COMPONENTS})
+  find_package(OGRE ${full_version}
+               COMPONENTS ${IgnOGRE_FIND_COMPONENTS})
 else()
   include(IgnPkgConfig)
   ign_pkg_check_modules_quiet(OGRE "OGRE >= ${full_version}")
@@ -80,20 +81,19 @@ else()
     # `plugindir` variable.  We have to call pkg-config manually to get it.
     # On Windows, we assume that all the OGRE* defines are passed in manually
     # to CMake.
-    if (NOT WIN32)
-      execute_process(COMMAND pkg-config --variable=plugindir OGRE
-                              OUTPUT_VARIABLE _pkgconfig_invoke_result
-                              RESULT_VARIABLE _pkgconfig_failed)
-      if(_pkgconfig_failed)
-        BUILD_WARNING ("Failed to find OGRE's plugin directory.  The build will succeed, but there will likely be run-time errors.")
-      else()
-        # This variable will be substituted into cmake/setup.sh.in
-        set (OGRE_PLUGINDIR ${_pkgconfig_invoke_result})
-      endif()
-  endif()
+    execute_process(COMMAND pkg-config --variable=plugindir OGRE
+ 			    OUTPUT_VARIABLE _pkgconfig_invoke_result
+			    RESULT_VARIABLE _pkgconfig_failed)
+    if(_pkgconfig_failed)
+      BUILD_WARNING ("Failed to find OGRE's plugin directory.  The build will succeed, but there will likely be run-time errors.")
+    else()
+      # This variable will be substituted into cmake/setup.sh.in
+      set (OGRE_PLUGINDIR ${_pkgconfig_invoke_result})
+    endif()
 
-  set(OGRE_RESOURCE_PATH ${OGRE_PLUGINDIR})
-  # Seems that OGRE_PLUGINDIR can end in a newline, which will cause problems when
-  # we pass it to the compiler later.
-  string(REPLACE "\n" "" OGRE_RESOURCE_PATH ${OGRE_RESOURCE_PATH})
+    set(OGRE_RESOURCE_PATH ${OGRE_PLUGINDIR})
+    # Seems that OGRE_PLUGINDIR can end in a newline, which will cause problems when
+    # we pass it to the compiler later.
+    string(REPLACE "\n" "" OGRE_RESOURCE_PATH ${OGRE_RESOURCE_PATH})
+  endif()
 endif ()
