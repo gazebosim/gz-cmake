@@ -17,20 +17,13 @@
 # Find FreeImage
 
 # Grab the version numbers requested by the call to find_package(~)
-set(major_version ${IgnFreeImage_FIND_VERSION_MAJOR})
-set(minor_version ${IgnFreeImage_FIND_VERSION_MINOR})
+set(major_version ${FreeImage_FIND_VERSION_MAJOR})
+set(minor_version ${FreeImage_FIND_VERSION_MINOR})
 
 # Set the full version number
 set(full_version ${major_version}.${minor_version})
 
-if (WIN32)
-    if (IgnFreeImage_FIND_QUIELTY)
-       set(find_options "${find_options} QUIET")
-    endif()
-    
-    find_package(FreeImage VERSION ${full_version}
-	         ${find_options})
-else()
+if (NOT WIN32)
   include(IgnPkgConfig)
   ign_pkg_config_library_entry(FreeImage freeimage)
 
@@ -40,7 +33,7 @@ else()
     find_path(FreeImage_INCLUDE_DIRS FreeImage.h)
     if(NOT FreeImage_INCLUDE_DIRS)
 
-      if(NOT IgnFreeImage_FIND_QUIETLY)
+      if(NOT FreeImage_FIND_QUIETLY)
         message(STATUS "Looking for FreeImage.h - not found")
         message(STATUS "Missing: Unable to find FreeImage.h")
       endif()
@@ -63,7 +56,7 @@ else()
 
       if(NOT FREEIMAGE_COMPILES)
 
-        if(NOT IgnFreeImage_FIND_QUIETLY)
+        if(NOT FreeImage_FIND_QUIETLY)
           message(STATUS "FreeImage test failed to compile - This may indicate a build system bug")
         endif()
 
@@ -72,7 +65,7 @@ else()
       endif(NOT FREEIMAGE_COMPILES)
 
       if(NOT FREEIMAGE_RUNS)
-        if(NOT IgnFreeImage_FIND_QUIETLY)
+        if(NOT FreeImage_FIND_QUIETLY)
           message(STATUS "Invalid FreeImage Version. Requires ${major_version}.${minor_version}")
         endif()
       endif(NOT FREEIMAGE_RUNS)
@@ -84,7 +77,7 @@ else()
     if(FreeImage_LIBRARIES)
       set(FreeImage_FOUND true)
     else()
-      if(NOT IgnFreeImage_FIND_QUIELTY)
+      if(NOT FreeImage_FIND_QUIELTY)
         message(STATUS "Missing: Unable to find libfreeimage")
       endif()
     endif(FreeImage_LIBRARIES)
@@ -102,5 +95,55 @@ else()
   find_package_handle_standard_args(
     FreeImage
     REQUIRED_VARS FreeImage_FOUND)
+else()
+  # true by default, change to false when a failure appears
+  set(FreeImage_FOUND true)
+
+  # 1. look for FreeImage headers
+  find_path(FreeImage_INCLUDE_DIRS FreeImage.h
+    hints
+      ${CMAKE_FIND_ROOT_PATH}
+    paths
+      ${CMAKE_FIND_ROOT_PATH}
+    doc "FreeImage header include dir"
+    path_suffixes
+      include
+  )
+
+  if (FreeImage_INCLUDE_DIRS)
+    if(NOT FreeImage_FIND_QUIETLY)
+      message(STATUS "Looking for FreeImage.h FreeImageconfig.h - found")
+    endif()
+  else()
+    if(NOT FreeImage_FIND_QUIETLY)
+      message(STATUS "Looking for FreeImage.h FreeImageconfig.h - not found")
+    endif()
+
+    set(FreeImage_FOUND false)
+  endif()
+  mark_as_advanced(FreeImage_INCLUDE_DIRS)
+
+  # 2. look for FreeImage libraries
+  find_library(FreeImage_LIBRARIES FreeImage)
+  mark_as_advanced(FreeImage_LIBRARIES)
+
+  if (FreeImage_LIBRARIES)
+    if(NOT FreeImage_FIND_QUIETLY)
+      message(STATUS "Looking for FreeImage library - found")
+    endif()
+  else()
+    if(NOT FreeImage_FIND_QUIETLY)
+      message(STATUS "Looking for FreeImage library - not found")
+    endif()
+
+    set (FreeImage_FOUND false)
+  endif()
+
+  if (FreeImage_FOUND)
+    include(IgnPkgConfig)
+    ign_pkg_check_modules(FreeImage "FreeImage")
+    include(IgnImportTarget)
+    ign_import_target(FreeImage)
+  endif()
 
 endif()
