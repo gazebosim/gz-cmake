@@ -54,6 +54,8 @@ set(full_version ${major_version}.${minor_version})
 if (WIN32)
   find_package(OGRE ${full_version}
                COMPONENTS ${IgnOGRE_FIND_COMPONENTS})
+  message(STATUS "COMPONENTS: ${IgnOGRE_FIND_COMPONENTS}")
+
   # The last subdirecty of OGRE_INCLUDE_DIRS from vcpkg FindOgre includes the
   # OGRE/ subdirectory while the code uses headers the form OGRE/header.h
   set(p_last_subdir)
