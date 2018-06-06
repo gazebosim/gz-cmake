@@ -108,3 +108,8 @@ else()
     string(REPLACE "\n" "" OGRE_RESOURCE_PATH ${OGRE_RESOURCE_PATH})
   endif()
 endif ()
+
+set (IgnOGRE_FOUND false)
+if (OGRE_FOUND)
+  set(IgnOGRE_FOUND true)
+endif()
