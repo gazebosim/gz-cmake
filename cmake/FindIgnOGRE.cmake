@@ -54,7 +54,6 @@ set(full_version ${major_version}.${minor_version})
 if (WIN32)
   find_package(OGRE ${full_version}
                COMPONENTS ${IgnOGRE_FIND_COMPONENTS})
-  message(STATUS "COMPONENTS: ${IgnOGRE_FIND_COMPONENTS}")
 
   # The last subdirecty of OGRE_INCLUDE_DIRS from vcpkg FindOgre includes the
   # OGRE/ subdirectory while the code uses headers the form OGRE/header.h
@@ -66,8 +65,16 @@ if (WIN32)
       list(APPEND OGRE_INCLUDE_DIRS ${p_last_subdir})
     endif()
   endforeach()
-  message(STATUS "p_last_subdir: ${p_last_subdir}")
-  message(STATUS "OGRE_INCLUDE_DIRS: ${OGRE_INCLUDE_DIRS}")
+
+  # Transform the libraries to absolute path form
+  foreach (lib ${OGRE_LIBRARIES})
+      list(APPEND OGRE_LIBRARIES_full_path "${OGRE_LIBRARY_DIRS}/${lib}")
+  endforeach()
+  set (OGRE_LIBRARIES ${OGRE_LIBRARIES_full_path})
+  
+  message(STATUS "OGRE_LIBRARIES ${OGRE_LIBRARIES}")
+  message(STATUS "COMPONENTS: ${IgnOGRE_FIND_COMPONENTS}")
+
 else()
   include(IgnPkgConfig)
   ign_pkg_check_modules_quiet(OGRE "OGRE >= ${full_version}")
