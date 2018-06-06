@@ -41,6 +41,12 @@ foreach(component ${IgnProtobuf_FIND_COMPONENTS})
   # If any component is missing, then we should not consider this package to be
   # found.
 
+  # If a requested component is not required, then we can just skip this
+  # iteration. We don't do anything special for optional components.
+  if(NOT IgnProtobuf_FIND_REQUIRED_${component})
+    continue()
+  endif()
+
   if((${component} STREQUAL "libprotobuf") OR (${component} STREQUAL "all"))
     if((NOT ${PROTOBUF_LIBRARY}) AND (NOT TARGET protobuf::libprotobuf))
       set(Protobuf_FOUND false)
