@@ -54,7 +54,7 @@ set(full_version ${major_version}.${minor_version})
 if (WIN32)
   find_package(OGRE ${full_version}
                COMPONENTS ${IgnOGRE_FIND_COMPONENTS})
-  
+
   message(STATUS "OGRE_LIBRARIES ${OGRE_LIBRARIES}")
   message(STATUS "OGRE_LIBRARY_DIRS ${OGRE_LIBRARY_DIRS}")
 
@@ -69,14 +69,16 @@ if (WIN32)
     endif()
   endforeach()
 
-  # Transform the libraries to absolute path form
-  foreach (lib ${OGRE_LIBRARIES})
-      list(APPEND OGRE_LIBRARIES_full_path "${OGRE_LIBRARY_DIRS}/${lib}")
+  # need to return only libraries only defined by components and give them the
+  # full path using OGRE_LIBRARY_DIRS
+  set (component_libs)
+  foreach (component ${IgnOGRE_FIND_COMPONENTS})
+      set(OGRE_${component}_LIBRARIES "${OGRE_LIBRARY_DIRS}/${OGRE_${component}_LIBRARIES}")
+      list(APPEND component_libs OGRE_${component}_LIBRARIES)
   endforeach()
-  set (OGRE_LIBRARIES ${OGRE_LIBRARIES_full_path})
-  
+  set(OGRE_LIBRARIES ${component_libs})
+
   message(STATUS "OGRE_LIBRARIES ${OGRE_LIBRARIES}")
-  message(STATUS "COMPONENTS: ${IgnOGRE_FIND_COMPONENTS}")
 
 else()
   include(IgnPkgConfig)
