@@ -74,7 +74,7 @@ if (WIN32)
   set (component_libs)
   foreach (component ${IgnOGRE_FIND_COMPONENTS})
       set(OGRE_${component}_LIBRARIES "${OGRE_LIBRARY_DIRS}/${OGRE_${component}_LIBRARIES}")
-      list(APPEND component_libs OGRE_${component}_LIBRARIES)
+      list(APPEND component_libs ${OGRE_${component}_LIBRARIES})
   endforeach()
   set(OGRE_LIBRARIES ${component_libs})
 
