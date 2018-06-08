@@ -71,12 +71,12 @@ if (WIN32)
 
   # need to return only libraries only defined by components and give them the
   # full path using OGRE_LIBRARY_DIRS
-  set (component_libs)
-  foreach (component ${IgnOGRE_FIND_COMPONENTS})
-      set(OGRE_${component}_LIBRARIES "${OGRE_LIBRARY_DIRS}/${OGRE_${component}_LIBRARIES}.lib")
-      list(APPEND component_libs ${OGRE_${component}_LIBRARIES})
+  set (ogre_all_libs)
+  foreach (ogre_lib ${OGRE_LIBRARIES})
+      set(lib_fullpath "${OGRE_LIBRARY_DIRS}/${ogre_lib}.lib")
+      list(APPEND ogre_all_libs ${lib_fullpath})
   endforeach()
-  set(OGRE_LIBRARIES ${component_libs})
+  set(OGRE_LIBRARIES ${ogre_all_libs})
 
   message(STATUS "OGRE_LIBRARIES ${OGRE_LIBRARIES}")
 
