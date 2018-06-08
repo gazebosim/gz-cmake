@@ -73,7 +73,7 @@ if (WIN32)
   # full path using OGRE_LIBRARY_DIRS
   set (component_libs)
   foreach (component ${IgnOGRE_FIND_COMPONENTS})
-      set(OGRE_${component}_LIBRARIES "${OGRE_LIBRARY_DIRS}/${OGRE_${component}_LIBRARIES}")
+      set(OGRE_${component}_LIBRARIES "${OGRE_LIBRARY_DIRS}/${OGRE_${component}_LIBRARIES}.lib")
       list(APPEND component_libs ${OGRE_${component}_LIBRARIES})
   endforeach()
   set(OGRE_LIBRARIES ${component_libs})
