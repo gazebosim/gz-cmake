@@ -140,8 +140,10 @@ else()
   endif()
 
   if (FreeImage_FOUND)
+    # We need to manually specify the pkgconfig entry (and type of entry),
+    # because ign_pkg_check_modules does not work for it.
     include(IgnPkgConfig)
-    ign_pkg_check_modules(FreeImage "FreeImage")
+    ign_pkg_config_library_entry(FreeImage freeimage)
     include(IgnImportTarget)
     ign_import_target(FreeImage)
   endif()

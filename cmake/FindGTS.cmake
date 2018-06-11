@@ -69,8 +69,10 @@ else()
   list(APPEND GTS_LIBRARIES "${GLIB_LIBRARY}")
 
   if (GTS_FOUND)
+    # We need to manually specify the pkgconfig entry (and type of entry),
+    # because ign_pkg_check_modules does not work for it.
     include(IgnPkgConfig)
-    ign_pkg_check_modules(GTS "gts")
+    ign_pkg_config_library_entry(GTS gts)
     include(IgnImportTarget)
     ign_import_target(GTS)
   endif()
