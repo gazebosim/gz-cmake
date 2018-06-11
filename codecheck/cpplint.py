@@ -2361,20 +2361,20 @@ class _NamespaceInfo(_BlockInfo):
     # Besides these, we don't accept anything else, otherwise we might
     # get false negatives when existing comment is a substring of the
     # expected namespace.
-    if self.name:
-      return
-    else:
-      # Anonymous namespace
-      if not Match(r'^\s*};*\s*(//|/\*).*\bnamespace[\*/\.\\\s]*$', line):
-        # If "// namespace anonymous" or "// anonymous namespace (more text)",
-        # mention "// anonymous namespace" as an acceptable form
-        if Match(r'^\s*}.*\b(namespace anonymous|anonymous namespace)\b', line):
-          error(filename, linenum, 'readability/namespace', 5,
-                'Anonymous namespace should be terminated with "// namespace"'
-                ' or "// anonymous namespace"')
-        else:
-          error(filename, linenum, 'readability/namespace', 5,
-                'Anonymous namespace should be terminated with "// namespace"')
+    # if self.name:
+    #   return
+    # else:
+    #   # Anonymous namespace
+    #   if not Match(r'^\s*};*\s*(//|/\*).*\bnamespace[\*/\.\\\s]*$', line):
+    #     # If "// namespace anonymous" or "// anonymous namespace (more text)",
+    #     # mention "// anonymous namespace" as an acceptable form
+    #     if Match(r'^\s*}.*\b(namespace anonymous|anonymous namespace)\b', line):
+    #       error(filename, linenum, 'readability/namespace', 5,
+    #             'Anonymous namespace should be terminated with "// namespace"'
+    #             ' or "// anonymous namespace"')
+    #     else:
+    #       error(filename, linenum, 'readability/namespace', 5,
+    #             'Anonymous namespace should be terminated with "// namespace"')
 
 
 class _PreprocessorInfo(object):
@@ -4530,10 +4530,10 @@ def CheckIncludeLine(filename, clean_lines, linenum, include_state, error):
   #
   # We also make an exception for Lua headers, which follow google
   # naming convention but not the include convention.
-  match = Match(r'#include\s*"([^/]+\.h)"', line)
-  if match and not _THIRD_PARTY_HEADERS_PATTERN.match(match.group(1)):
-    error(filename, linenum, 'build/include', 4,
-          'Include the directory when naming .h files')
+  # match = Match(r'#include\s*"([^/]+\.h)"', line)
+  # if match and not _THIRD_PARTY_HEADERS_PATTERN.match(match.group(1)):
+  #   error(filename, linenum, 'build/include', 4,
+  #         'Include the directory when naming .h files')
 
   # we shouldn't include a file more than once. actually, there are a
   # handful of instances where doing so is okay, but in general it's
