@@ -21,10 +21,13 @@ function(ign_setup_target_for_codecheck)
   endif()
 
   # Base set of cppcheck option
-  set (CPPCHECK_BASE -q --inline-suppr -j 4)
+  set (CPPCHECK_BASE -q --inline-suppr -j 4 --language=c++)
+  if (EXISTS "${PROJECT_BINARY_DIR}/cppcheck.suppress")
+    set (CPPCHECK_BASE ${CPPCHECK_BASE} --suppressions-list=${PROJECT_BINARY_DIR}/cppcheck.suppress)
+  endif()
 
   # Extra cppcheck option
-  set (CPPCHECK_EXTRA --language=c++ --enable=style,performance,portability,information)
+  set (CPPCHECK_EXTRA --enable=style,performance,portability,information)
 
   # Rules for cppcheck
   set (CPPCHECK_RULES "-UM_PI --rule-file=${IGNITION_CMAKE_CODECHECK_DIR}/header_guard.rule --rule-file=${IGNITION_CMAKE_CODECHECK_DIR}/namespace_AZ.rule")
