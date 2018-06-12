@@ -21,7 +21,7 @@ function(ign_setup_target_for_codecheck)
   endif()
 
   # Base set of cppcheck option
-  set (CPPCHECK_BASE -q --inline-suppr -j 4 --language=c++)
+  set (CPPCHECK_BASE -q --inline-suppr -j 4 --language=c++ --std=c++14 --force)
   if (EXISTS "${PROJECT_BINARY_DIR}/cppcheck.suppress")
     set (CPPCHECK_BASE ${CPPCHECK_BASE} --suppressions-list=${PROJECT_BINARY_DIR}/cppcheck.suppress)
   endif()
