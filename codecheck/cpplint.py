@@ -2986,7 +2986,8 @@ def CheckSpacingForFunctionCall(filename, clean_lines, linenum, error):
       if Search(r'\boperator_*\b', line):
         error(filename, linenum, 'whitespace/parens', 0,
               'Extra space before ( in function call')
-      else:
+      # If < and > are present, then we assume fncall is a function pointer.
+      elif not Search(r'\<.*\>', fncall):
         error(filename, linenum, 'whitespace/parens', 4,
               'Extra space before ( in function call')
     # If the ) is followed only by a newline or a { + newline, assume it's
