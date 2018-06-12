@@ -6060,7 +6060,7 @@ def ProcessFile(filename, vlevel, extra_check_functions=[]):
 
   # When reading from stdin, the extension is unknown, so no cpplint tests
   # should rely on the extension.
-  if filename != '-' and file_extension not in _valid_extensions:
+  if filename != '-' and file_extension not in _valid_extensions and not _Quiet():
     sys.stderr.write('Ignoring %s; not a valid file name '
                      '(%s)\n' % (filename, ', '.join(_valid_extensions)))
   else:
