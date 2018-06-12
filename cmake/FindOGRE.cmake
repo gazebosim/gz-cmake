@@ -53,23 +53,20 @@ set(minor_version ${OGRE_FIND_VERSION_MINOR})
 # Set the full version number
 set(full_version ${major_version}.${minor_version})
 
-# loop through pkg config path and find an ogre version that is < 2.0.0
-set (PKG_CONFIG_PATH_TMP $ENV{PKG_CONFIG_PATH})
-
+# loop through pkg config paths and find an ogre version that is > 2.0.0
+set(PKG_CONFIG_PATH_ORIGINAL $ENV{PKG_CONFIG_PATH})
+string(REPLACE ":" ";" PKG_CONFIG_PATH_TMP $ENV{PKG_CONFIG_PATH})
+list(LENGTH PKG_CONFIG_PATH_TMP lsize)
 foreach(pkg_path ${PKG_CONFIG_PATH_TMP})
-  set(ENV{PKG_CONFIG_PATH} pkg_path)
+  set(ENV{PKG_CONFIG_PATH} ${pkg_path})
   ign_pkg_check_modules_quiet(OGRE "OGRE >= ${full_version}")
   if (OGRE_FOUND)
-    message("ogre version ${OGRE_VERSION}")
-
-    if (${OGRE_VERSION} VERSION_GREATER 2.0.0)
+    if (NOT ${OGRE_VERSION} VERSION_LESS 2.0.0)
       set (OGRE_FOUND false)
       continue()
     endif()
-
   endif()
 endforeach()
-
 
 if (OGRE_FOUND)
 
@@ -114,6 +111,6 @@ if (OGRE_FOUND)
 endif ()
 
 #reset pkg config path
-set(ENV{PKG_CONFIG_PATH} ${PKG_CONFIG_PATH_TMP})
+set(ENV{PKG_CONFIG_PATH} ${PKG_CONFIG_PATH_ORIGINAL})
 
 
