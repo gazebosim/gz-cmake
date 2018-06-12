@@ -53,7 +53,6 @@ if (${OGRE2_FIND_VERSION_MAJOR})
 endif()
 
 # loop through pkg config paths and find an ogre version that is > 2.0.0
-#set (PKG_CONFIG_PATH_TMP $ENV{PKG_CONFIG_PATH})
 set(PKG_CONFIG_PATH_ORIGINAL $ENV{PKG_CONFIG_PATH})
 string(REPLACE ":" ";" PKG_CONFIG_PATH_TMP $ENV{PKG_CONFIG_PATH})
 list(LENGTH PKG_CONFIG_PATH_TMP lsize)
@@ -68,7 +67,7 @@ foreach(pkg_path ${PKG_CONFIG_PATH_TMP})
   endif()
 endforeach()
 
-#reset pkg config path
+# reset pkg config path
 set(ENV{PKG_CONFIG_PATH} ${PKG_CONFIG_PATH_ORIGINAL})
 
 if (NOT OGRE2_FOUND)
@@ -144,7 +143,7 @@ else ()
   endforeach()
 
   # set path to find ogre plugins
-  # keep variable naming consisting with ogre 1
+  # keep variable naming consistent with ogre 1
   # TODO currently using harded paths based on dir structure in ubuntu
   foreach(resource_path ${OGRE2_LIBRARY_DIRS})
     list(APPEND OGRE2_RESOURCE_PATH "${resource_path}/OGRE")

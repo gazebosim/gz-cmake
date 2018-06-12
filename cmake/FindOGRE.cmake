@@ -112,5 +112,3 @@ endif ()
 
 #reset pkg config path
 set(ENV{PKG_CONFIG_PATH} ${PKG_CONFIG_PATH_ORIGINAL})
-
-
