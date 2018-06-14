@@ -58,7 +58,7 @@ macro(ign_configure_build)
     foreach(msg ${build_errors})
       message("-- ${msg}")
     endforeach()
-    message("--  END BUILD ERRORS\n")
+    message("-- END BUILD ERRORS\n")
 
     set(error_str "Errors encountered in build. Please see BUILD ERRORS above.")
 
