@@ -141,7 +141,7 @@ else()
 
   if (FreeImage_FOUND)
     include(IgnPkgConfig)
-    ign_pkg_check_modules(FreeImage "FreeImage")
+    ign_pkg_config_library_entry(FreeImage "FreeImage")
     include(IgnImportTarget)
     ign_import_target(FreeImage)
   endif()
