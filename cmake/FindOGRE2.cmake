@@ -138,7 +138,7 @@ if (${OGRE2_LIBRARY} STREQUAL "OGRE2_LIBRARY-NOTFOUND")
 else ()
 
   get_filename_component(OGRE2_LIBRARY_DIRS "${OGRE2_LIBRARY}" PATH)
-  list(APPEND OGRE2_LIBRARIES ${OGRE2_LIBRARY})
+  set(OGRE2_LIBRARIES ${OGRE2_LIBRARY})
 
   # find ogre components
   include(IgnImportTarget)
