@@ -53,7 +53,42 @@ set(minor_version ${OGRE_FIND_VERSION_MINOR})
 # Set the full version number
 set(full_version ${major_version}.${minor_version})
 
-ign_pkg_check_modules_quiet(OGRE "OGRE >= ${full_version}")
+
+set(PKG_CONFIG_PATH_ORIGINAL $ENV{PKG_CONFIG_PATH})
+set(PKG_CONFIG_PATH_TMP ${PKG_CONFIG_PATH_ORIGINAL})
+
+# Get all pkg-config paths
+if (NOT WIN32)
+  execute_process(COMMAND pkg-config --variable pc_path pkg-config
+                  OUTPUT_VARIABLE _pkgconfig_invoke_result
+                  RESULT_VARIABLE _pkgconfig_failed)
+  if(_pkgconfig_failed)
+    BUILD_WARNING ("Failed to get pkg-config search paths")
+  elseif (NOT "_pkgconfig_invoke_result" STREQUAL "")
+    set (PKG_CONFIG_PATH_TMP "${PKG_CONFIG_PATH_TMP}:${_pkgconfig_invoke_result}")
+  endif()
+endif()
+
+# check and see if there are any paths at all
+if ("${PKG_CONFIG_PATH_TMP}" STREQUAL "")
+  message("No valid pkg-config search paths found")
+  return()
+endif()
+
+string(REPLACE ":" ";" PKG_CONFIG_PATH_TMP ${PKG_CONFIG_PATH_TMP})
+
+# loop through pkg config paths and find an ogre version that is < 2.0.0
+foreach(pkg_path ${PKG_CONFIG_PATH_TMP})
+  set(ENV{PKG_CONFIG_PATH} ${pkg_path})
+  ign_pkg_check_modules_quiet(OGRE "OGRE >= ${full_version}")
+  if (OGRE_FOUND)
+    if (NOT ${OGRE_VERSION} VERSION_LESS 2.0.0)
+      set (OGRE_FOUND false)
+    else ()
+      break()
+    endif()
+  endif()
+endforeach()
 
 if (OGRE_FOUND)
 
@@ -96,3 +131,6 @@ if (OGRE_FOUND)
   # we pass it to the compiler later.
   string(REPLACE "\n" "" OGRE_RESOURCE_PATH ${OGRE_RESOURCE_PATH})
 endif ()
+
+#reset pkg config path
+set(ENV{PKG_CONFIG_PATH} ${PKG_CONFIG_PATH_ORIGINAL})
