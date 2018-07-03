@@ -125,7 +125,7 @@ if (NOT WIN32)
     #reset pkg config path
     set(ENV{PKG_CONFIG_PATH} ${PKG_CONFIG_PATH_ORIGINAL})
   endif()
-else(WIN32)
+else()
   find_package(OGRE ${full_version}
                COMPONENTS ${OGRE_FIND_COMPONENTS})
 
@@ -157,4 +157,4 @@ else(WIN32)
     endforeach()
     set(OGRE_LIBRARIES ${ogre_all_libs})
   endif()
-endif (WIN32)
+endif()
