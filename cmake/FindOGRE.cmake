@@ -44,8 +44,6 @@
 #                      VERSION 1.8.0
 #                      COMPONENTS RTShaderSystem Terrain Overlay)
 
-include(IgnPkgConfig)
-
 # Grab the version numbers requested by the call to find_package(~)
 set(major_version ${OGRE_FIND_VERSION_MAJOR})
 set(minor_version ${OGRE_FIND_VERSION_MINOR})
@@ -53,12 +51,11 @@ set(minor_version ${OGRE_FIND_VERSION_MINOR})
 # Set the full version number
 set(full_version ${major_version}.${minor_version})
 
-
-set(PKG_CONFIG_PATH_ORIGINAL $ENV{PKG_CONFIG_PATH})
-set(PKG_CONFIG_PATH_TMP ${PKG_CONFIG_PATH_ORIGINAL})
-
-# Get all pkg-config paths
 if (NOT WIN32)
+  # pkg-config platforms
+  set(PKG_CONFIG_PATH_ORIGINAL $ENV{PKG_CONFIG_PATH})
+  set(PKG_CONFIG_PATH_TMP ${PKG_CONFIG_PATH_ORIGINAL})
+
   execute_process(COMMAND pkg-config --variable pc_path pkg-config
                   OUTPUT_VARIABLE _pkgconfig_invoke_result
                   RESULT_VARIABLE _pkgconfig_failed)
@@ -67,54 +64,48 @@ if (NOT WIN32)
   elseif (NOT "_pkgconfig_invoke_result" STREQUAL "")
     set (PKG_CONFIG_PATH_TMP "${PKG_CONFIG_PATH_TMP}:${_pkgconfig_invoke_result}")
   endif()
-endif()
 
-# check and see if there are any paths at all
-if ("${PKG_CONFIG_PATH_TMP}" STREQUAL "")
-  message("No valid pkg-config search paths found")
-  return()
-endif()
-
-string(REPLACE ":" ";" PKG_CONFIG_PATH_TMP ${PKG_CONFIG_PATH_TMP})
-
-# loop through pkg config paths and find an ogre version that is < 2.0.0
-foreach(pkg_path ${PKG_CONFIG_PATH_TMP})
-  set(ENV{PKG_CONFIG_PATH} ${pkg_path})
-  ign_pkg_check_modules_quiet(OGRE "OGRE >= ${full_version}")
-  if (OGRE_FOUND)
-    if (NOT ${OGRE_VERSION} VERSION_LESS 2.0.0)
-      set (OGRE_FOUND false)
-    else ()
-      break()
-    endif()
+  # check and see if there are any paths at all
+  if ("${PKG_CONFIG_PATH_TMP}" STREQUAL "")
+    message("No valid pkg-config search paths found")
+    return()
   endif()
-endforeach()
 
-if (OGRE_FOUND)
+  string(REPLACE ":" ";" PKG_CONFIG_PATH_TMP ${PKG_CONFIG_PATH_TMP})
 
-  # set OGRE major, minor, and patch version number
-  string (REGEX REPLACE "^([0-9]+).*" "\\1"
-    OGRE_VERSION_MAJOR "${OGRE_VERSION}")
-  string (REGEX REPLACE "^[0-9]+\\.([0-9]+).*" "\\1"
-    OGRE_VERSION_MINOR "${OGRE_VERSION}")
-  string (REGEX REPLACE "^[0-9]+\\.[0-9]+\\.([0-9]+).*" "\\1"
-    OGRE_VERSION_PATCH ${OGRE_VERSION})
-
-  # find ogre components
-  foreach(component ${OGRE_FIND_COMPONENTS})
-    ign_pkg_check_modules_quiet(OGRE-${component} "OGRE-${component} >= ${full_version}")
-    if(OGRE-${component}_FOUND)
-      list(APPEND OGRE_LIBRARIES OGRE-${component}::OGRE-${component})
-    elseif(OGRE_FIND_REQUIRED_${component})
-      set(OGRE_FOUND false)
+  # loop through pkg config paths and find an ogre version that is < 2.0.0
+  foreach(pkg_path ${PKG_CONFIG_PATH_TMP})
+    set(ENV{PKG_CONFIG_PATH} ${pkg_path})
+    ign_pkg_check_modules_quiet(OGRE "OGRE >= ${full_version}")
+    if (OGRE_FOUND)
+      if (NOT ${OGRE_VERSION} VERSION_LESS 2.0.0)
+        set (OGRE_FOUND false)
+      else ()
+        break()
+      endif()
     endif()
   endforeach()
 
-  # Also find OGRE's plugin directory, which is provided in its .pc file as the
-  # `plugindir` variable.  We have to call pkg-config manually to get it.
-  # On Windows, we assume that all the OGRE* defines are passed in manually
-  # to CMake.
-  if (NOT WIN32)
+  if (OGRE_FOUND)
+    # set OGRE major, minor, and patch version number
+    string (REGEX REPLACE "^([0-9]+).*" "\\1"
+      OGRE_VERSION_MAJOR "${OGRE_VERSION}")
+    string (REGEX REPLACE "^[0-9]+\\.([0-9]+).*" "\\1"
+      OGRE_VERSION_MINOR "${OGRE_VERSION}")
+    string (REGEX REPLACE "^[0-9]+\\.[0-9]+\\.([0-9]+).*" "\\1"
+      OGRE_VERSION_PATCH ${OGRE_VERSION})
+
+    # find ogre components
+    foreach(component ${OGRE_FIND_COMPONENTS})
+      ign_pkg_check_modules_quiet(OGRE-${component} "OGRE-${component} >= ${full_version}")
+      if(OGRE-${component}_FOUND)
+        list(APPEND OGRE_LIBRARIES OGRE-${component}::OGRE-${component})
+	list(APPEND OGRE_INCLUDE_DIRS OGRE-${component}_INCLUDE_DIRS)
+      elseif(OGRE_FIND_REQUIRED_${component})
+        set(OGRE_FOUND false)
+      endif()
+    endforeach()
+
     execute_process(COMMAND pkg-config --variable=plugindir OGRE
                     OUTPUT_VARIABLE _pkgconfig_invoke_result
                     RESULT_VARIABLE _pkgconfig_failed)
@@ -124,13 +115,47 @@ if (OGRE_FOUND)
       # This variable will be substituted into cmake/setup.sh.in
       set (OGRE_PLUGINDIR ${_pkgconfig_invoke_result})
     endif()
+
+    ign_pkg_config_library_entry(OGRE OgreMain)
+
+    set(OGRE_RESOURCE_PATH ${OGRE_PLUGINDIR})
+    # Seems that OGRE_PLUGINDIR can end in a newline, which will cause problems when
+    # we pass it to the compiler later.
+    string(REPLACE "\n" "" OGRE_RESOURCE_PATH ${OGRE_RESOURCE_PATH})
+
+    #reset pkg config path
+    set(ENV{PKG_CONFIG_PATH} ${PKG_CONFIG_PATH_ORIGINAL})
   endif()
+else(WIN32)
+  find_package(OGRE ${full_version}
+               COMPONENTS ${OGRE_FIND_COMPONENTS})
 
-  set(OGRE_RESOURCE_PATH ${OGRE_PLUGINDIR})
-  # Seems that OGRE_PLUGINDIR can end in a newline, which will cause problems when
-  # we pass it to the compiler later.
-  string(REPLACE "\n" "" OGRE_RESOURCE_PATH ${OGRE_RESOURCE_PATH})
-endif ()
+  if (OGRE_FOUND)
+    # The last subdirecty of OGRE_INCLUDE_DIRS from vcpkg FindOgre includes the
+    # OGRE/ subdirectory while the code uses headers the form OGRE/header.h
+    set(p_last_subdir)
+    foreach (dir ${OGRE_INCLUDE_DIRS})
+      get_filename_component(last_subdir ${dir} NAME)
+      if (last_subdir STREQUAL "OGRE")
+	get_filename_component(p_last_subdir "${dir}/.." ABSOLUTE)
+	list(APPEND OGRE_INCLUDE_DIRS ${p_last_subdir})
+      endif()
+    endforeach()
 
-#reset pkg config path
-set(ENV{PKG_CONFIG_PATH} ${PKG_CONFIG_PATH_ORIGINAL})
+    # need to return only libraries only defined by components and give them the
+    # full path using OGRE_LIBRARY_DIRS
+    set (ogre_all_libs)
+    foreach (ogre_lib ${OGRE_LIBRARIES})
+      set(prefix "")
+      set(postfix "")
+      # Only non .lib files need the prefix (vcpkg OgreConfig.cmake)
+      if (NOT ogre_lib MATCHES "lib$")
+	set(prefix "${OGRE_LIBRARY_DIRS}/")
+	set(postfix ".lib")
+      endif()
+      set(lib_fullpath "${prefix}${ogre_lib}${postfix}")
+      list(APPEND ogre_all_libs ${lib_fullpath})
+    endforeach()
+    set(OGRE_LIBRARIES ${ogre_all_libs})
+  endif()
+endif (WIN32)
