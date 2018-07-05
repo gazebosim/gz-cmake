@@ -115,7 +115,7 @@ if (NOT WIN32)
       set(OGRE_PLUGINDIR ${_pkgconfig_invoke_result})
     endif()
 
-    ign_pkg_config_library_entry(IgnOGRE OGREMain)
+    ign_pkg_config_library_entry(IgnOGRE OgreMain)
 
     set(OGRE_RESOURCE_PATH ${OGRE_PLUGINDIR})
     # Seems that OGRE_PLUGINDIR can end in a newline, which will cause problems
