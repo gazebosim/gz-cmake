@@ -112,12 +112,14 @@ if (NOT WIN32)
       BUILD_WARNING ("Failed to find OGRE's plugin directory.  The build will succeed, but there will likely be run-time errors.")
     else()
       # This variable will be substituted into cmake/setup.sh.in
-      set (OGRE_PLUGINDIR ${_pkgconfig_invoke_result})
+      set(OGRE_PLUGINDIR ${_pkgconfig_invoke_result})
     endif()
 
     ign_pkg_config_library_entry(IgnOGRE OGREMain)
 
-    # we pass it to the compiler later.
+    set(OGRE_RESOURCE_PATH ${OGRE_PLUGINDIR})
+    # Seems that OGRE_PLUGINDIR can end in a newline, which will cause problems
+    # when we pass it to the compiler later.
     string(REPLACE "\n" "" OGRE_RESOURCE_PATH ${OGRE_RESOURCE_PATH})
 
     #reset pkg config path
@@ -128,18 +130,8 @@ else()
                COMPONENTS ${IgnOGRE_FIND_COMPONENTS})
 
   if(OGRE_FOUND)
-    # The last subdirecty of OGRE_INCLUDE_DIRS from vcpkg FindOgre includes the
-    # OGRE/ subdirectory while the code uses headers the form OGRE/header.h
-    set(p_last_subdir)
-    foreach(dir ${OGRE_INCLUDE_DIRS})
-      get_filename_component(last_subdir ${dir} NAME)
-      if(last_subdir STREQUAL "OGRE")
-        get_filename_component(p_last_subdir "${dir}/.." ABSOLUTE)
-        list(APPEND OGRE_INCLUDE_DIRS ${p_last_subdir})
-      endif()
-    endforeach()
-
-    # full path for .lib files in OGRE_LIBRARIES
+    # need to return only libraries only defined by components and give them the
+    # full path using OGRE_LIBRARY_DIRS
     set(ogre_all_libs)
     foreach(ogre_lib ${OGRE_LIBRARIES})
       set(prefix "")
