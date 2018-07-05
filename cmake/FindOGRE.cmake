@@ -130,17 +130,6 @@ else()
                COMPONENTS ${OGRE_FIND_COMPONENTS})
 
   if (OGRE_FOUND)
-    # The last subdirecty of OGRE_INCLUDE_DIRS from vcpkg FindOgre includes the
-    # OGRE/ subdirectory while the code uses headers in the form OGRE/header.h
-    set(p_last_subdir)
-    foreach (dir ${OGRE_INCLUDE_DIRS})
-      get_filename_component(last_subdir ${dir} NAME)
-      if (last_subdir STREQUAL "OGRE")
-        get_filename_component(p_last_subdir "${dir}/.." ABSOLUTE)
-        list(APPEND OGRE_INCLUDE_DIRS ${p_last_subdir})
-      endif()
-    endforeach()
-
     # need to return only libraries defined by components and give them the
     # full path using OGRE_LIBRARY_DIRS
     set (ogre_all_libs)
