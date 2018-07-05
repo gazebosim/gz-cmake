@@ -130,7 +130,7 @@ else()
                COMPONENTS ${IgnOGRE_FIND_COMPONENTS})
 
   if(OGRE_FOUND)
-    # need to return only libraries only defined by components and give them the
+    # need to return only libraries defined by components and give them the
     # full path using OGRE_LIBRARY_DIRS
     set(ogre_all_libs)
     foreach(ogre_lib ${OGRE_LIBRARIES})
