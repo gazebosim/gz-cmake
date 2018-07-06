@@ -20,7 +20,7 @@
 #
 # Usage of this module as follows:
 #
-#     ign_find_package(OGRE)
+#     ign_find_package(IgnOGRE)
 #
 # Variables defined by this module:
 #
@@ -40,13 +40,13 @@
 #
 # Example usage:
 #
-#     ign_find_package(OGRE
+#     ign_find_package(IgnOGRE
 #                      VERSION 1.8.0
 #                      COMPONENTS RTShaderSystem Terrain Overlay)
 
 # Grab the version numbers requested by the call to find_package(~)
-set(major_version ${OGRE_FIND_VERSION_MAJOR})
-set(minor_version ${OGRE_FIND_VERSION_MINOR})
+set(major_version ${IgnOGRE_FIND_VERSION_MAJOR})
+set(minor_version ${IgnOGRE_FIND_VERSION_MINOR})
 
 # Set the full version number
 set(full_version ${major_version}.${minor_version})
@@ -78,7 +78,7 @@ if (NOT WIN32)
     set(ENV{PKG_CONFIG_PATH} ${pkg_path})
     ign_pkg_check_modules_quiet(OGRE "OGRE >= ${full_version}")
     if (OGRE_FOUND)
-      if (NOT ${OGRE_VERSION} VERSION_LESS 2.0.0)
+      if (NOT ${IgnOGRE_VERSION} VERSION_LESS 2.0.0)
         set (OGRE_FOUND false)
       else ()
         break()
@@ -96,8 +96,8 @@ if (NOT WIN32)
       OGRE_VERSION_PATCH ${OGRE_VERSION})
 
     # find ogre components
-    foreach(component ${OGRE_FIND_COMPONENTS})
-      ign_pkg_check_modules_quiet(OGRE-${component} "OGRE-${component} >= ${full_version}")
+    foreach(component ${IgnOGRE_FIND_COMPONENTS})
+      ign_pkg_check_modules_quiet(IgnOGRE-${component} "IgnOGRE-${component} >= ${full_version}")
       if(OGRE-${component}_FOUND)
         list(APPEND OGRE_LIBRARIES OGRE-${component}::OGRE-${component})
       elseif(OGRE_FIND_REQUIRED_${component})
@@ -112,14 +112,14 @@ if (NOT WIN32)
       BUILD_WARNING ("Failed to find OGRE's plugin directory.  The build will succeed, but there will likely be run-time errors.")
     else()
       # This variable will be substituted into cmake/setup.sh.in
-      set (OGRE_PLUGINDIR ${_pkgconfig_invoke_result})
+      set(OGRE_PLUGINDIR ${_pkgconfig_invoke_result})
     endif()
 
-    ign_pkg_config_library_entry(OGRE OgreMain)
+    ign_pkg_config_library_entry(IgnOGRE OgreMain)
 
     set(OGRE_RESOURCE_PATH ${OGRE_PLUGINDIR})
-    # Seems that OGRE_PLUGINDIR can end in a newline, which will cause problems when
-    # we pass it to the compiler later.
+    # Seems that OGRE_PLUGINDIR can end in a newline, which will cause problems
+    # when we pass it to the compiler later.
     string(REPLACE "\n" "" OGRE_RESOURCE_PATH ${OGRE_RESOURCE_PATH})
 
     #reset pkg config path
@@ -127,17 +127,17 @@ if (NOT WIN32)
   endif()
 else()
   find_package(OGRE ${full_version}
-               COMPONENTS ${OGRE_FIND_COMPONENTS})
+               COMPONENTS ${IgnOGRE_FIND_COMPONENTS})
 
-  if (OGRE_FOUND)
+  if(OGRE_FOUND)
     # need to return only libraries defined by components and give them the
     # full path using OGRE_LIBRARY_DIRS
-    set (ogre_all_libs)
-    foreach (ogre_lib ${OGRE_LIBRARIES})
+    set(ogre_all_libs)
+    foreach(ogre_lib ${OGRE_LIBRARIES})
       set(prefix "")
       set(postfix "")
       # Only non .lib files need the prefix (vcpkg OgreConfig.cmake)
-      if (NOT ogre_lib MATCHES "lib$")
+      if(NOT ogre_lib MATCHES "lib$")
         set(prefix "${OGRE_LIBRARY_DIRS}/")
         set(postfix ".lib")
       endif()
@@ -146,4 +146,9 @@ else()
     endforeach()
     set(OGRE_LIBRARIES ${ogre_all_libs})
   endif()
+endif()
+
+set(IgnOGRE_FOUND false)
+if(OGRE_FOUND)
+  set(IgnOGRE_FOUND true)
 endif()
