@@ -160,7 +160,6 @@ foreach(component ${OGRE2_FIND_COMPONENTS})
     list(APPEND OGRE2_LIBRARIES ${component_TARGET_NAME})
 
   elseif(OGRE2_FIND_REQUIRED_${component})
-    message("ogre comp not found: ${component}")
     set(OGRE2_FOUND false)
   endif()
 endforeach()
