@@ -137,6 +137,9 @@ if ("${OGRE2_LIBRARY_DIRS}" STREQUAL "")
 endif()
 
 # find the main ogre library
+set(OGRE2_LIBRARY_NAME OgreMain)
+find_library(OGRE2_LIBRARY NAMES ${OGRE2_LIBRARY_NAME} HINTS ${OGRE2_LIBRARY_DIRS} NO_DEFAULT_PATH)
+
 if ("${OGRE2_LIBRARY}" STREQUAL "OGRE2_LIBRARY-NOTFOUND")
   set(OGRE2_FOUND false)
   return()
