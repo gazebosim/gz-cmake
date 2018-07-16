@@ -128,55 +128,56 @@ get_preprocessor_entry(OGRE_TEMP_VERSION_CONTENT OGRE_VERSION_PATCH OGRE2_VERSIO
 get_preprocessor_entry(OGRE_TEMP_VERSION_CONTENT OGRE_VERSION_NAME OGRE2_VERSION_NAME)
 set(OGRE2_VERSION "${OGRE2_VERSION_MAJOR}.${OGRE2_VERSION_MINOR}.${OGRE2_VERSION_PATCH}")
 
-# find the main ogre library
-set(OGRE2_LIBRARY_NAME OgreMain)
-find_library(OGRE2_LIBRARY NAMES ${OGRE2_LIBRARY_NAME} HINTS ${OGRE2_LIBRARY_DIRS} NO_DEFAULT_PATH)
+# get ogre library paths
+if ("${OGRE2_LIBRARY_DIRS}" STREQUAL "")
+  foreach (lib ${OGRE2_LIBRARIES})
+    get_filename_component(OGRE2_LIBRARY_DIR "${lib}" PATH)
+    list(APPEND OGRE2_LIBRARY_DIRS ${OGRE2_LIBRARY_DIR})
+  endforeach()
+endif()
 
-if (${OGRE2_LIBRARY} STREQUAL "OGRE2_LIBRARY-NOTFOUND")
+# find the main ogre library
+if ("${OGRE2_LIBRARY}" STREQUAL "OGRE2_LIBRARY-NOTFOUND")
   set(OGRE2_FOUND false)
   return()
-else ()
-
-  get_filename_component(OGRE2_LIBRARY_DIRS "${OGRE2_LIBRARY}" PATH)
-  set(OGRE2_LIBRARIES ${OGRE2_LIBRARY})
-
-  # find ogre components
-  include(IgnImportTarget)
-  foreach(component ${OGRE2_FIND_COMPONENTS})
-    find_library(OGRE2-${component} NAMES "Ogre${component}" HINTS ${OGRE2_LIBRARY_DIRS})
-    if (NOT "OGRE2-${component}" STREQUAL "OGRE2-${component}-NOTFOUND")
-      # create a new target for each component
-      set(component_TARGET_NAME "OGRE2-${component}::OGRE2-${component}")
-      set(component_INCLUDE_DIRS ${OGRE2_INCLUDE_DIRS})
-      set(component_LIBRARY_DIRS ${OGRE2_LIBRARY_DIRS})
-      set(component_LIBRARIES ${OGRE2-${component}})
-      ign_import_target(${component} TARGET_NAME ${component_TARGET_NAME}
-          LIB_VAR component_LIBRARIES
-          INCLUDE_VAR component_INCLUDE_DIRS)
-
-      # add it to the list of ogre libraries
-      list(APPEND OGRE2_LIBRARIES ${component_TARGET_NAME})
-
-    elseif(OGRE2_FIND_REQUIRED_${component})
-      set(OGRE2_FOUND false)
-    endif()
-  endforeach()
-
-  # set path to find ogre plugins
-  # keep variable naming consistent with ogre 1
-  # TODO currently using harded paths based on dir structure in ubuntu
-  foreach(resource_path ${OGRE2_LIBRARY_DIRS})
-    list(APPEND OGRE2_RESOURCE_PATH "${resource_path}/OGRE")
-  endforeach()
-
-  # create OGRE2 target
-  if (OGRE2_FOUND)
-    ign_import_target(OGRE2)
-  endif()
-
-  # We need to manually specify the pkgconfig entry (and type of entry),
-  # because ign_pkg_check_modules does not work for it.
-  include(IgnPkgConfig)
-  ign_pkg_config_library_entry(OGRE2 OgreMain)
-
 endif()
+
+# find ogre components
+include(IgnImportTarget)
+foreach(component ${OGRE2_FIND_COMPONENTS})
+  find_library(OGRE2-${component} NAMES "Ogre${component}" HINTS ${OGRE2_LIBRARY_DIRS})
+  if (NOT "OGRE2-${component}" STREQUAL "OGRE2-${component}-NOTFOUND")
+    # create a new target for each component
+    set(component_TARGET_NAME "OGRE2-${component}::OGRE2-${component}")
+    set(component_INCLUDE_DIRS ${OGRE2_INCLUDE_DIRS})
+    set(component_LIBRARY_DIRS ${OGRE2_LIBRARY_DIRS})
+    set(component_LIBRARIES ${OGRE2-${component}})
+    ign_import_target(${component} TARGET_NAME ${component_TARGET_NAME}
+        LIB_VAR component_LIBRARIES
+        INCLUDE_VAR component_INCLUDE_DIRS)
+
+    # add it to the list of ogre libraries
+    list(APPEND OGRE2_LIBRARIES ${component_TARGET_NAME})
+
+  elseif(OGRE2_FIND_REQUIRED_${component})
+    message("ogre comp not found: ${component}")
+    set(OGRE2_FOUND false)
+  endif()
+endforeach()
+
+# set path to find ogre plugins
+# keep variable naming consistent with ogre 1
+# TODO currently using harded paths based on dir structure in ubuntu
+foreach(resource_path ${OGRE2_LIBRARY_DIRS})
+  list(APPEND OGRE2_RESOURCE_PATH "${resource_path}/OGRE")
+endforeach()
+
+# create OGRE2 target
+if (OGRE2_FOUND)
+  ign_import_target(OGRE2)
+endif()
+
+# We need to manually specify the pkgconfig entry (and type of entry),
+# because ign_pkg_check_modules does not work for it.
+include(IgnPkgConfig)
+ign_pkg_config_library_entry(OGRE2 OgreMain)
