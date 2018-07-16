@@ -136,8 +136,11 @@ macro(ign_configure_build)
 
       add_subdirectory(src)
       _ign_find_include_script()
-      add_subdirectory(test)
 
+    endif()
+
+    if(EXISTS ${CMAKE_CURRENT_LIST_DIR}/test)
+      add_subdirectory(test)
     endif()
 
     #--------------------------------------
