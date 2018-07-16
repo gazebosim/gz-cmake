@@ -61,20 +61,52 @@ IF ( NOT (CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "Covera
 ENDIF() # NOT CMAKE_BUILD_TYPE STREQUAL "Debug"
 
 
-# Param _targetname     The name of new the custom make target
-# Param _testrunner     The name of the target which runs the tests.
-#						MUST return ZERO always, even on errors.
-#						If not, no coverage report will be created!
-# Param _outputname     lcov output is generated as _outputname.info
-#                       HTML report is generated in _outputname/index.html
-# Optional fourth parameter is passed as arguments to _testrunner
-#   Pass them in list form, e.g.: "-j;2" for -j 2
+#################################################
+# ign_setup_target_for_coverage(
+#     [BRANCH_COVERAGE]
+#     [OUTPUT_NAME <output_name>]
+#     [TARGET_NAME <target_name>]
+#     [TEST_RUNNER <test_runner>])
+#
+# This function will create custom coverage targets with the specified options.
 #
 # Coverage is not run for files in the following formats:
 #
 # *.cxx : We assume these files are created by swig.
 # moc_*.cpp and qrc_*.cpp : We assume these files are created by Qt's meta-object compiler.
-FUNCTION(IGN_SETUP_TARGET_FOR_COVERAGE _targetname _testrunner _outputname)
+#
+# BRANCH_COVERAGE:  Optional. If provided, branch coverage will be computed
+#                   instead of line coverage.
+#
+# OUTPUT_NAME:  Required.
+#               lcov output is generated as _outputname.info
+#               HTML report is generated in _outputname/index.html
+#
+# TARGET_NAME:  The name of new the custom make target.
+#
+# TEST_RUNNER:  The name of the target which runs the tests.
+#               MUST return ZERO always, even on errors.
+#               If not, no coverage report will be created!
+#
+FUNCTION(ign_setup_target_for_coverage)
+
+  #------------------------------------
+  # Define the expected arguments
+  set(options "BRANCH_COVERAGE")
+  set(oneValueArgs "OUTPUT_NAME" "TARGET_NAME" "TEST_RUNNER")
+  set(multiValueArgs)
+
+  #------------------------------------
+  # Parse the arguments
+  _ign_cmake_parse_arguments(ign_coverage "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+  set(_outputname ${ign_coverage_OUTPUT_NAME})
+  set(_targetname ${ign_coverage_TARGET_NAME})
+  set(_testrunner ${ign_coverage_TEST_RUNNER})
+
+  if(ign_coverage_BRANCH_COVERAGE)
+    set(_branch_flags --rc lcov_branch_coverage=1)
+  endif()
 
   IF(NOT LCOV_PATH)
     MESSAGE(FATAL_ERROR "lcov not found! Aborting...")
@@ -94,16 +126,19 @@ FUNCTION(IGN_SETUP_TARGET_FOR_COVERAGE _targetname _testrunner _outputname)
     COMMAND ${CMAKE_COMMAND} -E remove ${_outputname}.info.cleaned
       ${_outputname}.info
     # Capturing lcov counters and generating report
-    COMMAND ${LCOV_PATH} -q --no-checksum --directory ${PROJECT_BINARY_DIR}
-      --capture --output-file ${_outputname}.info 2>/dev/null
+    COMMAND ${LCOV_PATH} ${_branch_flags} -q --no-checksum
+      --directory ${PROJECT_BINARY_DIR} --capture
+      --output-file ${_outputname}.info 2>/dev/null
     # Remove negative counts
     COMMAND sed -i '/,-/d' ${_outputname}.info
-    COMMAND ${LCOV_PATH} -q --remove ${_outputname}.info
-      'test/*' '/usr/*' '*_TEST*' '*.cxx' 'moc_*.cpp' 'qrc_*.cpp' --output-file ${_outputname}.info.cleaned
-    COMMAND ${GENHTML_PATH} -q --legend -o ${_outputname}
-      ${_outputname}.info.cleaned
-    COMMAND ${LCOV_PATH} --summary ${_outputname}.info.cleaned 2>&1 | grep "lines" | cut -d ' ' -f 4 | cut -d '%' -f 1 > coverage/lines.txt
-    COMMAND ${LCOV_PATH} --summary ${_outputname}.info.cleaned 2>&1 | grep "functions" | cut -d ' ' -f 4 | cut -d '%' -f 1 > coverage/functions.txt
+    COMMAND ${LCOV_PATH} ${_branch_flags} -q
+      --remove ${_outputname}.info 'test/*' '/usr/*' '*_TEST*' '*.cxx' 'moc_*.cpp' 'qrc_*.cpp' --output-file ${_outputname}.info.cleaned
+    COMMAND ${GENHTML_PATH} ${_branch_flags} -q
+    --legend -o ${_outputname} ${_outputname}.info.cleaned
+    COMMAND ${LCOV_PATH} --summary ${_outputname}.info.cleaned 2>&1 | grep "lines" | cut -d ' ' -f 4 | cut -d '%' -f 1 > ${_outputname}/lines.txt
+    COMMAND ${LCOV_PATH} --summary ${_outputname}.info.cleaned 2>&1 | grep "functions" | cut -d ' ' -f 4 | cut -d '%' -f 1 > ${_outputname}/functions.txt
+    COMMAND ${LCOV_PATH} ${_branch_flags}
+      --summary ${_outputname}.info.cleaned 2>&1 | grep "branches" | cut -d ' ' -f 4 | cut -d '%' -f 1 > ${_outputname}/branches.txt
     COMMAND ${CMAKE_COMMAND} -E rename ${_outputname}.info.cleaned
       ${_outputname}.info
 

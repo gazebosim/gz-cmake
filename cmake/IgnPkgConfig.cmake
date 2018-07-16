@@ -40,9 +40,9 @@
 #       Without the version comparison, the quotes and spacing are irrelevant.
 #       This usage note applies to ign_pkg_check_modules_quiet(~) as well.
 #
-macro(ign_pkg_check_modules package)
+macro(ign_pkg_check_modules package signature)
 
-  ign_pkg_check_modules_quiet(${package} ${ARGN})
+  ign_pkg_check_modules_quiet(${package} "${signature}" ${ARGN})
 
   if(NOT PKG_CONFIG_FOUND)
     message(WARNING "The package [${package}] requires pkg-config in order to be found. "
@@ -62,21 +62,47 @@ endmacro()
 # variables for you, whether or not pkg-config is available.
 #
 # For usage instructions, see ign_pkg_check_modules(~) above.
-macro(ign_pkg_check_modules_quiet package)
+macro(ign_pkg_check_modules_quiet package signature)
+
+  #------------------------------------
+  # Define the expected arguments
+  set(options INTERFACE)
+  set(oneValueArgs "TARGET_NAME")
+  set(multiValueArgs)
+
+  #------------------------------------
+  # Parse the arguments
+  _ign_cmake_parse_arguments(ign_pkg_check_modules "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+  if(ign_pkg_check_modules_INTERFACE)
+    set(_ign_pkg_check_modules_interface_option INTERFACE)
+  else()
+    set(_ign_pkg_check_modules_interface_option) # Intentionally blank
+  endif()
+
+  if(NOT ign_pkg_check_modules_TARGET_NAME)
+    set(ign_pkg_check_modules_TARGET_NAME "${package}::${package}")
+  endif()
 
   find_package(PkgConfig QUIET)
 
-  ign_pkg_config_entry(${package} "${ARGN}")
+  ign_pkg_config_entry(${package} "${signature}")
 
   if(PKG_CONFIG_FOUND)
 
-    pkg_check_modules(${package} ${ARGN})
+    if(${package}_FIND_QUIETLY)
+      set(ign_pkg_check_modules_quiet_arg QUIET)
+    else()
+      set(ign_pkg_check_modules_quiet_arg)
+    endif()
+
+    pkg_check_modules(${package} ${ign_pkg_check_modules_quiet_arg} ${signature})
 
     # TODO: When we require cmake-3.6+, we should remove this procedure and just
     #       use the plain pkg_check_modules, which provides an option called
     #       IMPORTED_TARGET that will create the imported targets the way we do
     #       here.
-    if(${package}_FOUND AND NOT TARGET ${package}::${package})
+    if(${package}_FOUND AND NOT TARGET ${ign_pkg_check_modules_TARGET_NAME})
 
       # pkg_check_modules will put ${package}_FOUND into the CACHE, which would
       # prevent our FindXXX.cmake script from being entered the next time cmake
@@ -105,7 +131,8 @@ macro(ign_pkg_check_modules_quiet package)
         "${${package}_LIBRARY_DIRS}")
 
       include(IgnImportTarget)
-      ign_import_target(${package})
+      ign_import_target(${package} ${_ign_pkg_check_modules_interface_option}
+        TARGET_NAME ${ign_pkg_check_modules_TARGET_NAME})
 
     endif()
 
@@ -122,7 +149,18 @@ endmacro()
 macro(ign_pkg_config_entry package string)
 
   set(${package}_PKGCONFIG_ENTRY "${string}")
-  set(${package}_PKGCONFIG_TYPE PROJECT_PKGCONFIG_REQUIRES)
+  set(${package}_PKGCONFIG_TYPE PKGCONFIG_REQUIRES)
+
+endmacro()
+
+# This creates variables which inform ign_find_package(~) that your package must
+# be found as a plain library by pkg-config. This should be used in any
+# find-module that handles a library package which does not install a pkg-config
+# <package>.pc file.
+macro(ign_pkg_config_library_entry package lib_name)
+
+  set(${package}_PKGCONFIG_ENTRY "-l${lib_name}")
+  set(${package}_PKGCONFIG_TYPE PKGCONFIG_LIBS)
 
 endmacro()
 
@@ -147,6 +185,7 @@ function(_ign_pkgconfig_find_libraries output_var package library_names library_
       ${package}_LIBRARY_${libname}
       ${libname}
       PATHS ${library_dirs})
+    mark_as_advanced(${package}_LIBRARY_${libname})
 
     list(APPEND library_paths "${${package}_LIBRARY_${libname}}")
 

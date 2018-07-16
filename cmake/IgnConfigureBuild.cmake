@@ -30,7 +30,9 @@ macro(ign_configure_build)
   #============================================================================
   # Parse the arguments that are passed in
   set(options QUIT_IF_BUILD_ERRORS)
-  _ign_cmake_parse_arguments(ign_configure_build "${options}" "" "" ${ARGN})
+  set(oneValueArgs)
+  set(multiValueArgs COMPONENTS)
+  cmake_parse_arguments(ign_configure_build "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   #============================================================================
   # Examine the build type. If we do not recognize the type, we will generate
@@ -44,19 +46,19 @@ macro(ign_configure_build)
   #============================================================================
   # Print warnings and errors
   if(build_warnings)
-    message(STATUS "BUILD WARNINGS")
+    message("-- BUILD WARNINGS")
     foreach (msg ${build_warnings})
-      message(STATUS ${msg})
+      message("-- ${msg}")
     endforeach ()
-    message(STATUS "END BUILD WARNINGS\n")
+    message("-- END BUILD WARNINGS\n")
   endif (build_warnings)
 
   if(build_errors)
-    message(STATUS "BUILD ERRORS: These must be resolved before compiling.")
+    message("-- BUILD ERRORS: These must be resolved before compiling.")
     foreach(msg ${build_errors})
-      message(STATUS ${msg})
+      message("-- ${msg}")
     endforeach()
-    message(STATUS " END BUILD ERRORS\n")
+    message("-- END BUILD ERRORS\n")
 
     set(error_str "Errors encountered in build. Please see BUILD ERRORS above.")
 
@@ -106,11 +108,126 @@ macro(ign_configure_build)
 
 
     #--------------------------------------
-    # Add all the source code directories
+    # Create the "all" meta-target
+    ign_create_all_target()
+
+
+    #--------------------------------------
+    # Add the source code directories of the core library
     add_subdirectory(src)
-    add_subdirectory(include)
+    _ign_find_include_script()
     add_subdirectory(test)
 
+    #--------------------------------------
+    # Add the source, include, and test directories to the cppcheck dirs.
+    # CPPCHECK_DIRS is used in IgnCodeCheck. The variable specifies the
+    # directories static code analyzers should check. Additional directories
+    # are added for each component.
+    set (CPPCHECK_DIRS)
+    set (potential_cppcheck_dirs 
+      ${CMAKE_SOURCE_DIR}/src
+      ${CMAKE_SOURCE_DIR}/include
+      ${CMAKE_SOURCE_DIR}/test/integration
+      ${CMAKE_SOURCE_DIR}/test/regression
+      ${CMAKE_SOURCE_DIR}/test/performance)
+    foreach (dir ${potential_cppcheck_dirs})
+      if (EXISTS ${dir})
+        list (APPEND CPPCHECK_DIRS ${dir})
+      endif()
+    endforeach()
+
+    # Includes for cppcheck. This sets include paths for cppcheck. Additional
+    # directories are added for each component.
+    set (CPPCHECK_INCLUDE_DIRS)
+    set (potential_cppcheck_include_dirs
+      ${CMAKE_BINARY_DIR}
+      ${CMAKE_SOURCE_DIR}/include/ignition/${IGN_DESIGNATION}
+      ${CMAKE_SOURCE_DIR}/test/integration
+      ${CMAKE_SOURCE_DIR}/test/regression
+      ${CMAKE_SOURCE_DIR}/test/performance)
+    foreach (dir ${potential_cppcheck_include_dirs})
+      if (EXISTS ${dir})
+        list (APPEND CPPCHECK_INCLUDE_DIRS ${dir})
+      endif()
+    endforeach()
+
+    #--------------------------------------
+    # Initialize the list of header directories that should be parsed by doxygen
+    set(ign_doxygen_component_input_dirs "${CMAKE_SOURCE_DIR}/include")
+
+    #--------------------------------------
+    # Add the source code directories of each component if they exist
+    foreach(component ${ign_configure_build_COMPONENTS})
+
+      if(NOT SKIP_${component})
+
+        # Append the component's include directory to both CPPCHECK_DIRS and
+        # CPPCHECK_INCLUDE_DIRS
+        list(APPEND CPPCHECK_DIRS ${CMAKE_CURRENT_LIST_DIR}/${component}/include)
+        list(APPEND CPPCHECK_INCLUDE_DIRS
+          ${CMAKE_CURRENT_LIST_DIR}/${component}/include)
+
+        # Note: It seems we need to give the delimiter exactly this many
+        # backslashes in order to get a \ plus a newline. This might be
+        # dependent on the implementation of ign_string_append, so be careful
+        # when changing the implementation of that function.
+        ign_string_append(ign_doxygen_component_input_dirs
+          "${CMAKE_CURRENT_LIST_DIR}/${component}/include"
+          DELIM " \\\\\\\\\n  ")
+
+        # Append the component's source directory to CPPCHECK_DIRS.
+        if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/${component}/src")
+          list(APPEND CPPCHECK_DIRS ${CMAKE_CURRENT_LIST_DIR}/${component}/src)
+        endif()
+
+        if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/${component}/CMakeLists.txt")
+
+          # If the component's directory has a top-level CMakeLists.txt, use
+          # that.
+          add_subdirectory(${component})
+
+        else()
+
+          # If the component's directory does not have a top-level
+          # CMakeLists.txt, try to call the expected set of subdirectories
+          # individually. This saves us from needing to create very redundant
+          # CMakeLists.txt files that do nothing but redirect us to these
+          # subdirectories.
+
+          # Add the source files
+          if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/${component}/src/CMakeLists.txt")
+            add_subdirectory(${component}/src)
+          endif()
+
+          _ign_find_include_script(COMPONENT ${component})
+
+          # Add the tests
+          if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/${component}/test/CMakeLists.txt")
+            add_subdirectory(${component}/test)
+          endif()
+        endif()
+
+      else()
+
+        set(skip_msg "Skipping the component [${component}]")
+        if(${component}_MISSING_DEPS)
+          ign_string_append(skip_msg "because the following packages are missing: ${${component}_MISSING_DEPS}")
+        endif()
+
+        message(STATUS "${skip_msg}")
+
+      endif()
+
+    endforeach()
+
+    #--------------------------------------
+    # Export the "all" meta-target
+    ign_export_target_all()
+
+    #--------------------------------------
+    # Create codecheck target
+    include(IgnCodeCheck)
+    ign_setup_target_for_codecheck()
 
     #--------------------------------------
     # If we made it this far, the configuration was successful
@@ -186,11 +303,54 @@ macro(ign_set_cxx_feature_flags)
 
 endmacro()
 
+function(_ign_find_include_script)
+
+  #------------------------------------
+  # Define the expected arguments
+  set(options) # Unused
+  set(oneValueArgs COMPONENT)
+  set(multiValueArgs) # Unused
+
+  #------------------------------------
+  # Parse the arguments
+  cmake_parse_arguments(_ign_find_include_script "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+  #------------------------------------
+  # Set the starting point
+  set(include_start "${CMAKE_CURRENT_LIST_DIR}")
+
+  if(_ign_find_include_script_COMPONENT)
+    ign_string_append(include_start ${_ign_find_include_script_COMPONENT} DELIM "/")
+  endif()
+
+  # Check each level of depth to find the first CMakeLists.txt. This allows us
+  # to have custom behavior for each include directory structure while also
+  # allowing us to just have one leaf CMakeLists.txt file if a project doesn't
+  # need any custom configuration in its include directories.
+  if(EXISTS "${include_start}/include/CMakeLists.txt")
+    add_subdirectory("${include_start}/include")
+  elseif(EXISTS "${include_start}/include/ignition/CMakeLists.txt")
+    add_subdirectory("${include_start}/include/ignition")
+  elseif(EXISTS "${include_start}/include/ignition/${IGN_DESIGNATION}/CMakeLists.txt")
+    add_subdirectory("${include_start}/include/ignition/${IGN_DESIGNATION}")
+  else()
+    # TODO: Should we print a warning or a status message here to indicate that
+    # no script was found for the include directory? Perhaps not all projects
+    # will have one.
+  endif()
+
+endfunction()
+
 macro(ign_parse_build_type)
 
   #============================================================================
   # If a build type is not specified, set it to RelWithDebInfo by default
   if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE "RelWithDebInfo")
+  endif()
+
+  # Handle NONE in MSVC as blank and default to RelWithDebInfo
+  if (MSVC AND CMAKE_BUILD_TYPE_UPPERCASE STREQUAL "NONE")
     set(CMAKE_BUILD_TYPE "RelWithDebInfo")
   endif()
 
@@ -203,6 +363,7 @@ macro(ign_parse_build_type)
   set(BUILD_TYPE_RELEASE FALSE)
   set(BUILD_TYPE_RELWITHDEBINFO FALSE)
   set(BUILD_TYPE_MINSIZEREL FALSE)
+  set(BUILD_TYPE_NONE FALSE)
   set(BUILD_TYPE_DEBUG FALSE)
 
   if("${CMAKE_BUILD_TYPE_UPPERCASE}" STREQUAL "DEBUG")
@@ -213,10 +374,20 @@ macro(ign_parse_build_type)
     set(BUILD_TYPE_RELWITHDEBINFO TRUE)
   elseif("${CMAKE_BUILD_TYPE_UPPERCASE}" STREQUAL "MINSIZEREL")
     set(BUILD_TYPE_MINSIZEREL TRUE)
+  elseif("${CMAKE_BUILD_TYPE_UPPERCASE}" STREQUAL "NONE")
+    set(BUILD_TYPE_NONE TRUE)
   elseif("${CMAKE_BUILD_TYPE_UPPERCASE}" STREQUAL "COVERAGE")
     include(IgnCodeCoverage)
     set(BUILD_TYPE_DEBUG TRUE)
-    ign_setup_target_for_coverage(coverage ctest coverage)
+    ign_setup_target_for_coverage(
+      OUTPUT_NAME coverage
+      TARGET_NAME coverage
+      TEST_RUNNER ctest)
+    ign_setup_target_for_coverage(
+      BRANCH_COVERAGE
+      OUTPUT_NAME coverage-branch
+      TARGET_NAME coverage-branch
+      TEST_RUNNER ctest)
   elseif("${CMAKE_BUILD_TYPE_UPPERCASE}" STREQUAL "PROFILE")
     set(BUILD_TYPE_PROFILE TRUE)
   else()

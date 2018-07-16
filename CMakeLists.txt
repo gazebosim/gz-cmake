@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.5.1 FATAL_ERROR)
 #============================================================================
 # Initialize the project
 #============================================================================
-project(ignition-cmake0 VERSION 0.4.0)
+project(ignition-cmake1 VERSION 1.0.0)
 
 #--------------------------------------
 # Initialize the IGNITION_CMAKE_DIR variable with the location of the cmake
@@ -20,7 +20,19 @@ include(IgnCMake)
 
 #--------------------------------------
 # Set up the project
-ign_configure_project()
+ign_configure_project(VERSION_SUFFIX pre3)
+
+#--------------------------------------
+# Install the ignition documentation files
+# Note: This is not actually creating a doc target for ign-cmake; this is just
+# installing files that are useful for generating the documentation of other
+# ignition projects.
+add_subdirectory(doc)
+
+#--------------------------------------
+# Install the codecheck files
+install(DIRECTORY codecheck/
+        DESTINATION ${IGN_DATA_INSTALL_DIR}/codecheck)
 
 #============================================================================
 # Configure the package to be installed
@@ -31,7 +43,7 @@ ign_configure_project()
 set(ign_config_input  "${CMAKE_CURRENT_SOURCE_DIR}/config/ignition-cmake-config.cmake.in")
 set(ign_config_output "${PROJECT_NAME_LOWER}-config.cmake")
 set(ign_version_output "${PROJECT_NAME_LOWER}-config-version.cmake")
-set(ign_config_install_dir "${IGN_LIB_INSTALL_DIR}/cmake/${PROJECT_NAME_LOWER}")
+set(ign_config_install_dir "${CMAKE_INSTALL_DATAROOTDIR}/cmake/${PROJECT_NAME_LOWER}")
 
 #--------------------------------------
 # Configure and install the config file
@@ -39,6 +51,7 @@ configure_package_config_file(
   ${ign_config_input}
   ${ign_config_output}
   INSTALL_DESTINATION ${ign_config_install_dir}
+  PATH_VARS IGN_DATA_INSTALL_DIR
   NO_CHECK_REQUIRED_COMPONENTS_MACRO)
 
 #--------------------------------------
@@ -121,27 +134,54 @@ if (BUILD_TESTING)
   #============================================================================
   # Build examples
   #============================================================================
-  # find_package expects cmakeN (e.g. cmake0, cmake1, ... depending on the major version of ign-cmake)
-  # to be in the build folder because that is where the ignition-cmake-config.cmake file is located
-  # before it is installed
+  # Do a fake install of ign-cmake in order to test the examples.
+  # Copy or symlink the config.cmake files and cmake folder
+  set(FAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install/fake")
+  set(FAKE_CMAKE_INSTALL_DIR "${FAKE_INSTALL_PREFIX}/${ign_config_install_dir}")
+  set(FAKE_DATA_INSTALL_DIR "${FAKE_INSTALL_PREFIX}/${IGN_DATA_INSTALL_DIR}")
   if (UNIX)
-    # make a symlink on unix
+    # make symlinks on unix
     execute_process(
       COMMAND
-        ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/cmake ${CMAKE_BINARY_DIR}/cmake${PROJECT_VERSION_MAJOR})
+        ${CMAKE_COMMAND} -E make_directory ${FAKE_CMAKE_INSTALL_DIR} ${FAKE_DATA_INSTALL_DIR})
+    execute_process(
+      COMMAND
+        ${CMAKE_COMMAND} -E create_symlink ${CMAKE_BINARY_DIR}/${ign_config_output} ${FAKE_CMAKE_INSTALL_DIR}/${ign_config_output})
+    execute_process(
+      COMMAND
+        ${CMAKE_COMMAND} -E create_symlink ${CMAKE_BINARY_DIR}/${ign_version_output} ${FAKE_CMAKE_INSTALL_DIR}/${ign_version_output})
+    execute_process(
+      COMMAND
+        ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/cmake ${FAKE_CMAKE_INSTALL_DIR}/cmake${PROJECT_VERSION_MAJOR})
+    execute_process(
+      COMMAND
+        ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/codecheck ${FAKE_DATA_INSTALL_DIR}/codecheck)
+    execute_process(
+      COMMAND
+        ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/doc/doxygen ${FAKE_DATA_INSTALL_DIR}/doxygen)
   else()
     # otherwise copy the files one by one
     # use configure_file(... COPYONLY) since it will run again if files change
+    configure_file(${CMAKE_BINARY_DIR}/${ign_config_output} ${FAKE_CMAKE_INSTALL_DIR}/${ign_config_output} COPYONLY)
+    configure_file(${CMAKE_BINARY_DIR}/${ign_version_output} ${FAKE_CMAKE_INSTALL_DIR}/${ign_version_output} COPYONLY)
     foreach (filename ${modules} ${templates})
       get_filename_component(file ${filename} NAME)
-      configure_file(${filename} ${CMAKE_BINARY_DIR}/cmake${PROJECT_VERSION_MAJOR}/${file} COPYONLY)
+      configure_file(${filename} ${FAKE_CMAKE_INSTALL_DIR}/cmake${PROJECT_VERSION_MAJOR}/${file} COPYONLY)
     endforeach()
     foreach (filename ${pkgconfig_templates})
       get_filename_component(file ${filename} NAME)
-      configure_file(${filename} ${CMAKE_BINARY_DIR}/cmake${PROJECT_VERSION_MAJOR}/pkgconfig/${file} COPYONLY)
+      configure_file(${filename} ${FAKE_CMAKE_INSTALL_DIR}/cmake${PROJECT_VERSION_MAJOR}/pkgconfig/${file} COPYONLY)
+    endforeach()
+    file(GLOB codecheck_files "codecheck/*")
+    foreach (filename ${codecheck_files})
+      get_filename_component(file ${filename} NAME)
+      configure_file(${filename} ${FAKE_DATA_INSTALL_DIR}/codecheck/${file} COPYONLY)
+    endforeach()
+    file(GLOB doc_doxygen "doc/doxygen/*")
+    foreach (filename ${doc_doxygen})
+      get_filename_component(file ${filename} NAME)
+      configure_file(${filename} ${FAKE_DATA_INSTALL_DIR}/doxygen/${file} COPYONLY)
     endforeach()
   endif()
   add_subdirectory(examples)
 endif()
-
-add_subdirectory(doc)
