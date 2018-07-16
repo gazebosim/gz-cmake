@@ -924,24 +924,40 @@ function(ign_create_core_library)
     SOURCES ${sources}
     ${interface_option})
 
-  # This generator expression is necessary for multi-configuration generators,
-  # such as MSVC on Windows, and also to ensure that our target exports the
+  # These generator expressions are necessary for multi-configuration generators
+  # such as MSVC on Windows. They also ensure that our target exports its
   # headers correctly
   target_include_directories(${PROJECT_LIBRARY_TARGET_NAME}
     ${property_type}
-      # This is the publicly installed ignition/math headers directory.
-      $<INSTALL_INTERFACE:${IGN_INCLUDE_INSTALL_DIR_FULL}>
-      # This is the build directory version of the headers. When exporting the
-      # target, this will not be included, because it is tied to the build
-      # interface instead of the install interface.
-      $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+      # This is the publicly installed headers directory.
+      "$<INSTALL_INTERFACE:${IGN_INCLUDE_INSTALL_DIR_FULL}>"
       # This is the in-build version of the core library headers directory.
       # Generated headers for the core library get placed here.
-      $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
-      # These will be the include directories for projects that put the core
-      # library contents into its own subdirectory.
-      $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/core/include>
-      $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/core/include>)
+      "$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>"
+      # Generated headers for the core library might also get placed here.
+      "$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/core/include>")
+
+  # We explicitly create these directories to avoid false-flag compiler warnings
+  file(MAKE_DIRECTORY
+    "${PROJECT_BINARY_DIR}/include"
+    "${PROJECT_BINARY_DIR}/core/include")
+
+  if(EXISTS "${PROJECT_SOURCE_DIR}/include")
+    target_include_directories(${PROJECT_LIBRARY_TARGET_NAME}
+      ${property_type}
+        # This is the build directory version of the headers. When exporting the
+        # target, this will not be included, because it is tied to the build
+        # interface instead of the install interface.
+        "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>")
+  endif()
+
+  if(EXISTS "${PROJECT_SOURCE_DIR}/core/include")
+    target_include_directories(${PROJECT_LIBRARY_TARGET_NAME}
+      ${property_type}
+        # This is the include directories for projects that put the core library
+        # contents into its own subdirectory.
+        "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/core/include>")
+  endif()
 
 
   #------------------------------------

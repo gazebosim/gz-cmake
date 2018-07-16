@@ -146,7 +146,7 @@ macro(ign_configure_build)
     # directories static code analyzers should check. Additional directories
     # are added for each component.
     set (CPPCHECK_DIRS)
-    set (potential_cppcheck_dirs 
+    set (potential_cppcheck_dirs
       ${CMAKE_SOURCE_DIR}/src
       ${CMAKE_SOURCE_DIR}/include
       ${CMAKE_SOURCE_DIR}/test/integration
@@ -363,16 +363,18 @@ function(_ign_find_include_script)
   # to have custom behavior for each include directory structure while also
   # allowing us to just have one leaf CMakeLists.txt file if a project doesn't
   # need any custom configuration in its include directories.
-  if(EXISTS "${include_start}/include/CMakeLists.txt")
-    add_subdirectory("${include_start}/include")
-  elseif(EXISTS "${include_start}/include/ignition/CMakeLists.txt")
-    add_subdirectory("${include_start}/include/ignition")
-  elseif(EXISTS "${include_start}/include/ignition/${IGN_DESIGNATION}/CMakeLists.txt")
-    add_subdirectory("${include_start}/include/ignition/${IGN_DESIGNATION}")
-  else()
-    # TODO: Should we print a warning or a status message here to indicate that
-    # no script was found for the include directory? Perhaps not all projects
-    # will have one.
+  if(EXISTS "${include_start}/include")
+    if(EXISTS "${include_start}/include/CMakeLists.txt")
+      add_subdirectory("${include_start}/include")
+    elseif(EXISTS "${include_start}/include/ignition/CMakeLists.txt")
+      add_subdirectory("${include_start}/include/ignition")
+    elseif(EXISTS "${include_start}/include/ignition/${IGN_DESIGNATION}/CMakeLists.txt")
+      add_subdirectory("${include_start}/include/ignition/${IGN_DESIGNATION}")
+    else()
+      message(AUTHOR_WARNING
+        "You have an include directory [${include_start}/include] without a "
+        "CMakeLists.txt. This means its headers will not get installed!")
+    endif()
   endif()
 
 endfunction()
