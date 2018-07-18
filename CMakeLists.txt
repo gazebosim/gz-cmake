@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.5.1 FATAL_ERROR)
 #============================================================================
 # Initialize the project
 #============================================================================
-project(ignition-cmake1 VERSION 1.0.0)
+project(ignition-cmake1 VERSION 1.1.0)
 
 #--------------------------------------
 # Initialize the IGNITION_CMAKE_DIR variable with the location of the cmake
@@ -20,7 +20,7 @@ include(IgnCMake)
 
 #--------------------------------------
 # Set up the project
-ign_configure_project(VERSION_SUFFIX pre4)
+ign_configure_project(VERSION_SUFFIX pre1)
 
 #--------------------------------------
 # Install the ignition documentation files
@@ -44,6 +44,10 @@ set(ign_config_input  "${CMAKE_CURRENT_SOURCE_DIR}/config/ignition-cmake-config.
 set(ign_config_output "${PROJECT_NAME_LOWER}-config.cmake")
 set(ign_version_output "${PROJECT_NAME_LOWER}-config-version.cmake")
 set(ign_config_install_dir "${CMAKE_INSTALL_DATAROOTDIR}/cmake/${PROJECT_NAME_LOWER}")
+set(ign_utilities_target ${PROJECT_EXPORT_NAME}-utilities)
+set(ign_utilities_import_target_name ${PROJECT_EXPORT_NAME}::${ign_utilities_target})
+set(ign_utilities_target_output_filename "${ign_utilities_target}-targets.cmake")
+set(simple_utilities_import_name ${PROJECT_EXPORT_NAME}::utilities)
 
 #--------------------------------------
 # Configure and install the config file
@@ -71,31 +75,28 @@ install(
 #============================================================================
 # Create and install the utilities component
 #============================================================================
-add_library(${PROJECT_EXPORT_NAME}-utilities INTERFACE)
-target_include_directories(${PROJECT_EXPORT_NAME}-utilities
+add_library(${ign_utilities_target} INTERFACE)
+target_include_directories(${ign_utilities_target}
   INTERFACE
     $<INSTALL_INTERFACE:${IGN_INCLUDE_INSTALL_DIR_FULL}>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>)
 
-set(ign_utilities_export ${PROJECT_EXPORT_NAME}-utilities)
-set(ign_utilities_export_output "${ign_utilities_export}-targets.cmake")
-
 # Export and install the interface target
 install(
-  TARGETS ${PROJECT_EXPORT_NAME}-utilities
-  EXPORT ${PROJECT_EXPORT_NAME}-utilities
+  TARGETS ${ign_utilities_target}
+  EXPORT ${ign_utilities_target}
   COMPONENT interface)
 
 export(
-  EXPORT ${PROJECT_EXPORT_NAME}-utilities
-  FILE ${ign_utilities_export_output}
+  EXPORT ${ign_utilities_target}
+  FILE ${ign_utilities_target_output_filename}
   NAMESPACE ${PROJECT_EXPORT_NAME}::)
 
 install(
-  EXPORT ${ign_utilities_export}
+  EXPORT ${ign_utilities_target}
   DESTINATION ${ign_config_install_dir}
-  FILE ${ign_utilities_export_output}
+  FILE ${ign_utilities_target_output_filename}
   NAMESPACE ${PROJECT_EXPORT_NAME}::)
 
 # Install the header directory
@@ -152,6 +153,9 @@ if (BUILD_TESTING)
         ${CMAKE_COMMAND} -E create_symlink ${CMAKE_BINARY_DIR}/${ign_version_output} ${FAKE_CMAKE_INSTALL_DIR}/${ign_version_output})
     execute_process(
       COMMAND
+        ${CMAKE_COMMAND} -E create_symlink ${CMAKE_BINARY_DIR}/${ign_utilities_target_output_filename} ${FAKE_CMAKE_INSTALL_DIR}/${ign_utilities_target_output_filename})
+    execute_process(
+      COMMAND
         ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/cmake ${FAKE_CMAKE_INSTALL_DIR}/cmake${PROJECT_VERSION_MAJOR})
     execute_process(
       COMMAND
@@ -164,6 +168,7 @@ if (BUILD_TESTING)
     # use configure_file(... COPYONLY) since it will run again if files change
     configure_file(${CMAKE_BINARY_DIR}/${ign_config_output} ${FAKE_CMAKE_INSTALL_DIR}/${ign_config_output} COPYONLY)
     configure_file(${CMAKE_BINARY_DIR}/${ign_version_output} ${FAKE_CMAKE_INSTALL_DIR}/${ign_version_output} COPYONLY)
+    configure_file(${CMAKE_BINARY_DIR}/${ign_utilities_target_output_filename} ${FAKE_CMAKE_INSTALL_DIR}/${ign_utilities_target_output_filename} COPYONLY)
     foreach (filename ${modules} ${templates})
       get_filename_component(file ${filename} NAME)
       configure_file(${filename} ${FAKE_CMAKE_INSTALL_DIR}/cmake${PROJECT_VERSION_MAJOR}/${file} COPYONLY)
