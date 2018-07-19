@@ -3,12 +3,13 @@
 
 class Base
 {
-  std::string stuff;
+  virtual std::string printStuff() = 0;
 };
 
 class Derived : public Base
 {
-  std::string moreStuff;
+  std::string stuff;
+  std::string printStuff() override { return stuff; }
 };
 
 Base *MakeDerived()
