@@ -51,6 +51,8 @@ set(minor_version ${IgnOGRE_FIND_VERSION_MINOR})
 # Set the full version number
 set(full_version ${major_version}.${minor_version})
 
+set(IGN_OGRE_DEBUG TRUE)
+
 if (NOT WIN32)
   # pkg-config platforms
   set(PKG_CONFIG_PATH_ORIGINAL $ENV{PKG_CONFIG_PATH})
@@ -127,7 +129,7 @@ if (NOT WIN32)
   endif()
 else()
   find_package(OGRE ${full_version}
-               COMPONENTS ${IgnOGRE_FIND_COMPONENTS})
+               COMPONENTS ${IgnOGRE_FIND_COMPONENTS})      
 
   if(OGRE_FOUND)
     # need to return only libraries defined by components and give them the
@@ -145,6 +147,17 @@ else()
       list(APPEND ogre_all_libs ${lib_fullpath})
     endforeach()
     set(OGRE_LIBRARIES ${ogre_all_libs})
+  endif()
+
+  if(IGN_OGRE_DEBUG)
+    messages(STATUS "User call: IgnOGRE_FIND_COMPONENTS:
+                              ${IgnOGRE_FIND_COMPONENTS}")
+    messages(STATUS "Upstream cmake: OGRE_LIBRARIES:
+                                   ${OGRE_LIBRARIES}")
+    messages(STATUS "Upstream cmake: OGRE_LIBRARY_DIRS:
+                                   ${OGRE_LIBRARY_DIRS}")
+    messages(STATUS "IgnOGRE: OGRE_LIBRARIES:
+                            ${OGRE_LIBRARIES}")
   endif()
 endif()
 
