@@ -1109,8 +1109,7 @@ function(ign_add_component component_name)
         # the component is independent of the core library.
         "$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>")
 
-      file(MAKE_DIRECTORY
-        "${PROJECT_BINARY_DIR}/include")
+      file(MAKE_DIRECTORY "${PROJECT_BINARY_DIR}/include")
 
   endif()
 
@@ -1132,8 +1131,7 @@ function(ign_add_component component_name)
       # directory. Generated headers for this component might end up here.
       "$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/${component_name}/include>")
 
-  file(MAKE_DIRECTORY
-    "$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/${component_name}/include>")
+  file(MAKE_DIRECTORY "${PROJECT_BINARY_DIR}/${component_name}/include")
 
   #------------------------------------
   # Adjust variables if a specific C++ standard was requested
@@ -1554,9 +1552,7 @@ macro(ign_build_executables)
     target_include_directories(${BINARY_NAME}
       PRIVATE
         ${PROJECT_SOURCE_DIR}
-        ${PROJECT_SOURCE_DIR}/include
         ${PROJECT_BINARY_DIR}
-        ${PROJECT_BINARY_DIR}/include
         ${ign_build_executables_INCLUDE_DIRS})
 
   endforeach()
