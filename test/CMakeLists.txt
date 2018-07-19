@@ -25,6 +25,4 @@ target_link_libraries(gtest_main gtest)
 set(GTEST_LIBRARY "${PROJECT_BINARY_DIR}/test/libgtest.a")
 set(GTEST_MAIN_LIBRARY "${PROJECT_BINARY_DIR}/test/libgtest_main.a")
 
-add_subdirectory(pimpl)
-add_subdirectory(unit)
 add_subdirectory(warnings)
