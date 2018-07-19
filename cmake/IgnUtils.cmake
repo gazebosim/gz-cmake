@@ -1103,24 +1103,37 @@ function(ign_add_component component_name)
     target_include_directories(${component_target_name}
       ${property_type}
         # This is the publicly installed ignition/math headers directory.
-        $<INSTALL_INTERFACE:${IGN_INCLUDE_INSTALL_DIR_FULL}>
+        "$<INSTALL_INTERFACE:${IGN_INCLUDE_INSTALL_DIR_FULL}>"
         # This is the in-build version of the core library's headers directory.
         # Generated headers for this component might get placed here, even if
         # the component is independent of the core library.
-        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>)
+        "$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>")
+
+      file(MAKE_DIRECTORY
+        "${PROJECT_BINARY_DIR}/include")
+
+  endif()
+
+  if(EXISTS "${PROJECT_SOURCE_DIR}/${component_name}/include")
+
+    target_include_directories(${component_target_name}
+      ${property_type}
+        # This is the in-source version of the component-specific headers
+        # directory. When exporting the target, this will not be included,
+        # because it is tied to the build interface instead of the install
+        # interface.
+        "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/${component_name}/include>")
 
   endif()
 
   target_include_directories(${component_target_name}
     ${property_type}
-      # This is the in-source version of the component-specific headers
-      # directory. When exporting the target, this will not be included,
-      # because it is tied to the build interface instead of the install
-      # interface.
-      $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/${component_name}/include>
       # This is the in-build version of the component-specific headers
       # directory. Generated headers for this component might end up here.
-      $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/${component_name}/include>)
+      "$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/${component_name}/include>")
+
+  file(MAKE_DIRECTORY
+    "$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/${component_name}/include>")
 
   #------------------------------------
   # Adjust variables if a specific C++ standard was requested
