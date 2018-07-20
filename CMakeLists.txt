@@ -137,56 +137,18 @@ if (BUILD_TESTING)
   #============================================================================
   # Do a fake install of ign-cmake in order to test the examples.
   # Copy or symlink the config.cmake files and cmake folder
-  set(FAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install/fake")
-  set(FAKE_CMAKE_INSTALL_DIR "${FAKE_INSTALL_PREFIX}/${ign_config_install_dir}")
-  set(FAKE_DATA_INSTALL_DIR "${FAKE_INSTALL_PREFIX}/${IGN_DATA_INSTALL_DIR}")
-  if (UNIX)
-    # make symlinks on unix
-    execute_process(
-      COMMAND
-        ${CMAKE_COMMAND} -E make_directory ${FAKE_CMAKE_INSTALL_DIR} ${FAKE_DATA_INSTALL_DIR})
-    execute_process(
-      COMMAND
-        ${CMAKE_COMMAND} -E create_symlink ${CMAKE_BINARY_DIR}/${ign_config_output} ${FAKE_CMAKE_INSTALL_DIR}/${ign_config_output})
-    execute_process(
-      COMMAND
-        ${CMAKE_COMMAND} -E create_symlink ${CMAKE_BINARY_DIR}/${ign_version_output} ${FAKE_CMAKE_INSTALL_DIR}/${ign_version_output})
-    execute_process(
-      COMMAND
-        ${CMAKE_COMMAND} -E create_symlink ${CMAKE_BINARY_DIR}/${ign_utilities_target_output_filename} ${FAKE_CMAKE_INSTALL_DIR}/${ign_utilities_target_output_filename})
-    execute_process(
-      COMMAND
-        ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/cmake ${FAKE_CMAKE_INSTALL_DIR}/cmake${PROJECT_VERSION_MAJOR})
-    execute_process(
-      COMMAND
-        ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/codecheck ${FAKE_DATA_INSTALL_DIR}/codecheck)
-    execute_process(
-      COMMAND
-        ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/doc/doxygen ${FAKE_DATA_INSTALL_DIR}/doxygen)
-  else()
-    # otherwise copy the files one by one
-    # use configure_file(... COPYONLY) since it will run again if files change
-    configure_file(${CMAKE_BINARY_DIR}/${ign_config_output} ${FAKE_CMAKE_INSTALL_DIR}/${ign_config_output} COPYONLY)
-    configure_file(${CMAKE_BINARY_DIR}/${ign_version_output} ${FAKE_CMAKE_INSTALL_DIR}/${ign_version_output} COPYONLY)
-    configure_file(${CMAKE_BINARY_DIR}/${ign_utilities_target_output_filename} ${FAKE_CMAKE_INSTALL_DIR}/${ign_utilities_target_output_filename} COPYONLY)
-    foreach (filename ${modules} ${templates})
-      get_filename_component(file ${filename} NAME)
-      configure_file(${filename} ${FAKE_CMAKE_INSTALL_DIR}/cmake${PROJECT_VERSION_MAJOR}/${file} COPYONLY)
-    endforeach()
-    foreach (filename ${pkgconfig_templates})
-      get_filename_component(file ${filename} NAME)
-      configure_file(${filename} ${FAKE_CMAKE_INSTALL_DIR}/cmake${PROJECT_VERSION_MAJOR}/pkgconfig/${file} COPYONLY)
-    endforeach()
-    file(GLOB codecheck_files "codecheck/*")
-    foreach (filename ${codecheck_files})
-      get_filename_component(file ${filename} NAME)
-      configure_file(${filename} ${FAKE_DATA_INSTALL_DIR}/codecheck/${file} COPYONLY)
-    endforeach()
-    file(GLOB doc_doxygen "doc/doxygen/*")
-    foreach (filename ${doc_doxygen})
-      get_filename_component(file ${filename} NAME)
-      configure_file(${filename} ${FAKE_DATA_INSTALL_DIR}/doxygen/${file} COPYONLY)
-    endforeach()
-  endif()
+  set(FAKE_BUILD_DIRECTORY "${CMAKE_BINARY_DIR}/fake/build")
+  set(FAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/fake/install")
+
+  file(MAKE_DIRECTORY ${FAKE_BUILD_DIRECTORY})
+  file(MAKE_DIRECTORY ${FAKE_INSTALL_PREFIX})
+
+  execute_process(
+    COMMAND ${CMAKE_COMMAND} "${PROJECT_SOURCE_DIR}" "-DCMAKE_INSTALL_PREFIX=${FAKE_INSTALL_PREFIX}" "-DBUILD_TESTING=OFF"
+    WORKING_DIRECTORY "${FAKE_BUILD_DIRECTORY}")
+
+  execute_process(
+    COMMAND ${CMAKE_COMMAND} "--build" "${FAKE_BUILD_DIRECTORY}" "--target" "install")
+
   add_subdirectory(examples)
 endif()
