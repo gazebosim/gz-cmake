@@ -134,11 +134,14 @@ else()
     # full path using OGRE_LIBRARY_DIRS
     set(ogre_all_libs)
     foreach(ogre_lib ${OGRE_LIBRARIES})
+      # Be sure that all Ogre* libraries are using absolute paths
       set(prefix "")
-      set(postfix "")
-      # Only non .lib files need the prefix (vcpkg OgreConfig.cmake)
-      if(NOT ogre_lib MATCHES "lib$")
+      if(ogre_lib MATCHES "Ogre" AND NOT IS_ABSOLUTE "${ogre_lib}")
         set(prefix "${OGRE_LIBRARY_DIRS}/")
+      endif()
+      # Some Ogre libraries are not using the .lib extension
+      set(postfix "")
+      if(NOT ogre_lib MATCHES "lib$")
         set(postfix ".lib")
       endif()
       set(lib_fullpath "${prefix}${ogre_lib}${postfix}")
