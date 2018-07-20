@@ -782,7 +782,7 @@ WARN_LOGFILE           = /tmp/ignition-@IGN_DESIGNATION@.warn
 
 INPUT                  = @IGNITION_DOXYGEN_API_MAINPAGE_MD@ \
                          @CMAKE_SOURCE_DIR@/tutorials \
-                         @CMAKE_BINARY_DIR@/tutorials.md \
+                         @IGNITION_DOXYGEN_TUTORIALS_MAINPAGE_MD@ \
   @ign_doxygen_component_input_dirs@
 
 # This tag can be used to specify the character encoding of the source files
