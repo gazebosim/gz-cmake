@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Open Source Robotics Foundation
+ * Copyright (C) 2018 Open Source Robotics Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  *
  */
 
-
 #ifndef IGNITION_UTILITIES_SUPPRESSWARNING_HH_
 #define IGNITION_UTILITIES_SUPPRESSWARNING_HH_
 
@@ -30,7 +29,7 @@
 /*
  * Usage example:
  *
- * SomeClass* ptr = CreatePtr();
+ * SomeClass *ptr = CreatePtr();
  * IGN_UTILS_WARN_IGNORE__DELETE_NON_VIRTUAL_DESTRUCTOR
  * delete ptr;
  * IGN_UTILS_WARN_RESUME__DELETE_NON_VIRTUAL_DESTRUCTOR
@@ -55,7 +54,6 @@
 #define IGN_UTILS_WARN_RESUME__DELETE_NON_VIRTUAL_DESTRUCTOR \
   DETAIL_IGN_UTILS_WARN_RESUME__DELETE_NON_VIRTUAL_DESTRUCTOR
 
-
 /// \brief Microsoft Visual Studio does not automatically export the interface
 /// information for member variables that belong to interface classes of a DLL.
 /// Instead it issues this warning. When the member variable is private, we
@@ -67,8 +65,7 @@
 #define IGN_UTILS_WARN_RESUME__DLL_INTERFACE_MISSING \
   DETAIL_IGN_UTILS_WARN_RESUME__DLL_INTERFACE_MISSING
 
-
-// TODO: Add more warning types as they become relevant. Do not add warning
-// types to suppress unless they are genuinely necessary.
+// TODO(anyone): Add more warning types as they become relevant.
+// Do not add warning types to suppress unless they are genuinely necessary.
 
 #endif
