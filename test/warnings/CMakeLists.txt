@@ -21,8 +21,13 @@ if (UNIX)
       COMMAND ${CMAKE_SOURCE_DIR}/test/warnings/testrunner.bash ${CMAKE_COMMAND} --build . --target ${test} --config $<CONFIGURATION>
       WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
 
-    set_tests_properties(WARNING_${test} PROPERTIES
-      PASS_REGULAR_EXPRESSION "deleting object of abstract class type")
+    if (NOT CMAKE_COMPILER_IS_GNUCXX)
+      set_tests_properties(WARNING_${test} PROPERTIES
+        PASS_REGULAR_EXPRESSION "delete called on .* that is abstract but has non-virtual destructor")
+    else()
+      set_tests_properties(WARNING_${test} PROPERTIES
+        PASS_REGULAR_EXPRESSION "deleting object of abstract class type")
+    endif()
 
   endforeach()
 
