@@ -141,7 +141,7 @@ else()
       endif()
       # Some Ogre libraries are not using the .lib extension
       set(postfix "")
-      if(NOT ogre_lib MATCHES "lib$")
+      if(NOT ogre_lib MATCHES ".lib$")
         set(postfix ".lib")
       endif()
       set(lib_fullpath "${prefix}${ogre_lib}${postfix}")
