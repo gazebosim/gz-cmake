@@ -143,12 +143,19 @@ if (BUILD_TESTING)
   file(MAKE_DIRECTORY ${FAKE_BUILD_DIRECTORY})
   file(MAKE_DIRECTORY ${FAKE_INSTALL_PREFIX})
 
-  execute_process(
-    COMMAND ${CMAKE_COMMAND} "${PROJECT_SOURCE_DIR}" "-DCMAKE_INSTALL_PREFIX=${FAKE_INSTALL_PREFIX}" "-DBUILD_TESTING=OFF"
-    WORKING_DIRECTORY "${FAKE_BUILD_DIRECTORY}")
+  include(ExternalProject)
+  ExternalProject_Add(
+    FAKE_INSTALL
 
-  execute_process(
-    COMMAND ${CMAKE_COMMAND} "--build" "${FAKE_BUILD_DIRECTORY}" "--target" "install")
+    SOURCE_DIR "${CMAKE_SOURCE_DIR}"
+    # BUILD_ALWAYS needed since cmake doesn't notice when
+    # example files change.
+    # See alternate approach in a2113e0997c9 if this becomes too slow
+    BUILD_ALWAYS 1
+    CMAKE_ARGS
+      "-DBUILD_TESTING=OFF"
+      "-DCMAKE_INSTALL_PREFIX=${FAKE_INSTALL_PREFIX}"
+  )
 
   add_subdirectory(examples)
 endif()

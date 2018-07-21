@@ -49,6 +49,7 @@ foreach(example ${example_directories})
     ExternalProject_Add(
       ${TEST_NAME}
 
+      DEPENDS FAKE_INSTALL
       SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/${example}"
       # BUILD_ALWAYS needed since cmake doesn't notice when
       # example files change.
