@@ -8,8 +8,6 @@ foreach(test ${tests})
   get_filename_component(name ${test} NAME_WE)
   set(name WARNING_${name})
 
-  message("Creating ${name} test")
-
   add_executable(${name} ${test})
   target_link_libraries(${name} ${PROJECT_EXPORT_NAME}-utilities)
   set_property(TARGET ${name} PROPERTY CXX_STANDARD 11)
@@ -21,7 +19,7 @@ foreach(test ${tests})
 
   elseif(MSVC)
 
-    target_compile_options(${name} PRIVATE "/WX")
+    target_compile_options(${name} PRIVATE "/W4" "/WX" "/we4265")
 
   endif()
 

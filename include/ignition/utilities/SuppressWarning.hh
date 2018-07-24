@@ -30,9 +30,9 @@
  * Usage example:
  *
  * SomeClass *ptr = CreatePtr();
- * IGN_UTILS_WARN_IGNORE__DELETE_NON_VIRTUAL_DESTRUCTOR
+ * IGN_UTILS_WARN_IGNORE__NON_VIRTUAL_DESTRUCTOR
  * delete ptr;
- * IGN_UTILS_WARN_RESUME__DELETE_NON_VIRTUAL_DESTRUCTOR
+ * IGN_UTILS_WARN_RESUME__NON_VIRTUAL_DESTRUCTOR
  *
  */
 
@@ -48,11 +48,11 @@
 /// We want to suppress this warning when we know for certain (via the design
 /// of our implementation) that the pointer is definitely not pointing to a more
 /// derived type.
-#define IGN_UTILS_WARN_IGNORE__DELETE_NON_VIRTUAL_DESTRUCTOR \
-  DETAIL_IGN_UTILS_WARN_IGNORE__DELETE_NON_VIRTUAL_DESTRUCTOR
+#define IGN_UTILS_WARN_IGNORE__NON_VIRTUAL_DESTRUCTOR \
+  DETAIL_IGN_UTILS_WARN_IGNORE__NON_VIRTUAL_DESTRUCTOR
 
-#define IGN_UTILS_WARN_RESUME__DELETE_NON_VIRTUAL_DESTRUCTOR \
-  DETAIL_IGN_UTILS_WARN_RESUME__DELETE_NON_VIRTUAL_DESTRUCTOR
+#define IGN_UTILS_WARN_RESUME__NON_VIRTUAL_DESTRUCTOR \
+  DETAIL_IGN_UTILS_WARN_RESUME__NON_VIRTUAL_DESTRUCTOR
 
 /// \brief Microsoft Visual Studio does not automatically export the interface
 /// information for member variables that belong to interface classes of a DLL.
