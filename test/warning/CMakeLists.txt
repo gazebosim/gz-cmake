@@ -17,7 +17,7 @@ foreach(test ${tests})
 
   elseif(MSVC)
 
-    target_compile_options(${name} PRIVATE "/W4" "/WX" "/we4265")
+    target_compile_options(${name} PRIVATE "/W4" "/WX" "/we4265" "/EHsc")
 
   endif()
 
