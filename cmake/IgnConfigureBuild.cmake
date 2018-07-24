@@ -100,9 +100,12 @@ macro(ign_configure_build)
     # TODO: We should consider removing this include_directories(~) command.
     # If these directories are needed by any targets, then we should specify it
     # for those targets directly.
-    include_directories(
-      ${PROJECT_SOURCE_DIR}/include
-      ${PROJECT_BINARY_DIR}/include)
+    if(EXISTS "${PROJECT_SOURCE_DIR}/include")
+      include_directories("${PROJECT_SOURCE_DIR}/include")
+    endif()
+
+    include_directories("${PROJECT_BINARY_DIR}/include")
+    file(MAKE_DIRECTORY "${PROJECT_BINARY_DIR}/include")
 
 
     #--------------------------------------
