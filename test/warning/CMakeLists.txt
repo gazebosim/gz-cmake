@@ -3,8 +3,6 @@ ign_get_sources(tests)
 
 foreach(test ${tests})
 
-  message("Looking at ${test} test")
-
   get_filename_component(name ${test} NAME_WE)
   set(name WARNING_${name})
 
