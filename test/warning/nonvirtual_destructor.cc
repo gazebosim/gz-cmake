@@ -1,6 +1,8 @@
 
 #include <string>
 
+#include <ignition/utilities/SuppressWarning.hh>
+
 class Base
 {
   virtual std::string printStuff() = 0;
@@ -20,5 +22,7 @@ Base *MakeDerived()
 int main()
 {
   Base *b = MakeDerived();
+  IGN_UTILS_WARN_IGNORE__DELETE_NON_VIRTUAL_DESTRUCTOR
   delete b;
+  IGN_UTILS_WARN_RESUME__DELETE_NON_VIRTUAL_DESTRUCTOR
 }

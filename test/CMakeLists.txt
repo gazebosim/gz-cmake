@@ -8,4 +8,4 @@ if (UNIX)
   )
 endif()
 
-add_subdirectory(warnings)
+add_subdirectory(warning)
