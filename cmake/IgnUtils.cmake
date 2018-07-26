@@ -482,45 +482,54 @@ endmacro()
 #################################################
 # ign_get_sources_and_unittests(<lib_srcs> <tests>)
 #
-# From the current directory, grab all the files ending in "*.cc" and sort them
-# into library source files <lib_srcs> and unittest source files <tests>. Remove
-# their paths to make them suitable for passing into ign_add_[library/tests].
+# Grab all the files ending in "*.cc" from either the "src/" subdirectory or the
+# current subdirectory if "src/" does not exist. They will be collated into
+# library source files <lib_sources_var> and unittest source files <tests_var>.
+#
+# These output variables can be consumed directly by ign_create_core_library(~),
+# ign_add_component(~), ign_build_tests(~), and ign_build_executables(~).
 function(ign_get_libsources_and_unittests lib_sources_var tests_var)
 
-  # GLOB all the source files
-  file(GLOB source_files "*.cc")
-  list(SORT source_files)
+  # Glob all the source files
+  if(EXISTS ${CMAKE_CURRENT_LIST_DIR}/src)
 
-  # GLOB all the unit tests
-  file(GLOB test_files "*_TEST.cc")
-  list(SORT test_files)
+    # Prefer files in the src/ subdirectory
+    file(GLOB source_files RELATIVE "${CMAKE_CURRENT_LIST_DIR}" "src/*.cc")
+    file(GLOB test_files RELATIVE "${CMAKE_CURRENT_LIST_DIR}" "src/*_TEST.cc")
 
-  # Initialize these lists
+  else()
+
+    # If src/ doesn't exist, then use the current directory
+    file(GLOB source_files RELATIVE "${CMAKE_CURRENT_LIST_DIR}" "*.cc")
+    file(GLOB test_files RELATIVE "${CMAKE_CURRENT_LIST_DIR}" "*_TEST.cc")
+
+  endif()
+
+  # Sort the files alphabetically
+  if(source_files)
+    list(SORT source_files)
+  endif()
+
+  if(test_files)
+    list(SORT test_files)
+  endif()
+
+  # Initialize the test list
   set(tests)
-  set(sources)
 
   # Remove the unit tests from the list of source files
   foreach(test_file ${test_files})
 
+    # Remove from the source_files list.
     list(REMOVE_ITEM source_files ${test_file})
 
-    # Remove the path from the unit test and append to the list of tests.
-    get_filename_component(test ${test_file} NAME)
-    list(APPEND tests ${test})
-
-  endforeach()
-
-  foreach(source_file ${source_files})
-
-    # Remove the path from the library source file and append it to the list of
-    # library source files.
-    get_filename_component(source ${source_file} NAME)
-    list(APPEND sources ${source})
+    # Append to the list of tests.
+    list(APPEND tests ${test_file})
 
   endforeach()
 
   # Return the lists that have been created.
-  set(${lib_sources_var} ${sources} PARENT_SCOPE)
+  set(${lib_sources_var} ${source_files} PARENT_SCOPE)
   set(${tests_var} ${tests} PARENT_SCOPE)
 
 endfunction()
@@ -915,20 +924,40 @@ function(ign_create_core_library)
     SOURCES ${sources}
     ${interface_option})
 
-  # This generator expression is necessary for multi-configuration generators,
-  # such as MSVC on Windows, and also to ensure that our target exports the
+  # These generator expressions are necessary for multi-configuration generators
+  # such as MSVC on Windows. They also ensure that our target exports its
   # headers correctly
   target_include_directories(${PROJECT_LIBRARY_TARGET_NAME}
     ${property_type}
-      # This is the publicly installed ignition/math headers directory.
-      $<INSTALL_INTERFACE:${IGN_INCLUDE_INSTALL_DIR_FULL}>
-      # This is the build directory version of the headers. When exporting the
-      # target, this will not be included, because it is tied to the build
-      # interface instead of the install interface.
-      $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+      # This is the publicly installed headers directory.
+      "$<INSTALL_INTERFACE:${IGN_INCLUDE_INSTALL_DIR_FULL}>"
       # This is the in-build version of the core library headers directory.
       # Generated headers for the core library get placed here.
-      $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>)
+      "$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>"
+      # Generated headers for the core library might also get placed here.
+      "$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/core/include>")
+
+  # We explicitly create these directories to avoid false-flag compiler warnings
+  file(MAKE_DIRECTORY
+    "${PROJECT_BINARY_DIR}/include"
+    "${PROJECT_BINARY_DIR}/core/include")
+
+  if(EXISTS "${PROJECT_SOURCE_DIR}/include")
+    target_include_directories(${PROJECT_LIBRARY_TARGET_NAME}
+      ${property_type}
+        # This is the build directory version of the headers. When exporting the
+        # target, this will not be included, because it is tied to the build
+        # interface instead of the install interface.
+        "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>")
+  endif()
+
+  if(EXISTS "${PROJECT_SOURCE_DIR}/core/include")
+    target_include_directories(${PROJECT_LIBRARY_TARGET_NAME}
+      ${property_type}
+        # This is the include directories for projects that put the core library
+        # contents into its own subdirectory.
+        "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/core/include>")
+  endif()
 
 
   #------------------------------------
@@ -1074,24 +1103,35 @@ function(ign_add_component component_name)
     target_include_directories(${component_target_name}
       ${property_type}
         # This is the publicly installed ignition/math headers directory.
-        $<INSTALL_INTERFACE:${IGN_INCLUDE_INSTALL_DIR_FULL}>
+        "$<INSTALL_INTERFACE:${IGN_INCLUDE_INSTALL_DIR_FULL}>"
         # This is the in-build version of the core library's headers directory.
         # Generated headers for this component might get placed here, even if
         # the component is independent of the core library.
-        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>)
+        "$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>")
+
+      file(MAKE_DIRECTORY "${PROJECT_BINARY_DIR}/include")
+
+  endif()
+
+  if(EXISTS "${PROJECT_SOURCE_DIR}/${component_name}/include")
+
+    target_include_directories(${component_target_name}
+      ${property_type}
+        # This is the in-source version of the component-specific headers
+        # directory. When exporting the target, this will not be included,
+        # because it is tied to the build interface instead of the install
+        # interface.
+        "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/${component_name}/include>")
 
   endif()
 
   target_include_directories(${component_target_name}
     ${property_type}
-      # This is the in-source version of the component-specific headers
-      # directory. When exporting the target, this will not be included,
-      # because it is tied to the build interface instead of the install
-      # interface.
-      $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/${component_name}/include>
       # This is the in-build version of the component-specific headers
       # directory. Generated headers for this component might end up here.
-      $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/${component_name}/include>)
+      "$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/${component_name}/include>")
+
+  file(MAKE_DIRECTORY "${PROJECT_BINARY_DIR}/${component_name}/include")
 
   #------------------------------------
   # Adjust variables if a specific C++ standard was requested
@@ -1492,7 +1532,7 @@ macro(ign_build_executables)
 
   foreach(exec_file ${ign_build_executables_SOURCES})
 
-    string(REGEX REPLACE ".cc" "" BINARY_NAME ${exec_file})
+    get_filename_component(BINARY_NAME ${exec_file} NAME_WE)
     set(BINARY_NAME ${ign_build_executables_PREFIX}${BINARY_NAME})
 
     add_executable(${BINARY_NAME} ${exec_file})
@@ -1512,9 +1552,7 @@ macro(ign_build_executables)
     target_include_directories(${BINARY_NAME}
       PRIVATE
         ${PROJECT_SOURCE_DIR}
-        ${PROJECT_SOURCE_DIR}/include
         ${PROJECT_BINARY_DIR}
-        ${PROJECT_BINARY_DIR}/include
         ${ign_build_executables_INCLUDE_DIRS})
 
   endforeach()
