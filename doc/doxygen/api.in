@@ -780,10 +780,9 @@ WARN_LOGFILE           = /tmp/ignition-@IGN_DESIGNATION@.warn
 # spaces. See also FILE_PATTERNS and EXTENSION_MAPPING
 # Note: If this tag is empty the current directory is searched.
 
-INPUT                  = @CMAKE_SOURCE_DIR@/README.md \
-                         @CMAKE_BINARY_DIR@/api.md \
+INPUT                  = @IGNITION_DOXYGEN_API_MAINPAGE_MD@ \
                          @CMAKE_SOURCE_DIR@/tutorials \
-                         @CMAKE_BINARY_DIR@/tutorials.md \
+                         @IGNITION_DOXYGEN_TUTORIALS_MAINPAGE_MD@ \
   @ign_doxygen_component_input_dirs@
 
 # This tag can be used to specify the character encoding of the source files
@@ -939,7 +938,7 @@ FILTER_SOURCE_PATTERNS =
 # (index.html). This can be useful if you have a project on for instance GitHub
 # and want to reuse the introduction page also for the doxygen output.
 
-USE_MDFILE_AS_MAINPAGE = @CMAKE_BINARY_DIR@/api.md
+USE_MDFILE_AS_MAINPAGE = @IGNITION_DOXYGEN_API_MAINPAGE_MD@
 
 #---------------------------------------------------------------------------
 # Configuration options related to source browsing
