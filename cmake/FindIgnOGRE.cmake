@@ -148,6 +148,8 @@ else()
       list(APPEND ogre_all_libs ${lib_fullpath})
     endforeach()
     set(OGRE_LIBRARIES ${ogre_all_libs})
+
+    set(OGRE_RESOURCE_PATH ${OGRE_CONFIG_DIR})
   endif()
 endif()
 
