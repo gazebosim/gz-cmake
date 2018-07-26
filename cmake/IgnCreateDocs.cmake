@@ -107,20 +107,14 @@ function(ign_create_docs)
   endforeach()
 
   find_package(Doxygen)
-  if (DOXYGEN_FOUND AND EXISTS ${IGNITION_CMAKE_DOXYGEN_DIR}/api.in AND
-      EXISTS ${IGNITION_CMAKE_DOXYGEN_DIR}/tutorials.in)
+  if (DOXYGEN_FOUND AND EXISTS ${IGNITION_CMAKE_DOXYGEN_DIR}/api.in)
     configure_file(${IGNITION_CMAKE_DOXYGEN_DIR}/api.in
                    ${CMAKE_BINARY_DIR}/api.dox @ONLY)
-
-    configure_file(${IGNITION_CMAKE_DOXYGEN_DIR}/tutorials.in
-                   ${CMAKE_BINARY_DIR}/tutorials.dox @ONLY)
 
     add_custom_target(doc ALL
       # Generate the API documentation
       ${DOXYGEN_EXECUTABLE} ${CMAKE_BINARY_DIR}/api.dox
       WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-
-      COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_BINARY_DIR}/tutorials.dox
 
       COMMENT "Generating API documentation with Doxygen" VERBATIM)
 
