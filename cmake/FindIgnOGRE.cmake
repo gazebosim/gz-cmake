@@ -122,9 +122,11 @@ if (NOT WIN32)
     # when we pass it to the compiler later.
     string(REPLACE "\n" "" OGRE_RESOURCE_PATH ${OGRE_RESOURCE_PATH})
 
-    #reset pkg config path
-    set(ENV{PKG_CONFIG_PATH} ${PKG_CONFIG_PATH_ORIGINAL})
   endif()
+
+  #reset pkg config path
+  set(ENV{PKG_CONFIG_PATH} ${PKG_CONFIG_PATH_ORIGINAL})
+
 else()
   find_package(OGRE ${full_version}
                COMPONENTS ${IgnOGRE_FIND_COMPONENTS})
@@ -148,6 +150,8 @@ else()
       list(APPEND ogre_all_libs ${lib_fullpath})
     endforeach()
     set(OGRE_LIBRARIES ${ogre_all_libs})
+
+    set(OGRE_RESOURCE_PATH ${OGRE_CONFIG_DIR})
   endif()
 endif()
 
