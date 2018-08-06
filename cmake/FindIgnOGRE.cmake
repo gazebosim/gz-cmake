@@ -96,7 +96,6 @@ if (NOT WIN32)
       OGRE_VERSION_PATCH ${OGRE_VERSION})
 
     # find ogre components
-    set(ENV{PKG_CONFIG_PATH} ${PKG_CONFIG_PATH_TMP})
     foreach(component ${IgnOGRE_FIND_COMPONENTS})
       ign_pkg_check_modules_quiet(IgnOGRE-${component} "OGRE-${component} >= ${full_version}")
       if(IgnOGRE-${component}_FOUND)
@@ -106,6 +105,8 @@ if (NOT WIN32)
       endif()
     endforeach()
 
+    # Use the full PKG_CONFIG_PATH_TMP list while looking for the plugindir (needed for MacOS)
+    set(ENV{PKG_CONFIG_PATH} ${PKG_CONFIG_PATH_TMP})
     execute_process(COMMAND pkg-config --variable=plugindir OGRE
                     OUTPUT_VARIABLE _pkgconfig_invoke_result
                     RESULT_VARIABLE _pkgconfig_failed)
