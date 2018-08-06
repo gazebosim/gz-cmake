@@ -71,7 +71,6 @@ if (NOT WIN32)
     return()
   endif()
 
-  string(REPLACE ":" ";" PKG_CONFIG_PATH_TMP ${PKG_CONFIG_PATH_TMP})
   string(REPLACE ":" ";" PKG_CONFIG_PATH_TMP_LIST ${PKG_CONFIG_PATH_TMP})
 
   # loop through pkg config paths and find an ogre version that is < 2.0.0
