@@ -72,9 +72,10 @@ if (NOT WIN32)
   endif()
 
   string(REPLACE ":" ";" PKG_CONFIG_PATH_TMP ${PKG_CONFIG_PATH_TMP})
+  string(REPLACE ":" ";" PKG_CONFIG_PATH_TMP_LIST ${PKG_CONFIG_PATH_TMP})
 
   # loop through pkg config paths and find an ogre version that is < 2.0.0
-  foreach(pkg_path ${PKG_CONFIG_PATH_TMP})
+  foreach(pkg_path ${PKG_CONFIG_PATH_TMP_LIST})
     set(ENV{PKG_CONFIG_PATH} ${pkg_path})
     ign_pkg_check_modules_quiet(OGRE "OGRE >= ${full_version}")
     if (OGRE_FOUND)
@@ -96,6 +97,7 @@ if (NOT WIN32)
       OGRE_VERSION_PATCH ${OGRE_VERSION})
 
     # find ogre components
+    set(ENV{PKG_CONFIG_PATH} ${PKG_CONFIG_PATH_TMP})
     foreach(component ${IgnOGRE_FIND_COMPONENTS})
       ign_pkg_check_modules_quiet(IgnOGRE-${component} "OGRE-${component} >= ${full_version}")
       if(IgnOGRE-${component}_FOUND)
