@@ -106,12 +106,21 @@ if (NOT WIN32)
     endforeach()
 
     # Use the full PKG_CONFIG_PATH_TMP list while looking for the plugindir (needed for MacOS)
-    set(ENV{PKG_CONFIG_PATH} ${PKG_CONFIG_PATH_TMP})
     execute_process(COMMAND pkg-config --variable=plugindir OGRE
                     OUTPUT_VARIABLE _pkgconfig_invoke_result
                     RESULT_VARIABLE _pkgconfig_failed)
     if(_pkgconfig_failed)
-      IGN_BUILD_WARNING ("Failed to find OGRE's plugin directory.  The build will succeed, but there will likely be run-time errors.")
+      # if plugindir not found then set it to a path based on directory
+      # structure on ubuntu / macOS
+      foreach (lib ${OGRE_LIBRARIES})
+        get_filename_component(OGRE_LIBRARY_DIR "${lib}" PATH)
+        if (NOT "${OGRE_LIBRARY_DIR}" STREQUAL "")
+          list(APPEND OGRE_LIBRARY_DIRS ${OGRE_LIBRARY_DIR})
+          list(APPEND OGRE_RESOURCE_PATH "${OGRE_LIBRARY_DIR}/OGRE")
+        endif()
+      endforeach()
+      list(REMOVE_DUPLICATES OGRE_RESOURCE_PATH)
+      IGN_BUILD_WARNING ("Failed to find OGRE's plugin directory. Setting path to: ${OGRE_RESOURCE_PATH}.")
     else()
       # This variable will be substituted into cmake/setup.sh.in
       set(OGRE_PLUGINDIR ${_pkgconfig_invoke_result})
