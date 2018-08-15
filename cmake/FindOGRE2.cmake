@@ -94,7 +94,7 @@ if (NOT WIN32)
                   OUTPUT_VARIABLE _pkgconfig_invoke_result
                   RESULT_VARIABLE _pkgconfig_failed)
   if(_pkgconfig_failed)
-    IGN_BUILD_WARNING ("Failed to find OGRE's plugin directory.  The build will succeed, but there will likely be run-time errors.")
+    IGN_BUILD_WARNING ("Failed to find OGRE's plugin directory. The build will succeed, but there will likely be run-time errors.")
   else()
     set(OGRE2_PLUGINDIR ${_pkgconfig_invoke_result})
   endif()
@@ -192,7 +192,6 @@ else()
   # Seems that OGRE2_PLUGINDIR can end in a newline, which will cause problems
   # when we pass it to the compiler later.
   string(REPLACE "\n" "" OGRE2_RESOURCE_PATH ${OGRE2_RESOURCE_PATH})
-
 endif()
 
 # create OGRE2 target
