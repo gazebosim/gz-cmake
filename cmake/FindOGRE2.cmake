@@ -87,6 +87,19 @@ foreach(pkg_path ${PKG_CONFIG_PATH_TMP})
   endif()
 endforeach()
 
+# use pkg-config to find ogre plugin path
+# do it here before resetting the pkg-config paths
+if (NOT WIN32)
+  execute_process(COMMAND pkg-config --variable=plugindir OGRE
+                  OUTPUT_VARIABLE _pkgconfig_invoke_result
+                  RESULT_VARIABLE _pkgconfig_failed)
+  if(_pkgconfig_failed)
+    IGN_BUILD_WARNING ("Failed to find OGRE's plugin directory.  The build will succeed, but there will likely be run-time errors.")
+  else()
+    set(OGRE2_PLUGINDIR ${_pkgconfig_invoke_result})
+  endif()
+endif()
+
 # reset pkg config path
 set(ENV{PKG_CONFIG_PATH} ${PKG_CONFIG_PATH_ORIGINAL})
 
@@ -167,12 +180,20 @@ foreach(component ${OGRE2_FIND_COMPONENTS})
   endif()
 endforeach()
 
-# set path to find ogre plugins
-# keep variable naming consistent with ogre 1
-# TODO currently using harded paths based on dir structure in ubuntu
-foreach(resource_path ${OGRE2_LIBRARY_DIRS})
-  list(APPEND OGRE2_RESOURCE_PATH "${resource_path}/OGRE")
-endforeach()
+if ("${OGRE2_PLUGINDIR}" STREQUAL "")
+  # set path to find ogre plugins
+  # keep variable naming consistent with ogre 1
+  # TODO currently using harded paths based on dir structure in ubuntu
+  foreach(resource_path ${OGRE2_LIBRARY_DIRS})
+    list(APPEND OGRE2_RESOURCE_PATH "${resource_path}/OGRE")
+  endforeach()
+else()
+  set(OGRE2_RESOURCE_PATH ${OGRE2_PLUGINDIR})
+  # Seems that OGRE2_PLUGINDIR can end in a newline, which will cause problems
+  # when we pass it to the compiler later.
+  string(REPLACE "\n" "" OGRE2_RESOURCE_PATH ${OGRE2_RESOURCE_PATH})
+
+endif()
 
 # create OGRE2 target
 if (OGRE2_FOUND)
