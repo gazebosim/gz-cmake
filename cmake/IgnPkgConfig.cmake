@@ -66,7 +66,7 @@ macro(ign_pkg_check_modules_quiet package signature)
 
   #------------------------------------
   # Define the expected arguments
-  set(options INTERFACE)
+  set(options INTERFACE NO_CMAKE_ENVIRONMENT_PATH)
   set(oneValueArgs "TARGET_NAME")
   set(multiValueArgs)
 
@@ -96,7 +96,7 @@ macro(ign_pkg_check_modules_quiet package signature)
       set(ign_pkg_check_modules_quiet_arg)
     endif()
 
-    pkg_check_modules(${package} ${ign_pkg_check_modules_quiet_arg} ${signature})
+    pkg_check_modules(${package} ${ign_pkg_check_modules_quiet_arg} ${signature} ${ARGN})
 
     # TODO: When we require cmake-3.6+, we should remove this procedure and just
     #       use the plain pkg_check_modules, which provides an option called

@@ -71,12 +71,12 @@ if (NOT WIN32)
     return()
   endif()
 
-  string(REPLACE ":" ";" PKG_CONFIG_PATH_TMP_LIST ${PKG_CONFIG_PATH_TMP})
+  string(REPLACE ":" ";" PKG_CONFIG_PATH_TMP ${PKG_CONFIG_PATH_TMP})
 
   # loop through pkg config paths and find an ogre version that is < 2.0.0
-  foreach(pkg_path ${PKG_CONFIG_PATH_TMP_LIST})
+  foreach(pkg_path ${PKG_CONFIG_PATH_TMP})
     set(ENV{PKG_CONFIG_PATH} ${pkg_path})
-    ign_pkg_check_modules_quiet(OGRE "OGRE >= ${full_version}")
+    ign_pkg_check_modules_quiet(OGRE "OGRE >= ${full_version}" NO_CMAKE_ENVIRONMENT_PATH)
     if (OGRE_FOUND)
       if (NOT ${OGRE_VERSION} VERSION_LESS 2.0.0)
         set (OGRE_FOUND false)
@@ -105,22 +105,11 @@ if (NOT WIN32)
       endif()
     endforeach()
 
-    # Use the full PKG_CONFIG_PATH_TMP list while looking for the plugindir (needed for MacOS)
     execute_process(COMMAND pkg-config --variable=plugindir OGRE
                     OUTPUT_VARIABLE _pkgconfig_invoke_result
                     RESULT_VARIABLE _pkgconfig_failed)
     if(_pkgconfig_failed)
-      # if plugindir not found then set it to a path based on directory
-      # structure on ubuntu / macOS
-      foreach (lib ${OGRE_LIBRARIES})
-        get_filename_component(OGRE_LIBRARY_DIR "${lib}" PATH)
-        if (NOT "${OGRE_LIBRARY_DIR}" STREQUAL "")
-          list(APPEND OGRE_LIBRARY_DIRS ${OGRE_LIBRARY_DIR})
-          list(APPEND OGRE_RESOURCE_PATH "${OGRE_LIBRARY_DIR}/OGRE")
-        endif()
-      endforeach()
-      list(REMOVE_DUPLICATES OGRE_RESOURCE_PATH)
-      IGN_BUILD_WARNING ("Failed to find OGRE's plugin directory. Setting path to: ${OGRE_RESOURCE_PATH}.")
+      IGN_BUILD_WARNING ("Failed to find OGRE's plugin directory.  The build will succeed, but there will likely be run-time errors.")
     else()
       # This variable will be substituted into cmake/setup.sh.in
       set(OGRE_PLUGINDIR ${_pkgconfig_invoke_result})
