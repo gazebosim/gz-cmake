@@ -66,7 +66,7 @@ macro(ign_pkg_check_modules_quiet package signature)
 
   #------------------------------------
   # Define the expected arguments
-  set(options INTERFACE NO_CMAKE_ENVIRONMENT_PATH)
+  set(options INTERFACE NO_CMAKE_ENVIRONMENT_PATH QUIET)
   set(oneValueArgs "TARGET_NAME")
   set(multiValueArgs)
 

@@ -76,7 +76,9 @@ if (NOT WIN32)
   # loop through pkg config paths and find an ogre version that is < 2.0.0
   foreach(pkg_path ${PKG_CONFIG_PATH_TMP})
     set(ENV{PKG_CONFIG_PATH} ${pkg_path})
-    ign_pkg_check_modules_quiet(OGRE "OGRE >= ${full_version}" NO_CMAKE_ENVIRONMENT_PATH)
+    ign_pkg_check_modules_quiet(OGRE "OGRE >= ${full_version}"
+                                NO_CMAKE_ENVIRONMENT_PATH
+                                QUIET)
     if (OGRE_FOUND)
       if (NOT ${OGRE_VERSION} VERSION_LESS 2.0.0)
         set (OGRE_FOUND false)

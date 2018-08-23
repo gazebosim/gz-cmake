@@ -77,7 +77,7 @@ string(REPLACE ":" ";" PKG_CONFIG_PATH_TMP ${PKG_CONFIG_PATH_TMP})
 # loop through pkg config paths and find an ogre version that is >= 2.0.0
 foreach(pkg_path ${PKG_CONFIG_PATH_TMP})
   set(ENV{PKG_CONFIG_PATH} ${pkg_path})
-  ign_pkg_check_modules_quiet(OGRE2 "OGRE" NO_CMAKE_ENVIRONMENT_PATH)
+  ign_pkg_check_modules_quiet(OGRE2 "OGRE" NO_CMAKE_ENVIRONMENT_PATH QUIET)
   if (OGRE2_FOUND)
     if (${OGRE2_VERSION} VERSION_LESS 2.0.0)
       set (OGRE2_FOUND false)
