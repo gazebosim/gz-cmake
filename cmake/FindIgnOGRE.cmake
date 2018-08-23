@@ -71,12 +71,14 @@ if (NOT WIN32)
     return()
   endif()
 
-  string(REPLACE ":" ";" PKG_CONFIG_PATH_TMP_LIST ${PKG_CONFIG_PATH_TMP})
+  string(REPLACE ":" ";" PKG_CONFIG_PATH_TMP ${PKG_CONFIG_PATH_TMP})
 
   # loop through pkg config paths and find an ogre version that is < 2.0.0
-  foreach(pkg_path ${PKG_CONFIG_PATH_TMP_LIST})
+  foreach(pkg_path ${PKG_CONFIG_PATH_TMP})
     set(ENV{PKG_CONFIG_PATH} ${pkg_path})
-    ign_pkg_check_modules_quiet(OGRE "OGRE >= ${full_version}")
+    ign_pkg_check_modules_quiet(OGRE "OGRE >= ${full_version}"
+                                NO_CMAKE_ENVIRONMENT_PATH
+                                QUIET)
     if (OGRE_FOUND)
       if (NOT ${OGRE_VERSION} VERSION_LESS 2.0.0)
         set (OGRE_FOUND false)
@@ -105,8 +107,6 @@ if (NOT WIN32)
       endif()
     endforeach()
 
-    # Use the full PKG_CONFIG_PATH_TMP list while looking for the plugindir (needed for MacOS)
-    set(ENV{PKG_CONFIG_PATH} ${PKG_CONFIG_PATH_TMP})
     execute_process(COMMAND pkg-config --variable=plugindir OGRE
                     OUTPUT_VARIABLE _pkgconfig_invoke_result
                     RESULT_VARIABLE _pkgconfig_failed)
