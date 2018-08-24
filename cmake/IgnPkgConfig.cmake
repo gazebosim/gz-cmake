@@ -90,13 +90,23 @@ macro(ign_pkg_check_modules_quiet package signature)
 
   if(PKG_CONFIG_FOUND)
 
-    if(${package}_FIND_QUIETLY)
+    if(${ign_pkg_check_modules_NO_CMAKE_ENVIRONMENT_PATH})
+      set(ign_pkg_check_modules_no_cmake_environment_path_arg
+          NO_CMAKE_ENVIRONMENT_PATH)
+    else()
+      set(ign_pkg_check_modules_no_cmake_environment_path_arg)
+    endif()
+
+    if(${ign_pkg_check_modules_QUIET} OR ${package}_FIND_QUIETLY)
       set(ign_pkg_check_modules_quiet_arg QUIET)
     else()
       set(ign_pkg_check_modules_quiet_arg)
     endif()
 
-    pkg_check_modules(${package} ${ign_pkg_check_modules_quiet_arg} ${signature} ${ARGN})
+    pkg_check_modules(${package}
+                      ${ign_pkg_check_modules_quiet_arg}
+                      ${ign_pkg_check_modules_no_cmake_environment_path_arg}
+                      ${signature})
 
     # TODO: When we require cmake-3.6+, we should remove this procedure and just
     #       use the plain pkg_check_modules, which provides an option called
