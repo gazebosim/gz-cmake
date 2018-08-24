@@ -20,7 +20,7 @@ include(IgnCMake)
 
 #--------------------------------------
 # Set up the project
-ign_configure_project(VERSION_SUFFIX gz11~v1)
+ign_configure_project(VERSION_SUFFIX gz11~v2)
 
 #--------------------------------------
 # Install the ignition documentation files
