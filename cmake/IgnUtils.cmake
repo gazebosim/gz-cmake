@@ -198,6 +198,11 @@ macro(ign_find_package PACKAGE_NAME)
     #------------------------------------
     # Construct the warning/error message to produce
     set(${PACKAGE_NAME}_msg "Missing: ${${PACKAGE_NAME}_pretty}")
+
+    if(ign_find_package_COMPONENTS)
+      set(${PACKAGE_NAME}_msg "${${PACKAGE_NAME}_msg} (${ign_find_package_COMPONENTS})")
+    endif()
+
     if(DEFINED ign_find_package_PURPOSE)
       set(${PACKAGE_NAME}_msg "${${PACKAGE_NAME}_msg} - ${ign_find_package_PURPOSE}")
     endif()
