@@ -228,12 +228,6 @@ macro(ign_find_package PACKAGE_NAME)
       ign_build_warning(${${PACKAGE_NAME}_msg})
     endif()
 
-    # The rest of this function deals with the pkg-config information of the
-    # dependency, but if we did not manage to find the dependency, then we might
-    # not have access to it pkg-config information either, so we should just
-    # return here.
-    return()
-
   endif()
 
 
@@ -242,7 +236,9 @@ macro(ign_find_package PACKAGE_NAME)
   # find-config file, unless the invoker specifies that it should not be added.
   # Also, add this package or library as an entry to the pkgconfig file that we
   # will produce for our project.
-  if( (ign_find_package_REQUIRED OR ign_find_package_REQUIRED_BY) AND NOT ign_find_package_BUILD_ONLY)
+  if( ${PACKAGE_NAME}_FOUND
+      AND (ign_find_package_REQUIRED OR ign_find_package_REQUIRED_BY)
+      AND NOT ign_find_package_BUILD_ONLY)
 
     # Set up the arguments we want to pass to the find_dependency invokation for
     # our ignition project. We always need to pass the name of the dependency.
