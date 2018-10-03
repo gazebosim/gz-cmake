@@ -228,6 +228,12 @@ macro(ign_find_package PACKAGE_NAME)
       ign_build_warning(${${PACKAGE_NAME}_msg})
     endif()
 
+    # The rest of this function deals with the pkg-config information of the
+    # dependency, but if we did not manage to find the dependency, then we might
+    # not have access to it pkg-config information either, so we should just
+    # return here.
+    return()
+
   endif()
 
 
