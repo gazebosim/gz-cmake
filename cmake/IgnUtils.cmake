@@ -662,7 +662,7 @@ function(ign_install_all_headers)
 
     # Remove the excluded headers
     if(headers)
-      foreach(exclude ${excluded})
+      foreach(exclude ${ign_install_all_headers_EXCLUDE_FILES})
         list(REMOVE_ITEM headers ${exclude})
       endforeach()
     endif()
