@@ -52,7 +52,7 @@ set(minor_version ${IgnOGRE_FIND_VERSION_MINOR})
 set(full_version ${major_version}.${minor_version})
 
 # Copied from OGREConfig.cmake
-macro(ogre_declare_plugin TYPE COMPONENT)
+macro(ign_ogre_declare_plugin TYPE COMPONENT)
     set(OGRE_${TYPE}_${COMPONENT}_FOUND TRUE)
     set(OGRE_${TYPE}_${COMPONENT}_LIBRARIES ${TYPE}_${COMPONENT})
 
@@ -141,6 +141,12 @@ else()
   find_package(OGRE ${full_version}
                COMPONENTS ${IgnOGRE_FIND_COMPONENTS})
   if(OGRE_FOUND)
+    # OGREConfig.cmake from vcpkg disable the link against plugin libs
+    # when compiling the shared version of it. Here we copied the code
+    # to use it.
+    if("RenderSystem_GL" IN_LIST IgnOGRE_FIND_COMPONENTS)
+      ign_ogre_declare_plugin(RenderSystem GL)
+    endif()
     # need to return only libraries defined by components and give them the
     # full path using OGRE_LIBRARY_DIRS
     set(ogre_all_libs)
@@ -149,6 +155,11 @@ else()
       set(prefix "")
       if(ogre_lib MATCHES "Ogre" AND NOT IS_ABSOLUTE "${ogre_lib}")
         set(prefix "${OGRE_LIBRARY_DIRS}/")
+      endif()
+      if(ogre_lib MATCHES "Plugin_" OR ogre_lib MATCHES "RenderSystem_")
+        if(NOT IS_ABSOLUTE "${ogre_lib}")
+          set(prefix "${OGRE_LIBRARY_DIRS}/OGRE/")
+        endif()
       endif()
       # Some Ogre libraries are not using the .lib extension
       set(postfix "")
@@ -161,14 +172,6 @@ else()
     set(OGRE_LIBRARIES ${ogre_all_libs})
 
     set(OGRE_RESOURCE_PATH ${OGRE_CONFIG_DIR})
-
-    # OGREConfig.cmake from vcpkg disable the link against plugin libs
-    # when compiling the shared version of it. Here we copied the code
-    # to use it.
-    if("RenderSystem_GL" IN_LIST ${IgnOGRE_FIND_COMPONENTS})
-      message(STATUS "OGRE PLUGIN FOUND")
-      ogre_declare_plugin(RenderSystem GL)
-    endif()
   endif()
 endif()
 
