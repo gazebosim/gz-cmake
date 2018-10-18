@@ -151,9 +151,9 @@ else()
         math(EXPR split_pos2 "${split_pos}+1")
         string(SUBSTRING "${ogre_component}" "0" "${split_pos}" component_type)
         string(SUBSTRING "${ogre_component}" "${split_pos2}" "${len}" component_name)
-      endif()
 
-      ign_ogre_declare_plugin("${component_type}" "${component_name}")
+        ign_ogre_declare_plugin("${component_type}" "${component_name}")
+      endif()
     endforeach()
 
     # need to return only libraries defined by components and give them the
