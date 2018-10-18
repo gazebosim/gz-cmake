@@ -144,9 +144,18 @@ else()
     # OGREConfig.cmake from vcpkg disable the link against plugin libs
     # when compiling the shared version of it. Here we copied the code
     # to use it.
-    if("RenderSystem_GL" IN_LIST IgnOGRE_FIND_COMPONENTS)
-      ign_ogre_declare_plugin(RenderSystem GL)
-    endif()
+    foreach(ogre_component ${IgnOGRE_FIND_COMPONENTS})
+      if(ogre_component MATCHES "Plugin_" OR ogre_component MATCHES "RenderSystem_")
+        string(LENGTH "${ogre_component}" len)
+        string(FIND "${ogre_component}" "_" split_pos)
+        math(EXPR split_pos2 "${split_pos}+1")
+        string(SUBSTRING "${ogre_component}" "0" "${split_pos}" component_type)
+        string(SUBSTRING "${ogre_component}" "${split_pos2}" "${len}" component_name)
+      endif()
+
+      ign_ogre_declare_plugin(component_type component_name)
+    endforeach()
+
     # need to return only libraries defined by components and give them the
     # full path using OGRE_LIBRARY_DIRS
     set(ogre_all_libs)
