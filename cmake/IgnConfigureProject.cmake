@@ -123,7 +123,7 @@ macro(ign_configure_project)
   set(PROJECT_PKGCONFIG_REQUIRES)
 
   # Initialize the list of <PROJECT_NAME>.pc Requires.private
-  set(PROJECT_PKCONFIG_REQUIRES_PRIVATE)
+  set(PROJECT_PKGCONFIG_REQUIRES_PRIVATE)
 
   # Initialize the list of <PROJECT_NAME>.pc Libs
   set(PROJECT_PKGCONFIG_LIBS)
