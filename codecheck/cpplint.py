@@ -399,6 +399,18 @@ _CPP_HEADERS = frozenset([
     'utility',
     'valarray',
     'vector',
+    # 17.6.1.2 C++14 headers
+    'shared_mutex',
+    # 17.6.1.2 C++17 headers
+    'any',
+    'charconv',
+    'codecvt',
+    'execution',
+    'filesystem',
+    'memory_resource',
+    'optional',
+    'string_view',
+    'variant',
     # 17.6.1.2 C++ headers for C library facilities
     'cassert',
     'ccomplex',
@@ -2361,20 +2373,20 @@ class _NamespaceInfo(_BlockInfo):
     # Besides these, we don't accept anything else, otherwise we might
     # get false negatives when existing comment is a substring of the
     # expected namespace.
-    if self.name:
-      return
-    else:
-      # Anonymous namespace
-      if not Match(r'^\s*};*\s*(//|/\*).*\bnamespace[\*/\.\\\s]*$', line):
-        # If "// namespace anonymous" or "// anonymous namespace (more text)",
-        # mention "// anonymous namespace" as an acceptable form
-        if Match(r'^\s*}.*\b(namespace anonymous|anonymous namespace)\b', line):
-          error(filename, linenum, 'readability/namespace', 5,
-                'Anonymous namespace should be terminated with "// namespace"'
-                ' or "// anonymous namespace"')
-        else:
-          error(filename, linenum, 'readability/namespace', 5,
-                'Anonymous namespace should be terminated with "// namespace"')
+    # if self.name:
+    #   return
+    # else:
+    #   # Anonymous namespace
+    #   if not Match(r'^\s*};*\s*(//|/\*).*\bnamespace[\*/\.\\\s]*$', line):
+    #     # If "// namespace anonymous" or "// anonymous namespace (more text)",
+    #     # mention "// anonymous namespace" as an acceptable form
+    #     if Match(r'^\s*}.*\b(namespace anonymous|anonymous namespace)\b', line):
+    #       error(filename, linenum, 'readability/namespace', 5,
+    #             'Anonymous namespace should be terminated with "// namespace"'
+    #             ' or "// anonymous namespace"')
+    #     else:
+    #       error(filename, linenum, 'readability/namespace', 5,
+    #             'Anonymous namespace should be terminated with "// namespace"')
 
 
 class _PreprocessorInfo(object):
@@ -2986,7 +2998,8 @@ def CheckSpacingForFunctionCall(filename, clean_lines, linenum, error):
       if Search(r'\boperator_*\b', line):
         error(filename, linenum, 'whitespace/parens', 0,
               'Extra space before ( in function call')
-      else:
+      # If < and > are present, then we assume fncall is a function pointer.
+      elif not Search(r'\<.*\>', fncall):
         error(filename, linenum, 'whitespace/parens', 4,
               'Extra space before ( in function call')
     # If the ) is followed only by a newline or a { + newline, assume it's
@@ -4530,10 +4543,10 @@ def CheckIncludeLine(filename, clean_lines, linenum, include_state, error):
   #
   # We also make an exception for Lua headers, which follow google
   # naming convention but not the include convention.
-  match = Match(r'#include\s*"([^/]+\.h)"', line)
-  if match and not _THIRD_PARTY_HEADERS_PATTERN.match(match.group(1)):
-    error(filename, linenum, 'build/include', 4,
-          'Include the directory when naming .h files')
+  # match = Match(r'#include\s*"([^/]+\.h)"', line)
+  # if match and not _THIRD_PARTY_HEADERS_PATTERN.match(match.group(1)):
+  #   error(filename, linenum, 'build/include', 4,
+  #         'Include the directory when naming .h files')
 
   # we shouldn't include a file more than once. actually, there are a
   # handful of instances where doing so is okay, but in general it's
@@ -6061,8 +6074,9 @@ def ProcessFile(filename, vlevel, extra_check_functions=[]):
   # When reading from stdin, the extension is unknown, so no cpplint tests
   # should rely on the extension.
   if filename != '-' and file_extension not in _valid_extensions:
-    sys.stderr.write('Ignoring %s; not a valid file name '
-                     '(%s)\n' % (filename, ', '.join(_valid_extensions)))
+    if not _Quiet():
+      sys.stderr.write('Ignoring %s; not a valid file name '
+                       '(%s)\n' % (filename, ', '.join(_valid_extensions)))
   else:
     ProcessFileData(filename, file_extension, lines, Error,
                     extra_check_functions)

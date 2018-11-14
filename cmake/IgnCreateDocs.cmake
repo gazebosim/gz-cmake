@@ -23,10 +23,16 @@
 
 #################################################
 # ign_create_docs(
+#     [API_MAINPAGE_MD <api_markdown_mainpage>]
+#     [TUTORIALS_MAINPAGE_MD <tutorials_markdown_mainpage>]
 #     [TAGFILES <tagfile_list>])
 #
 # This function will configure doxygen templates and install them.
 #
+# API_MAINPAGE_MD: Optional. Specify a Markdown page to use as the main page
+# for API documentation.
+# TUTORIALS_MAINPAGE_MD: Optional. Specify a Markdown page to use as the
+# main page for tutorial documentation.
 # TAGFILES: Optional. Specify tagfiles for doxygen to use. It should be a list of strings like:
 #           "${IGNITION-<DESIGNATION>_DOXYGEN_TAGFILE} = ${IGNITION-<DESIGNATION>_API_URL}"
 function(ign_create_docs)
@@ -34,7 +40,7 @@ function(ign_create_docs)
   #------------------------------------
   # Define the expected arguments
   set(options)
-  set(oneValueArgs)
+  set(oneValueArgs API_MAINPAGE_MD TUTORIALS_MAINPAGE_MD)
   set(multiValueArgs "TAGFILES")
 
   #------------------------------------
@@ -100,6 +106,10 @@ function(ign_create_docs)
   include(IgnRonn2Man)
   ign_add_manpage_target()
 
+  set(IGNITION_DOXYGEN_API_MAINPAGE_MD ${ign_create_docs_API_MAINPAGE_MD})
+  set(IGNITION_DOXYGEN_TUTORIALS_MAINPAGE_MD
+    ${ign_create_docs_TUTORIALS_MAINPAGE_MD})
+
   set(IGNITION_DOXYGEN_TAGFILES " ")
 
   foreach(tagfile ${ign_create_docs_TAGFILES})
@@ -107,20 +117,14 @@ function(ign_create_docs)
   endforeach()
 
   find_package(Doxygen)
-  if (DOXYGEN_FOUND AND EXISTS ${IGNITION_CMAKE_DOXYGEN_DIR}/api.in AND
-      EXISTS ${IGNITION_CMAKE_DOXYGEN_DIR}/tutorials.in)
+  if (DOXYGEN_FOUND AND EXISTS ${IGNITION_CMAKE_DOXYGEN_DIR}/api.in)
     configure_file(${IGNITION_CMAKE_DOXYGEN_DIR}/api.in
                    ${CMAKE_BINARY_DIR}/api.dox @ONLY)
-
-    configure_file(${IGNITION_CMAKE_DOXYGEN_DIR}/tutorials.in
-                   ${CMAKE_BINARY_DIR}/tutorials.dox @ONLY)
 
     add_custom_target(doc ALL
       # Generate the API documentation
       ${DOXYGEN_EXECUTABLE} ${CMAKE_BINARY_DIR}/api.dox
       WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-
-      COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_BINARY_DIR}/tutorials.dox
 
       COMMENT "Generating API documentation with Doxygen" VERBATIM)
 

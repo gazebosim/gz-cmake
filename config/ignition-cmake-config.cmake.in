@@ -22,6 +22,16 @@ set(@PKG_NAME@_CONFIG_INCLUDED TRUE)
 
 @PACKAGE_INIT@
 
+if(NOT TARGET @ign_utilities_import_target_name@)
+  include("${CMAKE_CURRENT_LIST_DIR}/@ign_utilities_target_output_filename@")
+
+  # Create a simplified imported target name for the utilities library
+  add_library(@simple_utilities_import_name@ INTERFACE IMPORTED)
+  set_target_properties(@simple_utilities_import_name@ PROPERTIES
+    INTERFACE_LINK_LIBRARIES @ign_utilities_import_target_name@)
+
+endif()
+
 # We should only perform these operations if either
 #  1. ign-cmake has not been included yet, or
 #  2. we need a higher version of ign-cmake than the last one that was included
