@@ -1,6 +1,6 @@
 # Ignition CMake : CMake Modules for Ignition Projects
 
-**Maintainer:** <email> AT <domain>
+**Maintainer:** grey AT openrobotics.org
 
 [![Bitbucket open issues](https://img.shields.io/bitbucket/issues-raw/ignitionrobotics/ign-cmake.svg)](https://bitbucket.org/ignitionrobotics/ign-cmake/issues)
 [![Bitbucket open pull requests](https://img.shields.io/bitbucket/pr-raw/ignitionrobotics/ign-cmake.svg)](https://bitbucket.org/ignitionrobotics/ign-cmake/pull-requests)
@@ -13,8 +13,6 @@ Test coverage | [![codecov](https://codecov.io/bb/ignitionrobotics/ign-cmake/bra
 Ubuntu Bionic | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_cmake-ci-default-bionic-amd64)](https://build.osrfoundation.org/job/ignition_cmake-ci-default-bionic-amd64)  
 Homebrew      | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_cmake-ci-default-homebrew-amd64)](https://build.osrfoundation.org/job/ignition_cmake-ci-default-homebrew-amd64)  
 Windows       | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_cmake-ci-default-windows7-amd64)](https://build.osrfoundation.org/job/ignition_cmake-ci-default-windows7-amd64)
-
-<Introduction to this repository>
 
 # Table of Contents
 
