@@ -51,6 +51,14 @@ set(minor_version ${IgnOGRE_FIND_VERSION_MINOR})
 # Set the full version number
 set(full_version ${major_version}.${minor_version})
 
+# Copied from OGREConfig.cmake
+macro(ign_ogre_declare_plugin TYPE COMPONENT)
+    set(OGRE_${TYPE}_${COMPONENT}_FOUND TRUE)
+    set(OGRE_${TYPE}_${COMPONENT}_LIBRARIES ${TYPE}_${COMPONENT})
+
+    list(APPEND OGRE_LIBRARIES ${TYPE}_${COMPONENT})
+endmacro()
+
 if (NOT WIN32)
   # pkg-config platforms
   set(PKG_CONFIG_PATH_ORIGINAL $ENV{PKG_CONFIG_PATH})
@@ -132,8 +140,22 @@ if (NOT WIN32)
 else()
   find_package(OGRE ${full_version}
                COMPONENTS ${IgnOGRE_FIND_COMPONENTS})
-
   if(OGRE_FOUND)
+    # OGREConfig.cmake from vcpkg disable the link against plugin libs
+    # when compiling the shared version of it. Here we copied the code
+    # to use it.
+    foreach(ogre_component ${IgnOGRE_FIND_COMPONENTS})
+      if(ogre_component MATCHES "Plugin_" OR ogre_component MATCHES "RenderSystem_")
+        string(LENGTH "${ogre_component}" len)
+        string(FIND "${ogre_component}" "_" split_pos)
+        math(EXPR split_pos2 "${split_pos}+1")
+        string(SUBSTRING "${ogre_component}" "0" "${split_pos}" component_type)
+        string(SUBSTRING "${ogre_component}" "${split_pos2}" "${len}" component_name)
+
+        ign_ogre_declare_plugin("${component_type}" "${component_name}")
+      endif()
+    endforeach()
+
     # need to return only libraries defined by components and give them the
     # full path using OGRE_LIBRARY_DIRS
     set(ogre_all_libs)
@@ -142,6 +164,11 @@ else()
       set(prefix "")
       if(ogre_lib MATCHES "Ogre" AND NOT IS_ABSOLUTE "${ogre_lib}")
         set(prefix "${OGRE_LIBRARY_DIRS}/")
+      endif()
+      if(ogre_lib MATCHES "Plugin_" OR ogre_lib MATCHES "RenderSystem_")
+        if(NOT IS_ABSOLUTE "${ogre_lib}")
+          set(prefix "${OGRE_LIBRARY_DIRS}/OGRE/")
+        endif()
       endif()
       # Some Ogre libraries are not using the .lib extension
       set(postfix "")
