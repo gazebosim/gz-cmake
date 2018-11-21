@@ -32,6 +32,7 @@
 #  OGRE2_VERSION_MINOR      OGRE minor version
 #  OGRE2_VERSION_PATCH      OGRE patch version
 #  OGRE2_RESOURCE_PATH      Path to ogre plugins directory
+#  IgnOGRE2::IgnOGRE2       Imported target for OGRE2
 #
 # On Windows, we assume that all the OGRE* defines are passed in manually
 # to CMake.
@@ -52,45 +53,69 @@ if (${OGRE2_FIND_VERSION_MAJOR})
   endif()
 endif()
 
-set(PKG_CONFIG_PATH_ORIGINAL $ENV{PKG_CONFIG_PATH})
-set(PKG_CONFIG_PATH_TMP ${PKG_CONFIG_PATH_ORIGINAL})
 
 if (NOT WIN32)
-  execute_process(COMMAND pkg-config --variable pc_path pkg-config
-                  OUTPUT_VARIABLE _pkgconfig_invoke_result
-                  RESULT_VARIABLE _pkgconfig_failed)
-  if(_pkgconfig_failed)
-    IGN_BUILD_WARNING ("Failed to get pkg-config search paths")
-  elseif (NOT "_pkgconfig_invoke_result" STREQUAL "")
-    set (PKG_CONFIG_PATH_TMP "${PKG_CONFIG_PATH_TMP}:${_pkgconfig_invoke_result}")
-  endif()
-endif()
+  set(PKG_CONFIG_PATH_ORIGINAL $ENV{PKG_CONFIG_PATH})
 
-# check and see if there are any paths at all
-if ("${PKG_CONFIG_PATH_TMP}" STREQUAL "")
-  message("No valid pkg-config search paths found")
-  return()
-endif()
-
-string(REPLACE ":" ";" PKG_CONFIG_PATH_TMP ${PKG_CONFIG_PATH_TMP})
-
-# loop through pkg config paths and find an ogre version that is >= 2.0.0
-foreach(pkg_path ${PKG_CONFIG_PATH_TMP})
-  set(ENV{PKG_CONFIG_PATH} ${pkg_path})
-  ign_pkg_check_modules_quiet(OGRE2 "OGRE" NO_CMAKE_ENVIRONMENT_PATH QUIET)
+  # Note: OGRE2 installed from debs is named OGRE-2.1 while the version
+  # installed from source does not have the 2.1 suffix
+  # look for OGRE2 installed from debs
+  ign_pkg_check_modules_quiet(OGRE2 "OGRE-2.1" NO_CMAKE_ENVIRONMENT_PATH QUIET)
   if (OGRE2_FOUND)
-    if (${OGRE2_VERSION} VERSION_LESS 2.0.0)
-      set (OGRE2_FOUND false)
-    else ()
-      break()
+    set(PKG_NAME "OGRE-2.1")
+  else()
+    # look for OGRE2 installed from source
+    set(PKG_CONFIG_PATH_TMP ${PKG_CONFIG_PATH_ORIGINAL})
+    execute_process(COMMAND pkg-config --variable pc_path pkg-config
+                    OUTPUT_VARIABLE _pkgconfig_invoke_result
+                    RESULT_VARIABLE _pkgconfig_failed)
+    if(_pkgconfig_failed)
+      IGN_BUILD_WARNING ("Failed to get pkg-config search paths")
+    elseif (NOT "_pkgconfig_invoke_result" STREQUAL "")
+      set (PKG_CONFIG_PATH_TMP "${PKG_CONFIG_PATH_TMP}:${_pkgconfig_invoke_result}")
     endif()
-  endif()
-endforeach()
 
-# use pkg-config to find ogre plugin path
-# do it here before resetting the pkg-config paths
-if (NOT WIN32)
-  execute_process(COMMAND pkg-config --variable=plugindir OGRE
+    # check and see if there are any paths at all
+    if ("${PKG_CONFIG_PATH_TMP}" STREQUAL "")
+      message("No valid pkg-config search paths found")
+      return()
+    endif()
+
+    string(REPLACE ":" ";" PKG_CONFIG_PATH_TMP ${PKG_CONFIG_PATH_TMP})
+
+    # loop through pkg config paths and find an ogre version that is >= 2.0.0
+    foreach(pkg_path ${PKG_CONFIG_PATH_TMP})
+      set(ENV{PKG_CONFIG_PATH} ${pkg_path})
+      pkg_check_modules(OGRE2 "OGRE" NO_CMAKE_ENVIRONMENT_PATH QUIET)
+      if (OGRE2_FOUND)
+        if (${OGRE2_VERSION} VERSION_LESS 2.0.0)
+          set (OGRE2_FOUND false)
+        else ()
+          # pkg_check_modules does not provide complete path to libraries
+          # So update variable to point to full path
+          set(OGRE2_LIBRARY_NAME ${OGRE2_LIBRARIES})
+          find_library(OGRE2_LIBRARY NAMES ${OGRE2_LIBRARY_NAME}
+                                     HINTS ${OGRE2_LIBRARY_DIRS} NO_DEFAULT_PATH)
+          if ("${OGRE2_LIBRARY}" STREQUAL "OGRE2_LIBRARY-NOTFOUND")
+            set(OGRE2_FOUND false)
+            continue()
+          else()
+            set(OGRE2_LIBRARIES ${OGRE2_LIBRARY})
+          endif()
+          set(PKG_NAME "OGRE")
+          break()
+        endif()
+      endif()
+    endforeach()
+  endif()
+
+  if (NOT OGRE2_FOUND)
+    return()
+  endif()
+
+  # use pkg-config to find ogre plugin path
+  # do it here before resetting the pkg-config paths
+  execute_process(COMMAND pkg-config --variable=plugindir ${PKG_NAME}
                   OUTPUT_VARIABLE _pkgconfig_invoke_result
                   RESULT_VARIABLE _pkgconfig_failed)
   if(_pkgconfig_failed)
@@ -98,105 +123,101 @@ if (NOT WIN32)
   else()
     set(OGRE2_PLUGINDIR ${_pkgconfig_invoke_result})
   endif()
-endif()
 
-# reset pkg config path
-set(ENV{PKG_CONFIG_PATH} ${PKG_CONFIG_PATH_ORIGINAL})
+  # reset pkg config path
+  set(ENV{PKG_CONFIG_PATH} ${PKG_CONFIG_PATH_ORIGINAL})
 
-if (NOT OGRE2_FOUND)
-  return()
-endif()
-
-# verify ogre header can be found in the include path
-find_path(OGRE2_INCLUDE
-  NAMES Ogre.h
-  PATHS ${OGRE2_INCLUDE_DIRS}
-  NO_DEFAULT_PATH
-)
-
-if(NOT OGRE2_INCLUDE)
-  set(OGRE2_FOUND false)
-  return()
-endif()
-
-# this macro and the version parsing logic below is taken from the
-# FindOGRE.cmake file distributed by ogre
-macro(get_preprocessor_entry CONTENTS KEYWORD VARIABLE)
-  string(REGEX MATCH
-    "# *define +${KEYWORD} +((\"([^\n]*)\")|([^ \n]*))"
-    PREPROC_TEMP_VAR
-    ${${CONTENTS}}
+  # verify ogre header can be found in the include path
+  find_path(OGRE2_INCLUDE
+    NAMES Ogre.h
+    PATHS ${OGRE2_INCLUDE_DIRS}
+    NO_DEFAULT_PATH
   )
-  if (CMAKE_MATCH_3)
-    set(${VARIABLE} ${CMAKE_MATCH_3})
-  else ()
-    set(${VARIABLE} ${CMAKE_MATCH_4})
-  endif ()
-endmacro()
 
-file(READ ${OGRE2_INCLUDE}/OgrePrerequisites.h OGRE_TEMP_VERSION_CONTENT)
-get_preprocessor_entry(OGRE_TEMP_VERSION_CONTENT OGRE_VERSION_MAJOR OGRE2_VERSION_MAJOR)
-get_preprocessor_entry(OGRE_TEMP_VERSION_CONTENT OGRE_VERSION_MINOR OGRE2_VERSION_MINOR)
-get_preprocessor_entry(OGRE_TEMP_VERSION_CONTENT OGRE_VERSION_PATCH OGRE2_VERSION_PATCH)
-get_preprocessor_entry(OGRE_TEMP_VERSION_CONTENT OGRE_VERSION_NAME OGRE2_VERSION_NAME)
-set(OGRE2_VERSION "${OGRE2_VERSION_MAJOR}.${OGRE2_VERSION_MINOR}.${OGRE2_VERSION_PATCH}")
-
-# get ogre library paths
-if ("${OGRE2_LIBRARY_DIRS}" STREQUAL "")
-  foreach (lib ${OGRE2_LIBRARIES})
-    get_filename_component(OGRE2_LIBRARY_DIR "${lib}" PATH)
-    list(APPEND OGRE2_LIBRARY_DIRS ${OGRE2_LIBRARY_DIR})
-  endforeach()
-endif()
-
-# find the main ogre library
-set(OGRE2_LIBRARY_NAME OgreMain)
-find_library(OGRE2_LIBRARY NAMES ${OGRE2_LIBRARY_NAME} HINTS ${OGRE2_LIBRARY_DIRS} NO_DEFAULT_PATH)
-
-if ("${OGRE2_LIBRARY}" STREQUAL "OGRE2_LIBRARY-NOTFOUND")
-  set(OGRE2_FOUND false)
-  return()
-endif()
-
-# find ogre components
-include(IgnImportTarget)
-foreach(component ${OGRE2_FIND_COMPONENTS})
-  find_library(OGRE2-${component} NAMES "Ogre${component}" HINTS ${OGRE2_LIBRARY_DIRS})
-  if (NOT "OGRE2-${component}" STREQUAL "OGRE2-${component}-NOTFOUND")
-    # create a new target for each component
-    set(component_TARGET_NAME "OGRE2-${component}::OGRE2-${component}")
-    set(component_INCLUDE_DIRS ${OGRE2_INCLUDE_DIRS})
-    set(component_LIBRARY_DIRS ${OGRE2_LIBRARY_DIRS})
-    set(component_LIBRARIES ${OGRE2-${component}})
-    ign_import_target(${component} TARGET_NAME ${component_TARGET_NAME}
-        LIB_VAR component_LIBRARIES
-        INCLUDE_VAR component_INCLUDE_DIRS)
-
-    # add it to the list of ogre libraries
-    list(APPEND OGRE2_LIBRARIES ${component_TARGET_NAME})
-
-  elseif(OGRE2_FIND_REQUIRED_${component})
+  if(NOT OGRE2_INCLUDE)
     set(OGRE2_FOUND false)
+    return()
   endif()
-endforeach()
 
-if ("${OGRE2_PLUGINDIR}" STREQUAL "")
-  # set path to find ogre plugins
-  # keep variable naming consistent with ogre 1
-  # TODO currently using harded paths based on dir structure in ubuntu
-  foreach(resource_path ${OGRE2_LIBRARY_DIRS})
-    list(APPEND OGRE2_RESOURCE_PATH "${resource_path}/OGRE")
+  # manually search and append the the RenderSystem/GL3Plus path to
+  # OGRE2_INCLUDE_DIRS so OGRE GL headers can be found
+  foreach (dir ${OGRE2_INCLUDE_DIRS})
+    get_filename_component(dir_name "${dir}" NAME)
+    if ("${dir_name}" STREQUAL ${PKG_NAME})
+      set(dir_include "${dir}/RenderSystems/GL3Plus")
+    else()
+      set(dir_include "${dir}")
+    endif()
+    list(APPEND OGRE2_INCLUDE_DIRS ${dir_include})
   endforeach()
-else()
-  set(OGRE2_RESOURCE_PATH ${OGRE2_PLUGINDIR})
-  # Seems that OGRE2_PLUGINDIR can end in a newline, which will cause problems
-  # when we pass it to the compiler later.
-  string(REPLACE "\n" "" OGRE2_RESOURCE_PATH ${OGRE2_RESOURCE_PATH})
+
+  # this macro and the version parsing logic below is taken from the
+  # FindOGRE.cmake file distributed by ogre
+  macro(get_preprocessor_entry CONTENTS KEYWORD VARIABLE)
+    string(REGEX MATCH
+      "# *define +${KEYWORD} +((\"([^\n]*)\")|([^ \n]*))"
+      PREPROC_TEMP_VAR
+      ${${CONTENTS}}
+    )
+    if (CMAKE_MATCH_3)
+      set(${VARIABLE} ${CMAKE_MATCH_3})
+    else ()
+      set(${VARIABLE} ${CMAKE_MATCH_4})
+    endif ()
+  endmacro()
+
+  file(READ ${OGRE2_INCLUDE}/OgrePrerequisites.h OGRE_TEMP_VERSION_CONTENT)
+  get_preprocessor_entry(OGRE_TEMP_VERSION_CONTENT OGRE_VERSION_MAJOR OGRE2_VERSION_MAJOR)
+  get_preprocessor_entry(OGRE_TEMP_VERSION_CONTENT OGRE_VERSION_MINOR OGRE2_VERSION_MINOR)
+  get_preprocessor_entry(OGRE_TEMP_VERSION_CONTENT OGRE_VERSION_PATCH OGRE2_VERSION_PATCH)
+  get_preprocessor_entry(OGRE_TEMP_VERSION_CONTENT OGRE_VERSION_NAME OGRE2_VERSION_NAME)
+  set(OGRE2_VERSION "${OGRE2_VERSION_MAJOR}.${OGRE2_VERSION_MINOR}.${OGRE2_VERSION_PATCH}")
+
+  # find ogre components
+  include(IgnImportTarget)
+  foreach(component ${OGRE2_FIND_COMPONENTS})
+    find_library(OGRE2-${component} NAMES "Ogre${component}" HINTS ${OGRE2_LIBRARY_DIRS})
+    if (NOT "OGRE2-${component}" STREQUAL "OGRE2-${component}-NOTFOUND")
+      # create a new target for each component
+      set(component_TARGET_NAME "OGRE2-${component}::OGRE2-${component}")
+      set(component_INCLUDE_DIRS ${OGRE2_INCLUDE_DIRS})
+      set(component_LIBRARY_DIRS ${OGRE2_LIBRARY_DIRS})
+      set(component_LIBRARIES ${OGRE2-${component}})
+      ign_import_target(${component} TARGET_NAME ${component_TARGET_NAME}
+          LIB_VAR component_LIBRARIES
+          INCLUDE_VAR component_INCLUDE_DIRS)
+
+      # add it to the list of ogre libraries
+      list(APPEND OGRE2_LIBRARIES ${component_TARGET_NAME})
+
+    elseif(OGRE2_FIND_REQUIRED_${component})
+      set(OGRE2_FOUND false)
+    endif()
+  endforeach()
+
+  if ("${OGRE2_PLUGINDIR}" STREQUAL "")
+    # set path to find ogre plugins
+    # keep variable naming consistent with ogre 1
+    # TODO currently using harded paths based on dir structure in ubuntu
+    foreach(resource_path ${OGRE2_LIBRARY_DIRS})
+      list(APPEND OGRE2_RESOURCE_PATH "${resource_path}/OGRE")
+    endforeach()
+  else()
+    set(OGRE2_RESOURCE_PATH ${OGRE2_PLUGINDIR})
+    # Seems that OGRE2_PLUGINDIR can end in a newline, which will cause problems
+    # when we pass it to the compiler later.
+    string(REPLACE "\n" "" OGRE2_RESOURCE_PATH ${OGRE2_RESOURCE_PATH})
+  endif()
+
+#endif NOT WIN32
 endif()
 
 # create OGRE2 target
 if (OGRE2_FOUND)
-  ign_import_target(OGRE2)
+  ign_import_target(IgnOGRE2
+    TARGET_NAME IgnOGRE2::IgnOGRE2
+    LIB_VAR OGRE2_LIBRARIES
+    INCLUDE_VAR OGRE2_INCLUDE_DIRS)
 endif()
 
 # We need to manually specify the pkgconfig entry (and type of entry),

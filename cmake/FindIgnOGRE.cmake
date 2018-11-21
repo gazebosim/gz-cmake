@@ -32,6 +32,7 @@
 #  OGRE_VERSION_MINOR      OGRE minor version
 #  OGRE_VERSION_PATCH      OGRE patch version
 #  OGRE_RESOURCE_PATH      Path to ogre plugins directory
+#  IgnOGRE::IgnOGRE        Imported target for OGRE
 #
 # On Windows, we assume that all the OGRE* defines are passed in manually
 # to CMake.
@@ -89,6 +90,18 @@ if (NOT WIN32)
   endforeach()
 
   if (OGRE_FOUND)
+    # manually search and append the the RenderSystem/GL path to
+    # OGRE_INCLUDE_DIRS so OGRE GL headers can be found
+    foreach (dir ${OGRE_INCLUDE_DIRS})
+      get_filename_component(dir_name "${dir}" NAME)
+      if ("${dir_name}" STREQUAL "OGRE")
+        set(dir_include "${dir}/RenderSystems/GL")
+      else()
+        set(dir_include "${dir}")
+      endif()
+      list(APPEND OGRE_INCLUDE_DIRS ${dir_include})
+    endforeach()
+
     # set OGRE major, minor, and patch version number
     string (REGEX REPLACE "^([0-9]+).*" "\\1"
       OGRE_VERSION_MAJOR "${OGRE_VERSION}")
@@ -123,6 +136,7 @@ if (NOT WIN32)
     # Seems that OGRE_PLUGINDIR can end in a newline, which will cause problems
     # when we pass it to the compiler later.
     string(REPLACE "\n" "" OGRE_RESOURCE_PATH ${OGRE_RESOURCE_PATH})
+
 
   endif()
 
@@ -160,4 +174,12 @@ endif()
 set(IgnOGRE_FOUND false)
 if(OGRE_FOUND)
   set(IgnOGRE_FOUND true)
+
+  include(IgnImportTarget)
+
+  ign_import_target(IgnOGRE
+    TARGET_NAME IgnOGRE::IgnOGRE
+    LIB_VAR OGRE_LIBRARIES
+    INCLUDE_VAR OGRE_INCLUDE_DIRS)
+
 endif()
