@@ -184,6 +184,17 @@ else()
   endif()
 endif()
 
+# there is a problem with finding gl/glew.h
+foreach(dir ${OGRE_INCLUDE_DIRS})
+  get_filename_component(dir_name "${dir}" NAME)
+  if("${dir_name}" STREQUAL "OGRE")
+    set(dir_include "${dir}/RenderSystems/GL")
+  else()
+    set(dir_include "${dir}")
+  endif()
+  list(APPEND OGRE_INCLUDES ${dir_include})
+endforeach()
+
 set(IgnOGRE_FOUND false)
 if(OGRE_FOUND)
   set(IgnOGRE_FOUND true)
