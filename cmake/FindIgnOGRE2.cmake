@@ -20,7 +20,7 @@
 #
 # Usage of this module as follows:
 #
-#     ign_find_package(OGRE2)
+#     ign_find_package(IgnOGRE2)
 #
 # Variables defined by this module:
 #
@@ -41,13 +41,13 @@
 #
 # Example usage:
 #
-#     ign_find_package(OGRE2
+#     ign_find_package(IgnOGRE2
 #                      VERSION 2.1.0
 #                      COMPONENTS HlmsPbs HlmsUnlit Overlay)
 
 # sanity check
-if (${OGRE2_FIND_VERSION_MAJOR})
-  if (${OGRE2_FIND_VERSION_MAJOR} VERSION_LESS "2")
+if (${IgnOGRE2_FIND_VERSION_MAJOR})
+  if (${IgnOGRE2_FIND_VERSION_MAJOR} VERSION_LESS "2")
     set (OGRE2_FOUND false)
     return()
   endif()
@@ -175,11 +175,11 @@ if (NOT WIN32)
 
   # find ogre components
   include(IgnImportTarget)
-  foreach(component ${OGRE2_FIND_COMPONENTS})
+  foreach(component ${IgnOGRE2_FIND_COMPONENTS})
     find_library(OGRE2-${component} NAMES "Ogre${component}" HINTS ${OGRE2_LIBRARY_DIRS})
     if (NOT "OGRE2-${component}" STREQUAL "OGRE2-${component}-NOTFOUND")
       # create a new target for each component
-      set(component_TARGET_NAME "OGRE2-${component}::OGRE2-${component}")
+      set(component_TARGET_NAME "IgnOGRE2-${component}::IgnOGRE2-${component}")
       set(component_INCLUDE_DIRS ${OGRE2_INCLUDE_DIRS})
       set(component_LIBRARY_DIRS ${OGRE2_LIBRARY_DIRS})
       set(component_LIBRARIES ${OGRE2-${component}})
@@ -190,7 +190,7 @@ if (NOT WIN32)
       # add it to the list of ogre libraries
       list(APPEND OGRE2_LIBRARIES ${component_TARGET_NAME})
 
-    elseif(OGRE2_FIND_REQUIRED_${component})
+    elseif(IgnOGRE2_FIND_REQUIRED_${component})
       set(OGRE2_FOUND false)
     endif()
   endforeach()
@@ -209,18 +209,21 @@ if (NOT WIN32)
     string(REPLACE "\n" "" OGRE2_RESOURCE_PATH ${OGRE2_RESOURCE_PATH})
   endif()
 
+  # We need to manually specify the pkgconfig entry (and type of entry),
+  # because ign_pkg_check_modules does not work for it.
+  include(IgnPkgConfig)
+  ign_pkg_config_library_entry(IgnOGRE2 OgreMain)
+
 #endif NOT WIN32
 endif()
 
+set(IgnOGRE2_FOUND false)
 # create OGRE2 target
 if (OGRE2_FOUND)
+  set(IgnOGRE2_FOUND true)
+
   ign_import_target(IgnOGRE2
     TARGET_NAME IgnOGRE2::IgnOGRE2
     LIB_VAR OGRE2_LIBRARIES
     INCLUDE_VAR OGRE2_INCLUDE_DIRS)
 endif()
-
-# We need to manually specify the pkgconfig entry (and type of entry),
-# because ign_pkg_check_modules does not work for it.
-include(IgnPkgConfig)
-ign_pkg_config_library_entry(OGRE2 OgreMain)
