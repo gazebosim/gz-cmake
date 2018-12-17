@@ -194,6 +194,17 @@ else()
   string(REPLACE "\n" "" OGRE2_RESOURCE_PATH ${OGRE2_RESOURCE_PATH})
 endif()
 
+# there is a problem with finding gl/glew.h on macOS
+foreach (dir ${OGRE2_INCLUDE_DIRS})
+  get_filename_component(dir_name "${dir}" NAME)
+  if ("${dir_name}" STREQUAL "OGRE")
+    set(dir_include "${dir}/RenderSystems/GL3Plus")
+  else()
+    set(dir_include "${dir}")
+  endif()
+  list(APPEND OGRE2_INCLUDES ${dir_include})
+endforeach()
+
 # create OGRE2 target
 if (OGRE2_FOUND)
   ign_import_target(OGRE2)
