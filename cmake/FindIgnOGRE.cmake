@@ -98,18 +98,6 @@ if (NOT WIN32)
   endforeach()
 
   if (OGRE_FOUND)
-    # manually search and append the the RenderSystem/GL path to
-    # OGRE_INCLUDE_DIRS so OGRE GL headers can be found
-    foreach (dir ${OGRE_INCLUDE_DIRS})
-      get_filename_component(dir_name "${dir}" NAME)
-      if ("${dir_name}" STREQUAL "OGRE")
-        set(dir_include "${dir}/RenderSystems/GL")
-      else()
-        set(dir_include "${dir}")
-      endif()
-      list(APPEND OGRE_INCLUDE_DIRS ${dir_include})
-    endforeach()
-
     # set OGRE major, minor, and patch version number
     string (REGEX REPLACE "^([0-9]+).*" "\\1"
       OGRE_VERSION_MAJOR "${OGRE_VERSION}")
@@ -197,6 +185,20 @@ else()
     set(OGRE_RESOURCE_PATH ${OGRE_CONFIG_DIR})
   endif()
 endif()
+
+# manually search and append the the RenderSystem/GL path to
+# OGRE_INCLUDE_DIRS so OGRE GL headers can be found
+foreach (dir ${OGRE_INCLUDE_DIRS})
+  get_filename_component(dir_name "${dir}" NAME)
+  if ("${dir_name}" STREQUAL "OGRE")
+    set(dir_include "${dir}/RenderSystems/GL")
+  else()
+    set(dir_include "${dir}")
+  endif()
+  list(APPEND OGRE_INCLUDE_DIRS ${dir_include})
+endforeach()
+
+
 
 set(IgnOGRE_FOUND false)
 if(OGRE_FOUND)
