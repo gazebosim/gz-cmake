@@ -161,6 +161,7 @@ else()
     # need to return only libraries defined by components and give them the
     # full path using OGRE_LIBRARY_DIRS
     set(ogre_all_libs)
+    message(" ignogre original ogre_libraries: ${OGRE_LIBRARIES}")
     foreach(ogre_lib ${OGRE_LIBRARIES})
       # Be sure that all Ogre* libraries are using absolute paths
       set(prefix "")
@@ -178,6 +179,7 @@ else()
         set(postfix ".lib")
       endif()
       set(lib_fullpath "${prefix}${ogre_lib}${postfix}")
+      message(" ignogre lib_fullpath: ${lib_fullpath}")
       list(APPEND ogre_all_libs ${lib_fullpath})
     endforeach()
     set(OGRE_LIBRARIES ${ogre_all_libs})
