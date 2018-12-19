@@ -14,6 +14,7 @@ set(example_directories
   core_child
   component_dependencies
   use_component_dependencies_ordered
+  use_component_dependencies_unordered
   )
 
 # test to see if we have programs necessary to run codecheck
@@ -36,6 +37,8 @@ foreach(example ${example_directories})
     set(example_tarball_name ignition-component_dependencies-0.1.0.tar.bz2)
   elseif (${example} STREQUAL "use_component_dependencies_ordered")
     set(example_tarball_name ignition-use_component_dependencies_ordered-0.1.0.tar.bz2)
+  elseif (${example} STREQUAL "use_component_dependencies_unordered")
+    set(example_tarball_name ignition-use_component_dependencies_unordered-0.1.0.tar.bz2)
   else()
     set(example_tarball_name)
   endif()
@@ -116,6 +119,7 @@ endforeach()
 foreach (build_type ${build_types})
   add_dependencies(core_child_${build_type} core_no_deps_${build_type})
   add_dependencies(use_component_dependencies_ordered_${build_type} component_dependencies_${build_type})
+  add_dependencies(use_component_dependencies_unordered_${build_type} component_dependencies_${build_type})
 endforeach()
 
 # test that core_child pkg-config file requires core_no_deps
