@@ -56,6 +56,7 @@ set(full_version ${major_version}.${minor_version})
 macro(ign_ogre_declare_plugin TYPE COMPONENT)
     set(OGRE_${TYPE}_${COMPONENT}_FOUND TRUE)
     set(OGRE_${TYPE}_${COMPONENT}_LIBRARIES ${TYPE}_${COMPONENT})
+    message("  ignogre declare_plugin type: ${TYPE} XXX ${COMPONENT}")
 
     list(APPEND OGRE_LIBRARIES ${TYPE}_${COMPONENT})
 endmacro()
@@ -143,6 +144,8 @@ else()
   find_package(OGRE ${full_version}
                COMPONENTS ${IgnOGRE_FIND_COMPONENTS})
   if(OGRE_FOUND)
+
+    message(" ignogre before find components original ogre_libraries: ${OGRE_LIBRARIES}")
     # OGREConfig.cmake from vcpkg disable the link against plugin libs
     # when compiling the shared version of it. Here we copied the code
     # to use it.
@@ -163,11 +166,6 @@ else()
     set(ogre_all_libs)
     message(" ignogre original ogre_libraries: ${OGRE_LIBRARIES}")
     foreach(ogre_lib ${OGRE_LIBRARIES})
-      # ignore ogrebites as it's used for ogre samples
-      if(ogre_lib MATCHES "OgreBites")
-        continue()
-      endif()
-
       # Be sure that all Ogre* libraries are using absolute paths
       set(prefix "")
       if(ogre_lib MATCHES "Ogre" AND NOT IS_ABSOLUTE "${ogre_lib}")
