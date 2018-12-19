@@ -15,13 +15,13 @@
  *
 */
 
-#include <ignition/core_no_deps/Export.hh>
+#include <ignition/component_dependencies/Export.hh>
 
 namespace ignition
 {
-  namespace core_no_deps
+  namespace component_dependencies
   {
-    class IGNITION_CORE_NO_DEPS_VISIBLE AlmostEmpty
+    class IGNITION_COMPONENT_DEPENDENCIES_VISIBLE AlmostEmpty
     {
     };
   }
