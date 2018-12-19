@@ -163,6 +163,11 @@ else()
     set(ogre_all_libs)
     message(" ignogre original ogre_libraries: ${OGRE_LIBRARIES}")
     foreach(ogre_lib ${OGRE_LIBRARIES})
+      # ignore ogrebites as it's used for ogre samples
+      if(ogre_lib MATCHES "OgreBites")
+        continue()
+      endif()
+
       # Be sure that all Ogre* libraries are using absolute paths
       set(prefix "")
       if(ogre_lib MATCHES "Ogre" AND NOT IS_ABSOLUTE "${ogre_lib}")
