@@ -32,6 +32,7 @@
 #  OGRE_VERSION_MINOR      OGRE minor version
 #  OGRE_VERSION_PATCH      OGRE patch version
 #  OGRE_RESOURCE_PATH      Path to ogre plugins directory
+#  IgnOGRE::IgnOGRE        Imported target for OGRE
 #
 # On Windows, we assume that all the OGRE* defines are passed in manually
 # to CMake.
@@ -55,7 +56,6 @@ set(full_version ${major_version}.${minor_version})
 macro(ign_ogre_declare_plugin TYPE COMPONENT)
     set(OGRE_${TYPE}_${COMPONENT}_FOUND TRUE)
     set(OGRE_${TYPE}_${COMPONENT}_LIBRARIES ${TYPE}_${COMPONENT})
-
     list(APPEND OGRE_LIBRARIES ${TYPE}_${COMPONENT})
 endmacro()
 
@@ -131,7 +131,6 @@ if (NOT WIN32)
     # Seems that OGRE_PLUGINDIR can end in a newline, which will cause problems
     # when we pass it to the compiler later.
     string(REPLACE "\n" "" OGRE_RESOURCE_PATH ${OGRE_RESOURCE_PATH})
-
   endif()
 
   #reset pkg config path
@@ -158,8 +157,14 @@ else()
 
     # need to return only libraries defined by components and give them the
     # full path using OGRE_LIBRARY_DIRS
+    # Note: the OGREConfig.cmake installed by vcpkg generates variables that
+    # contain unwanted substrings so the string regex replace is added to
+    # fix the ogre dir path and lib vars.
+    # TODO(anyone) check if this is an OGRE vcpkg config issue.
+    string(REGEX REPLACE "\\$.*>" "" OGRE_LIBRARY_DIRS ${OGRE_LIBRARY_DIRS})
     set(ogre_all_libs)
     foreach(ogre_lib ${OGRE_LIBRARIES})
+      string(REGEX REPLACE "\\$.*>" "" ogre_lib ${ogre_lib})
       # Be sure that all Ogre* libraries are using absolute paths
       set(prefix "")
       if(ogre_lib MATCHES "Ogre" AND NOT IS_ABSOLUTE "${ogre_lib}")
@@ -184,18 +189,26 @@ else()
   endif()
 endif()
 
-# there is a problem with finding gl/glew.h
-foreach(dir ${OGRE_INCLUDE_DIRS})
+# manually search and append the the RenderSystem/GL path to
+# OGRE_INCLUDE_DIRS so OGRE GL headers can be found
+foreach (dir ${OGRE_INCLUDE_DIRS})
   get_filename_component(dir_name "${dir}" NAME)
-  if("${dir_name}" STREQUAL "OGRE")
+  if ("${dir_name}" STREQUAL "OGRE")
     set(dir_include "${dir}/RenderSystems/GL")
   else()
     set(dir_include "${dir}")
   endif()
-  list(APPEND OGRE_INCLUDES ${dir_include})
+  list(APPEND OGRE_INCLUDE_DIRS ${dir_include})
 endforeach()
 
 set(IgnOGRE_FOUND false)
 if(OGRE_FOUND)
   set(IgnOGRE_FOUND true)
+
+  include(IgnImportTarget)
+
+  ign_import_target(IgnOGRE
+    TARGET_NAME IgnOGRE::IgnOGRE
+    LIB_VAR OGRE_LIBRARIES
+    INCLUDE_VAR OGRE_INCLUDE_DIRS)
 endif()

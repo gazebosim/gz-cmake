@@ -180,6 +180,16 @@ function(_ign_pkgconfig_find_libraries output_var package library_names library_
 
   foreach(libname ${library_names})
 
+    # As recommended in cmake's find_library documenation, we can call
+    # find_library multiple times with the NO_* option to override search order.
+    # Give priority to path specified by user by telling cmake not to look
+    # in default paths. If the first call succeeds, the second call will not
+    # search again
+    find_library(
+      ${package}_LIBRARY_${libname}
+      ${libname}
+      PATHS ${library_dirs} NO_DEFAULT_PATH)
+
     find_library(
       ${package}_LIBRARY_${libname}
       ${libname}
