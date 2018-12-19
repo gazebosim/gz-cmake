@@ -56,8 +56,6 @@ set(full_version ${major_version}.${minor_version})
 macro(ign_ogre_declare_plugin TYPE COMPONENT)
     set(OGRE_${TYPE}_${COMPONENT}_FOUND TRUE)
     set(OGRE_${TYPE}_${COMPONENT}_LIBRARIES ${TYPE}_${COMPONENT})
-    message("  ignogre declare_plugin type: ${TYPE} XXX ${COMPONENT}")
-
     list(APPEND OGRE_LIBRARIES ${TYPE}_${COMPONENT})
 endmacro()
 
@@ -133,8 +131,6 @@ if (NOT WIN32)
     # Seems that OGRE_PLUGINDIR can end in a newline, which will cause problems
     # when we pass it to the compiler later.
     string(REPLACE "\n" "" OGRE_RESOURCE_PATH ${OGRE_RESOURCE_PATH})
-
-
   endif()
 
   #reset pkg config path
@@ -144,8 +140,6 @@ else()
   find_package(OGRE ${full_version}
                COMPONENTS ${IgnOGRE_FIND_COMPONENTS})
   if(OGRE_FOUND)
-
-    message(" ignogre before find components original ogre_libraries: ${OGRE_LIBRARIES}")
     # OGREConfig.cmake from vcpkg disable the link against plugin libs
     # when compiling the shared version of it. Here we copied the code
     # to use it.
@@ -163,9 +157,12 @@ else()
 
     # need to return only libraries defined by components and give them the
     # full path using OGRE_LIBRARY_DIRS
+    # Note: the OGREConfig.cmake installed by vcpkg generates variables that
+    # contain unwanted substrings so the string regex replace is added to
+    # fix the ogre dir path and lib vars.
+    # TODO(anyone) check if this is an OGRE vcpkg config issue.
     string(REGEX REPLACE "\\$.*>" "" OGRE_LIBRARY_DIRS ${OGRE_LIBRARY_DIRS})
     set(ogre_all_libs)
-    message(" ignogre original ogre_libraries: ${OGRE_LIBRARIES}")
     foreach(ogre_lib ${OGRE_LIBRARIES})
       string(REGEX REPLACE "\\$.*>" "" ogre_lib ${ogre_lib})
       # Be sure that all Ogre* libraries are using absolute paths
@@ -184,7 +181,6 @@ else()
         set(postfix ".lib")
       endif()
       set(lib_fullpath "${prefix}${ogre_lib}${postfix}")
-      message(" ignogre lib_fullpath: ${lib_fullpath}")
       list(APPEND ogre_all_libs ${lib_fullpath})
     endforeach()
     set(OGRE_LIBRARIES ${ogre_all_libs})
@@ -205,8 +201,6 @@ foreach (dir ${OGRE_INCLUDE_DIRS})
   list(APPEND OGRE_INCLUDE_DIRS ${dir_include})
 endforeach()
 
-
-
 set(IgnOGRE_FOUND false)
 if(OGRE_FOUND)
   set(IgnOGRE_FOUND true)
@@ -217,5 +211,4 @@ if(OGRE_FOUND)
     TARGET_NAME IgnOGRE::IgnOGRE
     LIB_VAR OGRE_LIBRARIES
     INCLUDE_VAR OGRE_INCLUDE_DIRS)
-
 endif()
