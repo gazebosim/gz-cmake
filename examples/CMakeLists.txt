@@ -12,6 +12,7 @@ set(example_directories
   prerelease
   core_no_deps
   core_child
+  component_dependencies
   )
 
 # test to see if we have programs necessary to run codecheck
@@ -30,6 +31,8 @@ foreach(example ${example_directories})
   elseif (${example} STREQUAL "core_child")
     set(example_tarball_name ignition-core_child-0.1.0.tar.bz2)
     set(run_codecheck true)
+  elseif (${example} STREQUAL "component_dependencies")
+    set(example_tarball_name ignition-component_dependencies-0.1.0.tar.bz2)
   else()
     set(example_tarball_name)
   endif()
