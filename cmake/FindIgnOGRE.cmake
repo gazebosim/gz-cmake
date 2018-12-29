@@ -168,8 +168,8 @@ else()
       # absolute paths. These variables are sometimes multi-configuration vars
       # (i.e: C:/vcpkg/installed/x64-windows$<$<CONFIG:Debug>:/debug>/..)
       # IS_ABSOLUTE cmake function seems not to be working fine with them.
-      string(SUBSTRING "${OGRE_LIBRARY_DIRS}" 1 5 PATH_PREFIX)
-      string(SUBSTRING "${ogre_lib}" 1 5 ogrelib_PATH_PREFIX)
+      string(SUBSTRING "${OGRE_LIBRARY_DIRS}" 0 5 PATH_PREFIX)
+      string(SUBSTRING "${ogre_lib}" 0 5 ogrelib_PATH_PREFIX)
       if(ogrelib_PATH_PREFIX STREQUAL PATH_PREFIX)
         set(lib_fullpath "${ogre_lib}")
       else()
