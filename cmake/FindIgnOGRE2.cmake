@@ -62,7 +62,7 @@ if (NOT WIN32)
   # look for OGRE2 installed from debs
   ign_pkg_check_modules_quiet(OGRE2 "OGRE-2.1" NO_CMAKE_ENVIRONMENT_PATH QUIET)
   if (OGRE2_FOUND)
-    set(PKG_NAME "OGRE-2.1")
+    set(IGN_PKG_NAME "OGRE-2.1")
   else()
     # look for OGRE2 installed from source
     set(PKG_CONFIG_PATH_TMP ${PKG_CONFIG_PATH_ORIGINAL})
@@ -102,7 +102,7 @@ if (NOT WIN32)
           else()
             set(OGRE2_LIBRARIES ${OGRE2_LIBRARY})
           endif()
-          set(PKG_NAME "OGRE")
+          set(IGN_PKG_NAME "OGRE")
           break()
         endif()
       endif()
@@ -115,7 +115,7 @@ if (NOT WIN32)
 
   # use pkg-config to find ogre plugin path
   # do it here before resetting the pkg-config paths
-  execute_process(COMMAND pkg-config --variable=plugindir ${PKG_NAME}
+  execute_process(COMMAND pkg-config --variable=plugindir ${IGN_PKG_NAME}
                   OUTPUT_VARIABLE _pkgconfig_invoke_result
                   RESULT_VARIABLE _pkgconfig_failed)
   if(_pkgconfig_failed)
@@ -143,7 +143,7 @@ if (NOT WIN32)
   # OGRE2_INCLUDE_DIRS so OGRE GL headers can be found
   foreach (dir ${OGRE2_INCLUDE_DIRS})
     get_filename_component(dir_name "${dir}" NAME)
-    if ("${dir_name}" STREQUAL ${PKG_NAME})
+    if ("${dir_name}" STREQUAL ${IGN_PKG_NAME})
       set(dir_include "${dir}/RenderSystems/GL3Plus")
     else()
       set(dir_include "${dir}")
