@@ -12,7 +12,7 @@ set(example_directories
   prerelease
   core_no_deps
   core_child
-  component_dependencies
+  component_deps
   use_comp_deps_ordered
   )
 
@@ -32,8 +32,8 @@ foreach(example ${example_directories})
   elseif (${example} STREQUAL "core_child")
     set(example_tarball_name ignition-core_child-0.1.0.tar.bz2)
     set(run_codecheck true)
-  elseif (${example} STREQUAL "component_dependencies")
-    set(example_tarball_name ignition-component_dependencies-0.1.0.tar.bz2)
+  elseif (${example} STREQUAL "component_deps")
+    set(example_tarball_name ignition-component_deps-0.1.0.tar.bz2)
   elseif (${example} STREQUAL "use_comp_deps_ordered")
     set(example_tarball_name ignition-use_comp_deps_ordered-0.1.0.tar.bz2)
   else()
@@ -115,7 +115,7 @@ endforeach()
 # need to exist before they can be used there
 foreach (build_type ${build_types})
   add_dependencies(core_child_${build_type} core_no_deps_${build_type})
-  add_dependencies(use_comp_deps_ordered_${build_type} component_dependencies_${build_type})
+  add_dependencies(use_comp_deps_ordered_${build_type} component_deps_${build_type})
 endforeach()
 
 # test that core_child pkg-config file requires core_no_deps
