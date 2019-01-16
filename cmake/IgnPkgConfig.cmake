@@ -114,6 +114,26 @@ macro(ign_pkg_check_modules_quiet package signature)
     #       here.
     if(${package}_FOUND AND NOT TARGET ${ign_pkg_check_modules_TARGET_NAME})
 
+      # Because of some idiosyncrasies of pkg-config, pkg_check_modules does not
+      # put /usr/include in the <prefix>_INCLUDE_DIRS variable. E.g. try running
+      # $ pkg-config --cflags-only-I tinyxml2
+      # and you'll find that it comes out blank. This blank value gets cached
+      # into the <prefix>_INCLUDE_DIRS variable even though it's a bad value. If
+      # other packages then try to call find_path(<prefix>_INCLUDE_DIRS ...) in
+      # their own find-module or config-files, the find_path will quit early
+      # because a CACHE entry exists for <prefix>_INCLUDE_DIRS. However, that
+      # CACHE entry is blank, and so it will typically be interpreted as a
+      # failed attempt to find the path. So if this <prefix>_INCLUDE_DIRS
+      # variable is blank, then we'll unset it from the CACHE to avoid
+      # conflicts and confusion.
+      #
+      # TODO(MXG): Consider giving a different prefix (e.g. IGN_PC_${package})
+      # to pkg_check_modules(~) so that the cached variables don't collide. That
+      # would also help with the next TODO below.
+      if(NOT ${package}_INCLUDE_DIRS)
+        unset(${package}_INCLUDE_DIRS CACHE)
+      endif()
+
       # pkg_check_modules will put ${package}_FOUND into the CACHE, which would
       # prevent our FindXXX.cmake script from being entered the next time cmake
       # is run by a dependent project. This is a problem for us because we
@@ -124,7 +144,7 @@ macro(ign_pkg_check_modules_quiet package signature)
       # problem. Perhaps the cmake-3.6 version of pkg_check_modules has a
       # better solution.
       unset(${package}_FOUND CACHE)
-      set(${package}_FOUND true)
+      set(${package}_FOUND TRUE)
 
       # For some reason, pkg_check_modules does not provide complete paths to the
       # libraries it returns, even though find_package is conventionally supposed
