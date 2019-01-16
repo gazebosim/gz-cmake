@@ -994,6 +994,7 @@ endfunction()
 #################################################
 # ign_add_component(<component>
 #                   SOURCES <sources>
+#                   [COMPONENT_DEPS <components...>]
 #                   [INCLUDE_SUBDIR <subdirectory_name>]
 #                   [GET_TARGET_NAME <output_var>]
 #                   [INDEPENDENT_FROM_PROJECT_LIB]
@@ -1048,7 +1049,7 @@ function(ign_add_component component_name)
   # Define the expected arguments
   set(options INTERFACE INDEPENDENT_FROM_PROJECT_LIB PRIVATELY_DEPENDS_ON_PROJECT_LIB INTERFACE_DEPENDS_ON_PROJECT_LIB)
   set(oneValueArgs INCLUDE_SUBDIR GET_TARGET_NAME)
-  set(multiValueArgs SOURCES)
+  set(multiValueArgs SOURCES COMPONENT_DEPS)
 
   #------------------------------------
   # Parse the arguments
@@ -1184,6 +1185,11 @@ function(ign_add_component component_name)
 
     ign_string_append(${lib_pkgconfig_type} "${PKG_NAME} = ${PROJECT_VERSION_FULL_NO_SUFFIX}")
 
+  endif()
+
+  if(ign_add_component_COMPONENT_DEPS)
+    ign_string_append(${component_name}_CMAKE_DEPENDENCIES
+      "find_package(${PKG_NAME} ${PROJECT_VERSION_FULL_NO_SUFFIX} EXACT \\\${ign_package_quiet} \\\${ign_package_required} COMPONENTS ${ign_add_component_COMPONENT_DEPS})" DELIM "\n")
   endif()
 
   #------------------------------------
