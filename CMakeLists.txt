@@ -163,7 +163,6 @@ if (BUILD_TESTING)
     # example files change.
     # See alternate approach in a2113e0997c9 if this becomes too slow
     BUILD_ALWAYS 1
-    BUILD_COMMAND $(MAKE) --quiet
     CMAKE_ARGS
       "-DBUILD_TESTING=OFF"
       "-DCMAKE_INSTALL_PREFIX=${FAKE_INSTALL_PREFIX}"
