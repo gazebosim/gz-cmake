@@ -1,6 +1,6 @@
 
 ign_add_component(child INTERFACE
-  COMPONENT_DEPS parent
+  DEPENDS_ON_COMPONENTS parent
   GET_TARGET_NAME child)
 
 target_link_libraries(${child}
