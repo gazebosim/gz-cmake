@@ -65,24 +65,47 @@ foreach(example ${example_directories})
         "${CMAKE_CURRENT_BINARY_DIR}/test_results/${TEST_NAME}.xml"
     )
     if (${run_codecheck} AND TARGET codecheck)
-      ExternalProject_Add_Step(
-        ${TEST_NAME}
-        codecheck
-        COMMAND
-          ${CMAKE_COMMAND} --build <BINARY_DIR> --target codecheck
-        DEPENDEES
-          configure
-      )
+      if(CMAKE_GENERATOR MATCHES "Unix Makefiles")
+        ExternalProject_Add_Step(
+          ${TEST_NAME}
+          codecheck
+          COMMAND
+            $(MAKE) -C <BINARY_DIR> codecheck
+          DEPENDEES
+            configure
+        )
+      else()
+        ExternalProject_Add_Step(
+          ${TEST_NAME}
+          codecheck
+          COMMAND
+            ${CMAKE_COMMAND} --build <BINARY_DIR> --target codecheck
+          DEPENDEES
+            configure
+        )
+      endif()
     endif()
     if (CPACK_GENERATOR)
-      ExternalProject_Add_Step(
-        ${TEST_NAME}
-        package_source
-        COMMAND
-          ${CMAKE_COMMAND} --build <BINARY_DIR> --target package_source
-        DEPENDEES
-          configure
-      )
+      if(CMAKE_GENERATOR MATCHES "Unix Makefiles")
+        ExternalProject_Add_Step(
+          ${TEST_NAME}
+          package_source
+          COMMAND
+            $(MAKE) -C <BINARY_DIR> package_source
+          DEPENDEES
+            configure
+        )
+      else()
+        ExternalProject_Add_Step(
+          ${TEST_NAME}
+          package_source
+          COMMAND
+            ${CMAKE_COMMAND} --build <BINARY_DIR> --target package_source
+          DEPENDEES
+            configure
+        )
+      endif()
+
       ExternalProject_Add_Step(
         ${TEST_NAME}
         test_tarball_name
