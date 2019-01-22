@@ -1002,7 +1002,8 @@ endfunction()
 
 #################################################
 # ign_add_component(<component>
-#                   SOURCES <sources>
+#                   SOURCES <sources> | INTERFACE
+#                   [DEPENDS_ON_COMPONENTS <components...>]
 #                   [INCLUDE_SUBDIR <subdirectory_name>]
 #                   [GET_TARGET_NAME <output_var>]
 #                   [INDEPENDENT_FROM_PROJECT_LIB]
@@ -1018,8 +1019,16 @@ endfunction()
 # <component>: Required. Name of the component. The final name of this library
 #              and its target will be ignition-<project><major_ver>-<component>
 #
-# SOURCES: Required. Specify the source files that will be used to generate the
-#          library.
+# SOURCES: Required (unless INTERFACE is specified). Specify the source files
+#          that will be used to generate the library.
+#
+# INTERFACE: Indicate that this is an INTERFACE library which does not require
+#            any source files. This is required if SOURCES is not specified.
+#
+# [DEPENDS_ON_COMPONENTS]: Specify a list of other components of this package
+#                          that this component depends on. This argument should
+#                          be considered mandatory whenever there are
+#                          inter-component dependencies in an ignition package.
 #
 # [INCLUDE_SUBDIR]: Optional. If specified, the public include headers for this
 #                   component will go into "ignition/<project>/<subdirectory_name>/".
@@ -1057,7 +1066,7 @@ function(ign_add_component component_name)
   # Define the expected arguments
   set(options INTERFACE INDEPENDENT_FROM_PROJECT_LIB PRIVATELY_DEPENDS_ON_PROJECT_LIB INTERFACE_DEPENDS_ON_PROJECT_LIB)
   set(oneValueArgs INCLUDE_SUBDIR GET_TARGET_NAME)
-  set(multiValueArgs SOURCES)
+  set(multiValueArgs SOURCES DEPENDS_ON_COMPONENTS)
 
   #------------------------------------
   # Parse the arguments
@@ -1193,6 +1202,11 @@ function(ign_add_component component_name)
 
     ign_string_append(${lib_pkgconfig_type} "${PKG_NAME} = ${PROJECT_VERSION_FULL_NO_SUFFIX}")
 
+  endif()
+
+  if(ign_add_component_DEPENDS_ON_COMPONENTS)
+    ign_string_append(${component_name}_CMAKE_DEPENDENCIES
+      "find_package(${PKG_NAME} ${PROJECT_VERSION_FULL_NO_SUFFIX} EXACT \\\${ign_package_quiet} \\\${ign_package_required} COMPONENTS ${ign_add_component_DEPENDS_ON_COMPONENTS})" DELIM "\n")
   endif()
 
   #------------------------------------
