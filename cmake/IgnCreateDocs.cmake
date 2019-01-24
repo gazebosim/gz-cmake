@@ -84,7 +84,7 @@ function(ign_create_docs)
 
   foreach(required_file ${required_html_files})
     file(WRITE ${CMAKE_BINARY_DIR}/${required_file} ${doxygen_header})
-    file(APPEND ${CMAKE_BINARY_DIR}/${required_file} 
+    file(APPEND ${CMAKE_BINARY_DIR}/${required_file}
       "<div class='header'><div class='headertitle'>
        <div class='title'>No Documentation</div>
        </div></div>
@@ -118,6 +118,13 @@ function(ign_create_docs)
 
   find_package(Doxygen)
   if (DOXYGEN_FOUND AND EXISTS ${IGNITION_CMAKE_DOXYGEN_DIR}/api.in)
+
+    if(EXISTS ${CMAKE_SOURCE_DIR}/tutorials)
+      set(IGNITION_DOXYGEN_TUTORIALS_DIR ${CMAKE_SOURCE_DIR}/tutorials)
+    else()
+      set(IGNITION_DOXYGEN_TUTORIALS_DIR "")
+    endif()
+
     configure_file(${IGNITION_CMAKE_DOXYGEN_DIR}/api.in
                    ${CMAKE_BINARY_DIR}/api.dox @ONLY)
 

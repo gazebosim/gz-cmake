@@ -181,7 +181,11 @@ macro(ign_configure_build)
 
     #--------------------------------------
     # Initialize the list of header directories that should be parsed by doxygen
-    set(ign_doxygen_component_input_dirs "${CMAKE_SOURCE_DIR}/include")
+    if(EXISTS "${CMAKE_SOURCE_DIR}/include")
+      set(ign_doxygen_component_input_dirs "${CMAKE_SOURCE_DIR}/include")
+    else()
+      set(ign_doxygen_component_input_dirs "")
+    endif()
 
     #--------------------------------------
     # Add the source code directories of each component if they exist
@@ -197,13 +201,15 @@ macro(ign_configure_build)
         list(APPEND CPPCHECK_INCLUDE_DIRS
           ${CMAKE_CURRENT_LIST_DIR}/${component}/include)
 
-        # Note: It seems we need to give the delimiter exactly this many
-        # backslashes in order to get a \ plus a newline. This might be
-        # dependent on the implementation of ign_string_append, so be careful
-        # when changing the implementation of that function.
-        ign_string_append(ign_doxygen_component_input_dirs
-          "${CMAKE_CURRENT_LIST_DIR}/${component}/include"
-          DELIM " \\\\\\\\\n  ")
+        if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/${component}/include")
+          # Note: It seems we need to give the delimiter exactly this many
+          # backslashes in order to get a \ plus a newline. This might be
+          # dependent on the implementation of ign_string_append, so be careful
+          # when changing the implementation of that function.
+          ign_string_append(ign_doxygen_component_input_dirs
+            "${CMAKE_CURRENT_LIST_DIR}/${component}/include"
+            DELIM " \\\\\\\\\n  ")
+        endif()
 
         # Append the component's source directory to CPPCHECK_DIRS.
         if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/${component}/src")

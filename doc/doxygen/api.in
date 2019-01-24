@@ -781,7 +781,7 @@ WARN_LOGFILE           = /tmp/ignition-@IGN_DESIGNATION@.warn
 # Note: If this tag is empty the current directory is searched.
 
 INPUT                  = @IGNITION_DOXYGEN_API_MAINPAGE_MD@ \
-                         @CMAKE_SOURCE_DIR@/tutorials \
+                         @IGNITION_DOXYGEN_TUTORIALS_DIR@ \
                          @IGNITION_DOXYGEN_TUTORIALS_MAINPAGE_MD@ \
   @ign_doxygen_component_input_dirs@
 
@@ -1116,7 +1116,7 @@ HTML_FOOTER            = @IGNITION_CMAKE_DOXYGEN_DIR@/footer.html
 # obsolete.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_STYLESHEET        = 
+HTML_STYLESHEET        =
 
 # The HTML_EXTRA_STYLESHEET tag can be used to specify additional user-defined
 # cascading style sheets that are included after the standard style sheets
