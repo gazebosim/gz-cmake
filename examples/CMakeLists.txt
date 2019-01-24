@@ -13,10 +13,14 @@ set(example_directories
   core_no_deps
   core_child
   component_deps
-  use_component_deps1
-  use_component_deps2
-  use_component_deps3
   )
+if (NOT CMAKE_GENERATOR MATCHES "Visual Studio")
+  list(APPEND example_directories
+    use_component_deps1
+    use_component_deps2
+    use_component_deps3
+  )
+endif()
 
 # test to see if we have programs necessary to run codecheck
 include(IgnCodeCheck)
