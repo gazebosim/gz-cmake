@@ -13,10 +13,14 @@ set(example_directories
   core_no_deps
   core_child
   component_deps
-  use_component_deps1
-  use_component_deps2
-  use_component_deps3
   )
+if (NOT CMAKE_GENERATOR MATCHES "Visual Studio")
+  list(APPEND example_directories
+    use_component_deps1
+    use_component_deps2
+    use_component_deps3
+  )
+endif()
 
 # test to see if we have programs necessary to run codecheck
 include(IgnCodeCheck)
@@ -121,9 +125,15 @@ endforeach()
 # need to exist before they can be used there
 foreach (build_type ${build_types})
   add_dependencies(core_child_${build_type} core_no_deps_${build_type})
-  add_dependencies(use_component_deps1_${build_type} component_deps_${build_type})
-  add_dependencies(use_component_deps2_${build_type} component_deps_${build_type})
-  add_dependencies(use_component_deps3_${build_type} component_deps_${build_type})
+  if (TARGET use_component_deps1_${build_type})
+    add_dependencies(use_component_deps1_${build_type} component_deps_${build_type})
+  endif()
+  if (TARGET use_component_deps2_${build_type})
+    add_dependencies(use_component_deps2_${build_type} component_deps_${build_type})
+  endif()
+  if (TARGET use_component_deps3_${build_type})
+    add_dependencies(use_component_deps3_${build_type} component_deps_${build_type})
+  endif()
 endforeach()
 
 # test that core_child pkg-config file requires core_no_deps
