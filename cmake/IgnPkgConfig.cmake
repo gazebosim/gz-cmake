@@ -114,6 +114,26 @@ macro(ign_pkg_check_modules_quiet package signature)
     #       here.
     if(${package}_FOUND AND NOT TARGET ${ign_pkg_check_modules_TARGET_NAME})
 
+      # Because of some idiosyncrasies of pkg-config, pkg_check_modules does not
+      # put /usr/include in the <prefix>_INCLUDE_DIRS variable. E.g. try running
+      # $ pkg-config --cflags-only-I tinyxml2
+      # and you'll find that it comes out blank. This blank value gets cached
+      # into the <prefix>_INCLUDE_DIRS variable even though it's a bad value. If
+      # other packages then try to call find_path(<prefix>_INCLUDE_DIRS ...) in
+      # their own find-module or config-files, the find_path will quit early
+      # because a CACHE entry exists for <prefix>_INCLUDE_DIRS. However, that
+      # CACHE entry is blank, and so it will typically be interpreted as a
+      # failed attempt to find the path. So if this <prefix>_INCLUDE_DIRS
+      # variable is blank, then we'll unset it from the CACHE to avoid
+      # conflicts and confusion.
+      #
+      # TODO(MXG): Consider giving a different prefix (e.g. IGN_PC_${package})
+      # to pkg_check_modules(~) so that the cached variables don't collide. That
+      # would also help with the next TODO below.
+      if(NOT ${package}_INCLUDE_DIRS)
+        unset(${package}_INCLUDE_DIRS CACHE)
+      endif()
+
       # pkg_check_modules will put ${package}_FOUND into the CACHE, which would
       # prevent our FindXXX.cmake script from being entered the next time cmake
       # is run by a dependent project. This is a problem for us because we
@@ -124,7 +144,7 @@ macro(ign_pkg_check_modules_quiet package signature)
       # problem. Perhaps the cmake-3.6 version of pkg_check_modules has a
       # better solution.
       unset(${package}_FOUND CACHE)
-      set(${package}_FOUND true)
+      set(${package}_FOUND TRUE)
 
       # For some reason, pkg_check_modules does not provide complete paths to the
       # libraries it returns, even though find_package is conventionally supposed
@@ -174,22 +194,21 @@ macro(ign_pkg_config_library_entry package lib_name)
 
 endmacro()
 
-# This creates variables which inform ign_find_package(~) that your package must
-# be found as a plain library by pkg-config. This should be used in any
-# find-module that handles a library package which does not install a pkg-config
-# <package>.pc file.
-macro(ign_pkg_config_library_entry package lib_name)
-
-  set(${package}_PKGCONFIG_ENTRY "-l${lib_name}")
-  set(${package}_PKGCONFIG_TYPE PROJECT_PKGCONFIG_LIBS)
-
-endmacro()
-
 # Based on discussion here: https://cmake.org/Bug/view.php?id=15804
 # and a patch written by Sam Thursfield
 function(_ign_pkgconfig_find_libraries output_var package library_names library_dirs)
 
   foreach(libname ${library_names})
+
+    # As recommended in cmake's find_library documenation, we can call
+    # find_library multiple times with the NO_* option to override search order.
+    # Give priority to path specified by user by telling cmake not to look
+    # in default paths. If the first call succeeds, the second call will not
+    # search again
+    find_library(
+      ${package}_LIBRARY_${libname}
+      ${libname}
+      PATHS ${library_dirs} NO_DEFAULT_PATH)
 
     find_library(
       ${package}_LIBRARY_${libname}

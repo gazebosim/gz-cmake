@@ -54,8 +54,6 @@ if(ODE_FOUND)
     message(STATUS "Looking for Open Dynamics Engine - found")
   endif()
 
-  set(ODE_CFLAGS "-DdSINGLE")
-
   include(IgnImportTarget)
   ign_import_target(ODE)
 
