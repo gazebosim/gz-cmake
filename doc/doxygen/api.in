@@ -852,7 +852,7 @@ EXCLUDE_PATTERNS       = *_TEST.* \
 # Note that the wildcards are matched against the file with absolute path, so to
 # exclude all test directories use the pattern */test/*
 
-EXCLUDE_SYMBOLS        =
+EXCLUDE_SYMBOLS        = detail
 
 # The EXAMPLE_PATH tag can be used to specify one or more files or directories
 # that contain example code fragments that are included (see the \include
@@ -2085,7 +2085,7 @@ TAGFILES               = "@IGNITION_CMAKE_DOXYGEN_DIR@/cppreference.tag.xml = ht
 # tag file that is based on the input files it reads. See section "Linking to
 # external documentation" for more information about the usage of tag files.
 
-GENERATE_TAGFILE       = @CMAKE_BINARY_DIR@/doc/@PROJECT_NAME_LOWER@.tag.xml
+GENERATE_TAGFILE       = @CMAKE_BINARY_DIR@/@PROJECT_NAME_LOWER@.tag.xml
 
 # If the ALLEXTERNALS tag is set to YES, all external class will be listed in
 # the class index. If set to NO, only the inherited external classes will be

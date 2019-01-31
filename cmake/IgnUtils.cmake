@@ -236,7 +236,9 @@ macro(ign_find_package PACKAGE_NAME)
   # find-config file, unless the invoker specifies that it should not be added.
   # Also, add this package or library as an entry to the pkgconfig file that we
   # will produce for our project.
-  if( (ign_find_package_REQUIRED OR ign_find_package_REQUIRED_BY) AND NOT ign_find_package_BUILD_ONLY)
+  if( ${PACKAGE_NAME}_FOUND
+      AND (ign_find_package_REQUIRED OR ign_find_package_REQUIRED_BY)
+      AND NOT ign_find_package_BUILD_ONLY)
 
     # Set up the arguments we want to pass to the find_dependency invokation for
     # our ignition project. We always need to pass the name of the dependency.
@@ -482,45 +484,54 @@ endmacro()
 #################################################
 # ign_get_sources_and_unittests(<lib_srcs> <tests>)
 #
-# From the current directory, grab all the files ending in "*.cc" and sort them
-# into library source files <lib_srcs> and unittest source files <tests>. Remove
-# their paths to make them suitable for passing into ign_add_[library/tests].
+# Grab all the files ending in "*.cc" from either the "src/" subdirectory or the
+# current subdirectory if "src/" does not exist. They will be collated into
+# library source files <lib_sources_var> and unittest source files <tests_var>.
+#
+# These output variables can be consumed directly by ign_create_core_library(~),
+# ign_add_component(~), ign_build_tests(~), and ign_build_executables(~).
 function(ign_get_libsources_and_unittests lib_sources_var tests_var)
 
-  # GLOB all the source files
-  file(GLOB source_files "*.cc")
-  list(SORT source_files)
+  # Glob all the source files
+  if(EXISTS ${CMAKE_CURRENT_LIST_DIR}/src)
 
-  # GLOB all the unit tests
-  file(GLOB test_files "*_TEST.cc")
-  list(SORT test_files)
+    # Prefer files in the src/ subdirectory
+    file(GLOB source_files RELATIVE "${CMAKE_CURRENT_LIST_DIR}" "src/*.cc")
+    file(GLOB test_files RELATIVE "${CMAKE_CURRENT_LIST_DIR}" "src/*_TEST.cc")
 
-  # Initialize these lists
+  else()
+
+    # If src/ doesn't exist, then use the current directory
+    file(GLOB source_files RELATIVE "${CMAKE_CURRENT_LIST_DIR}" "*.cc")
+    file(GLOB test_files RELATIVE "${CMAKE_CURRENT_LIST_DIR}" "*_TEST.cc")
+
+  endif()
+
+  # Sort the files alphabetically
+  if(source_files)
+    list(SORT source_files)
+  endif()
+
+  if(test_files)
+    list(SORT test_files)
+  endif()
+
+  # Initialize the test list
   set(tests)
-  set(sources)
 
   # Remove the unit tests from the list of source files
   foreach(test_file ${test_files})
 
+    # Remove from the source_files list.
     list(REMOVE_ITEM source_files ${test_file})
 
-    # Remove the path from the unit test and append to the list of tests.
-    get_filename_component(test ${test_file} NAME)
-    list(APPEND tests ${test})
-
-  endforeach()
-
-  foreach(source_file ${source_files})
-
-    # Remove the path from the library source file and append it to the list of
-    # library source files.
-    get_filename_component(source ${source_file} NAME)
-    list(APPEND sources ${source})
+    # Append to the list of tests.
+    list(APPEND tests ${test_file})
 
   endforeach()
 
   # Return the lists that have been created.
-  set(${lib_sources_var} ${sources} PARENT_SCOPE)
+  set(${lib_sources_var} ${source_files} PARENT_SCOPE)
   set(${tests_var} ${tests} PARENT_SCOPE)
 
 endfunction()
@@ -884,7 +895,7 @@ function(ign_create_core_library)
 
   #------------------------------------
   # Define the expected arguments
-  set(options) # Not using options yet
+  set(options INTERFACE)
   set(oneValueArgs INCLUDE_SUBDIR CXX_STANDARD PRIVATE_CXX_STANDARD INTERFACE_CXX_STANDARD GET_TARGET_NAME)
   set(multiValueArgs SOURCES)
 
@@ -894,8 +905,16 @@ function(ign_create_core_library)
 
   if(ign_create_core_library_SOURCES)
     set(sources ${ign_create_core_library_SOURCES})
-  else()
+  elseif(NOT ign_create_core_library_INTERFACE)
     message(FATAL_ERROR "You must specify SOURCES for ign_create_core_library(~)!")
+  endif()
+
+  if(ign_create_core_library_INTERFACE)
+    set(interface_option INTERFACE)
+    set(property_type INTERFACE)
+  else()
+    set(interface_option) # Intentionally blank
+    set(property_type PUBLIC)
   endif()
 
   #------------------------------------
@@ -904,22 +923,43 @@ function(ign_create_core_library)
     LIB_NAME ${PROJECT_LIBRARY_TARGET_NAME}
     INCLUDE_DIR "ignition/${IGN_DESIGNATION_LOWER}"
     EXPORT_BASE IGNITION_${IGN_DESIGNATION_UPPER}
-    SOURCES ${sources})
+    SOURCES ${sources}
+    ${interface_option})
 
-  # This generator expression is necessary for multi-configuration generators,
-  # such as MSVC on Windows, and also to ensure that our target exports the
+  # These generator expressions are necessary for multi-configuration generators
+  # such as MSVC on Windows. They also ensure that our target exports its
   # headers correctly
   target_include_directories(${PROJECT_LIBRARY_TARGET_NAME}
-    PUBLIC
-      # This is the publicly installed ignition/math headers directory.
-      $<INSTALL_INTERFACE:${IGN_INCLUDE_INSTALL_DIR_FULL}>
-      # This is the build directory version of the headers. When exporting the
-      # target, this will not be included, because it is tied to the build
-      # interface instead of the install interface.
-      $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+    ${property_type}
+      # This is the publicly installed headers directory.
+      "$<INSTALL_INTERFACE:${IGN_INCLUDE_INSTALL_DIR_FULL}>"
       # This is the in-build version of the core library headers directory.
       # Generated headers for the core library get placed here.
-      $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>)
+      "$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>"
+      # Generated headers for the core library might also get placed here.
+      "$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/core/include>")
+
+  # We explicitly create these directories to avoid false-flag compiler warnings
+  file(MAKE_DIRECTORY
+    "${PROJECT_BINARY_DIR}/include"
+    "${PROJECT_BINARY_DIR}/core/include")
+
+  if(EXISTS "${PROJECT_SOURCE_DIR}/include")
+    target_include_directories(${PROJECT_LIBRARY_TARGET_NAME}
+      ${property_type}
+        # This is the build directory version of the headers. When exporting the
+        # target, this will not be included, because it is tied to the build
+        # interface instead of the install interface.
+        "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>")
+  endif()
+
+  if(EXISTS "${PROJECT_SOURCE_DIR}/core/include")
+    target_include_directories(${PROJECT_LIBRARY_TARGET_NAME}
+      ${property_type}
+        # This is the include directories for projects that put the core library
+        # contents into its own subdirectory.
+        "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/core/include>")
+  endif()
 
 
   #------------------------------------
@@ -930,6 +970,11 @@ function(ign_create_core_library)
 
   #------------------------------------
   # Handle cmake and pkgconfig packaging
+  if(ign_create_core_library_INTERFACE)
+    set(project_pkgconfig_core_lib) # Intentionally blank
+  else()
+    set(project_pkgconfig_core_lib "-l${PROJECT_NAME_LOWER}")
+  endif()
 
   # Export and install the core library's cmake target and package information
   _ign_create_cmake_package()
@@ -948,7 +993,8 @@ endfunction()
 
 #################################################
 # ign_add_component(<component>
-#                   SOURCES <sources>
+#                   SOURCES <sources> | INTERFACE
+#                   [DEPENDS_ON_COMPONENTS <components...>]
 #                   [INCLUDE_SUBDIR <subdirectory_name>]
 #                   [GET_TARGET_NAME <output_var>]
 #                   [INDEPENDENT_FROM_PROJECT_LIB]
@@ -964,8 +1010,16 @@ endfunction()
 # <component>: Required. Name of the component. The final name of this library
 #              and its target will be ignition-<project><major_ver>-<component>
 #
-# SOURCES: Required. Specify the source files that will be used to generate the
-#          library.
+# SOURCES: Required (unless INTERFACE is specified). Specify the source files
+#          that will be used to generate the library.
+#
+# INTERFACE: Indicate that this is an INTERFACE library which does not require
+#            any source files. This is required if SOURCES is not specified.
+#
+# [DEPENDS_ON_COMPONENTS]: Specify a list of other components of this package
+#                          that this component depends on. This argument should
+#                          be considered mandatory whenever there are
+#                          inter-component dependencies in an ignition package.
 #
 # [INCLUDE_SUBDIR]: Optional. If specified, the public include headers for this
 #                   component will go into "ignition/<project>/<subdirectory_name>/".
@@ -1001,9 +1055,9 @@ function(ign_add_component component_name)
 
   #------------------------------------
   # Define the expected arguments
-  set(options INDEPENDENT_FROM_PROJECT_LIB PRIVATELY_DEPENDS_ON_PROJECT_LIB INTERFACE_DEPENDS_ON_PROJECT_LIB)
+  set(options INTERFACE INDEPENDENT_FROM_PROJECT_LIB PRIVATELY_DEPENDS_ON_PROJECT_LIB INTERFACE_DEPENDS_ON_PROJECT_LIB)
   set(oneValueArgs INCLUDE_SUBDIR GET_TARGET_NAME)
-  set(multiValueArgs SOURCES)
+  set(multiValueArgs SOURCES DEPENDS_ON_COMPONENTS)
 
   #------------------------------------
   # Parse the arguments
@@ -1011,7 +1065,7 @@ function(ign_add_component component_name)
 
   if(ign_add_component_SOURCES)
     set(sources ${ign_add_component_SOURCES})
-  else()
+  elseif(NOT ign_add_component_INTERFACE)
     message(FATAL_ERROR "You must specify SOURCES for ign_add_component(~)!")
   endif()
 
@@ -1019,6 +1073,14 @@ function(ign_add_component component_name)
     set(include_subdir ${ign_add_component_INCLUDE_SUBDIR})
   else()
     set(include_subdir ${component_name})
+  endif()
+
+  if(ign_add_component_INTERFACE)
+    set(interface_option INTERFACE)
+    set(property_type INTERFACE)
+  else()
+    set(interface_option) # Intentionally blank
+    set(property_type PUBLIC)
   endif()
 
   # Set the name of the component's target
@@ -1039,7 +1101,8 @@ function(ign_add_component component_name)
     LIB_NAME ${component_target_name}
     INCLUDE_DIR "ignition/${IGN_DESIGNATION_LOWER}/${include_subdir}"
     EXPORT_BASE IGNITION_${IGN_DESIGNATION_UPPER}_${component_name_upper}
-    SOURCES ${sources})
+    SOURCES ${sources}
+    ${interface_option})
 
   if(ign_add_component_INDEPENDENT_FROM_PROJECT_LIB  OR
      ign_add_component_PRIVATELY_DEPENDS_ON_PROJECT_LIB)
@@ -1049,26 +1112,37 @@ function(ign_add_component component_name)
     # not needed if we link to the core library, because that will pull in these
     # include directories automatically.
     target_include_directories(${component_target_name}
-      PUBLIC
+      ${property_type}
         # This is the publicly installed ignition/math headers directory.
-        $<INSTALL_INTERFACE:${IGN_INCLUDE_INSTALL_DIR_FULL}>
+        "$<INSTALL_INTERFACE:${IGN_INCLUDE_INSTALL_DIR_FULL}>"
         # This is the in-build version of the core library's headers directory.
         # Generated headers for this component might get placed here, even if
         # the component is independent of the core library.
-        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>)
+        "$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>")
+
+      file(MAKE_DIRECTORY "${PROJECT_BINARY_DIR}/include")
+
+  endif()
+
+  if(EXISTS "${PROJECT_SOURCE_DIR}/${component_name}/include")
+
+    target_include_directories(${component_target_name}
+      ${property_type}
+        # This is the in-source version of the component-specific headers
+        # directory. When exporting the target, this will not be included,
+        # because it is tied to the build interface instead of the install
+        # interface.
+        "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/${component_name}/include>")
 
   endif()
 
   target_include_directories(${component_target_name}
-    PUBLIC
-      # This is the in-source version of the component-specific headers
-      # directory. When exporting the target, this will not be included,
-      # because it is tied to the build interface instead of the install
-      # interface.
-      $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/${component_name}/include>
+    ${property_type}
       # This is the in-build version of the component-specific headers
       # directory. Generated headers for this component might end up here.
-      $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/${component_name}/include>)
+      "$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/${component_name}/include>")
+
+  file(MAKE_DIRECTORY "${PROJECT_BINARY_DIR}/${component_name}/include")
 
   #------------------------------------
   # Adjust variables if a specific C++ standard was requested
@@ -1098,7 +1172,7 @@ function(ign_add_component component_name)
      NOT ign_add_component_INTERFACE_DEPENDS_ON_PROJECT_LIB)
 
     target_link_libraries(${component_target_name}
-      PUBLIC ${PROJECT_LIBRARY_TARGET_NAME})
+      ${property_type} ${PROJECT_LIBRARY_TARGET_NAME})
 
   endif()
 
@@ -1121,9 +1195,19 @@ function(ign_add_component component_name)
 
   endif()
 
+  if(ign_add_component_DEPENDS_ON_COMPONENTS)
+    ign_string_append(${component_name}_CMAKE_DEPENDENCIES
+      "find_package(${PKG_NAME} ${PROJECT_VERSION_FULL_NO_SUFFIX} EXACT \\\${ign_package_quiet} \\\${ign_package_required} COMPONENTS ${ign_add_component_DEPENDS_ON_COMPONENTS})" DELIM "\n")
+  endif()
+
   #------------------------------------
   # Set variables that are needed by cmake/ignition-component-config.cmake.in
   set(component_pkg_name ${component_target_name})
+  if(ign_add_component_INTERFACE)
+    set(component_pkgconfig_lib)
+  else()
+    set(component_pkgconfig_lib "-l${component_pkg_name}")
+  endif()
   set(component_cmake_dependencies ${${component_name}_CMAKE_DEPENDENCIES})
   # This next set is redundant, but it serves as a reminder that this input
   # variable is used in config files
@@ -1132,8 +1216,8 @@ function(ign_add_component component_name)
   # ... and by cmake/pkgconfig/ignition-component.pc.in
   set(component_pkgconfig_requires ${${component_name}_PKGCONFIG_REQUIRES})
   set(component_pkgconfig_requires_private ${${component_name}_PKGCONFIG_REQUIRES_PRIVATE})
-  set(component_pkgconfig_libs ${${component_name}_PKGCONFIG_LIBS})
-  set(component_pkgconfig_libs_private ${${component_name}_PKGCONFIG_LIBS_PRIVATE})
+  set(component_pkgconfig_lib_deps ${${component_name}_PKGCONFIG_LIBS})
+  set(component_pkgconfig_lib_deps_private ${${component_name}_PKGCONFIG_LIBS_PRIVATE})
   set(component_pkgconfig_cflags ${${component_name}_PKGCONFIG_CFLAGS})
 
   # Export and install the cmake target and package information
@@ -1220,7 +1304,7 @@ macro(_ign_add_library_or_component)
 
   #------------------------------------
   # Define the expected arguments
-  set(options) # We are not using options yet
+  set(options INTERFACE)
   set(oneValueArgs LIB_NAME INCLUDE_DIR EXPORT_BASE)
   set(multiValueArgs SOURCES)
 
@@ -1234,10 +1318,14 @@ macro(_ign_add_library_or_component)
     _ign_add_library_or_component_arg_error(LIB_NAME)
   endif()
 
-  if(_ign_add_library_SOURCES)
-    set(sources ${_ign_add_library_SOURCES})
+  if(NOT _ign_add_library_INTERFACE)
+    if(_ign_add_library_SOURCES)
+      set(sources ${_ign_add_library_SOURCES})
+    else()
+      _ign_add_library_or_component_arg_error(SOURCES)
+    endif()
   else()
-    _ign_add_library_or_component_arg_error(SOURCES)
+    set(sources)
   endif()
 
   if(_ign_add_library_INCLUDE_DIR)
@@ -1257,64 +1345,73 @@ macro(_ign_add_library_or_component)
 
   message(STATUS "Configuring library: ${lib_name}")
 
-  add_library(${lib_name} ${sources})
-
-  #------------------------------------
-  # Add fPIC if we are supposed to
-  if(IGN_ADD_fPIC_TO_LIBRARIES)
-    target_compile_options(${lib_name} PRIVATE -fPIC)
+  if(_ign_add_library_INTERFACE)
+    add_library(${lib_name} INTERFACE)
+  else()
+    add_library(${lib_name} ${sources})
   endif()
 
   #------------------------------------
-  # Generate export macro headers
-  set(binary_include_dir
-    "${CMAKE_BINARY_DIR}/include/${include_dir}")
+  # Add fPIC if we are supposed to
+  if(IGN_ADD_fPIC_TO_LIBRARIES AND NOT _ign_add_library_INTERFACE)
+    target_compile_options(${lib_name} PRIVATE -fPIC)
+  endif()
 
-  set(implementation_file_name "${binary_include_dir}/detail/Export.hh")
+  if(NOT _ign_add_library_INTERFACE)
 
-  include(GenerateExportHeader)
-  # This macro will generate a header called detail/Export.hh which implements
-  # some C-macros that are useful for exporting our libraries. The
-  # implementation header does not provide any commentary or explanation for its
-  # macros, so we tuck it away in the detail/ subdirectory, and then provide a
-  # public-facing header that provides commentary for the macros.
-  generate_export_header(${lib_name}
-    BASE_NAME ${export_base}
-    EXPORT_FILE_NAME ${implementation_file_name}
-    EXPORT_MACRO_NAME DETAIL_${export_base}_VISIBLE
-    NO_EXPORT_MACRO_NAME DETAIL_${export_base}_HIDDEN
-    DEPRECATED_MACRO_NAME IGN_DEPRECATED_ALL_VERSIONS)
+    #------------------------------------
+    # Generate export macro headers
+    # Note: INTERFACE libraries do not need the export header
+    set(binary_include_dir
+      "${CMAKE_BINARY_DIR}/include/${include_dir}")
 
-  set(install_include_dir
-    "${IGN_INCLUDE_INSTALL_DIR_FULL}/${include_dir}")
+    set(implementation_file_name "${binary_include_dir}/detail/Export.hh")
 
-  # Configure the installation of the automatically generated file.
-  install(
-    FILES "${implementation_file_name}"
-    DESTINATION "${install_include_dir}/detail"
-    COMPONENT headers)
+    include(GenerateExportHeader)
+    # This macro will generate a header called detail/Export.hh which implements
+    # some C-macros that are useful for exporting our libraries. The
+    # implementation header does not provide any commentary or explanation for its
+    # macros, so we tuck it away in the detail/ subdirectory, and then provide a
+    # public-facing header that provides commentary for the macros.
+    generate_export_header(${lib_name}
+      BASE_NAME ${export_base}
+      EXPORT_FILE_NAME ${implementation_file_name}
+      EXPORT_MACRO_NAME DETAIL_${export_base}_VISIBLE
+      NO_EXPORT_MACRO_NAME DETAIL_${export_base}_HIDDEN
+      DEPRECATED_MACRO_NAME IGN_DEPRECATED_ALL_VERSIONS)
 
-  # Configure the public-facing header for exporting and deprecating. This
-  # header provides commentary for the macros so that developers can know their
-  # purpose.
-  configure_file(
-    "${IGNITION_CMAKE_DIR}/Export.hh.in"
-    "${binary_include_dir}/Export.hh")
+    set(install_include_dir
+      "${IGN_INCLUDE_INSTALL_DIR_FULL}/${include_dir}")
 
-  # Configure the installation of the public-facing header.
-  install(
-    FILES "${binary_include_dir}/Export.hh"
-    DESTINATION "${install_include_dir}"
-    COMPONENT headers)
+    # Configure the installation of the automatically generated file.
+    install(
+      FILES "${implementation_file_name}"
+      DESTINATION "${install_include_dir}/detail"
+      COMPONENT headers)
 
+    # Configure the public-facing header for exporting and deprecating. This
+    # header provides commentary for the macros so that developers can know their
+    # purpose.
+    configure_file(
+      "${IGNITION_CMAKE_DIR}/Export.hh.in"
+      "${binary_include_dir}/Export.hh")
+
+    # Configure the installation of the public-facing header.
+    install(
+      FILES "${binary_include_dir}/Export.hh"
+      DESTINATION "${install_include_dir}"
+      COMPONENT headers)
+
+    set_target_properties(
+      ${lib_name}
+      PROPERTIES
+        SOVERSION ${PROJECT_VERSION_MAJOR}
+        VERSION ${PROJECT_VERSION_FULL})
+
+  endif()
 
   #------------------------------------
   # Configure the installation of the target
-  set_target_properties(
-    ${lib_name}
-    PROPERTIES
-      SOVERSION ${PROJECT_VERSION_MAJOR}
-      VERSION ${PROJECT_VERSION_FULL})
 
   install(
     TARGETS ${lib_name}
@@ -1451,7 +1548,7 @@ macro(ign_build_executables)
 
   foreach(exec_file ${ign_build_executables_SOURCES})
 
-    string(REGEX REPLACE ".cc" "" BINARY_NAME ${exec_file})
+    get_filename_component(BINARY_NAME ${exec_file} NAME_WE)
     set(BINARY_NAME ${ign_build_executables_PREFIX}${BINARY_NAME})
 
     add_executable(${BINARY_NAME} ${exec_file})
@@ -1471,9 +1568,7 @@ macro(ign_build_executables)
     target_include_directories(${BINARY_NAME}
       PRIVATE
         ${PROJECT_SOURCE_DIR}
-        ${PROJECT_SOURCE_DIR}/include
         ${PROJECT_BINARY_DIR}
-        ${PROJECT_BINARY_DIR}/include
         ${ign_build_executables_INCLUDE_DIRS})
 
   endforeach()

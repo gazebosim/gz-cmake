@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.5.1 FATAL_ERROR)
 #============================================================================
 # Initialize the project
 #============================================================================
-project(ignition-cmake1 VERSION 1.0.0)
+project(ignition-cmake1 VERSION 1.1.0)
 
 #--------------------------------------
 # Initialize the IGNITION_CMAKE_DIR variable with the location of the cmake
@@ -20,14 +20,19 @@ include(IgnCMake)
 
 #--------------------------------------
 # Set up the project
-ign_configure_project(VERSION_SUFFIX pre2)
+ign_configure_project()
 
 #--------------------------------------
 # Install the ignition documentation files
 # Note: This is not actually creating a doc target for ign-cmake; this is just
 # installing files that are useful for generating the documentation of other
 # ignition projects.
-ign_create_docs()
+add_subdirectory(doc)
+
+#--------------------------------------
+# Install the codecheck files
+install(DIRECTORY codecheck/
+        DESTINATION ${IGN_DATA_INSTALL_DIR}/codecheck)
 
 #============================================================================
 # Configure the package to be installed
@@ -39,6 +44,12 @@ set(ign_config_input  "${CMAKE_CURRENT_SOURCE_DIR}/config/ignition-cmake-config.
 set(ign_config_output "${PROJECT_NAME_LOWER}-config.cmake")
 set(ign_version_output "${PROJECT_NAME_LOWER}-config-version.cmake")
 set(ign_config_install_dir "${CMAKE_INSTALL_DATAROOTDIR}/cmake/${PROJECT_NAME_LOWER}")
+set(ign_pkgconfig_input "${CMAKE_CURRENT_SOURCE_DIR}/config/ignition-cmake.pc.in")
+set(ign_pkgconfig_output "${CMAKE_BINARY_DIR}/ignition-cmake${PROJECT_VERSION_MAJOR}.pc")
+set(ign_utilities_target ${PROJECT_EXPORT_NAME}-utilities)
+set(ign_utilities_import_target_name ${PROJECT_EXPORT_NAME}::${ign_utilities_target})
+set(ign_utilities_target_output_filename "${ign_utilities_target}-targets.cmake")
+set(simple_utilities_import_name ${PROJECT_EXPORT_NAME}::utilities)
 
 #--------------------------------------
 # Configure and install the config file
@@ -63,6 +74,48 @@ install(
   DESTINATION ${ign_config_install_dir}
   COMPONENT cmake)
 
+#--------------------------------------
+# Configure and install the pkgconfig file (needed for utilities headers)
+configure_file(${ign_pkgconfig_input} ${ign_pkgconfig_output} @ONLY)
+
+install(
+  FILES ${ign_pkgconfig_output}
+  DESTINATION ${IGN_LIB_INSTALL_DIR}/pkgconfig
+  COMPONENT pkgconfig)
+
+#============================================================================
+# Create and install the utilities component
+#============================================================================
+add_library(${ign_utilities_target} INTERFACE)
+target_include_directories(${ign_utilities_target}
+  INTERFACE
+    $<INSTALL_INTERFACE:${IGN_INCLUDE_INSTALL_DIR_FULL}>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>)
+
+# Export and install the interface target
+install(
+  TARGETS ${ign_utilities_target}
+  EXPORT ${ign_utilities_target}
+  COMPONENT interface)
+
+export(
+  EXPORT ${ign_utilities_target}
+  FILE ${ign_utilities_target_output_filename}
+  NAMESPACE ${PROJECT_EXPORT_NAME}::)
+
+install(
+  EXPORT ${ign_utilities_target}
+  DESTINATION ${ign_config_install_dir}
+  FILE ${ign_utilities_target_output_filename}
+  NAMESPACE ${PROJECT_EXPORT_NAME}::)
+
+# Install the header directory
+# Note: The trailing slash after "include" is necessary
+install(
+  DIRECTORY include/
+  DESTINATION ${IGN_INCLUDE_INSTALL_DIR_FULL}
+  COMPONENT headers)
 
 #============================================================================
 # Install the files for this package
@@ -95,35 +148,25 @@ if (BUILD_TESTING)
   #============================================================================
   # Do a fake install of ign-cmake in order to test the examples.
   # Copy or symlink the config.cmake files and cmake folder
-  set(FAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install/fake")
-  set(FAKE_CMAKE_INSTALL_DIR "${FAKE_INSTALL_PREFIX}/${ign_config_install_dir}")
-  if (UNIX)
-    # make symlinks on unix
-    execute_process(
-      COMMAND
-        ${CMAKE_COMMAND} -E make_directory ${FAKE_CMAKE_INSTALL_DIR})
-    execute_process(
-      COMMAND
-        ${CMAKE_COMMAND} -E create_symlink ${CMAKE_BINARY_DIR}/${ign_config_output} ${FAKE_CMAKE_INSTALL_DIR}/${ign_config_output})
-    execute_process(
-      COMMAND
-        ${CMAKE_COMMAND} -E create_symlink ${CMAKE_BINARY_DIR}/${ign_version_output} ${FAKE_CMAKE_INSTALL_DIR}/${ign_version_output})
-    execute_process(
-      COMMAND
-        ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/cmake ${FAKE_CMAKE_INSTALL_DIR}/cmake${PROJECT_VERSION_MAJOR})
-  else()
-    # otherwise copy the files one by one
-    # use configure_file(... COPYONLY) since it will run again if files change
-    configure_file(${CMAKE_BINARY_DIR}/${ign_config_output} ${FAKE_CMAKE_INSTALL_DIR}/${ign_config_output} COPYONLY)
-    configure_file(${CMAKE_BINARY_DIR}/${ign_version_output} ${FAKE_CMAKE_INSTALL_DIR}/${ign_version_output} COPYONLY)
-    foreach (filename ${modules} ${templates})
-      get_filename_component(file ${filename} NAME)
-      configure_file(${filename} ${FAKE_CMAKE_INSTALL_DIR}/cmake${PROJECT_VERSION_MAJOR}/${file} COPYONLY)
-    endforeach()
-    foreach (filename ${pkgconfig_templates})
-      get_filename_component(file ${filename} NAME)
-      configure_file(${filename} ${FAKE_CMAKE_INSTALL_DIR}/cmake${PROJECT_VERSION_MAJOR}/pkgconfig/${file} COPYONLY)
-    endforeach()
-  endif()
+  set(FAKE_BUILD_DIRECTORY "${CMAKE_BINARY_DIR}/fake/build")
+  set(FAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/fake/install")
+
+  file(MAKE_DIRECTORY ${FAKE_BUILD_DIRECTORY})
+  file(MAKE_DIRECTORY ${FAKE_INSTALL_PREFIX})
+
+  include(ExternalProject)
+  ExternalProject_Add(
+    FAKE_INSTALL
+
+    SOURCE_DIR "${CMAKE_SOURCE_DIR}"
+    # BUILD_ALWAYS needed since cmake doesn't notice when
+    # example files change.
+    # See alternate approach in a2113e0997c9 if this becomes too slow
+    BUILD_ALWAYS 1
+    CMAKE_ARGS
+      "-DBUILD_TESTING=OFF"
+      "-DCMAKE_INSTALL_PREFIX=${FAKE_INSTALL_PREFIX}"
+  )
+
   add_subdirectory(examples)
 endif()

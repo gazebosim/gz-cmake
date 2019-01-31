@@ -12,7 +12,16 @@ set(example_directories
   prerelease
   core_no_deps
   core_child
+  component_deps
   )
+if (NOT CMAKE_GENERATOR MATCHES "Visual Studio")
+  list(APPEND example_directories
+    use_component_depsA
+    use_component_depsB
+    use_component_depsC
+  )
+endif()
+
 find_package(ignition-cmake0)
 if (ignition-cmake0_FOUND)
   list(APPEND example_directories
@@ -21,15 +30,30 @@ if (ignition-cmake0_FOUND)
     )
 endif()
 
+# test to see if we have programs necessary to run codecheck
+include(IgnCodeCheck)
+ign_setup_target_for_codecheck()
+
 foreach(example ${example_directories})
+  set(run_codecheck false)
   if (${example} STREQUAL "ign_configure_build")
     set(example_tarball_name ignition-minimal-0.1.0.tar.bz2)
   elseif (${example} STREQUAL "prerelease")
     set(example_tarball_name ignition-minimal-1.0.0~pre1.tar.bz2)
   elseif (${example} STREQUAL "core_no_deps")
     set(example_tarball_name ignition-core_no_deps-0.1.0.tar.bz2)
+    set(run_codecheck true)
   elseif (${example} STREQUAL "core_child")
     set(example_tarball_name ignition-core_child-0.1.0.tar.bz2)
+    set(run_codecheck true)
+  elseif (${example} STREQUAL "component_deps")
+    set(example_tarball_name ignition-component_deps-0.1.0.tar.bz2)
+  elseif (${example} STREQUAL "use_component_depsA")
+    set(example_tarball_name ignition-use_component_depsa-0.1.0.tar.bz2)
+  elseif (${example} STREQUAL "use_component_depsB")
+    set(example_tarball_name ignition-use_component_depsb-0.1.0.tar.bz2)
+  elseif (${example} STREQUAL "use_component_depsC")
+    set(example_tarball_name ignition-use_component_depsc-0.1.0.tar.bz2)
   elseif (${example} STREQUAL "core01_no_deps")
     set(example_tarball_name ignition-core01_no_deps-0.1.0.tar.bz2)
   elseif (${example} STREQUAL "core01_child")
@@ -53,6 +77,7 @@ foreach(example ${example_directories})
     ExternalProject_Add(
       ${TEST_NAME}
 
+      DEPENDS FAKE_INSTALL
       SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/${example}"
       # BUILD_ALWAYS needed since cmake doesn't notice when
       # example files change.
@@ -67,6 +92,16 @@ foreach(example ${example_directories})
         "${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME}_pass.xml"
         "${CMAKE_CURRENT_BINARY_DIR}/test_results/${TEST_NAME}.xml"
     )
+    if (${run_codecheck} AND TARGET codecheck)
+      ExternalProject_Add_Step(
+        ${TEST_NAME}
+        codecheck
+        COMMAND
+          ${CMAKE_COMMAND} --build <BINARY_DIR> --target codecheck
+        DEPENDEES
+          configure
+      )
+    endif()
     if (CPACK_GENERATOR)
       ExternalProject_Add_Step(
         ${TEST_NAME}
@@ -102,7 +137,18 @@ endforeach()
 # need to exist before they can be used there
 foreach (build_type ${build_types})
   add_dependencies(core_child_${build_type} core_no_deps_${build_type})
-  add_dependencies(core01_child_${build_type} core01_no_deps_${build_type})
+  if (TARGET use_component_depsA_${build_type})
+    add_dependencies(use_component_depsA_${build_type} component_deps_${build_type})
+  endif()
+  if (TARGET use_component_depsB_${build_type})
+    add_dependencies(use_component_depsB_${build_type} component_deps_${build_type})
+  endif()
+  if (TARGET use_component_depsC_${build_type})
+    add_dependencies(use_component_depsC_${build_type} component_deps_${build_type})
+  endif()
+  if (TARGET core01_child_${build_type})
+    add_dependencies(core01_child_${build_type} core01_no_deps_${build_type})
+  endif()
 endforeach()
 
 # test that core_child pkg-config file requires core_no_deps
@@ -122,7 +168,7 @@ if (UNIX)
       "${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME}_fail.xml"
       @ONLY)
     set(_env_vars)
-    list(APPEND _env_vars "PKG_CONFIG_PATH=${example_INSTALL_DIR}/lib/pkgconfig:$PKG_CONFIG_PATH")
+    list(APPEND _env_vars "PKG_CONFIG_PATH=${example_INSTALL_DIR}/lib/pkgconfig:${FAKE_INSTALL_PREFIX}/lib/pkgconfig:$PKG_CONFIG_PATH")
     add_test(${TEST_NAME}
       ${CMAKE_CURRENT_SOURCE_DIR}/test_core_child_requires_core_no_deps.bash
       ${no_deps_name}

@@ -46,19 +46,19 @@ macro(ign_configure_build)
   #============================================================================
   # Print warnings and errors
   if(build_warnings)
-    message(STATUS "BUILD WARNINGS")
+    message("-- BUILD WARNINGS")
     foreach (msg ${build_warnings})
-      message(STATUS ${msg})
+      message("-- ${msg}")
     endforeach ()
-    message(STATUS "END BUILD WARNINGS\n")
+    message("-- END BUILD WARNINGS\n")
   endif (build_warnings)
 
   if(build_errors)
-    message(STATUS "BUILD ERRORS: These must be resolved before compiling.")
+    message("-- BUILD ERRORS: These must be resolved before compiling.")
     foreach(msg ${build_errors})
-      message(STATUS ${msg})
+      message("-- ${msg}")
     endforeach()
-    message(STATUS " END BUILD ERRORS\n")
+    message("-- END BUILD ERRORS\n")
 
     set(error_str "Errors encountered in build. Please see BUILD ERRORS above.")
 
@@ -96,13 +96,23 @@ macro(ign_configure_build)
     # also the include directory that's generated in the build folder,
     # ${PROJECT_BINARY_DIR}, so that headers which are generated via cmake will
     # be visible to the compiler.
-    include_directories(
-      ${PROJECT_SOURCE_DIR}/include
-      ${PROJECT_BINARY_DIR}/include)
+    #
+    # TODO: We should consider removing this include_directories(~) command.
+    # If these directories are needed by any targets, then we should specify it
+    # for those targets directly.
+    if(EXISTS "${PROJECT_SOURCE_DIR}/include")
+      include_directories("${PROJECT_SOURCE_DIR}/include")
+    endif()
+
+    include_directories("${PROJECT_BINARY_DIR}/include")
+    file(MAKE_DIRECTORY "${PROJECT_BINARY_DIR}/include")
 
 
     #--------------------------------------
     # Clear the test results directory
+    #
+    # TODO: This should probably be in a CI script instead of our build
+    # configuration script.
     execute_process(COMMAND cmake -E remove_directory ${CMAKE_BINARY_DIR}/test_results)
     execute_process(COMMAND cmake -E make_directory ${CMAKE_BINARY_DIR}/test_results)
 
@@ -114,9 +124,60 @@ macro(ign_configure_build)
 
     #--------------------------------------
     # Add the source code directories of the core library
-    add_subdirectory(src)
-    _ign_find_include_script()
-    add_subdirectory(test)
+    if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/core")
+
+      # If the directory structure has a subdirectory called "core", we will
+      # use that instead of assuming that src, include, and test subdirectories
+      # exist in the root directory.
+      #
+      # We treat "core" the same way as we treat the component subdirectories.
+      # It's inserted into the beginning of the list to make sure that the core
+      # subdirectory is handled before any other.
+      list(INSERT ign_configure_build_COMPONENTS 0 core)
+
+    else()
+
+      add_subdirectory(src)
+      _ign_find_include_script()
+
+    endif()
+
+    if(EXISTS ${CMAKE_CURRENT_LIST_DIR}/test)
+      add_subdirectory(test)
+    endif()
+
+    #--------------------------------------
+    # Add the source, include, and test directories to the cppcheck dirs.
+    # CPPCHECK_DIRS is used in IgnCodeCheck. The variable specifies the
+    # directories static code analyzers should check. Additional directories
+    # are added for each component.
+    set (CPPCHECK_DIRS)
+    set (potential_cppcheck_dirs
+      ${CMAKE_SOURCE_DIR}/src
+      ${CMAKE_SOURCE_DIR}/include
+      ${CMAKE_SOURCE_DIR}/test/integration
+      ${CMAKE_SOURCE_DIR}/test/regression
+      ${CMAKE_SOURCE_DIR}/test/performance)
+    foreach (dir ${potential_cppcheck_dirs})
+      if (EXISTS ${dir})
+        list (APPEND CPPCHECK_DIRS ${dir})
+      endif()
+    endforeach()
+
+    # Includes for cppcheck. This sets include paths for cppcheck. Additional
+    # directories are added for each component.
+    set (CPPCHECK_INCLUDE_DIRS)
+    set (potential_cppcheck_include_dirs
+      ${CMAKE_BINARY_DIR}
+      ${CMAKE_SOURCE_DIR}/include/ignition/${IGN_DESIGNATION}
+      ${CMAKE_SOURCE_DIR}/test/integration
+      ${CMAKE_SOURCE_DIR}/test/regression
+      ${CMAKE_SOURCE_DIR}/test/performance)
+    foreach (dir ${potential_cppcheck_include_dirs})
+      if (EXISTS ${dir})
+        list (APPEND CPPCHECK_INCLUDE_DIRS ${dir})
+      endif()
+    endforeach()
 
     #--------------------------------------
     # Initialize the list of header directories that should be parsed by doxygen
@@ -128,19 +189,33 @@ macro(ign_configure_build)
 
       if(NOT SKIP_${component})
 
+        set(found_${component}_src FALSE)
+
+        # Append the component's include directory to both CPPCHECK_DIRS and
+        # CPPCHECK_INCLUDE_DIRS
+        list(APPEND CPPCHECK_DIRS ${CMAKE_CURRENT_LIST_DIR}/${component}/include)
+        list(APPEND CPPCHECK_INCLUDE_DIRS
+          ${CMAKE_CURRENT_LIST_DIR}/${component}/include)
+
         # Note: It seems we need to give the delimiter exactly this many
         # backslashes in order to get a \ plus a newline. This might be
         # dependent on the implementation of ign_string_append, so be careful
         # when changing the implementation of that function.
         ign_string_append(ign_doxygen_component_input_dirs
-          "${CMAKE_SOURCE_DIR}/${component}/include"
+          "${CMAKE_CURRENT_LIST_DIR}/${component}/include"
           DELIM " \\\\\\\\\n  ")
+
+        # Append the component's source directory to CPPCHECK_DIRS.
+        if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/${component}/src")
+          list(APPEND CPPCHECK_DIRS ${CMAKE_CURRENT_LIST_DIR}/${component}/src)
+        endif()
 
         if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/${component}/CMakeLists.txt")
 
           # If the component's directory has a top-level CMakeLists.txt, use
           # that.
           add_subdirectory(${component})
+          set(found_${component}_src TRUE)
 
         else()
 
@@ -153,6 +228,7 @@ macro(ign_configure_build)
           # Add the source files
           if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/${component}/src/CMakeLists.txt")
             add_subdirectory(${component}/src)
+            set(found_${component}_src TRUE)
           endif()
 
           _ign_find_include_script(COMPONENT ${component})
@@ -161,6 +237,12 @@ macro(ign_configure_build)
           if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/${component}/test/CMakeLists.txt")
             add_subdirectory(${component}/test)
           endif()
+        endif()
+
+        if(NOT found_${component}_src)
+          message(AUTHOR_WARNING
+            "Could not find a top-level CMakeLists.txt or src/CMakeLists.txt "
+            "for the component [${component}]!")
         endif()
 
       else()
@@ -176,16 +258,14 @@ macro(ign_configure_build)
 
     endforeach()
 
-
     #--------------------------------------
     # Export the "all" meta-target
     ign_export_target_all()
 
-
     #--------------------------------------
-    # Create documentation
-    ign_create_docs()
-
+    # Create codecheck target
+    include(IgnCodeCheck)
+    ign_setup_target_for_codecheck()
 
     #--------------------------------------
     # If we made it this far, the configuration was successful
@@ -198,6 +278,10 @@ endmacro()
 macro(ign_set_cxx_feature_flags)
 
   set(IGN_KNOWN_CXX_STANDARDS 11 14)
+
+  # TODO: Once we're using cmake-3.8.2 or higher, we can replace these with
+  # cxx_std_11, cxx_std_14, and cxx_std_17, which will be defined automatically
+  # by cmake in later versions.
 
   set(IGN_CXX_11_FEATURES
     cxx_alias_templates
@@ -285,16 +369,18 @@ function(_ign_find_include_script)
   # to have custom behavior for each include directory structure while also
   # allowing us to just have one leaf CMakeLists.txt file if a project doesn't
   # need any custom configuration in its include directories.
-  if(EXISTS "${include_start}/include/CMakeLists.txt")
-    add_subdirectory("${include_start}/include")
-  elseif(EXISTS "${include_start}/include/ignition/CMakeLists.txt")
-    add_subdirectory("${include_start}/include/ignition")
-  elseif(EXISTS "${include_start}/include/ignition/${IGN_DESIGNATION}/CMakeLists.txt")
-    add_subdirectory("${include_start}/include/ignition/${IGN_DESIGNATION}")
-  else()
-    # TODO: Should we print a warning or a status message here to indicate that
-    # no script was found for the include directory? Perhaps not all projects
-    # will have one.
+  if(EXISTS "${include_start}/include")
+    if(EXISTS "${include_start}/include/CMakeLists.txt")
+      add_subdirectory("${include_start}/include")
+    elseif(EXISTS "${include_start}/include/ignition/CMakeLists.txt")
+      add_subdirectory("${include_start}/include/ignition")
+    elseif(EXISTS "${include_start}/include/ignition/${IGN_DESIGNATION}/CMakeLists.txt")
+      add_subdirectory("${include_start}/include/ignition/${IGN_DESIGNATION}")
+    else()
+      message(AUTHOR_WARNING
+        "You have an include directory [${include_start}/include] without a "
+        "CMakeLists.txt. This means its headers will not get installed!")
+    endif()
   endif()
 
 endfunction()
@@ -337,7 +423,15 @@ macro(ign_parse_build_type)
   elseif("${CMAKE_BUILD_TYPE_UPPERCASE}" STREQUAL "COVERAGE")
     include(IgnCodeCoverage)
     set(BUILD_TYPE_DEBUG TRUE)
-    ign_setup_target_for_coverage(coverage ctest coverage)
+    ign_setup_target_for_coverage(
+      OUTPUT_NAME coverage
+      TARGET_NAME coverage
+      TEST_RUNNER ctest)
+    ign_setup_target_for_coverage(
+      BRANCH_COVERAGE
+      OUTPUT_NAME coverage-branch
+      TARGET_NAME coverage-branch
+      TEST_RUNNER ctest)
   elseif("${CMAKE_BUILD_TYPE_UPPERCASE}" STREQUAL "PROFILE")
     set(BUILD_TYPE_PROFILE TRUE)
   else()
