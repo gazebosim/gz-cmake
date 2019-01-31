@@ -775,11 +775,7 @@ endmacro(ign_build_warning)
 #################################################
 macro(ign_add_library lib_target_name)
 
-  # TODO: For the first stable release of ign-cmake1, switch from the
-  # AUTHOR_WARNING message type to the FATAL_ERROR type.
-
-#  message(FATAL_ERROR
-  message(AUTHOR_WARNING
+  message(FATAL_ERROR
     "ign_add_library(<target_name> <sources>) is deprecated. Instead, use "
     "ign_create_core_library(SOURCES <sources>). It will determine the library "
     "target name automatically from the project name. To add a component "
@@ -1466,11 +1462,7 @@ endmacro()
 #################################################
 macro(ign_install_library)
 
-  # TODO: For the first stable release of ign-cmake1, switch from the
-  # AUTHOR_WARNING message type to the FATAL_ERROR type.
-
-#  message(FATAL_ERROR
-  message(AUTHOR_WARNING
+  message(FATAL_ERROR
     "ign_install_library is deprecated. "
     "Please remove it from your cmake script!")
 
@@ -1708,11 +1700,7 @@ endmacro()
 #
 macro(ign_set_project_public_cxx_standard standard)
 
-  # TODO: For the first stable release of ign-cmake1, switch from the
-  # AUTHOR_WARNING message type to the FATAL_ERROR type.
-
-#  message(FATAL_ERROR
-  message(AUTHOR_WARNING
+  message(FATAL_ERROR
     "The ign_set_project_public_cxx_standard(~) macro is deprecated. "
     "Instead, use the CXX_STANDARD argument of ign_create_core_library(~).")
 
