@@ -780,7 +780,9 @@ WARN_LOGFILE           = /tmp/ignition-@IGN_DESIGNATION@.warn
 # spaces. See also FILE_PATTERNS and EXTENSION_MAPPING
 # Note: If this tag is empty the current directory is searched.
 
-INPUT                  = @CMAKE_SOURCE_DIR@/README.md \
+INPUT                  = @IGNITION_DOXYGEN_API_MAINPAGE_MD@ \
+                         @IGNITION_DOXYGEN_TUTORIALS_DIR@ \
+                         @IGNITION_DOXYGEN_TUTORIALS_MAINPAGE_MD@ \
   @ign_doxygen_component_input_dirs@
 
 # This tag can be used to specify the character encoding of the source files
@@ -807,7 +809,8 @@ INPUT_ENCODING         = UTF-8
 # *.f, *.for, *.tcl, *.vhd, *.vhdl, *.ucf and *.qsf.
 
 FILE_PATTERNS          = *.hh \
-                         *.h
+                         *.h \
+                         *.md
 
 # The RECURSIVE tag can be used to specify whether or not subdirectories should
 # be searched for input files as well.
@@ -900,7 +903,7 @@ IMAGE_PATH             =
 # need to set EXTENSION_MAPPING for the extension otherwise the files are not
 # properly processed by doxygen.
 
-INPUT_FILTER           = "sed -e 's/inline\snamespace\s.*\s{$\|ignition::@IGN_DESIGNATION@::\|IGN_DEPRECATED\(.*\)\|IGNITION_@IGN_DESIGNATION_UPPER@_VISIBLE//g'"
+INPUT_FILTER           =
 
 # The FILTER_PATTERNS tag can be used to specify filters on a per file pattern
 # basis. Doxygen will compare the file name with each pattern and apply the
@@ -913,7 +916,7 @@ INPUT_FILTER           = "sed -e 's/inline\snamespace\s.*\s{$\|ignition::@IGN_DE
 # need to set EXTENSION_MAPPING for the extension otherwise the files are not
 # properly processed by doxygen.
 
-FILTER_PATTERNS        =
+FILTER_PATTERNS        = *.hh="sed -e 's/inline\snamespace\s.*\s{$\|ignition::@IGN_DESIGNATION@::\|IGN_DEPRECATED\(.*\)\|IGNITION_@IGN_DESIGNATION_UPPER@_VISIBLE//g'"
 
 # If the FILTER_SOURCE_FILES tag is set to YES, the input filter (if set using
 # INPUT_FILTER) will also be used to filter the input files that are used for
@@ -935,7 +938,7 @@ FILTER_SOURCE_PATTERNS =
 # (index.html). This can be useful if you have a project on for instance GitHub
 # and want to reuse the introduction page also for the doxygen output.
 
-USE_MDFILE_AS_MAINPAGE = @CMAKE_SOURCE_DIR@/README.md
+USE_MDFILE_AS_MAINPAGE = @IGNITION_DOXYGEN_API_MAINPAGE_MD@
 
 #---------------------------------------------------------------------------
 # Configuration options related to source browsing
@@ -1113,7 +1116,7 @@ HTML_FOOTER            = @IGNITION_CMAKE_DOXYGEN_DIR@/footer.html
 # obsolete.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_STYLESHEET        = 
+HTML_STYLESHEET        =
 
 # The HTML_EXTRA_STYLESHEET tag can be used to specify additional user-defined
 # cascading style sheets that are included after the standard style sheets
@@ -1475,7 +1478,7 @@ FORMULA_TRANSPARENT    = YES
 # The default value is: NO.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-USE_MATHJAX            = YES
+USE_MATHJAX            = NO
 
 # When MathJax is enabled you can set the default output format to be used for
 # the MathJax output. See the MathJax site (see:

@@ -181,7 +181,11 @@ macro(ign_configure_build)
 
     #--------------------------------------
     # Initialize the list of header directories that should be parsed by doxygen
-    set(ign_doxygen_component_input_dirs "${CMAKE_SOURCE_DIR}/include")
+    if(EXISTS "${CMAKE_SOURCE_DIR}/include")
+      set(ign_doxygen_component_input_dirs "${CMAKE_SOURCE_DIR}/include")
+    else()
+      set(ign_doxygen_component_input_dirs "")
+    endif()
 
     #--------------------------------------
     # Add the source code directories of each component if they exist
@@ -197,13 +201,15 @@ macro(ign_configure_build)
         list(APPEND CPPCHECK_INCLUDE_DIRS
           ${CMAKE_CURRENT_LIST_DIR}/${component}/include)
 
-        # Note: It seems we need to give the delimiter exactly this many
-        # backslashes in order to get a \ plus a newline. This might be
-        # dependent on the implementation of ign_string_append, so be careful
-        # when changing the implementation of that function.
-        ign_string_append(ign_doxygen_component_input_dirs
-          "${CMAKE_CURRENT_LIST_DIR}/${component}/include"
-          DELIM " \\\\\\\\\n  ")
+        if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/${component}/include")
+          # Note: It seems we need to give the delimiter exactly this many
+          # backslashes in order to get a \ plus a newline. This might be
+          # dependent on the implementation of ign_string_append, so be careful
+          # when changing the implementation of that function.
+          ign_string_append(ign_doxygen_component_input_dirs
+            "${CMAKE_CURRENT_LIST_DIR}/${component}/include"
+            DELIM " \\\\\\\\\n  ")
+        endif()
 
         # Append the component's source directory to CPPCHECK_DIRS.
         if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/${component}/src")
@@ -277,71 +283,11 @@ endmacro()
 
 macro(ign_set_cxx_feature_flags)
 
-  set(IGN_KNOWN_CXX_STANDARDS 11 14)
+  set(IGN_KNOWN_CXX_STANDARDS 11 14 17)
 
-  # TODO: Once we're using cmake-3.8.2 or higher, we can replace these with
-  # cxx_std_11, cxx_std_14, and cxx_std_17, which will be defined automatically
-  # by cmake in later versions.
-
-  set(IGN_CXX_11_FEATURES
-    cxx_alias_templates
-    cxx_alignas
-    cxx_alignof
-    cxx_attributes
-    cxx_auto_type
-    cxx_constexpr
-#    cxx_decltype_incomplete_return_types # Not yet supported in MSVC (as of 2017)
-    cxx_decltype
-    cxx_default_function_template_args
-    cxx_defaulted_functions
-    cxx_defaulted_move_initializers
-    cxx_delegating_constructors
-    cxx_deleted_functions
-    cxx_enum_forward_declarations
-    cxx_explicit_conversions
-    cxx_extended_friend_declarations
-    cxx_extern_templates
-    cxx_final
-    cxx_func_identifier
-    cxx_generalized_initializers
-    cxx_inheriting_constructors
-    cxx_inline_namespaces
-    cxx_lambdas
-    cxx_local_type_template_args
-    cxx_long_long_type
-    cxx_noexcept
-    cxx_nonstatic_member_init
-    cxx_nullptr
-    cxx_override
-    cxx_range_for
-    cxx_raw_string_literals
-    cxx_reference_qualified_functions
-    cxx_right_angle_brackets
-    cxx_rvalue_references
-    cxx_sizeof_member
-    cxx_static_assert
-    cxx_strong_enums
-    cxx_thread_local
-    cxx_trailing_return_types
-    cxx_unicode_literals
-    cxx_unrestricted_unions
-    cxx_user_literals
-    cxx_variadic_macros
-    cxx_variadic_templates)
-
-  set(IGN_CXX_14_FEATURES
-    ${IGN_CXX_11_FEATURES}
-    cxx_attribute_deprecated
-    cxx_binary_literals
-    cxx_contextual_conversions
-    cxx_decltype_auto
-    cxx_digit_separators
-    cxx_generic_lambdas
-    cxx_lambda_init_captures
-#    cxx_relaxed_constexpr # Not yet supported in MSVC (as of 2017)
-    cxx_return_type_deduction
-    cxx_variable_templates)
-
+  set(IGN_CXX_11_FEATURES cxx_std_11)
+  set(IGN_CXX_14_FEATURES cxx_std_14)
+  set(IGN_CXX_17_FEATURES cxx_std_17)
 
 endmacro()
 

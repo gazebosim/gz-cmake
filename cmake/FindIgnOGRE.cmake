@@ -32,6 +32,7 @@
 #  OGRE_VERSION_MINOR      OGRE minor version
 #  OGRE_VERSION_PATCH      OGRE patch version
 #  OGRE_RESOURCE_PATH      Path to ogre plugins directory
+#  IgnOGRE::IgnOGRE        Imported target for OGRE
 #
 # On Windows, we assume that all the OGRE* defines are passed in manually
 # to CMake.
@@ -50,6 +51,13 @@ set(minor_version ${IgnOGRE_FIND_VERSION_MINOR})
 
 # Set the full version number
 set(full_version ${major_version}.${minor_version})
+
+# Copied from OGREConfig.cmake
+macro(ign_ogre_declare_plugin TYPE COMPONENT)
+    set(OGRE_${TYPE}_${COMPONENT}_FOUND TRUE)
+    set(OGRE_${TYPE}_${COMPONENT}_LIBRARIES ${TYPE}_${COMPONENT})
+    list(APPEND OGRE_LIBRARIES ${TYPE}_${COMPONENT})
+endmacro()
 
 if (NOT WIN32)
   # pkg-config platforms
@@ -123,7 +131,6 @@ if (NOT WIN32)
     # Seems that OGRE_PLUGINDIR can end in a newline, which will cause problems
     # when we pass it to the compiler later.
     string(REPLACE "\n" "" OGRE_RESOURCE_PATH ${OGRE_RESOURCE_PATH})
-
   endif()
 
   #reset pkg config path
@@ -132,32 +139,86 @@ if (NOT WIN32)
 else()
   find_package(OGRE ${full_version}
                COMPONENTS ${IgnOGRE_FIND_COMPONENTS})
-
   if(OGRE_FOUND)
+    # OGREConfig.cmake from vcpkg disable the link against plugin libs
+    # when compiling the shared version of it. Here we copied the code
+    # to use it.
+    foreach(ogre_component ${IgnOGRE_FIND_COMPONENTS})
+      if(ogre_component MATCHES "Plugin_" OR ogre_component MATCHES "RenderSystem_")
+        string(LENGTH "${ogre_component}" len)
+        string(FIND "${ogre_component}" "_" split_pos)
+        math(EXPR split_pos2 "${split_pos}+1")
+        string(SUBSTRING "${ogre_component}" "0" "${split_pos}" component_type)
+        string(SUBSTRING "${ogre_component}" "${split_pos2}" "${len}" component_name)
+
+        ign_ogre_declare_plugin("${component_type}" "${component_name}")
+      endif()
+    endforeach()
+
     # need to return only libraries defined by components and give them the
     # full path using OGRE_LIBRARY_DIRS
+    # Note: the OGREConfig.cmake installed by vcpkg generates variables that
+    # contain unwanted substrings so the string regex replace is added to
+    # fix the ogre dir path and lib vars.
+    # TODO(anyone) check if this is an OGRE vcpkg config issue.
+    string(REGEX REPLACE "\\$.*>" "" OGRE_LIBRARY_DIRS ${OGRE_LIBRARY_DIRS})
     set(ogre_all_libs)
     foreach(ogre_lib ${OGRE_LIBRARIES})
-      # Be sure that all Ogre* libraries are using absolute paths
-      set(prefix "")
-      if(ogre_lib MATCHES "Ogre" AND NOT IS_ABSOLUTE "${ogre_lib}")
-        set(prefix "${OGRE_LIBRARY_DIRS}/")
+      # dirty hack to be able to know which ogre libraries are defined by the
+      # absolute paths. These variables are sometimes multi-configuration vars
+      # (i.e: C:/vcpkg/installed/x64-windows$<$<CONFIG:Debug>:/debug>/..)
+      # IS_ABSOLUTE cmake function seems not to be working fine with them.
+      string(SUBSTRING "${OGRE_LIBRARY_DIRS}" 0 5 PATH_PREFIX)
+      string(SUBSTRING "${ogre_lib}" 0 5 ogrelib_PATH_PREFIX)
+      if(ogrelib_PATH_PREFIX STREQUAL PATH_PREFIX)
+        set(lib_fullpath "${ogre_lib}")
+      else()
+        string(REGEX REPLACE "\\$.*>" "" ogre_lib ${ogre_lib})
+        # Be sure that all Ogre* libraries are using absolute paths
+        set(prefix "")
+        if(ogre_lib MATCHES "Ogre" AND NOT IS_ABSOLUTE "${ogre_lib}")
+          set(prefix "${OGRE_LIBRARY_DIRS}/")
+        endif()
+        if(ogre_lib MATCHES "Plugin_" OR ogre_lib MATCHES "RenderSystem_")
+          if(NOT IS_ABSOLUTE "${ogre_lib}")
+            set(prefix "${OGRE_LIBRARY_DIRS}/OGRE/")
+          endif()
+        endif()
+        # Some Ogre libraries are not using the .lib extension
+        set(postfix "")
+        if(NOT ogre_lib MATCHES ".lib$")
+          set(postfix ".lib")
+        endif()
+        set(lib_fullpath "${prefix}${ogre_lib}${postfix}")
       endif()
-      # Some Ogre libraries are not using the .lib extension
-      set(postfix "")
-      if(NOT ogre_lib MATCHES ".lib$")
-        set(postfix ".lib")
-      endif()
-      set(lib_fullpath "${prefix}${ogre_lib}${postfix}")
       list(APPEND ogre_all_libs ${lib_fullpath})
     endforeach()
-    set(OGRE_LIBRARIES ${ogre_all_libs})
 
+    set(OGRE_LIBRARIES ${ogre_all_libs})
     set(OGRE_RESOURCE_PATH ${OGRE_CONFIG_DIR})
   endif()
 endif()
 
+# manually search and append the the RenderSystem/GL path to
+# OGRE_INCLUDE_DIRS so OGRE GL headers can be found
+foreach (dir ${OGRE_INCLUDE_DIRS})
+  get_filename_component(dir_name "${dir}" NAME)
+  if ("${dir_name}" STREQUAL "OGRE")
+    set(dir_include "${dir}/RenderSystems/GL")
+  else()
+    set(dir_include "${dir}")
+  endif()
+  list(APPEND OGRE_INCLUDE_DIRS ${dir_include})
+endforeach()
+
 set(IgnOGRE_FOUND false)
 if(OGRE_FOUND)
   set(IgnOGRE_FOUND true)
+
+  include(IgnImportTarget)
+
+  ign_import_target(IgnOGRE
+    TARGET_NAME IgnOGRE::IgnOGRE
+    LIB_VAR OGRE_LIBRARIES
+    INCLUDE_VAR OGRE_INCLUDE_DIRS)
 endif()

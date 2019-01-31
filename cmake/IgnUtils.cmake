@@ -198,6 +198,12 @@ macro(ign_find_package PACKAGE_NAME)
     #------------------------------------
     # Construct the warning/error message to produce
     set(${PACKAGE_NAME}_msg "Missing: ${${PACKAGE_NAME}_pretty}")
+
+    if(ign_find_package_COMPONENTS)
+      ign_list_to_string(comp_str ign_find_package_COMPONENTS DELIM ", ")
+      set(${PACKAGE_NAME}_msg "${${PACKAGE_NAME}_msg} (Components: ${comp_str})")
+    endif()
+
     if(DEFINED ign_find_package_PURPOSE)
       set(${PACKAGE_NAME}_msg "${${PACKAGE_NAME}_msg} - ${ign_find_package_PURPOSE}")
     endif()
@@ -425,16 +431,6 @@ macro(ign_find_package PACKAGE_NAME)
 endmacro()
 
 #################################################
-# Macro to turn a list into a string (why doesn't CMake have this built-in?)
-macro(ign_list_to_string _string _list)
-    set(${_string})
-    foreach(_item ${_list})
-      set(${_string} "${${_string}} ${_item}")
-    endforeach(_item)
-    #string(STRIP ${${_string}} ${_string})
-endmacro()
-
-#################################################
 # ign_string_append(<output_var> <value_to_append> [DELIM <delimiter>])
 #
 # <output_var>: The name of the string variable that should be appended to
@@ -478,6 +474,19 @@ macro(ign_string_append output_var val)
   if(ign_string_append_PARENT_SCOPE)
     set(${output_var} "${${output_var}}" PARENT_SCOPE)
   endif()
+
+endmacro()
+
+#################################################
+# Macro to turn a list into a string
+macro(ign_list_to_string _output _input_list)
+
+  set(${_output})
+  foreach(_item ${${_input_list}})
+    # Append each item, and forward any extra options to ign_string_append, such
+    # as DELIM or PARENT_SCOPE
+    ign_string_append(${_output} "${_item}" ${ARGN})
+  endforeach(_item)
 
 endmacro()
 
@@ -655,7 +664,7 @@ function(ign_install_all_headers)
 
     # Remove the excluded headers
     if(headers)
-      foreach(exclude ${excluded})
+      foreach(exclude ${ign_install_all_headers_EXCLUDE_FILES})
         list(REMOVE_ITEM headers ${exclude})
       endforeach()
     endif()
@@ -766,11 +775,7 @@ endmacro(ign_build_warning)
 #################################################
 macro(ign_add_library lib_target_name)
 
-  # TODO: For the first stable release of ign-cmake1, switch from the
-  # AUTHOR_WARNING message type to the FATAL_ERROR type.
-
-#  message(FATAL_ERROR
-  message(AUTHOR_WARNING
+  message(FATAL_ERROR
     "ign_add_library(<target_name> <sources>) is deprecated. Instead, use "
     "ign_create_core_library(SOURCES <sources>). It will determine the library "
     "target name automatically from the project name. To add a component "
@@ -784,7 +789,7 @@ macro(ign_add_library lib_target_name)
 endmacro()
 
 #################################################
-# _ign_check_known_cxx_standards(<11|14|...>)
+# _ign_check_known_cxx_standards(<11|14|17>)
 #
 # Creates a fatal error if the variable passed in does not represent a supported
 # version of the C++ standard.
@@ -854,9 +859,9 @@ endmacro()
 
 #################################################
 # ign_create_core_library(SOURCES <sources>
-#                         [CXX_STANDARD <11|14|...>]
-#                         [PRIVATE_CXX_STANDARD <11|14|...>]
-#                         [INTERFACE_CXX_STANDARD <11|14|...>]
+#                         [CXX_STANDARD <11|14|17>]
+#                         [PRIVATE_CXX_STANDARD <11|14|17>]
+#                         [INTERFACE_CXX_STANDARD <11|14|17>]
 #                         [GET_TARGET_NAME <output_var>])
 #
 # This function will produce the "core" library for your project. There is no
@@ -1000,9 +1005,9 @@ endfunction()
 #                   [INDEPENDENT_FROM_PROJECT_LIB]
 #                   [PRIVATELY_DEPENDS_ON_PROJECT_LIB]
 #                   [INTERFACE_DEPENDS_ON_PROJECT_LIB]
-#                   [CXX_STANDARD <11|14|...>]
-#                   [PRIVATE_CXX_STANDARD <11|14|...>]
-#                   [INTERFACE_CXX_STANDARD <11|14|...>])
+#                   [CXX_STANDARD <11|14|17>]
+#                   [PRIVATE_CXX_STANDARD <11|14|17>]
+#                   [INTERFACE_CXX_STANDARD <11|14|17>])
 #
 # This function will produce a "component" library for your project. This is the
 # recommended way to produce plugins or library modules.
@@ -1457,11 +1462,7 @@ endmacro()
 #################################################
 macro(ign_install_library)
 
-  # TODO: For the first stable release of ign-cmake1, switch from the
-  # AUTHOR_WARNING message type to the FATAL_ERROR type.
-
-#  message(FATAL_ERROR
-  message(AUTHOR_WARNING
+  message(FATAL_ERROR
     "ign_install_library is deprecated. "
     "Please remove it from your cmake script!")
 
@@ -1692,18 +1693,14 @@ macro(ign_build_tests)
 endmacro()
 
 #################################################
-# ign_set_target_public_cxx_standard(<11|14>)
+# ign_set_target_public_cxx_standard(<11|14|17>)
 #
 # NOTE: This was a temporary workaround for an earlier prerelease and is
 #       deprecated as of the "Components" pull request.
 #
 macro(ign_set_project_public_cxx_standard standard)
 
-  # TODO: For the first stable release of ign-cmake1, switch from the
-  # AUTHOR_WARNING message type to the FATAL_ERROR type.
-
-#  message(FATAL_ERROR
-  message(AUTHOR_WARNING
+  message(FATAL_ERROR
     "The ign_set_project_public_cxx_standard(~) macro is deprecated. "
     "Instead, use the CXX_STANDARD argument of ign_create_core_library(~).")
 
