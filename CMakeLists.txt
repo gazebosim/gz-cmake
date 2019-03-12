@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.10.2 FATAL_ERROR)
 #============================================================================
 # Initialize the project
 #============================================================================
-project(ignition-cmake2 VERSION 2.0.0)
+project(ignition-cmake3 VERSION 3.0.0)
 
 #--------------------------------------
 # Initialize the IGNITION_CMAKE_DIR variable with the location of the cmake
@@ -20,7 +20,7 @@ include(IgnCMake)
 
 #--------------------------------------
 # Set up the project
-ign_configure_project(VERSION_SUFFIX pre4)
+ign_configure_project()
 
 #--------------------------------------
 # Install the ignition documentation files
