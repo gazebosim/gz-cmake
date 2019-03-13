@@ -125,18 +125,44 @@ function(ign_create_docs)
       set(IGNITION_DOXYGEN_TUTORIALS_DIR "")
     endif()
 
+    # Configure the main API+Tutorials doxygen configuration file. This
+    # configuration file is not used to generate the doxygen tag file,
+    # see below.
+    set(IGNITION_DOXYGEN_GENHTML "YES")
+
+    # Be careful when manipulating IGNITION_DOXYGEN_INPUT. Doxygen is finicky
+    # about the spaces between input files/directories. If you put each cmake
+    # variable on a separate line to make this `set` command more readable,
+    # then doxygen will not generate the correct/complete output.
+    set(IGNITION_DOXYGEN_INPUT "${IGNITION_DOXYGEN_API_MAINPAGE_MD} ${IGNITION_DOXYGEN_TUTORIALS_DIR} ${IGNITION_DOXYGEN_TUTORIALS_MAINPAGE_MD} ${ign_doxygen_component_input_dirs}")
     configure_file(${IGNITION_CMAKE_DOXYGEN_DIR}/api.in
                    ${CMAKE_BINARY_DIR}/api.dox @ONLY)
 
+    # The doxygen tagfile should not contain tutorial information. If tutorial
+    # information is included in the tagfile and a downstream package also has
+    # a page called "tutorials", then doxygen will silently fail to generate
+    # tutorial content for the downstream package. In order to
+    # satisfy this constraint we generate another doxygen configuration file
+    # whose sole purpose is the generation of a project's doxygen tagfile that
+    # contains only API information.
+    set(IGNITION_DOXYGEN_GENHTML "NO")
+    set(IGNITION_DOXYGEN_GENTAGFILE
+      "${CMAKE_BINARY_DIR}/${PROJECT_NAME_LOWER}.tag.xml")
+    set(IGNITION_DOXYGEN_INPUT "${ign_doxygen_component_input_dirs}")
+    configure_file(${IGNITION_CMAKE_DOXYGEN_DIR}/api.in
+                   ${CMAKE_BINARY_DIR}/api_tagfile.dox @ONLY)
+
     add_custom_target(doc ALL
+      # Generate the API tagfile
+      ${DOXYGEN_EXECUTABLE} ${CMAKE_BINARY_DIR}/api_tagfile.dox
       # Generate the API documentation
-      ${DOXYGEN_EXECUTABLE} ${CMAKE_BINARY_DIR}/api.dox
+      COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_BINARY_DIR}/api.dox
       WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 
       COMMENT "Generating API documentation with Doxygen" VERBATIM)
 
     install(FILES ${CMAKE_BINARY_DIR}/${PROJECT_NAME_LOWER}.tag.xml
-      DESTINATION ${IGN_DATA_INSTALL_DIR}_${PROJECT_VERSION_MINOR})
+      DESTINATION ${IGN_DATA_INSTALL_DIR})
   endif()
 
   #--------------------------------------
