@@ -11,8 +11,5 @@ build_script:
   - cmake .. -DCMAKE_CXX_FLAGS="-WX"
   - cmake --build .
 
-after_build:
-  - cmake --build . --target INSTALL
-
 test_script:
   - cmake --build . --target RUN_TESTS
