@@ -1,5 +1,8 @@
 #!/bin/sh
 
+echo "Usage: sh upload_doc.sh [y/n]"
+echo "  Optional [y/n] argument indicates whether to upload the docs to S3 automatically."
+
 # Check if the node was configured to use s3cmd
 # This is done by running s3cmd --configure
 if [ ! -f "${HOME}/.s3cfg" ]; then
