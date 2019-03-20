@@ -17,10 +17,14 @@ if [ ! -f "@CMAKE_BINARY_DIR@/doxygen/html/index.html" ]; then
 fi
 
 # Dry run
-s3cmd sync @CMAKE_BINARY_DIR@/doxygen/html/ s3://ignitionrobotics.org/api/@IGN_DESIGNATION@/@PROJECT_VERSION_MAJOR@.@PROJECT_VERSION_MINOR@/ -v
+s3cmd sync --dry-run @CMAKE_BINARY_DIR@/doxygen/html/ s3://ignitionrobotics.org/api/@IGN_DESIGNATION@/@PROJECT_VERSION_MAJOR@.@PROJECT_VERSION_MINOR@/ -v
 
-echo -n "Upload (Y/n)? "
-read ans
+if [ -z "$1" ]; then
+  echo -n "Upload (Y/n)? "
+  read ans
+else
+  ans=$1
+fi
 
 if [ "$ans" = "n" ] || [ "$ans" = "N" ]; then
   exit 1
