@@ -300,12 +300,21 @@ macro(ign_find_package PACKAGE_NAME)
     endif()
 
     if(ign_find_package_REQUIRED_BY)
+
+      # Identify which components are privately requiring this package
+      foreach(component ${ign_find_package_PRIVATE_FOR})
+        set(${component}_${PACKAGE_NAME}_PRIVATE true)
+      endforeach()
+
       # If this is required by some components, add it to the
       # ${component}_CMAKE_DEPENDENCIES variables that are specific to those
       # componenets
       foreach(component ${ign_find_package_REQUIRED_BY})
-        ign_string_append(${component}_CMAKE_DEPENDENCIES "${${PACKAGE_NAME}_find_dependency}" DELIM "\n")
+        if(NOT ${component}_${PACKAGE_NAME}_PRIVATE)
+          ign_string_append(${component}_CMAKE_DEPENDENCIES "${${PACKAGE_NAME}_find_dependency}" DELIM "\n")
+        endif()
       endforeach()
+
     endif()
 
     #------------------------------------
@@ -395,11 +404,6 @@ macro(ign_find_package PACKAGE_NAME)
         endif()
 
         if(ign_find_package_REQUIRED_BY)
-
-          # Identify which components are privately requiring this package
-          foreach(component ${ign_find_package_PRIVATE_FOR})
-            set(${component}_${PACKAGE_NAME}_PRIVATE true)
-          endforeach()
 
           # For each of the components that requires this package, append its
           # entry as a string onto the component-specific variable for whichever
