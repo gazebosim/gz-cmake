@@ -1,3 +1,29 @@
+#.rst
+# IgnGenerateVersionInfo
+# ----------------------
+#
+# Intended to be invoked as part of the ign_add_version_info_target function
+# in IgnBenchmark.
+#
+# Populates information in the version_info.json file.
+#
+#===============================================================================
+# Copyright (C) 2019 Open Source Robotics Foundation
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+P
+
+# Retrieve information about the mercurial state.
 execute_process(
   COMMAND hg id --id
   WORKING_DIRECTORY ${repository_root}
@@ -17,8 +43,13 @@ execute_process(
   OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 
+# Set time that this build occurred.
+# Adding a dependency to this target will cause this file to be generated
+# with each build, updating the timestamp accordingly.
 string(TIMESTAMP build_time)
 
+# Retrieve information about the host system
+# Ref: https://cmake.org/cmake/help/latest/command/cmake_host_system_information.html
 cmake_host_system_information(RESULT NUM_LOGICAL QUERY NUMBER_OF_LOGICAL_CORES)
 cmake_host_system_information(RESULT NUM_PHYSICAL QUERY NUMBER_OF_PHYSICAL_CORES)
 cmake_host_system_information(RESULT HOST QUERY HOSTNAME)
