@@ -45,7 +45,7 @@ execute_process(
 # Set time that this build occurred.
 # Adding a dependency to this target will cause this file to be generated
 # with each build, updating the timestamp accordingly.
-string(TIMESTAMP build_time)
+string(TIMESTAMP build_time UTC)
 
 # Retrieve information about the host system
 # Ref: https://cmake.org/cmake/help/latest/command/cmake_host_system_information.html

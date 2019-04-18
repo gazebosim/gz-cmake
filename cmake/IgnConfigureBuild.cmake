@@ -269,11 +269,6 @@ macro(ign_configure_build)
     ign_export_target_all()
 
     #--------------------------------------
-    # Create version_info.json target
-    include(IgnBenchmark)
-    ign_add_version_info_target()
-
-    #--------------------------------------
     # Create codecheck target
     include(IgnCodeCheck)
     ign_setup_target_for_codecheck()
