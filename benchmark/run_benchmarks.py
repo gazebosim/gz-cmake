@@ -13,9 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# THIS IS A GENERATED FILE, DO NOT MODIFY
-# This file was generated from ign-gazebo/test/benchmark/run_benchmarks.py.in
-
 import argparse
 import datetime
 import logging
