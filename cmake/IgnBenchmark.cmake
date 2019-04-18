@@ -6,6 +6,31 @@
 #
 # Adds a target to generate build and system configuration information.
 #
+# ign_add_run_benchmarks_target()
+#
+# Adds a target to execute all available benchmarks and aggregate the results.
+#
+# USAGE:
+# 1. Add the following line to your CMakeLists.txt
+#    include(IgnBenchmark)
+#
+# 2. Include the benchmark package
+#    find_package(benchmark REQUIRED)
+#
+# 3. Generate your benchmark executables using ign_build_executables
+#    ign_build_executables(
+#      PREFIX "BENCHMARK_"
+#      SOURCES ${benchmark_sources}
+#      LIB_DEBS benchmark::benchmark
+#      EXEC_LIST benchmark_list
+#    )
+#
+# 4. Add the benchmark target
+#    ign_add_run_benchmarks_target(TARGETS ${benchmark_list})
+#
+# 5. After building the project, use `make run_benchmarks` to execute and
+#    aggregate benchmark results to ${CMAKE_BINARY_DIR}/benchmark_results
+#
 #===============================================================================
 # Copyright (C) 2019 Open Source Robotics Foundation
 #
