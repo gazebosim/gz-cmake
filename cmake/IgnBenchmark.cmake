@@ -31,14 +31,15 @@ function(ign_add_version_info_target)
       -Dinput_file=${IGNITION_CMAKE_DIR}/version_info.json.in
       -Doutput_file=${PROJECT_BINARY_DIR}/version_info.json
       -Drepository_root=${CMAKE_CURRENT_SOURCE_DIR}
-      -Dbuild_type=${CMAKE_BUILD_TYPE}
-      -Dversion=${PROJECT_VERSION}
-      -Dversion_full=${PROJECT_VERSION_FULL}
-      -Dmajor=${PROJECT_VERSION_MAJOR}
-      -Dminor=${PROJECT_VERSION_MINOR}
-      -Dpatch=${PROJECT_VERSION_PATCH}
-      -Dproject_name=${PROJECT_NAME}
+      # Yes, these variables need to be passed in, because they won't
+      # get properly set when invoked as a CMake script.
+      -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+      -DPROJECT_VERSION=${PROJECT_VERSION}
+      -DPROJECT_VERSION_FULL=${PROJECT_VERSION_FULL}
+      -DPROJECT_VERSION_MAJOR=${PROJECT_VERSION_MAJOR}
+      -DPROJECT_VERSION_MINOR=${PROJECT_VERSION_MINOR}
+      -DPROJECT_VERSION_PATCH=${PROJECT_VERSION_PATCH}
+      -DPROJECT_NAME=${PROJECT_NAME}
       -P ${IGNITION_CMAKE_DIR}/IgnGenerateVersionInfo.cmake
   )
 endfunction()
-

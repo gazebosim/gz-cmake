@@ -1,7 +1,7 @@
 {
   "build":
   {
-    "cmake_build_type": "${build_type}",
+    "cmake_build_type": "${CMAKE_BUILD_TYPE}",
     "build_time": "${build_time}",
     "platform":
     {
@@ -39,12 +39,12 @@
   },
   "ignition":
   {
-    "project_name": "${project_name}",
-    "version": "${version}",
-    "version_full": "${version_full}",
-    "major": "${major}",
-    "minor": "${minor}",
-    "patch": "${patch}"
+    "project_name": "${PROJECT_NAME}",
+    "version": "${PROJECT_VERSION}",
+    "version_full": "${PROJECT_VERSION_FULL}",
+    "major": "${PROJECT_VERSION_MAJOR}",
+    "minor": "${PROJECT_VERSION_MINOR}",
+    "patch": "${PROJECT_VERSION_PATCH}"
   }
 }
 

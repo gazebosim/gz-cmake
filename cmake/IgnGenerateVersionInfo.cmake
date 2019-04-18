@@ -21,7 +21,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-P
 
 # Retrieve information about the mercurial state.
 execute_process(
@@ -65,6 +64,5 @@ cmake_host_system_information(RESULT OS_NAME QUERY OS_NAME)
 cmake_host_system_information(RESULT OS_RELEASE QUERY OS_RELEASE)
 cmake_host_system_information(RESULT OS_VERSION QUERY OS_VERSION)
 cmake_host_system_information(RESULT OS_PLATFORM QUERY OS_PLATFORM)
-
 
 configure_file(${input_file} ${output_file})
