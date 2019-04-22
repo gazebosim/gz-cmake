@@ -23,10 +23,14 @@
 # correctly imported. This is especially important on Windows in order to
 # support shared library versions of Protobuf.
 
-include(IgnPkgConfig)
-ign_pkg_config_entry(IgnProtobuf "protobuf >= ${IgnProtobuf_FIND_VERSION}")
+if (NOT WIN32)
+  include(IgnPkgConfig)
+  ign_pkg_config_entry(IgnProtobuf "protobuf >= ${IgnProtobuf_FIND_VERSION}")
 
-find_package(Protobuf ${IgnProtobuf_FIND_VERSION} QUIET CONFIG)
+  # CONFIG does not play well with protobuf version from vcpkg, it fails to
+  # find the PROTOBUF_GENERATE_CPP macro
+  find_package(Protobuf ${IgnProtobuf_FIND_VERSION} CONFIG)
+endif()
 
 if(NOT ${Protobuf_FOUND})
   # If a config-file was not found, then fall back on the system-installed
