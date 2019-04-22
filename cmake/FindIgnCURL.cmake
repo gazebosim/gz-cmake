@@ -48,6 +48,35 @@ if(${IgnCURL_FOUND})
   # them here if they have not been provided.
   include(IgnImportTarget)
 
+  # The curl vcpkg cmake module returns a string composed by
+  # build_type:path; pairs. Transforming it here to a multi
+  # configuration expression
+  if(WIN32)
+    set(conf)
+
+    foreach(library ${CURL_LIBRARIES})
+      if(library STREQUAL optimized)
+        set(conf optimized)
+      elseif(library STREQUAL debug)
+        set(conf debug)
+      else()
+        if(conf STREQUAL optimized)
+          set(CURL_RELEASE ${library})
+        elseif(conf STREQUAL debug)
+          set(CURL_DEBUG ${library})
+        else()
+          message(FATAL_ERROR "Unexpected configuration ${conf}")
+        endif()
+      endif()
+    endforeach()
+
+    if (CURL_DEBUG AND CURL_RELEASE)
+      set(CURL_LIBRARIES "$<$<CONFIG:Debug>>:${CURL_DEBUG}>;$<$<CONFIG:Release>:${CURL_RELEASE}>")
+    else()
+      message(FATAL_ERROR "CURL_RELEASE or CURL_DEBUG var is not set")
+    endif()
+  endif()
+
   if(NOT TARGET curl::curl)
     ign_import_target(curl
       LIB_VAR CURL_LIBRARIES
