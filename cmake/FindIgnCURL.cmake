@@ -49,33 +49,36 @@ if(${IgnCURL_FOUND})
   include(IgnImportTarget)
 
   message(STATUS "CURL_LIBRARIES: ${CURL_LIBRARIES}")
-  # The curl vcpkg cmake module returns a string composed by
-  # build_type:path; pairs. Transforming it here to a multi
-  # configuration expression
   if(WIN32)
     set(conf)
 
-    foreach(library ${CURL_LIBRARIES})
-      message(STATUS "library: ${library}")
-      if(library STREQUAL optimized)
-        set(conf optimized)
-      elseif(library STREQUAL debug)
-        set(conf debug)
-      else()
-        if(conf STREQUAL optimized)
-          set(CURL_RELEASE ${library})
-        elseif(conf STREQUAL debug)
-          set(CURL_DEBUG ${library})
+    # check if CURL_LIBRARIES is composed just by one value or need parsing
+    if(NOT EXISTS ${library})
+      # The curl vcpkg cmake module could returns a string composed by
+      # build_type:path; pairs. Transforming it here to a multi configuration
+      # expression
+      foreach(library ${CURL_LIBRARIES})
+        message(STATUS "library: ${library}")
+        if(library STREQUAL optimized)
+          set(conf optimized)
+        elseif(library STREQUAL debug)
+          set(conf debug)
         else()
-          message(FATAL_ERROR "Unexpected configuration ${conf}")
+          if(conf STREQUAL optimized)
+            set(CURL_RELEASE ${library})
+          elseif(conf STREQUAL debug)
+            set(CURL_DEBUG ${library})
+          else()
+            message(FATAL_ERROR "Unexpected configuration ${conf}")
+          endif()
         endif()
-      endif()
-    endforeach()
+      endforeach()
 
-    if(CURL_DEBUG AND CURL_RELEASE)
-      set(CURL_LIBRARIES "$<$<CONFIG:Debug>>:${CURL_DEBUG}>;$<$<CONFIG:Release>:${CURL_RELEASE}>")
-    else()
-      message(FATAL_ERROR "CURL_RELEASE or CURL_DEBUG var is not set")
+      if(CURL_DEBUG AND CURL_RELEASE)
+        set(CURL_LIBRARIES "$<$<CONFIG:Debug>>:${CURL_DEBUG}>;$<$<CONFIG:Release>:${CURL_RELEASE}>")
+      else()
+        message(FATAL_ERROR "CURL_RELEASE or CURL_DEBUG var is not set")
+      endif()
     endif()
   endif()
 
