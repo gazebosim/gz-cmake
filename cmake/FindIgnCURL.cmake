@@ -55,7 +55,7 @@ if(${IgnCURL_FOUND})
     # The curl vcpkg cmake module could returns a string composed by
     # build_type:path; pairs. Transforming it here to a multi configuration
     # expression
-    if(${CURL_LIBRARIES} MATCHES "optimized")
+    if("${CURL_LIBRARIES}" MATCHES "optimized")
       foreach(library ${CURL_LIBRARIES})
         message(STATUS "library: ${library}")
         if(library STREQUAL optimized)
