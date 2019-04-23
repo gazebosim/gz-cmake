@@ -53,7 +53,7 @@ if(${IgnCURL_FOUND})
     set(conf)
 
     # check if CURL_LIBRARIES is composed just by one value or need parsing
-    if(NOT EXISTS ${library})
+    if(NOT EXISTS ${CURL_LIBRARIES})
       # The curl vcpkg cmake module could returns a string composed by
       # build_type:path; pairs. Transforming it here to a multi configuration
       # expression
