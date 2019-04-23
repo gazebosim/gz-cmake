@@ -52,11 +52,10 @@ if(${IgnCURL_FOUND})
   if(WIN32)
     set(conf)
 
-    # check if CURL_LIBRARIES is composed just by one value or need parsing
-    if(NOT EXISTS ${CURL_LIBRARIES})
-      # The curl vcpkg cmake module could returns a string composed by
-      # build_type:path; pairs. Transforming it here to a multi configuration
-      # expression
+    # The curl vcpkg cmake module could returns a string composed by
+    # build_type:path; pairs. Transforming it here to a multi configuration
+    # expression
+    if(${CURL_LIBRARIES} MATCHES "optimized")
       foreach(library ${CURL_LIBRARIES})
         message(STATUS "library: ${library}")
         if(library STREQUAL optimized)
