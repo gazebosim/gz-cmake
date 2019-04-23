@@ -6,7 +6,7 @@
 #
 # Adds a target to generate build and system configuration information.
 #
-# ign_add_run_benchmarks_target()
+# ign_add_benchmarks()
 #
 # Adds a target to execute all available benchmarks and aggregate the results.
 #
@@ -14,21 +14,10 @@
 # 1. Add the following line to your CMakeLists.txt
 #    include(IgnBenchmark)
 #
-# 2. Include the benchmark package
-#    find_package(benchmark REQUIRED)
+# 2. Add the benchmark
+#    ign_add_benchmarks(SOURCES ${benchmark_sources_list})
 #
-# 3. Generate your benchmark executables using ign_build_executables
-#    ign_build_executables(
-#      PREFIX "BENCHMARK_"
-#      SOURCES ${benchmark_sources}
-#      LIB_DEBS benchmark::benchmark
-#      EXEC_LIST benchmark_list
-#    )
-#
-# 4. Add the benchmark target
-#    ign_add_run_benchmarks_target(TARGETS ${benchmark_list})
-#
-# 5. After building the project, use `make run_benchmarks` to execute and
+# 3. After building the project, use `make run_benchmarks` to execute and
 #    aggregate benchmark results to ${CMAKE_BINARY_DIR}/benchmark_results
 #
 #===============================================================================
@@ -69,8 +58,25 @@ function(ign_add_version_info_target)
   )
 endfunction()
 
-function(ign_add_run_benchmarks_target)
-  cmake_parse_arguments(BENCHMARK "" "" "TARGETS" ${ARGN})
+function(ign_add_benchmarks)
+  cmake_parse_arguments(BENCHMARK "" "" "SOURCES" ${ARGN})
+
+  find_package(benchmark)
+  if(NOT benchmark_FOUND)
+    message(WARNING "Unable to find google benchmark (libbenchmark-dev). Disabling benchmarks.")
+    return()
+  endif()
+
+  if(NOT BUILD_TESTING)
+    return()
+  endif()
+
+  ign_build_executables(
+    PREFIX "BENCHMARK_"
+    SOURCES ${BENCHMARK_SOURCES}
+    LIB_DEPS benchmark::benchmark
+    EXEC_LIST BENCHMARK_TARGETS
+  )
 
   set(BENCHMARK_TARGETS_LIST "")
   foreach(benchmark ${BENCHMARK_TARGETS})
