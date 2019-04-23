@@ -48,6 +48,7 @@ if(${IgnCURL_FOUND})
   # them here if they have not been provided.
   include(IgnImportTarget)
 
+  message(STATUS "CURL_LIBRARIES: ${CURL_LIBRARIES}")
   # The curl vcpkg cmake module returns a string composed by
   # build_type:path; pairs. Transforming it here to a multi
   # configuration expression
@@ -55,6 +56,7 @@ if(${IgnCURL_FOUND})
     set(conf)
 
     foreach(library ${CURL_LIBRARIES})
+      message(STATUS "library: ${library}")
       if(library STREQUAL optimized)
         set(conf optimized)
       elseif(library STREQUAL debug)
@@ -70,7 +72,7 @@ if(${IgnCURL_FOUND})
       endif()
     endforeach()
 
-    if (CURL_DEBUG AND CURL_RELEASE)
+    if(CURL_DEBUG AND CURL_RELEASE)
       set(CURL_LIBRARIES "$<$<CONFIG:Debug>>:${CURL_DEBUG}>;$<$<CONFIG:Release>:${CURL_RELEASE}>")
     else()
       message(FATAL_ERROR "CURL_RELEASE or CURL_DEBUG var is not set")
