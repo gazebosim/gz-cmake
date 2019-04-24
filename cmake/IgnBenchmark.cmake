@@ -61,13 +61,13 @@ endfunction()
 function(ign_add_benchmarks)
   cmake_parse_arguments(BENCHMARK "" "" "SOURCES" ${ARGN})
 
-  find_package(benchmark)
-  if(NOT benchmark_FOUND)
-    message(WARNING "Unable to find google benchmark (libbenchmark-dev). Disabling benchmarks.")
+  if(NOT BUILD_TESTING)
     return()
   endif()
 
-  if(NOT BUILD_TESTING)
+  find_package(benchmark)
+  if(NOT benchmark_FOUND)
+    message(WARNING "Unable to find google benchmark (libbenchmark-dev). Disabling benchmarks.")
     return()
   endif()
 
