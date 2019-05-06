@@ -30,9 +30,15 @@ ign_configure_project()
 add_subdirectory(doc)
 
 #--------------------------------------
+# Install the benchmark files
+install(DIRECTORY benchmark/
+        DESTINATION ${IGN_DATA_INSTALL_DIR}/benchmark)
+
+#--------------------------------------
 # Install the codecheck files
 install(DIRECTORY codecheck/
         DESTINATION ${IGN_DATA_INSTALL_DIR}/codecheck)
+
 
 #============================================================================
 # Configure the package to be installed
