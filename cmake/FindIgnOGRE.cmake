@@ -176,7 +176,11 @@ else()
         string(REGEX REPLACE "\\$.*>" "" ogre_lib ${ogre_lib})
         # Be sure that all Ogre* libraries are using absolute paths
         set(prefix "")
-        if(ogre_lib MATCHES "Ogre" AND NOT IS_ABSOLUTE "${ogre_lib}")
+	# vcpkg uses special directory (lib/manual-link/) to place libraries
+	# with main sysmbol like OgreMain.
+	if(ogre_lib MATCHES "OgreMain" AND NOT IS_ABSOLUTE "${ogre_lib}")
+          set(prefix "${OGRE_LIBRARY_DIRS}/manual-link")
+	elseif(ogre_lib MATCHES "Ogre" AND NOT IS_ABSOLUTE "${ogre_lib}")
           set(prefix "${OGRE_LIBRARY_DIRS}/")
         endif()
         if(ogre_lib MATCHES "Plugin_" OR ogre_lib MATCHES "RenderSystem_")
