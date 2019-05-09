@@ -179,7 +179,7 @@ else()
 	# vcpkg uses special directory (lib/manual-link/) to place libraries
 	# with main sysmbol like OgreMain.
 	if(ogre_lib MATCHES "OgreMain" AND NOT IS_ABSOLUTE "${ogre_lib}")
-          set(prefix "${OGRE_LIBRARY_DIRS}/manual-link")
+          set(prefix "${OGRE_LIBRARY_DIRS}/manual-link/")
 	elseif(ogre_lib MATCHES "Ogre" AND NOT IS_ABSOLUTE "${ogre_lib}")
           set(prefix "${OGRE_LIBRARY_DIRS}/")
         endif()
