@@ -4,6 +4,9 @@
 
 ### Ignition CMake 2.1.0
 
+1. Fixes for vcpkg ogre 1.11 version
+    * [Pull request 152](https://bitbucket.org/ignitionrobotics/ign-cmake/pull-requests/152)
+
 1. Add benchmark aggregation functionality
     * [Pull request 148](https://bitbucket.org/ignitionrobotics/ign-cmake/pull-requests/148)
     * [Pull request 149](https://bitbucket.org/ignitionrobotics/ign-cmake/pull-requests/149)
