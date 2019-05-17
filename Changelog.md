@@ -2,7 +2,7 @@
 
 ### Ignition CMake 2.x.x
 
-### Ignition CMake 2.1.0
+### Ignition CMake 2.1.0 (2019-05-17)
 
 1. Fixes for vcpkg ogre 1.11 version
     * [Pull request 152](https://bitbucket.org/ignitionrobotics/ign-cmake/pull-requests/152)
@@ -29,7 +29,7 @@
 1. Allow tests to build without automatic linking against project lib
     * [Pull request 140](https://bitbucket.org/ignitionrobotics/ign-cmake/pull-requests/140)
 
-### Ignition CMake 2.0.0
+### Ignition CMake 2.0.0 (2019-01-31)
 
 1. Require cmake 3.10.2, support `CXX_STANDARD` 17
     * [Pull request 68](https://bitbucket.org/ignitionrobotics/ign-cmake/pull-requests/68)
