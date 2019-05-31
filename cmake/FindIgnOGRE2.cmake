@@ -53,6 +53,46 @@ if (${IgnOGRE2_FIND_VERSION_MAJOR})
   endif()
 endif()
 
+macro(append_library VAR LIB)
+  if(EXISTS "${LIB}")
+    list(APPEND ${VAR} ${LIB})
+  else()
+    message(FATAL_ERROR "Library does not exist: ${LIB}")
+  endif()
+endmacro()
+
+# filter all ocurrences of LIBRARY_STR with the form of: debug;<path>;optimized;<path>
+# based on CMAKE_BUILD_TYPE
+macro(select_lib_by_build_type LIBRARY_STR OUTPUT_VAR)
+  set(next_add FALSE)
+  set(next_jump FALSE)
+  set(OUTPUT_VAR)
+
+  foreach(component ${LIBRARY_STR})
+    if(next_add)
+     append_library(${OUTPUT_VAR} ${component})
+     set(next_add FALSE)
+     continue()
+    endiF()
+
+    if(next_jump)
+      set(next_jump FALSE)
+      continue()
+    endif()
+
+    if(component STREQUAL "debug" AND CMAKE_BUILD_TYPE STREQUAL "Debug")
+       set(next_add TRUE)
+    elseif(component STREQUAL "debug")
+       set(next_jump TRUE)
+    elseif(component STREQUAL "optimized" AND (NOT CMAKE_BUILD_TYPE STREQUAL "Debug"))
+       set(next_add TRUE)
+    elseif(component STREQUAL "optimized")
+       set(next_jump TRUE)
+    else()
+       append_library(${OUTPUT_VAR} ${component})
+    endif()
+  endforeach()
+endmacro()
 
 if (NOT WIN32)
   set(PKG_CONFIG_PATH_ORIGINAL $ENV{PKG_CONFIG_PATH})
@@ -214,7 +254,29 @@ if (NOT WIN32)
   include(IgnPkgConfig)
   ign_pkg_config_library_entry(IgnOGRE2 OgreMain)
 
-#endif NOT WIN32
+else() #WIN32
+  # reset ogre variables to be sure they dont conflict with OGRE1
+  unset(OGRE_FOUND)
+  unset(OGRE_INCLUDE_DIRS)
+  unset(OGRE_LIBRARIES)
+  foreach(ogre_component ${IgnOGRE2_FIND_COMPONENTS})
+    set(OGRE_${ogre_component}_FOUND FALSE)
+  endforeach()
+  # currently designed to work with osrf vcpkg ogre2 portfile
+  find_package(OGRE2
+               COMPONENTS ${IgnOGRE2_FIND_COMPONENTS})
+  set(OGRE2_INCLUDE_DIRS ${OGRE_INCLUDE_DIRS})
+  # Imported from OGRE1: link component libs outside of static build
+  foreach(ogre_component ${IgnOGRE2_FIND_COMPONENTS})
+    if (OGRE_${ogre_component}_FOUND)
+       list(APPEND OGRE_LIBRARIES "${OGRE_${ogre_component}_LIBRARIES}")
+    endif()
+  endforeach()
+
+  select_lib_by_build_type("${OGRE_LIBRARIES}" OGRE2_LIBRARIES)
+
+  include(IgnPkgConfig)
+  ign_pkg_config_library_entry(IgnOGRE2 OgreMain)
 endif()
 
 set(IgnOGRE2_FOUND false)
