@@ -275,6 +275,15 @@ else() #WIN32
 
   select_lib_by_build_type("${OGRE_LIBRARIES}" OGRE2_LIBRARIES)
 
+  set(OGRE2_PLUGINS_VCPKG Plugin_ParticleFX RenderSystem_GL RenderSystem_GL3Plus RenderSystem_Direct3D11)
+
+  foreach(PLUGIN ${OGRE2_PLUGINS_VCPKG})
+    if(OGRE_${PLUGIN}_FOUND)
+      message("Plugin found: ${PLUGIN}")
+      list(APPEND OGRE2_INCLUDE_DIRS ${OGRE_${PLUGIN}_INCLUDE_DIRS})
+    endif()
+  endforeach()
+
   include(IgnPkgConfig)
   ign_pkg_config_library_entry(IgnOGRE2 OgreMain)
 endif()
