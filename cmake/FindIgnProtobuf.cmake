@@ -31,7 +31,7 @@ if(NOT ${Protobuf_FOUND})
   find_package(Protobuf ${IgnProtobuf_FIND_VERSION})
 endif()
 
-if(${Protobuf_FOUND})
+if(${Protobuf_FOUND} OR ${PROTOBUF_FOUND})
   # If we have found Protobuf, then set the IgnProtobuf_FOUND flag to true so
   # that ign_find_package(~) knows that we were successful.
   set(IgnProtobuf_FOUND true)
