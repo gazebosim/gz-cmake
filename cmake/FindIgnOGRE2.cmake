@@ -183,11 +183,8 @@ if (NOT WIN32)
       set(component_TARGET_NAME "IgnOGRE2-${component}::IgnOGRE2-${component}")
       set(component_INCLUDE_DIRS ${OGRE2_INCLUDE_DIRS})
 
-      message(STATUS "Found component: ${component}")
-
       string(FIND ${component} "Hlms" HLMS_POS)
       if(${HLMS_POS} GREATER -1)
-        message(STATUS "Hlms Component")
         foreach (dir ${OGRE2_INCLUDE_DIRS})
           get_filename_component(dir_name "${dir}" NAME)
           if ("${dir_name}" STREQUAL ${IGN_PKG_NAME})
@@ -198,8 +195,6 @@ if (NOT WIN32)
           list(APPEND component_INCLUDE_DIRS ${dir_include})
         endforeach()
       endif()
-
-      message(STATUS ${component_INCLUDE_DIRS})
 
       set(component_LIBRARY_DIRS ${OGRE2_LIBRARY_DIRS})
       set(component_LIBRARIES ${OGRE2-${component}})
