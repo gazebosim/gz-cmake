@@ -1,5 +1,8 @@
 #!/bin/sh
 
+echo "Usage: sh upload_doc.sh [y/n]"
+echo "  Optional [y/n] argument indicates whether to upload the docs to S3 automatically."
+
 # Check if the node was configured to use s3cmd
 # This is done by running s3cmd --configure
 if [ ! -f "${HOME}/.s3cfg" ]; then
@@ -17,16 +20,19 @@ if [ ! -f "@CMAKE_BINARY_DIR@/doxygen/html/index.html" ]; then
 fi
 
 # Dry run
-s3cmd sync @CMAKE_BINARY_DIR@/doxygen/html/ s3://ignitionrobotics.org/api/@IGN_DESIGNATION@/@PROJECT_VERSION_MAJOR@.@PROJECT_VERSION_MINOR@/ -v
+s3cmd sync --dry-run @CMAKE_BINARY_DIR@/doxygen/html/ s3://ignitionrobotics.org/api/@IGN_DESIGNATION@/@PROJECT_VERSION_MAJOR@.@PROJECT_VERSION_MINOR@/ -v
 
-echo -n "Upload (Y/n)? "
-read ans
+if [ -z "$1" ]; then
+  echo -n "Upload (Y/n)? "
+  read ans
+else
+  ans=$1
+fi
 
 if [ "$ans" = "n" ] || [ "$ans" = "N" ]; then
   exit 1
 else
   s3cmd sync @CMAKE_BINARY_DIR@/doxygen/html/ s3://ignitionrobotics.org/api/@IGN_DESIGNATION@/@PROJECT_VERSION_MAJOR@.@PROJECT_VERSION_MINOR@/ -v
-  s3cmd sync @CMAKE_BINARY_DIR@/tutorials/html/ s3://ignitionrobotics.org/tutorials/@IGN_DESIGNATION@/@PROJECT_VERSION_MAJOR@.@PROJECT_VERSION_MINOR@/ -v
 
   echo "WARNING"
   echo "  A CloudFront invalidation is required. Run the following command with the appropriate \$CLOUDFRONT_DISTRIBUTION_ID:\n"

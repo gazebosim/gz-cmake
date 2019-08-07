@@ -25,12 +25,12 @@ your project is migrated properly.
 ### Clear out your top-level `CMakeLists.txt` entirely
 That's right, just throw it all out.
 
-### Begin your top-level `CMakeLists.txt` with `cmake_minimum_required(VERSION 3.5.1 FATAL_ERROR)`
+### Begin your top-level `CMakeLists.txt` with `cmake_minimum_required(VERSION 3.10.2 FATAL_ERROR)`
 
-We're migrating to 3.5 because it provides many valuable features that we are
+We're migrating to 3.10 because it provides many valuable features that we are
 now taking advantage of.
 
-### Then call `find_package(ignition-cmake0 REQUIRED)`
+### Then call `find_package(ignition-cmake2 REQUIRED)`
 
 This will find `ignition-cmake` and load up all its useful features for you.
 
@@ -108,6 +108,23 @@ should not be using the CMake cache except to allow human users to set build
 options. For more explanation about why and how we should avoid using the cache,
 see the below section on CMake anti-patterns.
 
+### Replace `ign_add_library(${PROJECT_LIBRARY_TARGET_NAME} ${sources})` with `ign_create_core_library(SOURCES ${sources})`
+
+The `ign_add_library(~)` macro has been removed and replaced with the macro
+`ign_create_core_library(~)`. With this new macro, you no longer need to specify
+the library name, because it will be inferred from your project information.
+Instead, you should pass the `SOURCES` argument, followed by the source files
+which will be used to generate your library.
+
+You may also use the `CXX_STANDARD` argument to specify which C++ standard your
+library requires (current options are 11 or 14). Note that if your library
+requires a certain standard, it MUST be specified directly to this function in
+order to ensure that the requirement gets correctly propagated into the
+project's package information so that dependent libraries will also be aware of
+the requirement. See the documentation of `ign_create_core_library(~)` in
+`ign-cmake/cmake/IgnUtils.cmake` for more details on how to specify your
+library's C++ standard requirement.
+
 ### Specify `TYPE` and `SOURCES` arguments in `ign_build_tests(~)`
 
 Previously, ignition libraries would set a `TEST_TYPE` variable before calling
@@ -132,7 +149,8 @@ Note that when individual tests depend on additional libraries, those individual
 tests should be linked to their dependencies using
 `target_link_libraries(<test_name> <dependency>)` after the call to
 `ign_build_tests(~)`. `LIB_DEPS` should only be used for dependencies that are
-needed by (nearly) all of the tests.
+needed by (nearly) all of the tests. For component libraries, you can use
+`LIB_DEPS` to have the tests link to your component library.
 
 `INCLUDE_DIRS`: Include directories that need to be visible to all (or most) of
 the tests can be specified using the `INCLUDE_DIRS` tag. Note that the macro
@@ -200,10 +218,10 @@ find-module, the macro `ign_import_target(~)` should be used generate an
 imported target which follows this convention. More about creating find-modules
 can be found in the section on anti-patterns.
 
-### Remove all arguments from `ign_install_library()`
+### Remove ign_install_library()
 
-To reduce complexity, this macro no longer takes in any arguments, and instead
-uses the standardized target name and export name.
+Calling `ign_create_core_library()` will also take care of installing the
+library. Simply remove this function from your cmake script.
 
 ### Replace calls to `#include "ignition/<project>/System.hh"` with `#include "ignition/<project>/Export.hh"`, and delete the file `System.hh`.
 
@@ -226,6 +244,10 @@ unique. Different ignition libraries might depend on each other, and the
 compiler/linker would be misinformed about which symbols to export if two
 different libraries share the same export macro.
 
+Note that component libraries will generate their own visibility macros so that
+they can correctly be compiled alongside their core library. Those macros will
+look like `IGNITION_<PROJECT>_<COMPONENT>_<VISIBLE/HIDDEN>`.
+
 ### Move all find-modules in your project's `cmake/` directory to your `ign-cmake` repo, and submit a pull request for them
 
 We are centralizing all find-modules into `ign-cmake` so that everyone benefits
@@ -239,7 +261,28 @@ that are not already present in `ign-cmake`, then you should add those
 features to `ign-cmake` and submit a pull request. I will try to be very prompt
 about reviewing and approving those PRs.
 
+### To add a component library, use `ign_add_component(<component> SOURCES ${sources})`
 
+This new function allows you to create a "component" library which will be
+compiled separately from your core library. It will be packaged as a cmake
+component of your core library, and it will also be packaged as its own
+independent cmake package. For pkg-config, it will packaged as its own
+independent package because pkg-config does not seem to have a concept analogous
+to components.
+
+By default, your component will be publicly linked to your core library. To
+change this behavior, you may pass one of the following arguments:
+`INDEPENDENT_FROM_PROJECT_LIB`, `PRIVATELY_DEPENDS_ON_PROJECT_LIB`, or
+`INTERFACE_DEPENDS_ON_PROJECT_LIB`.
+
+By default, the auto-generate public headers for this component will go into the
+directory `ignition/<project>/<component>/`. You can change the subdirectory
+using the optional argument `INCLUDE_SUBDIR <subdir>` which will instead put
+the auto-generate public headers into `ignition/<project>/<subdir>/`.
+
+You may also pass the argument `GET_TARGET_NAME <output_var>` to retrieve the
+auto-generated name of the target. You can then use the target with
+`${<output_var>}`.
 
 
 # 2. Recommended Changes
@@ -263,13 +306,14 @@ want a file to be excluded, you can change its extension (e.g. `*.cc.backup` or
 ### Use `ign_install_all_headers(~)` in `include/ignition/<project>/CMakeLists.txt`
 
 Using this macro will install all files ending in `*.h` and `*.hh` in the
-current source directory as well as the subdirectory named `detail` (if it
-exists). It will also configure your project's `<project>.hh` and `config.hh.in`
-files and install them.
+current source directory recursively (so all the files in all subdirectories as
+well as their subdirectories will also be installed). It will also configure
+your project's `<project>.hh` and `config.hh.in` files and install them.
 
-You can use the argument `ADDITIONAL_DIRS` to specify additional subdirectories
-to install, and the argument `EXCLUDE` can specify files that should not be
-installed.
+You can use the argument `EXCLUDE_FILES` to specify files that should not be
+installed. The argument `EXCLUDE_DIRS` lets you specify subdirectories to not
+install. Note that the files or directories must be specified relative to the
+current directory.
 
 ### Use `ign_get_sources(~)` in `test/<type>/CMakeLists.txt` to collect source files
 

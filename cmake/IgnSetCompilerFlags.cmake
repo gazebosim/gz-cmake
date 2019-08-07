@@ -210,6 +210,11 @@ macro(ign_setup_gcc_or_clang)
   set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL} ${CUSTOM_ALL_FLAGS} ${CUSTOM_MINSIZEREL_FLAGS}")
 
 
+  # NONE is a custom type used in Debian, not automatically provided by cmake
+  set(CMAKE_C_FLAGS_NONE "${CMAKE_C_FLAGS_NONE} ${CUSTOM_ALL_FLAGS} ${MSVC_MINIMAL_FLAGS}")
+  set(CMAKE_CXX_FLAGS_NONE "${CMAKE_CXX_FLAGS_NONE} ${CUSTOM_ALL_FLAGS} ${MSVC_MINIMAL_FLAGS}")
+
+
   # PROFILE is a custom build type, not automatically provided by cmake
   set(CMAKE_C_FLAGS_PROFILE "${CMAKE_C_FLAGS_PROFILE} ${CUSTOM_ALL_FLAGS} ${CUSTOM_PROFILE_FLAGS}")
   set(CMAKE_CXX_FLAGS_PROFILE "${CMAKE_CXX_FLAGS_PROFILE} ${CUSTOM_ALL_FLAGS} ${CUSTOM_PROFILE_FLAGS}")
@@ -300,6 +305,9 @@ macro(ign_setup_msvc)
     # UNDEBUG: Undefine NDEBUG so that assertions can be triggered
     set(MSVC_RELWITHDEBINFO_FLAGS "${MSVC_RELEASE_FLAGS} /UNDEBUG")
 
+    # INCREMENTAL:NO fix LNK4075 warning
+    set(MSVC_RELWITHDEBINFO_LINKER_FLAGS "/INCREMENTAL:NO")
+
     # cmake automatically provides /Zi /Ob0 /Od /RTC1
     set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} ${MSVC_DEBUG_FLAGS}")
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${MSVC_DEBUG_FLAGS}")
@@ -311,6 +319,7 @@ macro(ign_setup_msvc)
     # cmake automatically provides /Zi /O2 /Ob1 /DNDEBUG
     set(CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO} ${MSVC_RELWITHDEBINFO_FLAGS}")
     set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} ${MSVC_RELWITHDEBINFO_FLAGS}")
+    set(CMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO "${CMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO} ${MSVC_RELWITHDEBINFO_LINKER_FLAGS}")
 
     # cmake automatically provides /O1 /Ob1 /DNDEBUG
     set(CMAKE_C_FLAGS_MINSIZEREL "${CMAKE_C_FLAGS_MINSIZEREL} ${MSVC_MINIMAL_FLAGS}")
@@ -341,7 +350,7 @@ macro(ign_setup_msvc)
   endif()
 
   if(IGN_USE_STATIC_RUNTIME)
-    foreach(build_type DEBUG RELEASE RELWITHDEBINFO MINSIZEREL)
+    foreach(build_type DEBUG RELEASE RELWITHDEBINFO MINSIZEREL NONE)
       foreach(lang C CXX)
         set(flags_var CMAKE_${lang}_FLAGS_${build_type})
         string(REGEX REPLACE "/MD" "/MT" ${flags_var} "${${flags_var}}")

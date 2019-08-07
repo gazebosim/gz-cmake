@@ -3,14 +3,14 @@
 # Only use spaces to indent your .yml configuration.
 # -----
 # You can specify a custom docker image from Docker Hub as your build environment.
-image: ubuntu:xenial
+image: ubuntu:bionic
 
 pipelines:
   default:
     - step:
         script: # Modify the commands below to build your repository.
           - apt-get update
-          - apt-get -y install cmake build-essential lcov
+          - apt-get -y install cmake build-essential lcov pkg-config cppcheck
           - mkdir build
           - cd build
           - cmake ..

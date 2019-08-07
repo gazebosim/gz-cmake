@@ -123,7 +123,7 @@ macro(ign_configure_project)
   set(PROJECT_PKGCONFIG_REQUIRES)
 
   # Initialize the list of <PROJECT_NAME>.pc Requires.private
-  set(PROJECT_PKCONFIG_REQUIRES_PRIVATE)
+  set(PROJECT_PKGCONFIG_REQUIRES_PRIVATE)
 
   # Initialize the list of <PROJECT_NAME>.pc Libs
   set(PROJECT_PKGCONFIG_LIBS)
@@ -139,6 +139,21 @@ macro(ign_configure_project)
   # features are requested. Explicitly turning this flag off will force cmake to
   # choose -std=c++14.
   set(CMAKE_CXX_EXTENSIONS off)
+
+  #============================================================================
+  # Put all runtime objects (executables and DLLs) into a single directory.
+  # This helps executables (e.g. tests) to run from the build directory on
+  # Windows. The DLLs that we build for this library needs to be available to
+  # the executables that depend on them.
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
+  # Put all libraries (.so, static .lib) into a single directory. This is just
+  # for convenience.
+  set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+
+  # Put all archive libraries (export .lib) into the lib directory. This is
+  # just for convenience.
+  set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 endmacro()
 

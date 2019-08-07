@@ -40,9 +40,9 @@
 #       Without the version comparison, the quotes and spacing are irrelevant.
 #       This usage note applies to ign_pkg_check_modules_quiet(~) as well.
 #
-macro(ign_pkg_check_modules package)
+macro(ign_pkg_check_modules package signature)
 
-  ign_pkg_check_modules_quiet(${package} ${ARGN})
+  ign_pkg_check_modules_quiet(${package} "${signature}" ${ARGN})
 
   if(NOT PKG_CONFIG_FOUND)
     message(WARNING "The package [${package}] requires pkg-config in order to be found. "
@@ -62,21 +62,77 @@ endmacro()
 # variables for you, whether or not pkg-config is available.
 #
 # For usage instructions, see ign_pkg_check_modules(~) above.
-macro(ign_pkg_check_modules_quiet package)
+macro(ign_pkg_check_modules_quiet package signature)
+
+  #------------------------------------
+  # Define the expected arguments
+  set(options INTERFACE NO_CMAKE_ENVIRONMENT_PATH QUIET)
+  set(oneValueArgs "TARGET_NAME")
+  set(multiValueArgs)
+
+  #------------------------------------
+  # Parse the arguments
+  _ign_cmake_parse_arguments(ign_pkg_check_modules "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+  if(ign_pkg_check_modules_INTERFACE)
+    set(_ign_pkg_check_modules_interface_option INTERFACE)
+  else()
+    set(_ign_pkg_check_modules_interface_option) # Intentionally blank
+  endif()
+
+  if(NOT ign_pkg_check_modules_TARGET_NAME)
+    set(ign_pkg_check_modules_TARGET_NAME "${package}::${package}")
+  endif()
 
   find_package(PkgConfig QUIET)
 
-  ign_pkg_config_entry(${package} "${ARGN}")
+  ign_pkg_config_entry(${package} "${signature}")
 
   if(PKG_CONFIG_FOUND)
 
-    pkg_check_modules(${package} ${ARGN})
+    if(${ign_pkg_check_modules_NO_CMAKE_ENVIRONMENT_PATH})
+      set(ign_pkg_check_modules_no_cmake_environment_path_arg
+          NO_CMAKE_ENVIRONMENT_PATH)
+    else()
+      set(ign_pkg_check_modules_no_cmake_environment_path_arg)
+    endif()
+
+    if(${ign_pkg_check_modules_QUIET} OR ${package}_FIND_QUIETLY)
+      set(ign_pkg_check_modules_quiet_arg QUIET)
+    else()
+      set(ign_pkg_check_modules_quiet_arg)
+    endif()
+
+    pkg_check_modules(${package}
+                      ${ign_pkg_check_modules_quiet_arg}
+                      ${ign_pkg_check_modules_no_cmake_environment_path_arg}
+                      ${signature})
 
     # TODO: When we require cmake-3.6+, we should remove this procedure and just
     #       use the plain pkg_check_modules, which provides an option called
     #       IMPORTED_TARGET that will create the imported targets the way we do
     #       here.
-    if(${package}_FOUND AND NOT TARGET ${package}::${package})
+    if(${package}_FOUND AND NOT TARGET ${ign_pkg_check_modules_TARGET_NAME})
+
+      # Because of some idiosyncrasies of pkg-config, pkg_check_modules does not
+      # put /usr/include in the <prefix>_INCLUDE_DIRS variable. E.g. try running
+      # $ pkg-config --cflags-only-I tinyxml2
+      # and you'll find that it comes out blank. This blank value gets cached
+      # into the <prefix>_INCLUDE_DIRS variable even though it's a bad value. If
+      # other packages then try to call find_path(<prefix>_INCLUDE_DIRS ...) in
+      # their own find-module or config-files, the find_path will quit early
+      # because a CACHE entry exists for <prefix>_INCLUDE_DIRS. However, that
+      # CACHE entry is blank, and so it will typically be interpreted as a
+      # failed attempt to find the path. So if this <prefix>_INCLUDE_DIRS
+      # variable is blank, then we'll unset it from the CACHE to avoid
+      # conflicts and confusion.
+      #
+      # TODO(MXG): Consider giving a different prefix (e.g. IGN_PC_${package})
+      # to pkg_check_modules(~) so that the cached variables don't collide. That
+      # would also help with the next TODO below.
+      if(NOT ${package}_INCLUDE_DIRS)
+        unset(${package}_INCLUDE_DIRS CACHE)
+      endif()
 
       # pkg_check_modules will put ${package}_FOUND into the CACHE, which would
       # prevent our FindXXX.cmake script from being entered the next time cmake
@@ -88,7 +144,7 @@ macro(ign_pkg_check_modules_quiet package)
       # problem. Perhaps the cmake-3.6 version of pkg_check_modules has a
       # better solution.
       unset(${package}_FOUND CACHE)
-      set(${package}_FOUND true)
+      set(${package}_FOUND TRUE)
 
       # For some reason, pkg_check_modules does not provide complete paths to the
       # libraries it returns, even though find_package is conventionally supposed
@@ -105,7 +161,8 @@ macro(ign_pkg_check_modules_quiet package)
         "${${package}_LIBRARY_DIRS}")
 
       include(IgnImportTarget)
-      ign_import_target(${package})
+      ign_import_target(${package} ${_ign_pkg_check_modules_interface_option}
+        TARGET_NAME ${ign_pkg_check_modules_TARGET_NAME})
 
     endif()
 
@@ -122,7 +179,7 @@ endmacro()
 macro(ign_pkg_config_entry package string)
 
   set(${package}_PKGCONFIG_ENTRY "${string}")
-  set(${package}_PKGCONFIG_TYPE PROJECT_PKGCONFIG_REQUIRES)
+  set(${package}_PKGCONFIG_TYPE PKGCONFIG_REQUIRES)
 
 endmacro()
 
@@ -133,7 +190,7 @@ endmacro()
 macro(ign_pkg_config_library_entry package lib_name)
 
   set(${package}_PKGCONFIG_ENTRY "-l${lib_name}")
-  set(${package}_PKGCONFIG_TYPE PROJECT_PKGCONFIG_LIBS)
+  set(${package}_PKGCONFIG_TYPE PKGCONFIG_LIBS)
 
 endmacro()
 
@@ -143,10 +200,21 @@ function(_ign_pkgconfig_find_libraries output_var package library_names library_
 
   foreach(libname ${library_names})
 
+    # As recommended in cmake's find_library documenation, we can call
+    # find_library multiple times with the NO_* option to override search order.
+    # Give priority to path specified by user by telling cmake not to look
+    # in default paths. If the first call succeeds, the second call will not
+    # search again
+    find_library(
+      ${package}_LIBRARY_${libname}
+      ${libname}
+      PATHS ${library_dirs} NO_DEFAULT_PATH)
+
     find_library(
       ${package}_LIBRARY_${libname}
       ${libname}
       PATHS ${library_dirs})
+    mark_as_advanced(${package}_LIBRARY_${libname})
 
     list(APPEND library_paths "${${package}_LIBRARY_${libname}}")
 

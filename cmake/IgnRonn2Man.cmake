@@ -11,7 +11,7 @@
 MACRO(IGN_ADD_MANPAGE_TARGET)
   # It is not possible add a dependency to target 'install'
   # Run hard-coded 'make man' when 'make install' is invoked
-  INSTALL(CODE "EXECUTE_PROCESS(COMMAND make man)")
+  INSTALL(CODE "EXECUTE_PROCESS(COMMAND $(MAKE) man)")
   ADD_CUSTOM_TARGET(man)
 ENDMACRO(IGN_ADD_MANPAGE_TARGET)
 

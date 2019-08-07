@@ -4,18 +4,25 @@
 #
 # find_package(@PKG_NAME@)
 #
-# It defines the following variables:
+# This creates the following targets:
 #
-#  @PKG_NAME@_FOUND        - System has @PKG_NAME@.
-#  @PKG_NAME@_INCLUDE_DIRS - include directories for @PKG_NAME@ and its dependencies.
-#  @PKG_NAME@_LIBRARY_DIRS - Paths in which the linker should search for libraries.
-#  @PKG_NAME@_LIBRARIES    - Libraries to link against.
-#  @PKG_NAME@_LDFLAGS      - Linker flags.
+#   Core library target                     - @import_target_name@
+#   Alternative target name                 - @simple_import_name@
+#   Core library + all requested components - @ign_namespace@requested
 #
-# Additionally, it will create an imported target named @PROJECT_EXPORT_NAME@::@PROJECT_EXPORT_NAME@.
-# You can link your library against that target using target_link_library(~),
-# and all the variables mentioned above will automatically be pulled into your
-# target.
+# Use target_link_libraries() to link your library or executable to one of the
+# above targets.
+#
+# We also provide the following variables for backwards compatibility, but use
+# of these is discouraged:
+#
+#   @PKG_NAME@_CORE_LIBRARY - Core library (actually contains @simple_import_name@)
+#   @PKG_NAME@_LIBRARIES    - All libraries to link against (actually contains @ign_namespace@requested).
+#   @PKG_NAME@_INCLUDE_DIRS - Include directories for @PKG_NAME@ and its dependencies.
+#
+# We will also set @PKG_NAME@_FOUND to indicate that the package was found.
+#
+################################################################################
 
 # We explicitly set the desired cmake version to ensure that the policy settings
 # of users or of toolchains do not result in the wrong behavior for our modules.
@@ -23,55 +30,156 @@
 # taking on these version settings, and then that stack will POP after the
 # find_package(~) has exited, so this will not affect the cmake policy settings
 # of a caller.
-cmake_minimum_required(VERSION 3.5.1 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.10.2 FATAL_ERROR)
 
+if(NOT @PKG_NAME@_FIND_QUIETLY)
+  message(STATUS "Looking for @PKG_NAME@ -- found version @PROJECT_VERSION_FULL@")
+endif()
 
 if(@PKG_NAME@_CONFIG_INCLUDED)
-  return()
+
+  # Check that each of the components requested in this call to find_package(~)
+  # have already been found.
+  set(@PKG_NAME@_all_requested_components_found true)
+  foreach(component ${@PKG_NAME@_FIND_COMPONENTS})
+    if(NOT @PKG_NAME@-${component}_FOUND)
+      set(@PKG_NAME@_all_requested_components_found false)
+      break()
+    endif()
+  endforeach()
+
+  # If this @PKG_NAME@-config.cmake file has been called before,
+  # and all the requested components are already found, then exit early.
+  if(@PKG_NAME@_all_requested_components_found)
+    return()
+  endif()
 endif()
 set(@PKG_NAME@_CONFIG_INCLUDED TRUE)
 
+# Get access to the find_dependency utility
+include(CMakeFindDependencyMacro)
+# Find ignition-cmake, because we need its modules in order to find the rest of
+# our dependencies.
+find_dependency(ignition-cmake@IGNITION_CMAKE_VERSION_MAJOR@)
+
+# Set the REQUIRED flag for the find_package(~) calls on this project's
+# dependencies.
+if(@PKG_NAME@_FIND_REQUIRED)
+  set(ign_package_required REQUIRED)
+else()
+  set(ign_package_required "")
+endif()
+
+# Set the QUIET flag for the find_package(~) calls on this project's
+# dependencies.
+if(@PKG_NAME@_FIND_QUIETLY)
+  set(ign_package_quiet QUIET)
+else()
+  set(ign_package_quiet "")
+endif()
+
+# --------------------------------
+# Find each required dependency of this project (if nothing is below, then the
+# project has no external dependencies). We use find_package(~) instead of
+# find_dependency(~) here so that we can support COMPONENT arguments.
+#
+# TODO: When we migrate to cmake-3.9+, change these to find_dependency(~),
+#       because at that point the find_dependency(~) function will support
+#       the COMPONENT argument.
+if(NOT @PKG_NAME@_FIND_QUIETLY)
+  message(STATUS "Searching for dependencies of @PKG_NAME@")
+endif()
+@PROJECT_CMAKE_DEPENDENCIES@
+# --------------------------------
+
 @PACKAGE_INIT@
 
-if(NOT TARGET @PROJECT_EXPORT_NAME@::@PROJECT_EXPORT_NAME@)
-  include("${CMAKE_CURRENT_LIST_DIR}/@ign_targets_output@")
+if(NOT TARGET @import_target_name@)
+  include("${CMAKE_CURRENT_LIST_DIR}/@target_output_filename@")
+
+  # Create a simplified imported target name for the core library.
+  # You can link to this target instead of the core library.
+  add_library(@simple_import_name@ INTERFACE IMPORTED)
+  set_target_properties(@simple_import_name@ PROPERTIES
+    INTERFACE_LINK_LIBRARIES @import_target_name@)
+  # Note: In a future version of cmake, we can replace this with an ALIAS target
+
+  # In case someone tries to link against the plain library name, we want to
+  # intercept that and have them link against a target instead. This is
+  # effectively the same as @simple_import_name@, but it does not have the
+  # benefit of unambiguously being a target name.
+  add_library(@PKG_NAME@ INTERFACE IMPORTED)
+  set_target_properties(@PKG_NAME@ PROPERTIES
+    INTERFACE_LINK_LIBRARIES @import_target_name@)
+
+endif()
+
+# Create the "all" target if it does not already exist
+if(NOT TARGET @ign_namespace@requested)
+  add_library(@ign_namespace@requested INTERFACE IMPORTED)
+endif()
+
+# Link the core library to the "all" target. We set the property explicitly
+# because target_link_libraries cannot be called on an imported target.
+get_target_property(ign_all_components @ign_namespace@requested INTERFACE_LINK_LIBRARIES)
+if(NOT ign_all_components)
+  # If @ign_namespace@requested has not been given any libraries yet, then cmake will
+  # set ign_all_components to ign_all_components-NOTFOUND, which is something we
+  # should NOT pass into the INTERFACE_LINK_LIBRARIES property.
+  set_target_properties(@ign_namespace@requested PROPERTIES
+    INTERFACE_LINK_LIBRARIES "@import_target_name@")
+else()
+  set_target_properties(@ign_namespace@requested PROPERTIES
+    INTERFACE_LINK_LIBRARIES "${ign_all_components};@import_target_name@")
 endif()
 
 # On windows we produce .dll libraries with no prefix
 if(WIN32)
- set(CMAKE_FIND_LIBRARY_PREFIXES "")
- set(CMAKE_FIND_LIBRARY_SUFFIXES ".lib" ".dll")
+  set(CMAKE_FIND_LIBRARY_PREFIXES "")
+  set(CMAKE_FIND_LIBRARY_SUFFIXES ".lib" ".dll")
 endif()
 
-# Package variables. Note that @PKG_NAME@_LIBRARIES merely contains an imported
-# target for the library, so it is sufficient to simply link to
-# @PKG_NAME@_LIBRARIES. None of the other package variables are needed.
-set(@PKG_NAME@_LIBRARIES @PROJECT_EXPORT_NAME@::@PROJECT_EXPORT_NAME@)
-set(@PKG_NAME@_INCLUDE_DIRS "@PACKAGE_IGN_INCLUDE_INSTALL_DIR_FULL@")
-set(@PKG_NAME@_LIBRARY_DIRS "@PACKAGE_IGN_LIB_INSTALL_DIR@")
-set(@PKG_NAME@_LDFLAGS      "-L@PACKAGE_IGN_LIB_INSTALL_DIR@")
+# Package variables. Note that @PKG_NAME@_LIBRARIES and @PKG_NAME@_CORE_LIBRARY
+# contain imported targets, so @PKG_NAME@_INCLUDE_DIRS is never needed.
+set(@PKG_NAME@_CORE_LIBRARY @simple_import_name@)
+set(@PKG_NAME@_LIBRARIES @ign_namespace@requested)
+set_and_check(@PKG_NAME@_INCLUDE_DIRS "@PACKAGE_IGN_INCLUDE_INSTALL_DIR_FULL@")
 
 # Backwards compatibility variables
 set(@PROJECT_NAME_NO_VERSION_UPPER@_LIBRARIES ${@PKG_NAME@_LIBRARIES})
 set(@PROJECT_NAME_NO_VERSION_UPPER@_INCLUDE_DIRS ${@PKG_NAME@_INCLUDE_DIRS})
 
-# These variables are used by ignition-cmake to automatically configure the
-# pkgconfig files for ignition projects.
-set(@PKG_NAME@_PKGCONFIG_ENTRY "@PKG_NAME@")
-set(@PKG_NAME@_PKGCONFIG_TYPE PROJECT_PKGCONFIG_REQUIRES)
+# This macro is used by ignition-cmake to automatically configure the pkgconfig
+# files for ignition projects.
+ign_pkg_config_entry(@PKG_NAME@ "@PKG_NAME@")
 
-# Get access to the find_dependency utility
-include(CMakeFindDependencyMacro)
+# Find each of the components requested by find_package(~)
+foreach(component ${@PKG_NAME@_FIND_COMPONENTS})
 
-# Find ignition-cmake, because we need its modules in order to find the rest of
-# our dependencies.
-find_dependency(ignition-cmake@IGNITION_CMAKE_VERSION_MAJOR@)
+  if(NOT @PKG_NAME@_FIND_QUIETLY)
+    message(STATUS "Searching for <@PKG_NAME@> component [${component}]")
+  endif()
 
-# Find each dependency of this project (if nothing is below, then the project
-# has no external dependencies).@PROJECT_CMAKE_DEPENDENCIES@
+  if(@PKG_NAME@_FIND_REQUIRED_${component})
+
+    # Find the component package using find_dependency(~). If the user specified
+    # REQUIRED or QUIET, those will automatically get forwarded to
+    # find_dependency(~)
+    find_dependency(@PKG_NAME@-${component} @PROJECT_VERSION_FULL_NO_SUFFIX@ EXACT)
+
+  else()
+
+    # If this is an optional component, use find_package(~) instead of
+    # find_dependency(~) so we can ensure that the use of REQUIRED does not get
+    # forwarded to it.
+    find_package(@PKG_NAME@-${component} @PROJECT_VERSION_FULL_NO_SUFFIX@ EXACT ${ign_package_quiet})
+
+  endif()
+
+endforeach()
 
 # Specify the doxygen tag file
-set(@PROJECT_NAME_NO_VERSION_UPPER@_DOXYGEN_TAGFILE "@CMAKE_INSTALL_PREFIX@/share/ignition/@PROJECT_NAME_LOWER@_@PROJECT_VERSION_MINOR@/@PROJECT_NAME_LOWER@.tag.xml")
+set(@PROJECT_NAME_NO_VERSION_UPPER@_DOXYGEN_TAGFILE "@CMAKE_INSTALL_PREFIX@/@IGN_DATA_INSTALL_DIR@/@PROJECT_NAME_LOWER@.tag.xml")
 
 # Specify the API url. This is where the doxygen tag file will resolve URLS to.
 set(@PROJECT_NAME_NO_VERSION_UPPER@_API_URL "https://ignitionrobotics.org/api/@IGN_DESIGNATION@/@PROJECT_VERSION_MAJOR@.@PROJECT_VERSION_MINOR@")
