@@ -23,10 +23,17 @@
 # This file is provided under the "BSD-style" License
 ########################################
 
+set(ign_quiet_arg)
+if(IgnBullet_FIND_QUIETLY)
+  set(ign_quiet_arg QUIET)
+endif()
+
 # Bullet. Force MODULE mode to use the FindBullet.cmake file distributed with
 # CMake. Otherwise, we may end up using the BulletConfig.cmake file distributed
 # with Bullet, which uses relative paths and may break transitive dependencies.
 find_package(Bullet COMPONENTS BulletMath BulletCollision MODULE QUIET)
+
+set(IgnBullet_FOUND ${BULLET_FOUND})
 
 if((BULLET_FOUND OR Bullet_FOUND) AND NOT TARGET Bullet)
   add_library(Bullet INTERFACE IMPORTED)
