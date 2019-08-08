@@ -2,6 +2,9 @@
 
 ### Ignition CMake 2.x.x
 
+1. Turn on doxygen warnings, add CI script to check for doxygen warnings.
+    * [Pull request 158](https://bitbucket.org/ignitionrobotics/ign-cmake/pull-requests/158)
+
 ### Ignition CMake 2.1.0 (2019-05-17)
 
 1. Fixes for vcpkg ogre 1.11 version
