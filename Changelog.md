@@ -1,6 +1,6 @@
 ## Ignition CMake 2.x
 
-### Ignition CMake 2.x.x
+### Ignition CMake 2.1.1 (2019-08-07)
 
 1. Turn on doxygen warnings, add CI script to check for doxygen warnings.
     * [Pull request 158](https://bitbucket.org/ignitionrobotics/ign-cmake/pull-requests/158)
