@@ -1,5 +1,11 @@
 ## Ignition CMake 2.x
 
+### Ignition CMake 2.x.x
+
+1. Support for custom vcpkg ogre2 windows port (backport of PR 155).
+    * [Pull request 161](https://bitbucket.org/ignitionrobotics/ign-cmake/pull-requests/161)
+    * [Pull request 155](https://bitbucket.org/ignitionrobotics/ign-cmake/pull-requests/155)
+
 ### Ignition CMake 2.1.1 (2019-08-07)
 
 1. Turn on doxygen warnings, add CI script to check for doxygen warnings.
