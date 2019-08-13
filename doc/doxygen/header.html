@@ -20,11 +20,13 @@
   </head>
 
     <script type="text/javascript">
-      /* Replace all the "permalink" &#9670;&nbsp; icons with a material icon */
+      /* Replace all the "permalink" &#9670;&nbsp; icons with a unicode link
+        symbol.*/
       $(document).ready(function() {
         var elems = document.getElementsByClassName("permalink");
         for (var i = 0; i < elems.length; ++i) {
-          elems[i].firstChild.innerHTML="<i class='material-icons'>link</i>";
+          elems[i].firstChild.innerHTML="&#x1f517;";
+          elems[i].firstChild.style.fontSize="18px";
         }
       });
     </script>
