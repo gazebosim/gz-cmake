@@ -33,12 +33,14 @@ endif()
 # with Bullet, which uses relative paths and may break transitive dependencies.
 find_package(Bullet MODULE ${ign_quiet_arg})
 
-set(IgnBullet_FOUND ${BULLET_FOUND})
+set(IgnBullet_FOUND false)
+# create Bullet target
+if(BULLET_FOUND)
+  set(IgnBullet_FOUND true)
 
-if((BULLET_FOUND OR Bullet_FOUND) AND NOT TARGET IgnBullet)
-  add_library(IgnBullet INTERFACE IMPORTED)
-  set_target_properties(IgnBullet PROPERTIES
-    INTERFACE_INCLUDE_DIRECTORIES "${BULLET_INCLUDE_DIRS}"
-    INTERFACE_LINK_LIBRARIES "${BULLET_LIBRARIES}"
+  ign_import_target(IgnBullet
+    TARGET_NAME IgnBullet::IgnBullet
+    LIB_VAR BULLET_LIBRARIES
+    INCLUDE_VAR BULLET_INCLUDE_DIRS)
   )
 endif()
