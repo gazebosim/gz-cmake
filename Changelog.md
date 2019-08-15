@@ -1,5 +1,10 @@
 ## Ignition CMake 2.x
 
+### Ignition CMake 2.x.x
+
+1. Add FindIgnBullet cmake module.
+    * [Pull request 162](https://bitbucket.org/ignitionrobotics/ign-cmake/pull-requests/162)
+
 ### Ignition CMake 2.1.1 (2019-08-07)
 
 1. Turn on doxygen warnings, add CI script to check for doxygen warnings.
