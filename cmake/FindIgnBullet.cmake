@@ -41,6 +41,6 @@ if(BULLET_FOUND)
   ign_import_target(IgnBullet
     TARGET_NAME IgnBullet::IgnBullet
     LIB_VAR BULLET_LIBRARIES
-    INCLUDE_VAR BULLET_INCLUDE_DIRS)
+    INCLUDE_VAR BULLET_INCLUDE_DIRS
   )
 endif()
