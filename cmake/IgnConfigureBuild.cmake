@@ -109,7 +109,9 @@ macro(ign_configure_build)
     # Add all the source code directories
     add_subdirectory(src)
     add_subdirectory(include)
-    add_subdirectory(test)
+    if(BUILD_TESTING)
+      add_subdirectory(test)
+    endif()
 
 
     #--------------------------------------
