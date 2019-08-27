@@ -142,7 +142,7 @@ macro(ign_configure_build)
 
     endif()
 
-    if(EXISTS ${CMAKE_CURRENT_LIST_DIR}/test)
+    if(BUILD_TESTING AND EXISTS ${CMAKE_CURRENT_LIST_DIR}/test)
       add_subdirectory(test)
     endif()
 
@@ -240,7 +240,8 @@ macro(ign_configure_build)
           _ign_find_include_script(COMPONENT ${component})
 
           # Add the tests
-          if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/${component}/test/CMakeLists.txt")
+          if(BUILD_TESTING AND
+             EXISTS "${CMAKE_CURRENT_LIST_DIR}/${component}/test/CMakeLists.txt")
             add_subdirectory(${component}/test)
           endif()
         endif()

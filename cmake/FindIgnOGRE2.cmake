@@ -53,6 +53,45 @@ if (${IgnOGRE2_FIND_VERSION_MAJOR})
   endif()
 endif()
 
+macro(append_library VAR LIB)
+  if(EXISTS "${LIB}")
+    list(APPEND ${VAR} ${LIB})
+  else()
+    message(FATAL_ERROR "Library does not exist: ${LIB}")
+  endif()
+endmacro()
+
+# filter all ocurrences of LIBRARY_STR with the form of: debug;<path>;optimized;<path>
+# based on CMAKE_BUILD_TYPE
+macro(select_lib_by_build_type LIBRARY_STR OUTPUT_VAR)
+  foreach(library ${LIBRARY_STR})
+    if(library STREQUAL optimized)
+      set(conf optimized)
+    elseif(library STREQUAL debug)
+      set(conf debug)
+    else()
+      if(conf STREQUAL optimized)
+        append_library(LIB_RELEASE ${library})
+        set(conf)
+      elseif(conf STREQUAL debug)
+        append_library(LIB_DEBUG ${library})
+        set(conf)
+      else()
+        # assume library without debug/optimized prefix
+        append_library(LIB_RELEASE ${library})
+        append_library(LIB_DEBUG ${library})
+      endif()
+    endif()
+  endforeach()
+
+  if(LIB_DEBUG AND CMAKE_BUILD_TYPE STREQUAL "Debug")
+    set(${OUTPUT_VAR} "${LIB_DEBUG}")
+  elseif(LIB_RELEASE)
+    set(${OUTPUT_VAR} "${LIB_RELEASE}")
+  else()
+    message(FATAL_ERROR "Can not find libraries in ${LIBRARY_STR}")
+  endif()
+endmacro()
 
 if (NOT WIN32)
   set(PKG_CONFIG_PATH_ORIGINAL $ENV{PKG_CONFIG_PATH})
@@ -227,7 +266,38 @@ if (NOT WIN32)
   include(IgnPkgConfig)
   ign_pkg_config_library_entry(IgnOGRE2 OgreMain)
 
-#endif NOT WIN32
+else() #WIN32
+  # reset ogre variables to be sure they dont conflict with OGRE1
+  unset(OGRE_FOUND)
+  unset(OGRE_INCLUDE_DIRS)
+  unset(OGRE_LIBRARIES)
+  foreach(ogre_component ${IgnOGRE2_FIND_COMPONENTS})
+    set(OGRE_${ogre_component}_FOUND FALSE)
+  endforeach()
+  # currently designed to work with osrf vcpkg ogre2 portfile
+  find_package(OGRE2
+               COMPONENTS ${IgnOGRE2_FIND_COMPONENTS})
+  set(OGRE2_INCLUDE_DIRS ${OGRE_INCLUDE_DIRS})
+  # Imported from OGRE1: link component libs outside of static build
+  foreach(ogre_component ${IgnOGRE2_FIND_COMPONENTS})
+    if (OGRE_${ogre_component}_FOUND)
+       list(APPEND OGRE_LIBRARIES "${OGRE_${ogre_component}_LIBRARIES}")
+    endif()
+  endforeach()
+
+  select_lib_by_build_type("${OGRE_LIBRARIES}" OGRE2_LIBRARIES)
+
+  set(OGRE2_PLUGINS_VCPKG Plugin_ParticleFX RenderSystem_GL RenderSystem_GL3Plus RenderSystem_Direct3D11)
+
+  foreach(PLUGIN ${OGRE2_PLUGINS_VCPKG})
+    if(OGRE_${PLUGIN}_FOUND)
+      message("Plugin found: ${PLUGIN}")
+      list(APPEND OGRE2_INCLUDE_DIRS ${OGRE_${PLUGIN}_INCLUDE_DIRS})
+    endif()
+  endforeach()
+
+  include(IgnPkgConfig)
+  ign_pkg_config_library_entry(IgnOGRE2 OgreMain)
 endif()
 
 set(IgnOGRE2_FOUND false)
