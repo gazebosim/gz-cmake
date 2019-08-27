@@ -2,6 +2,9 @@
 
 ### Ignition CMake 2.x.x
 
+1. IgnConfigureBuild: only add_subdirectory(test) if BUILD_TESTING is ON
+    * [Pull request 169](https://bitbucket.org/ignitionrobotics/ign-cmake/pull-requests/169)
+
 1. Add FindIgnBullet cmake module.
     * [Pull request 162](https://bitbucket.org/ignitionrobotics/ign-cmake/pull-requests/162)
 
@@ -46,6 +49,9 @@
 
 ## Ignition CMake 1.x
 
+1. IgnConfigureBuild: only add_subdirectory(test) if BUILD_TESTING is ON
+    * [Pull request 165](https://bitbucket.org/ignitionrobotics/ign-cmake/pull-requests/165)
+
 1. Fix race condition in test for issue 48
     * [Pull request 136](https://bitbucket.org/ignitionrobotics/ign-cmake/pull-requests/136)
     * [Issue 48](https://bitbucket.org/ignitionrobotics/ign-cmake/issue/48)
@@ -63,6 +69,9 @@
 * [Full list of pull requests](https://bitbucket.org/ignitionrobotics/ign-cmake/branches/compare/ignition-cmake1_1.0.0%0Dign-cmake0#pull-requests)
 
 ## Ignition CMake 0.x
+
+1. IgnConfigureBuild: only add_subdirectory(test) if BUILD_TESTING is ON
+    * [Pull request 163](https://bitbucket.org/ignitionrobotics/ign-cmake/pull-requests/163)
 
 1. IgnConfigureProject.cmake: fix small typo PKCONFIG -> PKGCONFIG
     * [Pull request 118](https://bitbucket.org/ignitionrobotics/ign-cmake/pull-requests/118)
