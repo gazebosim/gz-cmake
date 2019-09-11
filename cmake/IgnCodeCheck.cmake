@@ -4,17 +4,17 @@ function(ign_setup_target_for_codecheck)
   find_program(CPPCHECK_PATH cppcheck)
   find_program(PYTHON_PATH python)
   find_program(FIND_PATH find)
-  
+
   if(NOT CPPCHECK_PATH)
     message(STATUS "The program [cppcheck] was not found! Skipping codecheck setup")
     return()
   endif()
-  
+
   if(NOT PYTHON_PATH)
     message(STATUS "python not found! Skipping codecheck setup.")
     return()
   endif()
-  
+
   if(NOT FIND_PATH)
     message(STATUS "The program [find] was not found! Skipping codecheck setup.")
     return()
@@ -33,7 +33,7 @@ function(ign_setup_target_for_codecheck)
   set (CPPCHECK_RULES "-UM_PI --rule-file=${IGNITION_CMAKE_CODECHECK_DIR}/header_guard.rule --rule-file=${IGNITION_CMAKE_CODECHECK_DIR}/namespace_AZ.rule")
 
   # The find command
-  set (CPPCHECK_FIND ${FIND_PATH} ${CPPCHECK_DIRS} -name '*.cc' -o -name '*.hh' -o -name '*.c' -o -name '*.h')
+  set (CPPCHECK_FIND ${FIND_PATH} ${CPPCHECK_DIRS} -name '*.cc' -o -name '*.c')
 
   message(STATUS "Adding codecheck target")
 
