@@ -217,9 +217,25 @@ if (NOT WIN32)
   foreach(component ${IgnOGRE2_FIND_COMPONENTS})
     find_library(OGRE2-${component} NAMES "Ogre${component}" HINTS ${OGRE2_LIBRARY_DIRS})
     if (NOT "OGRE2-${component}" STREQUAL "OGRE2-${component}-NOTFOUND")
+
       # create a new target for each component
       set(component_TARGET_NAME "IgnOGRE2-${component}::IgnOGRE2-${component}")
       set(component_INCLUDE_DIRS ${OGRE2_INCLUDE_DIRS})
+
+      # append the Hlms/Common include dir if it exists.
+      string(FIND ${component} "Hlms" HLMS_POS)
+      if(${HLMS_POS} GREATER -1)
+        foreach (dir ${OGRE2_INCLUDE_DIRS})
+          get_filename_component(dir_name "${dir}" NAME)
+          if ("${dir_name}" STREQUAL ${IGN_PKG_NAME})
+            set(dir_include "${dir}/Hlms/Common")
+            if (EXISTS ${dir_include})
+              list(APPEND component_INCLUDE_DIRS ${dir_include})
+            endif()
+          endif()
+        endforeach()
+      endif()
+
       set(component_LIBRARY_DIRS ${OGRE2_LIBRARY_DIRS})
       set(component_LIBRARIES ${OGRE2-${component}})
       ign_import_target(${component} TARGET_NAME ${component_TARGET_NAME}
