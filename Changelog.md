@@ -6,6 +6,10 @@
     * [Pull request 171](https://bitbucket.org/ignitionrobotics/ign-cmake/pull-requests/171)
     * [Pull request 168](https://bitbucket.org/ignitionrobotics/ign-cmake/pull-requests/168)
 
+1. FindIgnOGRE2: fix include paths for new directory structure.
+    * [Pull request 170](https://bitbucket.org/ignitionrobotics/ign-cmake/pull-requests/170)
+    * [Pull request 157](https://bitbucket.org/ignitionrobotics/ign-cmake/pull-requests/157)
+
 1. Support for custom vcpkg ogre2 windows port (backport of PR 155).
     * [Pull request 161](https://bitbucket.org/ignitionrobotics/ign-cmake/pull-requests/161)
     * [Pull request 155](https://bitbucket.org/ignitionrobotics/ign-cmake/pull-requests/155)
