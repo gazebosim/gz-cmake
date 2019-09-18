@@ -2,6 +2,10 @@
 
 ### Ignition CMake 2.x.x
 
+1. Avoid hardcoding /machine:x64 flag on 64-bit on MSVC.
+    * [Pull request 171](https://bitbucket.org/ignitionrobotics/ign-cmake/pull-requests/171)
+    * [Pull request 168](https://bitbucket.org/ignitionrobotics/ign-cmake/pull-requests/168)
+
 1. FindIgnOGRE2: fix include paths for new directory structure.
     * [Pull request 170](https://bitbucket.org/ignitionrobotics/ign-cmake/pull-requests/170)
     * [Pull request 157](https://bitbucket.org/ignitionrobotics/ign-cmake/pull-requests/157)
@@ -10,7 +14,7 @@
     * [Pull request 161](https://bitbucket.org/ignitionrobotics/ign-cmake/pull-requests/161)
     * [Pull request 155](https://bitbucket.org/ignitionrobotics/ign-cmake/pull-requests/155)
 
-1. IgnConfigureBuild: only add_subdirectory(test) if BUILD_TESTING is ON
+1. IgnConfigureBuild: only `add_subdirectory(test)` if `BUILD_TESTING` is ON
     * [Pull request 169](https://bitbucket.org/ignitionrobotics/ign-cmake/pull-requests/169)
 
 1. Add FindIgnBullet cmake module.
@@ -57,7 +61,11 @@
 
 ## Ignition CMake 1.x
 
-1. IgnConfigureBuild: only add_subdirectory(test) if BUILD_TESTING is ON
+1. Avoid hardcoding /machine:x64 flag on 64-bit on MSVC.
+    * [Pull request 171](https://bitbucket.org/ignitionrobotics/ign-cmake/pull-requests/171)
+    * [Pull request 168](https://bitbucket.org/ignitionrobotics/ign-cmake/pull-requests/168)
+
+1. IgnConfigureBuild: only `add_subdirectory(test)` if `BUILD_TESTING` is ON
     * [Pull request 165](https://bitbucket.org/ignitionrobotics/ign-cmake/pull-requests/165)
 
 1. Fix race condition in test for issue 48
@@ -78,7 +86,10 @@
 
 ## Ignition CMake 0.x
 
-1. IgnConfigureBuild: only add_subdirectory(test) if BUILD_TESTING is ON
+1. Avoid hardcoding /machine:x64 flag on 64-bit on MSVC.
+    * [Pull request 168](https://bitbucket.org/ignitionrobotics/ign-cmake/pull-requests/168)
+
+1. IgnConfigureBuild: only `add_subdirectory(test)` if `BUILD_TESTING` is ON
     * [Pull request 163](https://bitbucket.org/ignitionrobotics/ign-cmake/pull-requests/163)
 
 1. IgnConfigureProject.cmake: fix small typo PKCONFIG -> PKGCONFIG
