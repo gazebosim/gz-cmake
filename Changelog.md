@@ -2,6 +2,12 @@
 
 ### Ignition CMake 2.x.x
 
+1. Set viewport for doxygen pages.
+    * [Pull request 167](https://bitbucket.org/ignitionrobotics/ign-cmake/pull-requests/167)
+
+1. Use upstream `CURL::libcurl` imported target in FindIgnCURL.cmake if available.
+    * [Pull request 175](https://bitbucket.org/ignitionrobotics/ign-cmake/pull-requests/175)
+
 1. Avoid hardcoding /machine:x64 flag on 64-bit on MSVC.
     * [Pull request 171](https://bitbucket.org/ignitionrobotics/ign-cmake/pull-requests/171)
     * [Pull request 168](https://bitbucket.org/ignitionrobotics/ign-cmake/pull-requests/168)
@@ -61,6 +67,12 @@
 
 ## Ignition CMake 1.x
 
+1. Set viewport for doxygen pages.
+    * [Pull request 167](https://bitbucket.org/ignitionrobotics/ign-cmake/pull-requests/167)
+
+1. Use upstream `CURL::libcurl` imported target in FindIgnCURL.cmake if available.
+    * [Pull request 175](https://bitbucket.org/ignitionrobotics/ign-cmake/pull-requests/175)
+
 1. Avoid hardcoding /machine:x64 flag on 64-bit on MSVC.
     * [Pull request 171](https://bitbucket.org/ignitionrobotics/ign-cmake/pull-requests/171)
     * [Pull request 168](https://bitbucket.org/ignitionrobotics/ign-cmake/pull-requests/168)
@@ -85,6 +97,12 @@
 * [Full list of pull requests](https://bitbucket.org/ignitionrobotics/ign-cmake/branches/compare/ignition-cmake1_1.0.0%0Dign-cmake0#pull-requests)
 
 ## Ignition CMake 0.x
+
+1. Set viewport for doxygen pages.
+    * [Pull request 167](https://bitbucket.org/ignitionrobotics/ign-cmake/pull-requests/167)
+
+1. Use upstream `CURL::libcurl` imported target in FindIgnCURL.cmake if available.
+    * [Pull request 175](https://bitbucket.org/ignitionrobotics/ign-cmake/pull-requests/175)
 
 1. Avoid hardcoding /machine:x64 flag on 64-bit on MSVC.
     * [Pull request 168](https://bitbucket.org/ignitionrobotics/ign-cmake/pull-requests/168)
