@@ -46,6 +46,12 @@ if(${IgnCURL_FOUND})
 
   # Older versions of curl don't create imported targets, so we will create
   # them here if they have not been provided.
+  if(TARGET CURL::libcurl AND NOT TARGET curl::curl)
+    add_library(curl::curl INTERFACE IMPORTED)
+    set_target_properties(curl::curl PROPERTIES
+        INTERFACE_LINK_LIBRARIES CURL::libcurl)
+  endif()
+  
   include(IgnImportTarget)
 
   if(NOT TARGET curl::curl)
