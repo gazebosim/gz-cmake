@@ -1062,6 +1062,8 @@ endfunction()
 # will get inherited from the core library.
 function(ign_add_component component_name)
 
+  cmake_policy(SET CMP0079 NEW)
+
   #------------------------------------
   # Define the expected arguments
   set(options INTERFACE INDEPENDENT_FROM_PROJECT_LIB PRIVATELY_DEPENDS_ON_PROJECT_LIB INTERFACE_DEPENDS_ON_PROJECT_LIB)
