@@ -10,7 +10,7 @@ endif()
 set(example_directories
   ign_conf
   prerelease
-  core_no_deps
+  core_nodep
   core_child
   comp_deps
   )
@@ -32,7 +32,7 @@ foreach(example ${example_directories})
     set(example_tarball_name ignition-minimal-0.1.0.tar.bz2)
   elseif (${example} STREQUAL "prerelease")
     set(example_tarball_name ignition-minimal-1.0.0~pre1.tar.bz2)
-  elseif (${example} STREQUAL "core_no_deps")
+  elseif (${example} STREQUAL "core_nodep")
     set(example_tarball_name ignition-core_no_deps-0.1.0.tar.bz2)
     set(run_codecheck true)
   elseif (${example} STREQUAL "core_child")
@@ -147,7 +147,7 @@ endforeach()
 # hard to use DEPENDS in ExternalProject_Add because targets
 # need to exist before they can be used there
 foreach (build_type ${build_types})
-  add_dependencies(core_child_${build_type} core_no_deps_${build_type})
+  add_dependencies(core_child_${build_type} core_nodep_${build_type})
   if (TARGET use_component_depsA_${build_type})
     add_dependencies(use_component_depsA_${build_type} comp_deps_${build_type})
   endif()
@@ -159,9 +159,9 @@ foreach (build_type ${build_types})
   endif()
 endforeach()
 
-# test that core_child pkg-config file requires core_no_deps
+# test that core_child pkg-config file requires core_nodep
 if (UNIX)
-  set(TEST_NAME core_child_requires_core_no_deps)
+  set(TEST_NAME core_child_requires_core_nodep)
   string(TIMESTAMP TEST_TIME)
   configure_file(
     "${CMAKE_CURRENT_SOURCE_DIR}/junit_pass.xml.in"
