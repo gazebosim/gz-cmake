@@ -1,6 +1,6 @@
 #!/bin/bash
 if pkg-config ignition-core_child --print-requires \
-  | grep ignition-core_nodep
+  | grep ignition-core_no_deps
 then
   echo Successfully detected ignition-core_nodep requirement
   cp core_child_requires_core_nodep_pass.xml ../test_results/core_child_requires_core_nodep.xml
