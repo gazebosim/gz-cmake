@@ -8,11 +8,11 @@ if (NOT WIN32 AND EXAMPLE_LCOV_PATH)
 endif()
 
 set(example_directories
-  ign_configure_build
+  ign_conf
   prerelease
   core_no_deps
   core_child
-  component_deps
+  comp_deps
   )
 if (NOT CMAKE_GENERATOR MATCHES "Visual Studio")
   list(APPEND example_directories
@@ -28,7 +28,7 @@ ign_setup_target_for_codecheck()
 
 foreach(example ${example_directories})
   set(run_codecheck false)
-  if (${example} STREQUAL "ign_configure_build")
+  if (${example} STREQUAL "ign_conf")
     set(example_tarball_name ignition-minimal-0.1.0.tar.bz2)
   elseif (${example} STREQUAL "prerelease")
     set(example_tarball_name ignition-minimal-1.0.0~pre1.tar.bz2)
@@ -38,7 +38,7 @@ foreach(example ${example_directories})
   elseif (${example} STREQUAL "core_child")
     set(example_tarball_name ignition-core_child-0.1.0.tar.bz2)
     set(run_codecheck true)
-  elseif (${example} STREQUAL "component_deps")
+  elseif (${example} STREQUAL "comp_deps")
     set(example_tarball_name ignition-component_deps-0.1.0.tar.bz2)
   elseif (${example} STREQUAL "use_component_depsA")
     set(example_tarball_name ignition-use_component_depsa-0.1.0.tar.bz2)
@@ -149,13 +149,13 @@ endforeach()
 foreach (build_type ${build_types})
   add_dependencies(core_child_${build_type} core_no_deps_${build_type})
   if (TARGET use_component_depsA_${build_type})
-    add_dependencies(use_component_depsA_${build_type} component_deps_${build_type})
+    add_dependencies(use_component_depsA_${build_type} comp_deps_${build_type})
   endif()
   if (TARGET use_component_depsB_${build_type})
-    add_dependencies(use_component_depsB_${build_type} component_deps_${build_type})
+    add_dependencies(use_component_depsB_${build_type} comp_deps_${build_type})
   endif()
   if (TARGET use_component_depsC_${build_type})
-    add_dependencies(use_component_depsC_${build_type} component_deps_${build_type})
+    add_dependencies(use_component_depsC_${build_type} comp_deps_${build_type})
   endif()
 endforeach()
 
