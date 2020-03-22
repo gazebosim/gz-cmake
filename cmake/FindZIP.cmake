@@ -27,7 +27,7 @@
 #  ZIP_LIBRARIES          The ZIP libraries
 
 include(IgnPkgConfig)
-ign_pkg_check_modules(ZIP libzip)
+ign_pkg_check_modules_quiet(ZIP libzip)
 
 # If that failed, then fall back to manual detection.
 if(NOT ZIP_FOUND)
@@ -58,10 +58,9 @@ if(NOT ZIP_FOUND)
     include(IgnImportTarget)
     ign_import_target(ZIP)
   endif()
-
-  include(FindPackageHandleStandardArgs)
-  find_package_handle_standard_args(
-    ZIP
-    REQUIRED_VARS ZIP_FOUND)
-
 endif()
+
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(
+  ZIP
+  REQUIRED_VARS ZIP_FOUND)
