@@ -2,6 +2,21 @@
 
 ### Ignition CMake 2.2.0
 
+1. Fix use of FindZIP without pkg-config.
+    * [Pull request 182](https://bitbucket.org/ignitionrobotics/ign-cmake/pull-requests/182)
+
+1. Use mathjax to render equations.
+    * [Pull request 181](https://bitbucket.org/ignitionrobotics/ign-cmake/pull-requests/181)
+
+1. Reduce example names to fix build on Windows
+    * [Pull request 180](https://bitbucket.org/ignitionrobotics/ign-cmake/pull-requests/180)
+
+1. Fix doxygen deprecation filter
+    * [Pull request 160](https://bitbucket.org/ignitionrobotics/ign-cmake/pull-requests/160)
+
+1. Change the diamond link icon to a material design link
+    * [Pull request 159](https://bitbucket.org/ignitionrobotics/ign-cmake/pull-requests/159)
+
 1. Set viewport for doxygen pages.
     * [Pull request 167](https://bitbucket.org/ignitionrobotics/ign-cmake/pull-requests/167)
 
