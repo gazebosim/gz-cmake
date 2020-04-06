@@ -1,6 +1,6 @@
 ## Ignition CMake 2.x
 
-### Ignition CMake 2.x.x
+### Ignition CMake 2.2.0
 
 1. Set viewport for doxygen pages.
     * [Pull request 167](https://bitbucket.org/ignitionrobotics/ign-cmake/pull-requests/167)
