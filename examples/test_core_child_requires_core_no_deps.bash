@@ -26,6 +26,7 @@ then
 fi
 
 if [[ $TEST_STATUS ]]
+then
   echo Successfully detected ignition-core_nodep requirements
   cp core_child_requires_core_nodep_pass.xml ../test_results/core_child_requires_core_nodep.xml
   exit 0
