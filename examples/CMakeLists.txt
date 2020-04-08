@@ -12,6 +12,7 @@ set(example_directories
   prerelease
   core_nodep
   core_child
+  core_child_private
   comp_deps
   )
 if (NOT CMAKE_GENERATOR MATCHES "Visual Studio")
@@ -37,6 +38,9 @@ foreach(example ${example_directories})
     set(run_codecheck true)
   elseif (${example} STREQUAL "core_child")
     set(example_tarball_name ignition-core_child-0.1.0.tar.bz2)
+    set(run_codecheck true)
+  elseif (${example} STREQUAL "core_child_private")
+    set(example_tarball_name ignition-core_child_private-0.1.0.tar.bz2)
     set(run_codecheck true)
   elseif (${example} STREQUAL "comp_deps")
     set(example_tarball_name ignition-component_deps-0.1.0.tar.bz2)
@@ -148,6 +152,7 @@ endforeach()
 # need to exist before they can be used there
 foreach (build_type ${build_types})
   add_dependencies(core_child_${build_type} core_nodep_${build_type})
+  add_dependencies(core_child_private_${build_type} core_nodep_${build_type})
   if (TARGET use_component_depsA_${build_type})
     add_dependencies(use_component_depsA_${build_type} comp_deps_${build_type})
   endif()
@@ -160,6 +165,7 @@ foreach (build_type ${build_types})
 endforeach()
 
 # test that core_child pkg-config file requires core_nodep
+# and that core_child_private pkg-config file requires core_nodep privately
 if (UNIX)
   set(TEST_NAME core_child_requires_core_nodep)
   string(TIMESTAMP TEST_TIME)
