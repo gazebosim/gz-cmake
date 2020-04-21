@@ -16,33 +16,33 @@ Windows       | [![Build Status](https://build.osrfoundation.org/buildStatus/ico
 
 # Table of Contents
 
-[Features](#markdown-header-features)
+[Features](#features)
 
-[Install](#markdown-header-install)
+[Install](#install)
 
-* [Binary Install](#markdown-header-binary-install)
+* [Binary Install](#binary-install)
 
-* [Source Install](#markdown-header-source-install)
+* [Source Install](#source-install)
 
-    * [Prerequisites](#markdown-header-prerequisites)
+    * [Prerequisites](#prerequisites)
   
-    * [Building from Source](#markdown-header-building-from-source)
+    * [Building from Source](#building-from-source)
 
-[Usage](#markdown-header-usage)
+[Usage](#usage)
 
-[Documentation](#markdown-header-documentation)
+[Documentation](#documentation)
 
-[Testing](#markdown-header-testing)
+[Testing](#testing)
 
-[Folder Structure](#markdown-header-folder-structure)
+[Folder Structure](#folder-structure)
 
-[Code of Conduct](#markdown-header-code-of-conduct)
+[Code of Conduct](#code-of-conduct)
 
-[Contributing](#markdown-header-code-of-contributing)
+[Contributing](#code-of-contributing)
 
-[Versioning](#markdown-header-versioning)
+[Versioning](#versioning)
 
-[License](#markdown-header-license)
+[License](#license)
 
 # Features
 
@@ -52,9 +52,9 @@ These modules are tailored to the ignition projects, so their use for non-igniti
 
 # Install
 
-We recommend following the [Binary Install](#markdown-header-binary-install) instructions to get up and running as quickly and painlessly as possible.
+We recommend following the [Binary Install](#binary-install) instructions to get up and running as quickly and painlessly as possible.
 
-The [Source Install](#markdown-header-source-install) instructions should be used if you need the very latest software improvements, you need to modify the code, or you plan to make a contribution.
+The [Source Install](#source-install) instructions should be used if you need the very latest software improvements, you need to modify the code, or you plan to make a contribution.
 
 ## Binary Install
 
