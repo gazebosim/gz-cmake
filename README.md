@@ -122,7 +122,7 @@ $ make test
 # Contributing
 
 Please see
-[CONTRIBUTING.md](https://github.com/ignitionrobotics/ign-gazebo/blob/master/CONTRIBUTING.md).
+[CONTRIBUTING.md](https://ignitionrobotics.org/docs/all/contributing).
 
 # Code of Conduct
 
