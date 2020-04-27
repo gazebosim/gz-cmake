@@ -1,0 +1,7 @@
+📜 blueprint:
+  base: "ign-cmake2"
+🏰 citadel:
+  base: "ign-cmake2"
+🔮 dome:
+  base: "ign-cmake2"
+
