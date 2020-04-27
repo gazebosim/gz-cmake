@@ -7,7 +7,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Label PRs
-      if: github.event.action == 'opened'
       uses: ffittschen/pr-branch-labeler@v1
       with:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
