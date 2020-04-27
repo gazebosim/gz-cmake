@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Label PRs
-      #  if: github.event.action == 'opened'
+      # if: github.event.action == 'opened'
       uses: chapulina/pr-branch-labeler@deb_v1
       with:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
