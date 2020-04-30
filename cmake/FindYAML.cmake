@@ -52,7 +52,7 @@ if(YAML_FIND_VERSION AND NOT YAML_FIND_VERSION VERSION_EQUAL "0.1")
                   "but you requested version ${YAML_FIND_VERSION}.")
 else()
   include(IgnPkgConfig)
-  ign_pkg_check_modules(YAML yaml-0.1)
+  ign_pkg_check_modules_quiet(YAML yaml-0.1)
 
   # If that failed, then fall back to manual detection.
   if(NOT YAML_FOUND)
@@ -87,10 +87,10 @@ else()
         INTERFACE_COMPILE_DEFINITIONS "YAML_DECLARE_STATIC"
       )
     endif()
-
-    include(FindPackageHandleStandardArgs)
-    find_package_handle_standard_args(
-      YAML
-      REQUIRED_VARS YAML_FOUND)
   endif()
+  
+  include(FindPackageHandleStandardArgs)
+  find_package_handle_standard_args(
+    YAML
+    REQUIRED_VARS YAML_FOUND)
 endif()
