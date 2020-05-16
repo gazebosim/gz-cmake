@@ -17,5 +17,17 @@
 # Find uuid
 if (UNIX)
   include(IgnPkgConfig)
-  ign_pkg_check_modules(UUID uuid)
+  ign_pkg_check_modules_quiet(UUID uuid)
+
+  if(NOT UUID_FOUND)
+    include(IgnManualSearch)
+    ign_manual_search(UUID
+                      HEADER_NAMES "uuid/uuid.h"
+                      LIBRARY_NAMES "uuid libuuid")
+  endif()
+
+  include(FindPackageHandleStandardArgs)
+  find_package_handle_standard_args(
+    UUID
+    REQUIRED_VARS UUID_FOUND)
 endif()
