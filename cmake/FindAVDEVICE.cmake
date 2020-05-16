@@ -20,4 +20,36 @@ set(av_minor ${AVDEVICE_FIND_VERSION_MINOR})
 set(av_patch ${AVDEVICE_FIND_VERSION_PATCH})
 
 include(IgnPkgConfig)
-ign_pkg_check_modules(AVDEVICE "libavdevice >= ${av_major}.${av_minor}.${av_patch}")
+ign_pkg_check_modules_quiet(AVDEVICE "libavdevice >= ${av_major}.${av_minor}.${av_patch}")
+
+if(NOT AVDEVICE_FOUND)
+  include(IgnManualSearch)
+  ign_manual_search(AVDEVICE
+                    HEADER_NAMES "libavdevice/avdevice.h"
+                    LIBRARY_NAMES "avdevice")
+
+  # Version check
+  if(AVDEVICE_FOUND)
+    file(READ "${AVDEVICE_INCLUDE_DIRS}/libavdevice/version.h" ver_file)
+
+    string(REGEX MATCH "LIBAVDEVICE_VERSION_MAJOR[ \t\r\n]+([0-9]*)" _ ${ver_file})
+    set(ver_major ${CMAKE_MATCH_1})
+
+    string(REGEX MATCH "LIBAVDEVICE_VERSION_MINOR[ \t\r\n]+([0-9]*)" _ ${ver_file})
+    set(ver_minor ${CMAKE_MATCH_1})
+
+    string(REGEX MATCH "LIBAVDEVICE_VERSION_MICRO[ \t\r\n]+([0-9]*)" _ ${ver_file})
+    set(ver_patch ${CMAKE_MATCH_1})
+
+    set(AVDEVICE_VERSION "${ver_major}.${ver_minor}.${ver_patch}")
+
+    if(AVDEVICE_VERSION VERSION_LESS AVDEVICE_FIND_VERSION)
+      set(AVDEVICE_FOUND FALSE)
+    endif()
+  endif()
+endif()
+
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(
+  AVDEVICE
+  REQUIRED_VARS AVDEVICE_FOUND)

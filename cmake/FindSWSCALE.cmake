@@ -16,4 +16,16 @@
 ########################################
 # Find libswscale format
 include(IgnPkgConfig)
-ign_pkg_check_modules(SWSCALE libswscale)
+ign_pkg_check_modules_quiet(SWSCALE libswscale)
+
+if(NOT SWSCALE_FOUND)
+  include(IgnManualSearch)
+  ign_manual_search(SWSCALE
+                    HEADER_NAMES "libswscale/swscale.h"
+                    LIBRARY_NAMES "swscale")
+endif()
+
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(
+  SWSCALE
+  REQUIRED_VARS SWSCALE_FOUND)
