@@ -9,9 +9,9 @@
 
 Build | Status
 -- | --
-Test coverage | [![codecov](https://codecov.io/bb/ignitionrobotics/ign-cmake/branch/default/graph/badge.svg)](https://codecov.io/bb/ignitionrobotics/ign-cmake)  
-Ubuntu Bionic | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_cmake-ci-default-bionic-amd64)](https://build.osrfoundation.org/job/ignition_cmake-ci-default-bionic-amd64)  
-Homebrew      | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_cmake-ci-default-homebrew-amd64)](https://build.osrfoundation.org/job/ignition_cmake-ci-default-homebrew-amd64)  
+Test coverage | [![codecov](https://codecov.io/bb/ignitionrobotics/ign-cmake/branch/default/graph/badge.svg)](https://codecov.io/bb/ignitionrobotics/ign-cmake)
+Ubuntu Bionic | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_cmake-ci-default-bionic-amd64)](https://build.osrfoundation.org/job/ignition_cmake-ci-default-bionic-amd64)
+Homebrew      | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_cmake-ci-default-homebrew-amd64)](https://build.osrfoundation.org/job/ignition_cmake-ci-default-homebrew-amd64)
 Windows       | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_cmake-ci-default-windows7-amd64)](https://build.osrfoundation.org/job/ignition_cmake-ci-default-windows7-amd64)
 
 # Table of Contents
@@ -25,7 +25,7 @@ Windows       | [![Build Status](https://build.osrfoundation.org/buildStatus/ico
 * [Source Install](#source-install)
 
     * [Prerequisites](#prerequisites)
-  
+
     * [Building from Source](#building-from-source)
 
 [Usage](#usage)
@@ -102,9 +102,11 @@ Documentation for `ignition-cmake` can be found within the source code, and also
 
 # Testing
 
+A fuller suite of tests in the `examples` directory can be enabled by building with `BUILDSYSTEM_TESTING` enabled.
 Tests can be run by building the `test` target. From your build directory you can run:
 
 ```
+$ cmake .. -DBUILDSYSTEM_TESTING=1
 $ make test
 ```
 
