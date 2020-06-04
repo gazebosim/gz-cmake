@@ -23,6 +23,10 @@ include(IgnCMake)
 ign_configure_project()
 
 #--------------------------------------
+# Set project-specific options
+option(BUILDSYSTEM_TESTING "Enable extended buildsystem testing" FALSE)
+
+#--------------------------------------
 # Install the ignition documentation files
 # Note: This is not actually creating a doc target for ign-cmake; this is just
 # installing files that are useful for generating the documentation of other
@@ -148,7 +152,9 @@ message(STATUS "Install prefix: ${CMAKE_INSTALL_PREFIX}")
 include(CTest)
 if (BUILD_TESTING)
   add_subdirectory(test)
+endif()
 
+if (BUILD_TESTING AND BUILDSYSTEM_TESTING)
   #============================================================================
   # Build examples
   #============================================================================

@@ -1,5 +1,10 @@
 ## Ignition CMake 2.x
 
+### Ignition CMake 2.2.x
+
+1. Disable long-running buildsystem tests by default.
+    * [Pull request 97](https://github.com/ignitionrobotics/ign-cmake/pull/97)
+
 ### Ignition CMake 2.2.0
 
 1. Fix use of FindZIP without pkg-config.
