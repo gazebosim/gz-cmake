@@ -2,6 +2,8 @@
 
 ### Ignition CMake 2.x.x
 
+1. Disable long-running buildsystem tests by default.
+    * [Pull request 97](https://github.com/ignitionrobotics/ign-cmake/pull/97)
 1. Set viewport for doxygen pages.
     * [BitBucket pull request 167](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-cmake/pull-requests/167)
 

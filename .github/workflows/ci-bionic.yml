@@ -14,3 +14,5 @@ jobs:
         uses: ignition-tooling/ubuntu-bionic-ci-action@master
         with:
           apt-dependencies: 'pkg-config'
+          cmake-args: '-DBUILDSYSTEM_TESTING=True'
+
