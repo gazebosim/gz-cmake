@@ -102,9 +102,11 @@ Documentation for `ignition-cmake` can be found within the source code, and also
 
 # Testing
 
+A fuller suite of tests in the `examples` directory can be enabled by building with `BUILDSYSTEM_TESTING` enabled.
 Tests can be run by building the `test` target. From your build directory you can run:
 
 ```
+$ cmake .. -DBUILDSYSTEM_TESTING=1
 $ make test
 ```
 
