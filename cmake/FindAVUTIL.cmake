@@ -16,4 +16,16 @@
 ########################################
 # Find avutil
 include(IgnPkgConfig)
-ign_pkg_check_modules(AVUTIL libavutil)
+ign_pkg_check_modules_quiet(AVUTIL libavutil)
+
+if(NOT AVUTIL_FOUND)
+  include(IgnManualSearch)
+  ign_manual_search(AVUTIL
+                    HEADER_NAMES "libavutil/avutil.h"
+                    LIBRARY_NAMES "avutil")
+endif()
+
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(
+  AVUTIL
+  REQUIRED_VARS AVUTIL_FOUND)
