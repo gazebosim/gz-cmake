@@ -79,7 +79,7 @@ if (OGRE_FOUND)
   # `plugindir` variable.  We have to call pkg-config manually to get it.
   # On Windows, we assume that all the OGRE* defines are passed in manually
   # to CMake.
-  if (NOT WIN32)
+  if (PKG_CONFIG_FOUND)
     execute_process(COMMAND pkg-config --variable=plugindir OGRE
                     OUTPUT_VARIABLE _pkgconfig_invoke_result
                     RESULT_VARIABLE _pkgconfig_failed)
