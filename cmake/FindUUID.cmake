@@ -22,8 +22,36 @@ if (UNIX)
   if(NOT UUID_FOUND)
     include(IgnManualSearch)
     ign_manual_search(UUID
-                      HEADER_NAMES "uuid/uuid.h"
-                      LIBRARY_NAMES "uuid libuuid")
+                      HEADER_NAMES "uuid.h"
+                      LIBRARY_NAMES "uuid libuuid"
+                      PATH_SUFFIXES "uuid")
+  endif()
+
+  # The pkg-config or the manual search will place
+  # <uuid_install_prefix>/include/uuid in INTERFACE_INCLUDE_DIRECTORIES,
+  # but some projects exepect to use <uuid_install_prefix>/include, so
+  # we add it as well.
+  # See https://github.com/ignitionrobotics/ign-cmake/issues/103
+  if(TARGET UUID::UUID)
+    get_property(uuid_include_dirs
+      TARGET UUID::UUID
+      PROPERTY INTERFACE_INCLUDE_DIRECTORIES)
+
+    set(uuid_include_dirs_extended ${uuid_include_dirs})
+
+    foreach(include_dir IN LISTS uuid_include_dirs)
+      if(include_dir MATCHES "uuid$")
+        get_filename_component(include_dir_parent ${include_dir} DIRECTORY)
+        list(APPEND uuid_include_dirs_extended ${include_dir_parent})
+      endif()
+    endforeach()
+
+    list(REMOVE_DUPLICATES uuid_include_dirs_extended)
+
+    set_property(
+      TARGET UUID::UUID
+      PROPERTY INTERFACE_INCLUDE_DIRECTORIES
+      ${uuid_include_dirs_extended})
   endif()
 
   include(FindPackageHandleStandardArgs)

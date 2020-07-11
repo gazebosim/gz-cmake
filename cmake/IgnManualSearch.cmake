@@ -17,12 +17,13 @@
 # ign_manual_search(<package> [INTERFACE]
 #     [HEADER_NAMES <header_names>]
 #     [LIBRARY_NAMES <library_names>]
-#     [TARGET_NAME <target_name>])
+#     [TARGET_NAME <target_name>]
+#     [PATH_SUFFIXES <path_suffixes>]])
 #
 # This macro will find a library based on the name of one of its headers,
 # and the library name.
-# It is used inside Find***.cmake scripts, typicall as fallback for a 
-# ign_pkg_check_modules_quiet call. 
+# It is used inside Find***.cmake scripts, typicall as fallback for a
+# ign_pkg_check_modules_quiet call.
 # It will create an imported target for the  library
 #
 # INTERFACE: Optional. Use INTERFACE when the target does not actually provide
@@ -38,13 +39,15 @@
 # TARGET_NAME: Optional. Explicitly specify the desired imported target name.
 #              Default is <package>::<package>.
 #
+# PATH_SUFFIXES: Optional. Parameter forwarded to the find_path and find_library calls.
+#
 macro(ign_manual_search package)
 
   #------------------------------------
   # Define the expected arguments
   set(options INTERFACE)
   set(oneValueArgs "TARGET_NAME")
-  set(multiValueArgs "HEADER_NAMES" "LIBRARY_NAMES")
+  set(multiValueArgs "HEADER_NAMES" "LIBRARY_NAMES" "PATH_SUFFIXES")
 
   #------------------------------------
   # Parse the arguments
@@ -59,7 +62,7 @@ macro(ign_manual_search package)
   if(NOT ign_manual_search_HEADER_NAMES)
     set(ign_manual_search_HEADER_NAMES "${package}.h")
   endif()
-  
+
   if(NOT ign_manual_search_LIBRARY_NAMES)
     set(ign_manual_search_LIBRARY_NAMES "${package}")
   endif()
@@ -67,14 +70,17 @@ macro(ign_manual_search package)
   if(NOT ign_manual_search_TARGET_NAME)
     set(ign_manual_search_TARGET_NAME "${package}::${package}")
   endif()
-  
+
   find_path(${package}_INCLUDE_DIRS
-            NAMES ${ign_manual_search_HEADER_NAMES})
+            NAMES ${ign_manual_search_HEADER_NAMES}
+            PATH_SUFFIXES ${ign_manual_search_PATH_SUFFIXES})
   find_library(${package}_LIBRARIES
-               NAMES ${ign_manual_search_LIBRARY_NAMES})
+               NAMES ${ign_manual_search_LIBRARY_NAMES}
+               PATH_SUFFIXES ${ign_manual_search_PATH_SUFFIXES})
+
   mark_as_advanced(${package}_INCLUDE_DIRS)
   mark_as_advanced(${package}_LIBRARIES)
-  
+
   set(${package}_FOUND true)
 
   if(NOT ${package}_INCLUDE_DIRS)
