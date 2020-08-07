@@ -1,9 +1,27 @@
 ## Ignition CMake 2.x
 
-### Ignition CMake 2.2.x
+### Ignition CMake 2.3.0 (2020-08-07)
 
-1. Disable long-running buildsystem tests by default.
+1. New macros to help with filter google-test in some platforms
+    * [Pull request 102](https://github.com/ignitionrobotics/ign-cmake/pull/102)
+
+1. Disable long-running buildsystem tests by default
     * [Pull request 97](https://github.com/ignitionrobotics/ign-cmake/pull/97)
+
+1. Fix use of FindYAML.cmake and FindJSONCPP without pkg-config
+    * [Pull request 79](https://github.com/ignitionrobotics/ign-cmake/pull/79)
+
+1. Fix use of FindIgnOGRE2 on Windows if OGRE2 is not found
+    * [Pull request 94](https://github.com/ignitionrobotics/ign-cmake/pull/94)
+    * Thanks to Silvio Traversaro
+
+1. FindUUID: Export include path as expected by Ignition Libraries #104
+    * [Pull request 104](https://github.com/ignitionrobotics/ign-cmake/pull/104)
+    * Thanks to Silvio Traversaro
+
+1. Make the OGRE plugin path discovery portable
+    * [Pull request 101](https://github.com/ignitionrobotics/ign-cmake/pull/101)
+    * Thanks to Sean Yen
 
 ### Ignition CMake 2.2.0
 
