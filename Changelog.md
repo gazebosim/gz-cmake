@@ -1,5 +1,12 @@
 ## Ignition CMake 2.x
 
+### Ignition CMake 2.X.X (20XX-XX-XX)
+
+### Ignition CMake 2.4.0 (2020-08-20)
+
+1. Added an option to include generated code in the ign_create_docs function
+    * [Pull request 108](https://github.com/ignitionrobotics/ign-cmake/pull/108)
+
 ### Ignition CMake 2.3.0 (2020-08-07)
 
 1. New macros to help with filter google-test in some platforms
