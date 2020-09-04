@@ -61,17 +61,9 @@ set(ZeroMQ_TARGET ZeroMQ::ZeroMQ)
 
 find_package(ZeroMQ ${ZeroMQ_FIND_VERSION} QUIET CONFIG)
 if (ZeroMQ_FOUND)
-
-  # ZeroMQ's cmake script imports its own target, so we'll
-  # overwrite the default with the name of theirs. In the
-  # future, we should be able to use a target alias instead.
-  set(ZeroMQ_TARGET libzmq)
-
   # Make sure to fill out the pkg-config information before quitting
   ign_pkg_config_entry(ZeroMQ "libzmq >= ${ZeroMQ_FIND_VERSION}")
-
   return()
-
 endif()
 
 if (UNIX)
