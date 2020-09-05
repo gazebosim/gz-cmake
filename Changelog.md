@@ -2,6 +2,11 @@
 
 ### Ignition CMake 2.X.X (20XX-XX-XX)
 
+### Ignition CMake 2.5.0 (2020-09-05)
+
+1. Add additional input directories to parse when generating documentation
+    * [Pull request 111](https://github.com/ignitionrobotics/ign-cmake/pull/111)
+
 ### Ignition CMake 2.4.0 (2020-08-20)
 
 1. Added an option to include generated code in the ign_create_docs function
