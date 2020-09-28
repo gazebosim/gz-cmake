@@ -14,11 +14,21 @@
 # limitations under the License.
 #
 ########################################
-# Find tinyxml2. Only debian distributions package tinyxml with a pkg-config.
+# Find tinyxml2.
 
+# Try to find it in Config mode first
+find_package(TINYXML2 CONFIG QUIET NAMES tinyxml2)
+if(TINYXML2_FOUND)
+  message(STATUS "Found TINYXML2 via Config file: ${TINYXML2_DIR}")
+  # Create an "alias" target for tinyxml2::tinyxml2
+  add_library(TINYXML2::TINYXML2 INTERFACE IMPORTED)
+  target_link_libraries(TINYXML2::TINYXML2 INTERFACE tinyxml2::tinyxml2)
+  return()
+endif()
+
+# Use pkg_check_modules if the Config search fails.
+# Only debian distributions package tinyxml with a pkg-config.
 include(IgnPkgConfig)
-
-# Use pkg_check_modules to start
 ign_pkg_check_modules_quiet(TINYXML2 tinyxml2)
 
 # If that failed, then fall back to manual detection (necessary for MacOS)
