@@ -32,9 +32,7 @@ function(ign_setup_target_for_codecheck)
 
   message(STATUS "Adding codecheck target")
 
-  # Setup the codecheck target
-  add_custom_target(codecheck
-
+  add_custom_target(cppcheck
     # First cppcheck
     COMMAND ${CPPCHECK_PATH} ${CPPCHECK_BASE} ${CPPCHECK_EXTRA} -I ${CPPCHECK_INCLUDE_DIRS} ${CPPCHECK_RULES} `${CPPCHECK_FIND}`
 
@@ -43,9 +41,11 @@ function(ign_setup_target_for_codecheck)
   )
 
   add_custom_target(cpplint
-
     # cpplint cppcheck
     COMMAND ${PYTHON_EXECUTABLE} ${IGNITION_CMAKE_CODECHECK_DIR}/cpplint.py --extensions=cc,hh --quiet `${CPPCHECK_FIND}`
   )
 
+  add_custom_target(codecheck
+    DEPENDS cpplint cppcheck
+  )
 endfunction()
