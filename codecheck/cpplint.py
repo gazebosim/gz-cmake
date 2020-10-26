@@ -372,7 +372,22 @@ _LEGACY_ERROR_CATEGORIES = [
 # flag. By default all errors are on, so only add here categories that should be
 # off by default (i.e., categories that must be enabled by the --filter= flags).
 # All entries here should start with a '-' or '+', as in the --filter= flag.
-_DEFAULT_FILTERS = ['-build/include_alpha']
+_DEFAULT_FILTERS = [
+        #'-build/c++11',
+        '-build/header_guard',
+        '-build/include_alpha',
+        '-build/include_order',
+        '-build/include_subdir',
+        '-build/namespaces',
+        '-readability/namespace',
+        '-runtime/indentation_namespace',
+        '-runtime/references',
+        '-whitespace/blank_line',
+        '-whitespace/braces',
+        '-whitespace/indent',
+        '-whitespace/newline',
+        '-whitespace/parens',
+        ]
 
 # The default list of categories suppressed for C (not C++) files.
 _DEFAULT_C_SUPPRESSED_CATEGORIES = [
@@ -6399,10 +6414,6 @@ def FlagCxx11Features(filename, clean_lines, linenum, error):
   if include and include.group(1) in ('cfenv',
                                       'condition_variable',
                                       'fenv.h',
-                                      'future',
-                                      'mutex',
-                                      'thread',
-                                      'chrono',
                                       'ratio',
                                       'regex',
                                       'system_error',
@@ -6650,8 +6661,10 @@ def ProcessFile(filename, vlevel, extra_check_functions=None):
   # When reading from stdin, the extension is unknown, so no cpplint tests
   # should rely on the extension.
   if filename != '-' and file_extension not in GetAllExtensions():
-    _cpplint_state.PrintError('Ignoring %s; not a valid file name '
-                     '(%s)\n' % (filename, ', '.join(GetAllExtensions())))
+    pass
+    # Ignition: never print this
+    # _cpplint_state.PrintError('Ignoring %s; not a valid file name '
+    #                 '(%s)\n' % (filename, ', '.join(GetAllExtensions())))
   else:
     ProcessFileData(filename, file_extension, lines, Error,
                     extra_check_functions)
@@ -6677,7 +6690,9 @@ def ProcessFile(filename, vlevel, extra_check_functions=None):
   # Suppress printing anything if --quiet was passed unless the error
   # count has increased after processing this file.
   if not _cpplint_state.quiet or old_errors != _cpplint_state.error_count:
-    _cpplint_state.PrintInfo('Done processing %s\n' % filename)
+    pass
+    # Ignition: never print "Done Processing"
+    # _cpplint_state.PrintInfo('Done processing %s\n' % filename)
   _RestoreFilters()
 
 
