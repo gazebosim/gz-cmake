@@ -373,7 +373,7 @@ _LEGACY_ERROR_CATEGORIES = [
 # off by default (i.e., categories that must be enabled by the --filter= flags).
 # All entries here should start with a '-' or '+', as in the --filter= flag.
 _DEFAULT_FILTERS = [
-        #'-build/c++11',
+        '-build/c++11',
         '-build/header_guard',
         '-build/include_alpha',
         '-build/include_order',
@@ -6414,6 +6414,10 @@ def FlagCxx11Features(filename, clean_lines, linenum, error):
   if include and include.group(1) in ('cfenv',
                                       'condition_variable',
                                       'fenv.h',
+                                      'future',
+                                      'mutex',
+                                      'thread',
+                                      'chrono',
                                       'ratio',
                                       'regex',
                                       'system_error',
