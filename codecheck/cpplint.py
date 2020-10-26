@@ -28,6 +28,9 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+# Imported from https://github.com/cpplint/cpplint:
+# https://github.com/cpplint/cpplint/blob/0f2319741f3407d8638cdc7c41e4fc9bad217f68/cpplint.py
+
 """Does google-lint on c++ files.
 
 The goal of this script is to identify places in the code that *may*
