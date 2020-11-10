@@ -1676,7 +1676,8 @@ macro(ign_build_tests)
 
     # Find the Python interpreter for running the
     # check_test_ran.py script
-    find_package(PythonInterp QUIET)
+
+    include(IgnPython)
 
     # Build all the tests
     foreach(target_name ${test_list})
