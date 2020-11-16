@@ -211,7 +211,11 @@ if (NOT WIN32)
   # find ogre components
   include(IgnImportTarget)
   foreach(component ${IgnOGRE2_FIND_COMPONENTS})
-    find_library(OGRE2-${component} NAMES "Ogre${component}" HINTS ${OGRE2_LIBRARY_DIRS})
+    find_library(OGRE2-${component}
+      NAMES
+        "Ogre${component}.${OGRE2_VERSION}"
+        "Ogre${component}"
+      HINTS ${OGRE2_LIBRARY_DIRS})
     if (NOT "OGRE2-${component}" STREQUAL "OGRE2-${component}-NOTFOUND")
 
       # create a new target for each component
