@@ -2,6 +2,11 @@
 
 ### Ignition CMake 2.X.X (20XX-XX-XX)
 
+### Ignition CMake 2.6.1 (2020-12-10)
+
+1. Revert python to optional dependency
+    * [Pull request 132](https://github.com/ignitionrobotics/ign-cmake/pull/132)
+
 ### Ignition CMake 2.6.0 (2020-12-08)
 
 1. Added build-essential and cmake to packages.apt 
