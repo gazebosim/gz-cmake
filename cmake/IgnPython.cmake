@@ -22,4 +22,4 @@ if(NOT PYTHON_VERSION)
   set(PYTHON_VERSION "3")
 endif()
 
-find_package(PythonInterp ${PYTHON_VERSION} REQUIRED)
+find_package(PythonInterp ${PYTHON_VERSION} QUIET)
