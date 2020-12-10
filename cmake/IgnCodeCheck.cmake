@@ -40,12 +40,15 @@ function(ign_setup_target_for_codecheck)
     COMMAND ${CPPCHECK_PATH} ${CPPCHECK_BASE} --enable=missingInclude `${CPPCHECK_FIND}`
   )
 
-  add_custom_target(cpplint
-    # cpplint cppcheck
-    COMMAND ${PYTHON_EXECUTABLE} ${IGNITION_CMAKE_CODECHECK_DIR}/cpplint.py --extensions=cc,hh --quiet `${CPPCHECK_FIND}`
+  add_custom_target(codecheck
+    DEPENDS cppcheck
   )
 
-  add_custom_target(codecheck
-    DEPENDS cpplint cppcheck
-  )
+  if(PYTHONINTERP_FOUND)
+    add_custom_target(cpplint
+      COMMAND ${PYTHON_EXECUTABLE} ${IGNITION_CMAKE_CODECHECK_DIR}/cpplint.py --extensions=cc,hh --quiet `${CPPCHECK_FIND}`
+    )
+
+    add_dependencies(codecheck cpplint)
+  endif()
 endfunction()
