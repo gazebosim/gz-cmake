@@ -2,6 +2,28 @@
 
 ### Ignition CMake 2.X.X (20XX-XX-XX)
 
+### Ignition CMake 2.6.1 (2020-12-10)
+
+1. Revert python to optional dependency
+    * [Pull request 132](https://github.com/ignitionrobotics/ign-cmake/pull/132)
+
+### Ignition CMake 2.6.0 (2020-12-08)
+
+1. Added build-essential and cmake to packages.apt 
+    * [Pull request 130](https://github.com/ignitionrobotics/ign-cmake/pull/130)
+
+1. Fix FindIgnOgre on Windows when not using vcpkg
+    * [Pull request 124](https://github.com/ignitionrobotics/ign-cmake/pull/124)
+
+1. FindIgnOGRE2: prefer versioned component libraries 
+    * [Pull request 125](https://github.com/ignitionrobotics/ign-cmake/pull/125)
+
+1. Correct CMake logic and update cpplint to Python3 
+    * [Pull request 117](https://github.com/ignitionrobotics/ign-cmake/pull/117)
+
+1. Improve fork experience 
+    * [Pull request 118](https://github.com/ignitionrobotics/ign-cmake/pull/118)
+
 ### Ignition CMake 2.5.0 (2020-09-05)
 
 1. Add additional input directories to parse when generating documentation
