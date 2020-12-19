@@ -1103,6 +1103,8 @@ function(ign_add_component component_name)
   # Create an upper case version of the component name, to be used as an export
   # base name.
   string(TOUPPER ${component_name} component_name_upper)
+  # hyphen is not supported as macro name, replace it by underscore
+  string(REPLACE "-" "_" component_name_upper ${component_name_upper})
 
   #------------------------------------
   # Create the target for this component, and configure it to be installed
@@ -1347,6 +1349,14 @@ macro(_ign_add_library_or_component)
     set(export_base ${_ign_add_library_EXPORT_BASE})
   else()
     _ign_add_library_or_component_arg_error(EXPORT_BASE)
+  endif()
+
+  # check that export_base has no invalid symbols
+  string(REPLACE "-" "_" export_base_replaced ${export_base})
+  if(NOT ${export_base} STREQUAL ${export_base_replaced})
+      message(FATAL_ERROR
+        "export_base has a hyphen which is not"
+        "supported by macros used for visibility")
   endif()
 
   #------------------------------------
