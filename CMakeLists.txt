@@ -183,6 +183,12 @@ if (BUILD_TESTING AND BUILDSYSTEM_TESTING)
   add_subdirectory(examples)
 endif()
 
+# Codecheck
+set(CPPCHECK_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/include)
+set(IGNITION_CMAKE_CODECHECK_DIR "${CMAKE_CURRENT_SOURCE_DIR}/codecheck")
+include(IgnCodeCheck)
+ign_setup_target_for_codecheck()
+
 # Docs
 set(IGNITION_CMAKE_DOXYGEN_DIR "${CMAKE_CURRENT_SOURCE_DIR}/doc/doxygen")
 configure_file(${CMAKE_SOURCE_DIR}/api.md.in ${CMAKE_BINARY_DIR}/api.md)
