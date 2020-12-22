@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.10.2 FATAL_ERROR)
 #============================================================================
 # Initialize the project
 #============================================================================
-project(ignition-cmake2 VERSION 2.5.0)
+project(ignition-cmake2 VERSION 2.6.1)
 
 #--------------------------------------
 # Initialize the IGNITION_CMAKE_DIR variable with the location of the cmake
@@ -182,3 +182,24 @@ if (BUILD_TESTING AND BUILDSYSTEM_TESTING)
 
   add_subdirectory(examples)
 endif()
+
+# Codecheck
+set(CPPCHECK_DIRS
+  ${CMAKE_SOURCE_DIR}/examples
+)
+set(CPPCHECK_INCLUDE_DIRS
+  ${CMAKE_SOURCE_DIR}/include
+  ${CMAKE_SOURCE_DIR}/examples
+)
+set(IGNITION_CMAKE_CODECHECK_DIR "${CMAKE_CURRENT_SOURCE_DIR}/codecheck")
+include(IgnCodeCheck)
+ign_setup_target_for_codecheck()
+
+# Docs
+set(IGNITION_CMAKE_DOXYGEN_DIR "${CMAKE_CURRENT_SOURCE_DIR}/doc/doxygen")
+configure_file(${CMAKE_SOURCE_DIR}/api.md.in ${CMAKE_BINARY_DIR}/api.md)
+configure_file(${CMAKE_SOURCE_DIR}/tutorials.md.in ${CMAKE_BINARY_DIR}/tutorials.md)
+ign_create_docs(
+  API_MAINPAGE_MD "${CMAKE_BINARY_DIR}/api.md"
+  TUTORIALS_MAINPAGE_MD "${CMAKE_BINARY_DIR}/tutorials.md"
+  )
