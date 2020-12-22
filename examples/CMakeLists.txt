@@ -23,10 +23,6 @@ if (NOT CMAKE_GENERATOR MATCHES "Visual Studio")
   )
 endif()
 
-# test to see if we have programs necessary to run codecheck
-include(IgnCodeCheck)
-ign_setup_target_for_codecheck()
-
 foreach(example ${example_directories})
   set(run_codecheck false)
   if (${example} STREQUAL "ign_conf")
