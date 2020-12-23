@@ -60,6 +60,23 @@ Add OSRF packages:
     wget http://packages.osrfoundation.org/gazebo.key -O - | apt-key add -
     sudo apt-add-repository -s "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -c -s) main"
 
+Only on Bionic, update the GCC compiler version:
+
+    sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 800 --slave /usr/bin/g++ g++ /usr/bin/g++-8 --slave /usr/bin/gcov gcov /usr/bin/gcov-8
+
+#### Windows 10
+
+1. Install [Conda package management system](https://docs.conda.io/projects/conda/en/latest/user-guide/install/download.html).
+   Miniconda suffices.
+
+1. Install [Visual Studio 2019](https://visualstudio.microsoft.com/downloads/).
+   The Community version is free for students, open-source contributors, and individuals.
+   Check "Desktop development with C++" in the Workloads tab, and uncheck C++ CMake Tools. We will install cmake via Conda.
+
+### Building from source
+
+#### Ubuntu
+
 Clone source code:
 
     # This checks out the `main` branch. You can append `-b ign-cmake#` (replace # with a number) to checkout a specific version
@@ -69,13 +86,6 @@ Install dependencies
 
     sudo apt -y install $(sort -u $(find . -iname 'packages.apt') | tr '\n' ' ')
 
-Only on Bionic, update the GCC compiler version:
-
-    sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 800 --slave /usr/bin/g++ g++ /usr/bin/g++-8 --slave /usr/bin/gcov gcov /usr/bin/gcov-8
-
-
-### Building from source
-
 Build and install as follows:
 
     cd ign-cmake
@@ -84,6 +94,44 @@ Build and install as follows:
     cmake ..
     make -j4
     sudo make install
+
+#### Windows
+
+You will need a Visual Studio Command Prompt, which you can access by searching for "x64 Native Tools Command Prompt for VS 2019" in the search bar near the Start button.
+Right-click and run as Administrator.
+Optionally, right-click and pin to the task bar for quick access in the future.
+
+If you did not add Conda to your ``PATH`` environment variable during Conda installation, you may need to navigate to the location of ``condabin`` in order to use the `conda` command.
+To find ``condabin``, search for "Anaconda Prompt" in the search bar near the Start button, open it, run ``where conda``, and look for a line containing the directory ``condabin``.
+
+1. Navigate to your ``condabin`` if necessary, then create and activate a Conda environment:
+
+    conda create -n ign-ws
+    conda activate ign-ws
+
+   Once you have activated an environment, a prefix like ``(ign-ws)`` will be prepended to your prompt, and you can use the ``conda`` command outside of ``condabin``.
+
+   You can use ``conda info --envs`` to see all your environments.
+   To remove an environment, use``conda env remove --name <env_name>``.
+
+1. Install dependencies
+
+    conda install -c conda-forge colcon-common-extensions git cmake pkg-config
+
+1. Navigate to where you would like to build the library, and then clone the repository.
+   We will be using a [colcon](https://colcon.readthedocs.io/en/released/) workspace structure.
+
+    mkdir ign_ws
+    cd ign_ws
+    mkdir src
+    cd src
+    # This checks out the `main` branch. You can append `-b ign-cmake#` (replace # with a number) to checkout a specific version
+    git clone https://github.com/ignitionrobotics/ign-cmake.git
+
+1. Compile
+
+    # Replace <#> with the numeric version you cloned
+    colcon build --cmake-args -DBUILD_TESTING=OFF --merge-install --packages-up-to ignition-cmake<#>
 
 # Documentation
 
