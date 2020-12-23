@@ -97,41 +97,42 @@ Build and install as follows:
 
 #### Windows
 
-You will need a Visual Studio Command Prompt, which you can access by searching for "x64 Native Tools Command Prompt for VS 2019" in the search bar near the Start button.
+Open a Visual Studio Command Prompt (search for "x64 Native Tools Command Prompt for VS 2019" in the Windows search near the Start button).
 Right-click and run as Administrator.
 Optionally, right-click and pin to the task bar for quick access in the future.
 
 If you did not add Conda to your ``PATH`` environment variable during Conda installation, you may need to navigate to the location of ``condabin`` in order to use the `conda` command.
-To find ``condabin``, search for "Anaconda Prompt" in the search bar near the Start button, open it, run ``where conda``, and look for a line containing the directory ``condabin``.
+To find ``condabin``, search for "Anaconda Prompt" in the Windows search near the Start button, open it, run ``where conda``, and look for a line containing the directory ``condabin``.
 
-1. Navigate to your ``condabin`` if necessary, then create and activate a Conda environment:
+1. Navigate to your ``condabin`` if necessary, and then create and activate a Conda environment:
 
-    conda create -n ign-ws
-    conda activate ign-ws
+        conda create -n ign-ws
+        conda activate ign-ws
 
    Once you have activated an environment, a prefix like ``(ign-ws)`` will be prepended to your prompt, and you can use the ``conda`` command outside of ``condabin``.
 
    You can use ``conda info --envs`` to see all your environments.
+
    To remove an environment, use``conda env remove --name <env_name>``.
 
 1. Install dependencies
 
-    conda install -c conda-forge colcon-common-extensions git cmake pkg-config
+        conda install -c conda-forge colcon-common-extensions git cmake pkg-config
 
 1. Navigate to where you would like to build the library, and then clone the repository.
    We will be using a [colcon](https://colcon.readthedocs.io/en/released/) workspace structure.
 
-    mkdir ign_ws
-    cd ign_ws
-    mkdir src
-    cd src
-    # This checks out the `main` branch. You can append `-b ign-cmake#` (replace # with a number) to checkout a specific version
-    git clone https://github.com/ignitionrobotics/ign-cmake.git
+        mkdir ign_ws
+        cd ign_ws
+        mkdir src
+        cd src
+        # This checks out the `main` branch. You can append `-b ign-cmake#` (replace # with a number) to checkout a specific version
+        git clone https://github.com/ignitionrobotics/ign-cmake.git
 
 1. Compile
 
-    # Replace <#> with the numeric version you cloned
-    colcon build --cmake-args -DBUILD_TESTING=OFF --merge-install --packages-up-to ignition-cmake<#>
+        # Replace <#> with the numeric version you cloned
+        colcon build --cmake-args -DBUILD_TESTING=OFF --merge-install --packages-up-to ignition-cmake<#>
 
 # Documentation
 
