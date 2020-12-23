@@ -117,22 +117,21 @@ To find ``condabin``, search for "Anaconda Prompt" in the Windows search near th
 
 1. Install dependencies
 
-        conda install -c conda-forge colcon-common-extensions git cmake pkg-config
+        conda install -c conda-forge git cmake pkg-config
 
 1. Navigate to where you would like to build the library, and then clone the repository.
-   We will be using a [colcon](https://colcon.readthedocs.io/en/released/) workspace structure.
 
-        mkdir ign_ws
-        cd ign_ws
-        mkdir src
-        cd src
         # This checks out the `main` branch. You can append `-b ign-cmake#` (replace # with a number) to checkout a specific version
         git clone https://github.com/ignitionrobotics/ign-cmake.git
 
-1. Compile
+1. Build. Tests do not build at this time, so we turn tests off.
 
-        # Replace <#> with the numeric version you cloned
-        colcon build --cmake-args -DBUILD_TESTING=OFF --merge-install --packages-up-to ignition-cmake<#>
+        cd ign-cmake
+        mkdir build
+        cd build
+        cmake .. -DBUILD_TESTING=OFF  # Optionally, -DCMAKE_INSTALL_PREFIX=path\to\install
+        cmake --build . --config Release
+        cmake --install . --config Release
 
 # Documentation
 
