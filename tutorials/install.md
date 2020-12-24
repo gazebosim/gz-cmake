@@ -65,11 +65,11 @@ which version you need.
 
 You can view all the versions with
 
-    conda search libignition-math* --channel conda-forge --info
+    conda search libignition-cmake* --channel conda-forge --info
 
 and install a specific minor version with
 
-    conda install libignition-math6=6.7.0 --channel conda-forge
+    conda install libignition-cmake=2.6.1 --channel conda-forge
 
 ## Source Install
 
