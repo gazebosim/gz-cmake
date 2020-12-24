@@ -46,6 +46,31 @@ Install Ignition CMake:
 Be sure to replace `<#>` with a number value, such as 1 or 2, depending on
 which version you need.
 
+### Windows
+
+Install [Conda package management system](https://docs.conda.io/projects/conda/en/latest/user-guide/install/download.html).
+Miniconda suffices.
+
+Create if necessary, and activate a Conda environment:
+
+    conda create -n ign-ws
+    conda activate ign-ws
+
+Install Ignition CMake:
+
+    conda install libignition-cmake<#> --channel conda-forge
+
+Be sure to replace `<#>` with a number value, such as 1 or 2, depending on
+which version you need.
+
+You can view all the versions with
+
+    conda search libignition-math* --channel conda-forge --info
+
+and install a specific minor version with
+
+    conda install libignition-math6=6.7.0 --channel conda-forge
+
 ## Source Install
 
 ### Prerequisites
@@ -117,7 +142,7 @@ To find ``condabin``, search for "Anaconda Prompt" in the Windows search near th
 
 1. Install dependencies
 
-        conda install -c conda-forge git cmake pkg-config
+        conda install git cmake pkg-config --channel conda-forge 
 
 1. Navigate to where you would like to build the library, and then clone the repository.
 
