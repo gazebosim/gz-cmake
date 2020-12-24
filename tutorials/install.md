@@ -65,6 +65,10 @@ which version you need.
 
 You can view all the versions with
 
+    conda search libignition-cmake* --channel conda-forge
+
+and view their dependencies with
+
     conda search libignition-cmake* --channel conda-forge --info
 
 and install a specific minor version with
@@ -146,7 +150,7 @@ To find ``condabin``, search for "Anaconda Prompt" in the Windows search near th
 
 1. Navigate to where you would like to build the library, and then clone the repository.
 
-        # This checks out the `main` branch. You can append `-b ign-cmake#` (replace # with a number) to checkout a specific version
+        # Optionally, append `-b ign-cmake#` (replace # with a number) to check out a specific version
         git clone https://github.com/ignitionrobotics/ign-cmake.git
 
 1. Build. Tests do not build at this time, so we turn tests off.
