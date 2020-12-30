@@ -2,6 +2,23 @@
 
 ### Ignition CMake 2.X.X (20XX-XX-XX)
 
+### Ignition CMake 2.6.2 (2020-12-29)
+
+1. FindUUID: Always define UUID::UUID on Apple platforms
+    * [Pull request 128](https://github.com/ignitionrobotics/ign-cmake/pull/128)
+
+1. Remove deprecated doxygen configurations
+    * [Pull request 136](https://github.com/ignitionrobotics/ign-cmake/pull/136)
+
+1. Generate doxygen tutorials for ign-cmake
+    * [Pull request 137](https://github.com/ignitionrobotics/ign-cmake/pull/137)
+
+1. Enable make codecheck for ign-cmake
+    * [Pull request 138](https://github.com/ignitionrobotics/ign-cmake/pull/138)
+
+1. Generate valid visibility macros by replacing hyphens in component name
+    * [Pull request 135](https://github.com/ignitionrobotics/ign-cmake/pull/135)
+
 ### Ignition CMake 2.6.1 (2020-12-10)
 
 1. Revert python to optional dependency
@@ -9,19 +26,19 @@
 
 ### Ignition CMake 2.6.0 (2020-12-08)
 
-1. Added build-essential and cmake to packages.apt 
+1. Added build-essential and cmake to packages.apt
     * [Pull request 130](https://github.com/ignitionrobotics/ign-cmake/pull/130)
 
 1. Fix FindIgnOgre on Windows when not using vcpkg
     * [Pull request 124](https://github.com/ignitionrobotics/ign-cmake/pull/124)
 
-1. FindIgnOGRE2: prefer versioned component libraries 
+1. FindIgnOGRE2: prefer versioned component libraries
     * [Pull request 125](https://github.com/ignitionrobotics/ign-cmake/pull/125)
 
-1. Correct CMake logic and update cpplint to Python3 
+1. Correct CMake logic and update cpplint to Python3
     * [Pull request 117](https://github.com/ignitionrobotics/ign-cmake/pull/117)
 
-1. Improve fork experience 
+1. Improve fork experience
     * [Pull request 118](https://github.com/ignitionrobotics/ign-cmake/pull/118)
 
 ### Ignition CMake 2.5.0 (2020-09-05)
