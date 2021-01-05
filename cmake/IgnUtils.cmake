@@ -663,7 +663,7 @@ function(ign_install_all_headers)
   foreach(dir ${directories})
 
     # GLOB all the header files in dir
-    file(GLOB headers RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "${dir}/*.h" "${dir}/*.hh")
+    file(GLOB headers RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "${dir}/*.h" "${dir}/*.hh" "${dir}/*.hpp")
     list(SORT headers)
 
     # Remove the excluded headers
