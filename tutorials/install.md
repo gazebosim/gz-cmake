@@ -51,35 +51,47 @@ which version you need.
 Install [Conda package management system](https://docs.conda.io/projects/conda/en/latest/user-guide/install/download.html).
 Miniconda suffices.
 
-Create if necessary, and activate a Conda environment:
+Open a Visual Studio Command Prompt (search for "x64 Native Tools Command Prompt for VS 2019" in the Windows search near the Start button).
+Optionally, right-click and pin to the task bar for quick access in the future.
 
-    conda create -n ign-ws
-    conda activate ign-ws
+If you did not add Conda to your `PATH` environment variable during Conda installation, you may need to navigate to the location of `condabin` in order to use the `conda` command.
+To find `condabin`, search for "Anaconda Prompt" in the Windows search near the Start button, open it, run `where conda`, and look for a line containing the directory `condabin`.
 
-Install Ignition CMake:
+1. Navigate to your `condabin` if necessary, and then create and activate a Conda environment:
 
-    conda install libignition-cmake<#> --channel conda-forge
+        conda create -n ign-ws
+        conda activate ign-ws
 
-Be sure to replace `<#>` with a number value, such as 1 or 2, depending on
+   Once you have activated an environment, a prefix like `(ign-ws)` will be prepended to your prompt, and you can use the `conda` command outside of `condabin`.
+
+   You can use `conda info --envs` to see all your environments.
+
+   To remove an environment, use `conda env remove --name <env_name>`.
+
+1. Install Ignition CMake:
+
+        conda install libignition-cmake<#> --channel conda-forge
+
+   Be sure to replace `<#>` with a number value, such as 1 or 2, depending on
 which version you need.
 
-You can view all the versions with
+   You can view all the versions with
 
-    conda search libignition-cmake* --channel conda-forge
+        conda search libignition-cmake* --channel conda-forge
 
-and view their dependencies with
+   and view their dependencies with
 
-    conda search libignition-cmake* --channel conda-forge --info
+        conda search libignition-cmake* --channel conda-forge --info
 
-and install a specific minor version with
+   and install a specific minor version with
 
-    conda install libignition-cmake=2.6.1 --channel conda-forge
+        conda install libignition-cmake=2.6.1 --channel conda-forge
 
 ## Source Install
 
-### Prerequisites
+### Ubuntu Bionic 18.04 or above
 
-#### Ubuntu Bionic 18.04 or above
+#### Prerequisites
 
 Add OSRF packages:
 
@@ -93,18 +105,7 @@ Only on Bionic, update the GCC compiler version:
 
     sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 800 --slave /usr/bin/g++ g++ /usr/bin/g++-8 --slave /usr/bin/gcov gcov /usr/bin/gcov-8
 
-#### Windows 10
-
-1. Install [Conda package management system](https://docs.conda.io/projects/conda/en/latest/user-guide/install/download.html).
-   Miniconda suffices.
-
-1. Install [Visual Studio 2019](https://visualstudio.microsoft.com/downloads/).
-   The Community version is free for students, open-source contributors, and individuals.
-   Check "Desktop development with C++" in the Workloads tab, and uncheck C++ CMake Tools. We will install cmake via Conda.
-
-### Building from source
-
-#### Ubuntu
+#### Building from source
 
 Clone source code:
 
@@ -124,25 +125,35 @@ Build and install as follows:
     make -j4
     sudo make install
 
-#### Windows
+### Windows 10
 
-Open a Visual Studio Command Prompt (search for "x64 Native Tools Command Prompt for VS 2019" in the Windows search near the Start button).
-Right-click and run as Administrator.
+#### Prerequisites
+
+1. Install [Conda package management system](https://docs.conda.io/projects/conda/en/latest/user-guide/install/download.html).
+   Miniconda suffices.
+
+1. Install [Visual Studio 2019](https://visualstudio.microsoft.com/downloads/).
+   The Community version is free for students, open-source contributors, and individuals.
+   Check "Desktop development with C++" in the "Workloads" tab, and uncheck "C++ CMake Tools". We will install `cmake` via Conda.
+
+#### Building from source
+
+Open a Visual Studio Command Prompt (search for "x64 Native Tools Command Prompt for VS 2019" in the search field near the Windows button).
 Optionally, right-click and pin to the task bar for quick access in the future.
 
-If you did not add Conda to your ``PATH`` environment variable during Conda installation, you may need to navigate to the location of ``condabin`` in order to use the `conda` command.
-To find ``condabin``, search for "Anaconda Prompt" in the Windows search near the Start button, open it, run ``where conda``, and look for a line containing the directory ``condabin``.
+If you did not add Conda to your `PATH` environment variable during Conda installation, you may need to navigate to the location of `condabin` in order to use the `conda` command.
+To find `condabin`, search for "Anaconda Prompt" in the search field near the Windows button, open it, run `where conda`, and look for a line containing the directory `condabin`.
 
-1. Navigate to your ``condabin`` if necessary, and then create and activate a Conda environment:
+1. Navigate to your `condabin` if necessary, and then create and activate a Conda environment:
 
         conda create -n ign-ws
         conda activate ign-ws
 
-   Once you have activated an environment, a prefix like ``(ign-ws)`` will be prepended to your prompt, and you can use the ``conda`` command outside of ``condabin``.
+   Once you have activated an environment, a prefix like `(ign-ws)` will be prepended to your prompt, and you can use the `conda` command outside of `condabin`.
 
-   You can use ``conda info --envs`` to see all your environments.
+   You can use `conda info --envs` to see all your environments.
 
-   To remove an environment, use``conda env remove --name <env_name>``.
+   To remove an environment, use `conda env remove --name <env_name>`.
 
 1. Install dependencies
 
