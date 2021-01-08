@@ -1,4 +1,4 @@
-prefix=${pcfiledir}/../..
+prefix=${pcfiledir}/@PC_CONFIG_RELATIVE_PATH_TO_PREFIX@
 libdir=${prefix}/@CMAKE_INSTALL_LIBDIR@
 includedir=${prefix}/@CMAKE_INSTALL_INCLUDEDIR@/ignition/@IGN_DESIGNATION@@PROJECT_VERSION_MAJOR@
 
