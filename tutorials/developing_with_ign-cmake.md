@@ -58,7 +58,7 @@ First, install `ccache` and configure it to an appropriate cache size for your s
 ```
 $ sudo apt install ccache
 $ ccache -M10G
-Set cache size limit to 30.0 GB
+Set cache size limit to 10.0 GB
 ```
 
 Then set the CMake flag either via the command line or `defaults.yaml`:
