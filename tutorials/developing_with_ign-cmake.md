@@ -114,15 +114,12 @@ To use:
 ```
 colcon build --mixin ccache rel-with-deb-info
 ```
-
-
-
 ### Using a defaults file
 
 It is useful to be able to apply a consistent set of flags across an entire Ignition collection when building.
 One mechanism for accomplishing this is a `defaults.yaml` file.
 This is a file of configuration options that `colcon` will read to customize the default behavior.
-More information about the `defaults.yaml` file can be found in the corresponding [`colcon` documentaion](https://colcon.readthedocs.io/en/released/user/configuration.html#defaults-yaml)
+More information about the `defaults.yaml` file can be found in the corresponding [`colcon` documentation](https://colcon.readthedocs.io/en/released/user/configuration.html#defaults-yaml)
 
 To try this out, first create an Ignition source workspace:
 ```
@@ -196,6 +193,5 @@ $ echo $COLCON_DEFAULTS_FILE
 ```
 
 Once this is configured, the environment will be applied each time you navigate to the `~/ign_edifice` directory or its children.
-
 
 
