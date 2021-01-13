@@ -1072,8 +1072,8 @@ function(ign_add_component component_name)
   # Parse the arguments
   cmake_parse_arguments(ign_add_component "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
-  if(POLICY CMP0076)
-    cmake_policy(SET CMP0076 NEW)
+  if(POLICY CMP0079)
+    cmake_policy(SET CMP0079 NEW)
   endif()
 
   if(ign_add_component_SOURCES)
