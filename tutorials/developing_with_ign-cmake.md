@@ -9,6 +9,9 @@ This tutorial documents various tips and strategies for developing with Ignition
 There are several flags that control the results of the CMake tool.
 Some of these flags are built into CMake, where some are Ignition CMake specific.
 
+All of the following flags may be set as part of an individual CMake invocation.
+Alternatively, the flags may be passed to `colcon` using techniques described later in this document.
+
 ### Setting the build type
 
 The `CMAKE_BUILD_TYPE` variable controls the type of binary output from the build stage.
@@ -16,66 +19,130 @@ This will have an impact on the flags passed to the compiler and linker.
 
 The available options are:
 
-  * `RelWithDebInfo` (default): Mostly optimized build, but with debug symbols.
-  * `Debug`: Debug build without optimizations, with debug symbols enabled.
-  * `Release`: Fully optimized build, no debug symbols.
-  * `MinSizeRel`: Fully optimized build, minimal binary size 
-  * `Coverage`: Build with additional information required for code coverage computation
-  * `Profile`: Use flags that are helpful with the `gprof` profiling tool
+* `RelWithDebInfo`: Mostly optimized build, but with debug symbols.
+* `Debug`: Debug build without optimizations, with debug symbols enabled.
+* `Release`: Fully optimized build, no debug symbols.
+* `MinSizeRel`: Fully optimized build, minimal binary size 
+* `Coverage`: Build with additional information required for the [`gcov` analysis tool](https://en.wikipedia.org/wiki/Gcov)
+* `Profile`: Use flags that are helpful with the [`gprof` profiling tool](https://en.wikipedia.org/wiki/Gprof)
 
 More information about flags applied can be found in [IgnSetCompilerFlags.cmake](https://github.com/ignitionrobotics/ign-cmake/blob/ign-cmake2/cmake/IgnSetCompilerFlags.cmake)
+
+If left unspecified, `CMAKE_BUILD_TYPE` is set to `RelWithDebInfo`
+
+To change the build type, set the CMake flag:
+
+```
+-DCMAKE_BUILD_TYPE=Debug
+```
 
 ### Creating a compilation database
 
 `CMake` can optionally generate a compilation data base that may be used with a variety of code completion tools.
-To enable this set: `-DCMAKE_EXPORT_COMPILE_COMMANDS=ON`.
+
+By default, a compilation database is *not generated*
+
+To enable compilation database generation, set the CMake flag:
+
+```
+-DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+```
+
+For more information about what the compilation database is, consult the [`clang` documentation](https://clang.llvm.org/docs/JSONCompilationDatabase.html)
+
+Some examples of utilities that can use the compilation database:
+
+* [`coc.vim`](https://github.com/neoclide/coc.nvim): Code completion for VIM
+* [`YouCompleteMe`](https://github.com/ycm-core/YouCompleteMe) Code completion for VIM
 
 ### Using the ninja build system
 
 Rather than using `make`, it may be desired to use the [Ninja](https://ninja-build.org/) build tool.
 
-This may be applied by setting `-GNinja`.
+By default `make` will be used.
 
-### Address sanitizer
+To change the build system type, set the CMake flag:
+
+```
+-GNinja
+```
+
+### Address sanitizer (ASan)
 
 The `gcc` and `clang` compilers have a set of flags to generate instrumented builds for detecting memory leaks.
 
+By default, address sanitizer is *not used*.
+
+To enable address sanitizer, set all of the following flags:
+
 ```
--DCMAKE_CXX_FLAGS:STRING= -fsanitize=address  -fsanitize=leak -g
--DCMAKE_C_FLAGS:STRING=-fsanitize=address  -fsanitize=leak -g
--DCMAKE_EXE_LINKER_FLAGS:STRING=-fsanitize=address  -fsanitize=leak
--DCMAKE_MODULE_LINKER_FLAGS:STRING=-fsanitize=address  -fsanitize=leak
+-DCMAKE_CXX_FLAGS="-fsanitize=address -fsanitize=leak -g"
+-DCMAKE_C_FLAGS="-fsanitize=address -fsanitize=leak -g"
+-DCMAKE_EXE_LINKER_FLAGS="-fsanitize=address -fsanitize=leak"
+-DCMAKE_MODULE_LINKER_FLAGS="-fsanitize=address -fsanitize=leak"
 ```
 
 This will report if memory is leaked during execution of binaries or tests.
+
+More information about address santizier can be found in the [ASan documentation](https://github.com/google/sanitizers/wiki/AddressSanitizer).
+
+Note: Address sanitizer may have an impact on the performance of execution.
 
 ### Using CCache
 
 When you are doing frequent rebuilds, you can use a program to cache intermediate compiler results.
 
-First, install `ccache` and configure it to an appropriate cache size for your system:
+First, install [`ccache`](https://ccache.dev/) and configure it to an appropriate cache size for your system:
 
 ```
-$ sudo apt install ccache
+$ sudo apt update && sudo apt install ccache
 $ ccache -M10G
 Set cache size limit to 10.0 GB
 ```
 
-Then set the CMake flag either via the command line or `defaults.yaml`:
+Then set the CMake flags:
 
 ```
-"-DCMAKE_C_COMPILER_LAUNCHER=ccache",
-"-DCMAKE_CXX_COMPILER_LAUNCHER=ccache"
+-DCMAKE_C_COMPILER_LAUNCHER=ccache
+-DCMAKE_CXX_COMPILER_LAUNCHER=ccache
 ```
 
 ### Enabling/Disabling Documentation
 
 When you are doing frequent rebuilds, it generally doesn't make sense to rebuild documentation each build.
 
-To disable building documentation (default is on), set the CMake flag either via the command line or `defaults.yaml`:
+By default, building documentation is *enabled*.
+
+To disable building documentation, set the CMake flag:
 
 ```
-"-DBUILD_DOCS=OFF"
+-DBUILD_DOCS=OFF
+```
+
+### Enabling/Disabling Tests
+ 
+If your intent is to only produce libraries and executables, it is possible to disables tests.
+
+By default, building tests is *enabled*.
+
+To disable building tests, set the CMake flag:
+
+```
+-DBUILD_TESTING=OFF
+```
+
+### Enabling/Disabling Buildsystem Tests
+
+There are additional tests of the Ignition CMake buildsystem.
+It is recommend to run these tests when making modifications to the Ignition CMake codebase.
+
+By default, building buildsystem tests is *disabled*.
+
+To enable building buildsystem tests, set the CMake flags:
+
+```
+-DBUILD_TESTING=ON
+-DBUILDSYSTEM_TESTING=ON
 ```
 
 ## Developing with Colcon and vcstool
@@ -87,7 +154,7 @@ The basic outline of obtaining Ignition source packages via `vcs` and building w
 
 ### Passing CMake flags via command line
 
-When performing `colcon` builds, flags may be passed to Ignition CMake to configure the build 
+When performing `colcon` builds, flags may be passed to Ignition CMake to configure the build.
 
 This can be done via the `--cmake-args` flag in `colcon`:
 
@@ -109,11 +176,19 @@ $ colcon mixin update default
 $ colcon mixin show
 ```
 
-To use:
+An example of building with `colcon` with two mixins:
+ * [`ccache` mixin](https://github.com/colcon/colcon-mixin-repository/blob/master/ccache.mixin) 
+ * [`rel-with-db-info` mixin](https://github.com/colcon/colcon-mixin-repository/blob/master/build-type.mixin) 
 
 ```
 colcon build --mixin ccache rel-with-deb-info
 ```
+
+This will build with the flags applied from the requested mixins.
+
+Colcon allows you to create your own mixins for commonly-reused command line flags.
+For more information about creating mixins, consult the [`colcon mixin` documentation](https://colcon.readthedocs.io/en/released/reference/mixin-arguments.html)
+
 ### Using a defaults file
 
 It is useful to be able to apply a consistent set of flags across an entire Ignition collection when building.
@@ -175,7 +250,7 @@ Mixins can also be applied via the `defaults.yaml` file:
 Optionally, defaults can be applied user-wide by placing a defaults file at `$COLCON_HOME/defaults.yaml` (which is `~/.colcon/defaults.yaml` by default).
 
 In order to manage per-workspace settings, a tool like [`direnv`](https://direnv.net/) can be used to automate the application of the environment variable.
-Once installed and configured with your shell of choice, do the following:
+Once `direnv` is installed and configured with your shell of choice, do the following:
 
 ```
 $ cd ~/ign_edifice/
