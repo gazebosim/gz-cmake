@@ -1,4 +1,4 @@
-\page developingwithcmake Developing with Ignition CMake 
+\page developingwithcmake Developing with Ignition CMake
 
 # Developing with Ignition CMake
 
@@ -22,7 +22,7 @@ The available options are:
 * `RelWithDebInfo`: Mostly optimized build, but with debug symbols.
 * `Debug`: Debug build without optimizations, with debug symbols enabled.
 * `Release`: Fully optimized build, no debug symbols.
-* `MinSizeRel`: Fully optimized build, minimal binary size 
+* `MinSizeRel`: Fully optimized build, minimal binary size
 * `Coverage`: Build with additional information required for the [`gcov` analysis tool](https://en.wikipedia.org/wiki/Gcov)
 * `Profile`: Use flags that are helpful with the [`gprof` profiling tool](https://en.wikipedia.org/wiki/Gprof)
 
@@ -120,7 +120,7 @@ To disable building documentation, set the CMake flag:
 ```
 
 ### Enabling/Disabling Tests
- 
+
 If your intent is to only produce libraries and executables, it is possible to disables tests.
 
 By default, building tests is *enabled*.
@@ -170,15 +170,15 @@ The set of readily-available defaults is in the [colcon-mixin-repository](https:
 
 To install:
 
-``` 
+```
 $ colcon mixin add default https://raw.githubusercontent.com/colcon/colcon-mixin-repository/master/index.yaml
 $ colcon mixin update default
 $ colcon mixin show
 ```
 
 An example of building with `colcon` with two mixins:
- * [`ccache` mixin](https://github.com/colcon/colcon-mixin-repository/blob/master/ccache.mixin) 
- * [`rel-with-db-info` mixin](https://github.com/colcon/colcon-mixin-repository/blob/master/build-type.mixin) 
+ * [`ccache` mixin](https://github.com/colcon/colcon-mixin-repository/blob/master/ccache.mixin)
+ * [`rel-with-db-info` mixin](https://github.com/colcon/colcon-mixin-repository/blob/master/build-type.mixin)
 
 ```
 colcon build --mixin ccache rel-with-deb-info
@@ -195,6 +195,8 @@ It is useful to be able to apply a consistent set of flags across an entire Igni
 One mechanism for accomplishing this is a `defaults.yaml` file.
 This is a file of configuration options that `colcon` will read to customize the default behavior.
 More information about the `defaults.yaml` file can be found in the corresponding [`colcon` documentation](https://colcon.readthedocs.io/en/released/user/configuration.html#defaults-yaml)
+
+For the following, if you do not have `colcon` or `vcs` installed, consult the [Ignition source installation documentation](https://ignitionrobotics.org/docs/latest/install_ubuntu_src).
 
 To try this out, first create an Ignition source workspace:
 ```
@@ -260,7 +262,7 @@ $ echo $COLCON_DEFAULTS_FILE
 $ echo export COLCON_DEFAULTS_FILE=`pwd`/defaults.yaml > .envrc
 direnv: error .envrc is blocked, Run `direnv allow` to approve its content
 $ direnv allow
-direnv: loading ~/ign_edifice/.envrc                                            
+direnv: loading ~/ign_edifice/.envrc
 direnv: export +COLCON_DEFAULTS_FILE
 
 $ echo $COLCON_DEFAULTS_FILE
@@ -268,5 +270,3 @@ $ echo $COLCON_DEFAULTS_FILE
 ```
 
 Once this is configured, the environment will be applied each time you navigate to the `~/ign_edifice` directory or its children.
-
-
