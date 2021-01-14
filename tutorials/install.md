@@ -1,7 +1,5 @@
 \page install Installation
 
-# Install
-
 These instructions are for installing only Ignition CMake. If you're interested
 in using all the Ignition libraries, not only Igniton CMake, check out this
 [Ignition installation](https://ignitionrobotics.org/docs/latest/install).
@@ -13,9 +11,9 @@ The source install instructions should be used if you need the very latest
 software improvements, if you need to modify the code, or if you plan to make a
 contribution.
 
-## Binary Install
+# Binary Install
 
-### Ubuntu
+## Ubuntu
 
 On Ubuntu, it's possible to install Ignition CMake as follows:
 
@@ -32,7 +30,7 @@ Install Ignition CMake:
 Be sure to replace `<#>` with a number value, such as 1 or 2, depending on
 which version you need.
 
-### macOS
+## macOS
 
 On macOS, add OSRF packages:
 
@@ -46,7 +44,7 @@ Install Ignition CMake:
 Be sure to replace `<#>` with a number value, such as 1 or 2, depending on
 which version you need.
 
-### Windows
+## Windows
 
 Install [Conda package management system](https://docs.conda.io/projects/conda/en/latest/user-guide/install/download.html).
 Miniconda suffices.
@@ -87,11 +85,11 @@ which version you need.
 
         conda install libignition-cmake=2.6.1 --channel conda-forge
 
-## Source Install
+# Source Install
 
-### Ubuntu Bionic 18.04 or above
+## Ubuntu Bionic 18.04 or above
 
-#### Prerequisites
+### Prerequisites
 
 Add OSRF packages:
 
@@ -105,7 +103,7 @@ Only on Bionic, update the GCC compiler version:
 
     sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 800 --slave /usr/bin/g++ g++ /usr/bin/g++-8 --slave /usr/bin/gcov gcov /usr/bin/gcov-8
 
-#### Building from source
+### Building from source
 
 Clone source code:
 
@@ -125,9 +123,9 @@ Build and install as follows:
     make -j4
     sudo make install
 
-### Windows 10
+## Windows 10
 
-#### Prerequisites
+### Prerequisites
 
 1. Install [Conda package management system](https://docs.conda.io/projects/conda/en/latest/user-guide/install/download.html).
    Miniconda suffices.
@@ -136,7 +134,7 @@ Build and install as follows:
    The Community version is free for students, open-source contributors, and individuals.
    Check "Desktop development with C++" in the "Workloads" tab, and uncheck "C++ CMake Tools". We will install `cmake` via Conda.
 
-#### Building from source
+### Building from source
 
 Open a Visual Studio Command Prompt (search for "x64 Native Tools Command Prompt for VS 2019" in the search field near the Windows button).
 Optionally, right-click and pin to the task bar for quick access in the future.
