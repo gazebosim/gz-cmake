@@ -1072,6 +1072,10 @@ function(ign_add_component component_name)
   # Parse the arguments
   cmake_parse_arguments(ign_add_component "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
+  if(POLICY CMP0079)
+    cmake_policy(SET CMP0079 NEW)
+  endif()
+
   if(ign_add_component_SOURCES)
     set(sources ${ign_add_component_SOURCES})
   elseif(NOT ign_add_component_INTERFACE)
@@ -1250,7 +1254,6 @@ function(ign_add_component component_name)
     set_property(TARGET ${PROJECT_LIBRARY_TARGET_NAME}-all
       PROPERTY INTERFACE_IGN_ALL_KNOWN_COMPONENTS "${all_known_components};${component_target_name}")
   endif()
-
 endfunction()
 
 #################################################
