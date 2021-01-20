@@ -98,11 +98,48 @@ This library is used internally by the ignition projects. See other ignition pro
 
 # Documentation
 
-Documentation for `ignition-cmake` can be found within the source code, and also in the [MIGRATION.md guide](https://github.com/ignitionrobotics/ign-cmake/blob/master/MIGRATION.md).
+API documentation and tutorials can be accessed at
+[https://ignitionrobotics.org/libs/cmake](https://ignitionrobotics.org/libs/cmake)
+
+You can also generate the documentation from a clone of this repository by following these steps.
+
+1. You will need [Doxygen](http://www.doxygen.org/). On Ubuntu Doxygen can be installed using
+
+        sudo apt-get install doxygen
+
+2. Clone the repository
+
+        git clone https://github.com/ignitionrobotics/ign-cmake
+
+3. Configure and build the documentation.
+
+        cd ign-cmake
+        mkdir build
+        cd build
+        cmake ..
+        make doc
+
+4. View the documentation by running the following command from the `build` directory.
+
+        firefox doxygen/html/index.html
+
+**Note** Alternatively, documentation for `ignition-cmake` can be found within the source code, and also in the [MIGRATION.md guide](https://github.com/ignitionrobotics/ign-cmake/blob/master/MIGRATION.md).
 
 # Testing
 
-A fuller suite of tests in the `examples` directory can be enabled by building with `BUILDSYSTEM_TESTING` enabled.
+Follow these steps to run tests and static code analysis in your clone of this repository.
+
+1. Follow the [source install instruction](#source-install).
+
+2. Run tests.
+
+        make test
+
+3. Static code checker.
+
+        make codecheck
+
+Additionally, a fuller suite of tests in the `examples` directory can be enabled by building with `BUILDSYSTEM_TESTING` enabled.
 Tests can be run by building the `test` target. From your build directory you can run:
 
 ```

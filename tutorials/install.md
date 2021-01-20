@@ -162,55 +162,16 @@ To find `condabin`, search for "Anaconda Prompt" in the search field near the Wi
         # Optionally, append `-b ign-cmake#` (replace # with a number) to check out a specific version
         git clone https://github.com/ignitionrobotics/ign-cmake.git
 
-1. Build. Tests do not build at this time, so we turn tests off.
+1. Build.
 
         cd ign-cmake
         mkdir build
         cd build
-        cmake .. -DBUILD_TESTING=OFF  # Optionally, -DCMAKE_INSTALL_PREFIX=path\to\install
+        cmake .. # Optionally, -DCMAKE_INSTALL_PREFIX=path\to\install
         cmake --build . --config Release
         cmake --install . --config Release
 
-# Documentation
+**Note** If you find that the build is failing due to failures in the `test` directory, then you may need to disable tests by adding `-DBUILD_TESTING=OFF` to the `cmake ..` command.
 
-API documentation and tutorials can be accessed at
-[https://ignitionrobotics.org/libs/cmake](https://ignitionrobotics.org/libs/cmake)
-
-You can also generate the documentation from a clone of this repository by following these steps.
-
-1. You will need [Doxygen](http://www.doxygen.org/). On Ubuntu Doxygen can be installed using
-
-        sudo apt-get install doxygen
-
-2. Clone the repository
-
-        git clone https://github.com/ignitionrobotics/ign-cmake
-
-3. Configure and build the documentation.
-
-        cd ign-cmake
-        mkdir build
-        cd build
-        cmake ..
-        make doc
-
-4. View the documentation by running the following command from the `build` directory.
-
-        firefox doxygen/html/index.html
-
-# Testing
-
-Follow these steps to run tests and static code analysis in your clone of this repository.
-
-1. Follow the [source install instruction](#source-install).
-
-2. Run tests.
-
-        make test
-
-3. Static code checker.
-
-        make codecheck
-
-See the [Writing Tests section of the contributor cmakede](https://ignitionrobotics.org/docs/all/contributing#writing-tests) for help creating or modifying tests.
+See the [Writing Tests section of the ign-cmake contributor documentation](https://ignitionrobotics.org/docs/all/contributing#writing-tests) for help creating or modifying tests.
 
