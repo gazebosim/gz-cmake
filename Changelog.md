@@ -2,6 +2,29 @@
 
 ### Ignition CMake 2.X.X (20XX-XX-XX)
 
+### Ignition CMake 2.7.0 (2021-XX-XX)
+
+1. Set cmake CMP0079 policy
+    * [Pull request 146](https://github.com/ignitionrobotics/ign-cmake/pull/146)
+
+1. Tutorial about building with cmake and colcon
+    * [Pull request 145](https://github.com/ignitionrobotics/ign-cmake/pull/145)
+
+1. Add an option to disable docs when building
+    * [Pull request 144](https://github.com/ignitionrobotics/ign-cmake/pull/144)
+
+1. Install hpp files as headers
+    * [Pull request 143](https://github.com/ignitionrobotics/ign-cmake/pull/143)
+
+1. Suppress warning C5205 on Windows
+    * [Pull request 141](https://github.com/ignitionrobotics/ign-cmake/pull/141)
+
+1. Windows installation instructions via conda-forge
+    * [Pull request 139](https://github.com/ignitionrobotics/ign-cmake/pull/139)
+
+1. Ensure relocatable config files
+    * [Pull request 129](https://github.com/ignitionrobotics/ign-cmake/pull/129)
+
 ### Ignition CMake 2.6.2 (2020-12-29)
 
 1. FindUUID: Always define UUID::UUID on Apple platforms
