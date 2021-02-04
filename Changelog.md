@@ -22,6 +22,9 @@
 1. Windows installation instructions via conda-forge
     * [Pull request 139](https://github.com/ignitionrobotics/ign-cmake/pull/139)
 
+1. Ensure relocatable config files
+    * [Pull request 129](https://github.com/ignitionrobotics/ign-cmake/pull/129)
+
 ### Ignition CMake 2.6.2 (2020-12-29)
 
 1. FindUUID: Always define UUID::UUID on Apple platforms
