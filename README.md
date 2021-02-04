@@ -18,21 +18,17 @@ Windows       | [![Build Status](https://build.osrfoundation.org/buildStatus/ico
 
 [Features](#features)
 
-[Install](#install)
+[Installation](#install)
 
-* [Binary Install](#binary-install)
+* [Binary Installation](#binary-install)
 
-* [Source Install](#source-install)
+* [Source Installation](#source-install)
 
     * [Prerequisites](#prerequisites)
   
     * [Building from Source](#building-from-source)
 
 [Usage](#usage)
-
-[Documentation](#documentation)
-
-[Testing](#testing)
 
 [Folder Structure](#folder-structure)
 
@@ -52,11 +48,11 @@ These modules are tailored to the ignition projects, so their use for non-igniti
 
 # Install
 
-We recommend following the [Binary Install](#binary-install) instructions to get up and running as quickly and painlessly as possible.
+We recommend following the [Binary Installation](#binary-install) instructions to get up and running as quickly and painlessly as possible.
 
-The [Source Install](#source-install) instructions should be used if you need the very latest software improvements, you need to modify the code, or you plan to make a contribution.
+The [Source Installation](#source-install) instructions should be used if you need the very latest software improvements, you need to modify the code, or you plan to make a contribution.
 
-## Binary Install
+## Binary Installation
 
 On Ubuntu systems, `apt-get` can be used to install `ignition-cmake`:
 
@@ -66,7 +62,7 @@ $ sudo apt install libignition-cmake<#>-dev
 
 Be sure to replace `<#>` with a number value, such as `1` or `2`, depending on which version you need.
 
-## Source Install
+## Source Installation
 
 ### Prerequisites
 
@@ -76,7 +72,7 @@ The only prerequisite of `ignition-cmake` is `cmake`. Ubuntu users can install c
 $ sudo apt install cmake
 ```
 
-### Building from source
+### Building from Source
 
 To build and install from source, you can clone the repo and use cmake to install the modules as though this is a regular cmake project:
 
@@ -95,20 +91,6 @@ Replace `/path/to/install/dir` to whatever directory you want to install this pa
 # Usage
 
 This library is used internally by the ignition projects. See other ignition projects for examples of how this gets used.
-
-# Documentation
-
-Documentation for `ignition-cmake` can be found within the source code, and also in the [MIGRATION.md guide](https://github.com/ignitionrobotics/ign-cmake/blob/master/MIGRATION.md).
-
-# Testing
-
-A fuller suite of tests in the `examples` directory can be enabled by building with `BUILDSYSTEM_TESTING` enabled.
-Tests can be run by building the `test` target. From your build directory you can run:
-
-```
-$ cmake .. -DBUILDSYSTEM_TESTING=1
-$ make test
-```
 
 # Folder Structure
 

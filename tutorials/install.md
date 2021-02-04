@@ -1,7 +1,5 @@
 \page install Installation
 
-# Install
-
 These instructions are for installing only Ignition CMake. If you're interested
 in using all the Ignition libraries, not only Igniton CMake, check out this
 [Ignition installation](https://ignitionrobotics.org/docs/latest/install).
@@ -13,77 +11,185 @@ The source install instructions should be used if you need the very latest
 software improvements, if you need to modify the code, or if you plan to make a
 contribution.
 
-## Binary Install
+# Binary Install
 
-### Ubuntu
+## Ubuntu
 
 On Ubuntu, it's possible to install Ignition CMake as follows:
 
 Add OSRF packages:
-
-    echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list
-    sudo apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys D2486D2DD83DB69272AFE98867170598AF249743
-    sudo apt update
+  ```
+  echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list
+  sudo apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys D2486D2DD83DB69272AFE98867170598AF249743
+  sudo apt update
+  ```
 
 Install Ignition CMake:
-
-    sudo apt install libignition-cmake<#>-dev
+  ```
+  sudo apt install libignition-cmake<#>-dev
+  ```
 
 Be sure to replace `<#>` with a number value, such as 1 or 2, depending on
 which version you need.
 
-### macOS
+## macOS
 
 On macOS, add OSRF packages:
-
-    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-    brew tap osrf/simulation
+  ```
+  ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+  brew tap osrf/simulation
+  ```
 
 Install Ignition CMake:
-
-    brew install ignition-cmake<#>
+  ```
+  brew install ignition-cmake<#>
+  ```
 
 Be sure to replace `<#>` with a number value, such as 1 or 2, depending on
 which version you need.
 
-## Source Install
+## Windows
+
+Install [Conda package management system](https://docs.conda.io/projects/conda/en/latest/user-guide/install/download.html).
+Miniconda suffices.
+
+Open a Visual Studio Command Prompt (search for "x64 Native Tools Command Prompt for VS 2019" in the Windows search near the Start button).
+Optionally, right-click and pin to the task bar for quick access in the future.
+
+If you did not add Conda to your `PATH` environment variable during Conda installation, you may need to navigate to the location of `condabin` in order to use the `conda` command.
+To find `condabin`, search for "Anaconda Prompt" in the Windows search near the Start button, open it, run `where conda`, and look for a line containing the directory `condabin`.
+
+1. Navigate to your `condabin` if necessary, and then create and activate a Conda environment:
+  ```
+  conda create -n ign-ws
+  conda activate ign-ws
+  ```
+
+  Once you have activated an environment, a prefix like `(ign-ws)` will be prepended to your prompt, and you can use the `conda` command outside of `condabin`.
+
+  You can use `conda info --envs` to see all your environments.
+
+  To remove an environment, use `conda env remove --name <env_name>`.
+
+2. Install Ignition CMake:
+  ```
+  conda install libignition-cmake<#> --channel conda-forge
+  ```
+
+  Be sure to replace `<#>` with a number value, such as 1 or 2, depending on which version you need.
+
+  You can view all the versions with
+  ```
+  conda search libignition-cmake* --channel conda-forge
+  ```
+
+  and view their dependencies with
+  ```
+  conda search libignition-cmake* --channel conda-forge --info
+  ```
+
+  and install a specific minor version with
+  ```
+  conda install libignition-cmake=2.6.1 --channel conda-forge
+  ```
+
+# Source Install
+
+## Ubuntu Bionic 18.04 or above
 
 ### Prerequisites
 
-#### Ubuntu Bionic 18.04 or above
-
 Add OSRF packages:
-
-    sudo apt update
-    sudo apt -y install wget lsb-release gnupg
-    sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list'
-    wget http://packages.osrfoundation.org/gazebo.key -O - | apt-key add -
-    sudo apt-add-repository -s "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -c -s) main"
-
-Clone source code:
-
-    # This checks out the `main` branch. You can append `-b ign-cmake#` (replace # with a number) to checkout a specific version
-    git clone http://github.com/ignitionrobotics/ign-cmake
-
-Install dependencies
-
-    sudo apt -y install $(sort -u $(find . -iname 'packages.apt') | tr '\n' ' ')
+``` 
+sudo apt update
+sudo apt -y install wget lsb-release gnupg
+sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list'
+wget http://packages.osrfoundation.org/gazebo.key -O - | apt-key add -
+sudo apt-add-repository -s "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -c -s) main"
+```
 
 Only on Bionic, update the GCC compiler version:
-
-    sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 800 --slave /usr/bin/g++ g++ /usr/bin/g++-8 --slave /usr/bin/gcov gcov /usr/bin/gcov-8
-
+```
+sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 800 --slave /usr/bin/g++ g++ /usr/bin/g++-8 --slave /usr/bin/gcov gcov /usr/bin/gcov-8
+```
 
 ### Building from source
 
-Build and install as follows:
+Clone source code:
 
-    cd ign-cmake
-    mkdir build
-    cd build
-    cmake ..
-    make -j4
-    sudo make install
+```
+# This checks out the `main` branch. You can append `-b ign-cmake#` (replace # with a number) to checkout a specific version
+git clone http://github.com/ignitionrobotics/ign-cmake
+```
+
+Install dependencies
+```
+sudo apt -y install $(sort -u $(find . -iname 'packages.apt') | tr '\n' ' ')
+```
+
+Build and install as follows:
+```
+cd ign-cmake
+mkdir build
+cd build
+cmake ..
+make -j4
+sudo make install
+```
+
+## Windows 10
+
+### Prerequisites
+
+1. Install [Conda package management system](https://docs.conda.io/projects/conda/en/latest/user-guide/install/download.html).
+   Miniconda suffices.
+
+2. Install [Visual Studio 2019](https://visualstudio.microsoft.com/downloads/).
+   The Community version is free for students, open-source contributors, and individuals.
+   Check "Desktop development with C++" in the "Workloads" tab, and uncheck "C++ CMake Tools". We will install `cmake` via Conda.
+
+### Building from source
+
+Open a Visual Studio Command Prompt (search for "x64 Native Tools Command Prompt for VS 2019" in the search field near the Windows button).
+Optionally, right-click and pin to the task bar for quick access in the future.
+
+If you did not add Conda to your `PATH` environment variable during Conda installation, you may need to navigate to the location of `condabin` in order to use the `conda` command.
+To find `condabin`, search for "Anaconda Prompt" in the search field near the Windows button, open it, run `where conda`, and look for a line containing the directory `condabin`.
+
+1. Navigate to your `condabin` if necessary, and then create and activate a Conda environment:
+  ```
+  conda create -n ign-ws
+  conda activate ign-ws
+  ```
+
+   Once you have activated an environment, a prefix like `(ign-ws)` will be prepended to your prompt, and you can use the `conda` command outside of `condabin`.
+
+   You can use `conda info --envs` to see all your environments.
+
+   To remove an environment, use `conda env remove --name <env_name>`.
+
+2. Install dependencies
+  ```
+  conda install git cmake pkg-config --channel conda-forge 
+  ```
+
+3. Navigate to where you would like to build the library, and then clone the repository.
+  ```
+  # Optionally, append `-b ign-cmake#` (replace # with a number) to check out a specific version
+  git clone https://github.com/ignitionrobotics/ign-cmake.git
+  ```
+
+4. Build.
+  ```
+  cd ign-cmake
+  mkdir build
+  cd build
+  cmake .. # Optionally, -DCMAKE_INSTALL_PREFIX=path\to\install
+  cmake --build . --config Release
+  cmake --install . --config Release
+  ```
+
+**Note** If you find that the build is failing due to failures in the `test` directory, then you may need to disable tests by adding `-DBUILD_TESTING=OFF` to the `cmake ..` command.
 
 # Documentation
 
@@ -93,24 +199,31 @@ API documentation and tutorials can be accessed at
 You can also generate the documentation from a clone of this repository by following these steps.
 
 1. You will need [Doxygen](http://www.doxygen.org/). On Ubuntu Doxygen can be installed using
-
-        sudo apt-get install doxygen
+  ```
+  sudo apt-get install doxygen
+  ```
 
 2. Clone the repository
 
-        git clone https://github.com/ignitionrobotics/ign-cmake
+  ```
+  git clone https://github.com/ignitionrobotics/ign-cmake
+  ```
 
 3. Configure and build the documentation.
-
-        cd ign-cmake
-        mkdir build
-        cd build
-        cmake ..
-        make doc
+  ```
+  cd ign-cmake
+  mkdir build
+  cd build
+  cmake ..
+  make doc
+  ```
 
 4. View the documentation by running the following command from the `build` directory.
+  ```
+  firefox doxygen/html/index.html
+  ```
 
-        firefox doxygen/html/index.html
+**Note** Alternatively, documentation for `ignition-cmake` can be found within the source code, and also in the [MIGRATION.md guide](https://github.com/ignitionrobotics/ign-cmake/blob/master/MIGRATION.md).
 
 # Testing
 
@@ -119,12 +232,23 @@ Follow these steps to run tests and static code analysis in your clone of this r
 1. Follow the [source install instruction](#source-install).
 
 2. Run tests.
-
-        make test
+  ```
+  make test
+  ```
 
 3. Static code checker.
+  ```
+  make codecheck
+  ```
 
-        make codecheck
+Additionally, a fuller suite of tests in the `examples` directory can be enabled by building with `BUILDSYSTEM_TESTING` enabled.
+Tests can be run by building the `test` target. From your build directory you can run:
 
-See the [Writing Tests section of the contributor cmakede](https://ignitionrobotics.org/docs/all/contributing#writing-tests) for help creating or modifying tests.
+```
+$ cmake .. -DBUILDSYSTEM_TESTING=1
+$ make test
+```
+
+
+See the [Writing Tests section of the ign-cmake contributor documentation](https://ignitionrobotics.org/docs/all/contributing#writing-tests) for help creating or modifying tests.
 
