@@ -57,7 +57,7 @@ to support the maintainers
 
 Preparation for <X.Y.Z> release.
 
-Comparison to <x.y.z>: https://github.com/ignitionrobotics/testing/compare/<LATEST_TAG_BRANCH>...<RELEASE_BRANCH>
+Comparison to <x.y.z>: https://github.com/ignitionrobotics/ign-cmake/compare/<LATEST_TAG_BRANCH>...<RELEASE_BRANCH>
 
 ## Checklist
 - [ ] Asked team if this is a good time for a release
@@ -80,7 +80,7 @@ Comparison to <x.y.z>: https://github.com/ignitionrobotics/testing/compare/<LATE
 
 Port <FROM_BRANCH> to <TO_BRANCH>
 
-Branch comparison: https://github.com/ignitionrobotics/testing/compare/<TO_BRANCH>...<FROM_BRANCH>
+Branch comparison: https://github.com/ignitionrobotics/ign-cmake/compare/<TO_BRANCH>...<FROM_BRANCH>
 
 **Note to maintainers**: Remember to **Merge** with commit (not squash-merge
 or rebase)
