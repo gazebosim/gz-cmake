@@ -53,11 +53,11 @@ context (e.g., screenshots, gifs) if appropriate.-->
 
 🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸
 
-# Forward port
+# ➡️ Forward port
 
 Port <FROM_BRANCH> to <TO_BRANCH>
 
-Branch comparison: https://github.com/ignitionrobotics/ign-cmake/compare/<TO_BRANCH>...<FROM_BRANCH>
+Branch comparison: https://github.com/ignitionrobotics/testing/compare/<TO_BRANCH>...<FROM_BRANCH>
 
 **Note to maintainers**: Remember to **Merge** with commit (not squash-merge or rebase)
 
@@ -65,11 +65,11 @@ Branch comparison: https://github.com/ignitionrobotics/ign-cmake/compare/<TO_BRA
 
 <!-- For maintainers only -->
 
-# Release
+# 🎈 Release
 
 Preparation for <X.Y.Z> release.
 
-Comparison to <x.y.z>: https://github.com/ignitionrobotics/ign-cmake/compare/<LATEST_TAG_BRANCH>...<RELEASE_BRANCH>
+Comparison to <x.y.z>: https://github.com/ignitionrobotics/testing/compare/<LATEST_TAG_BRANCH>...<RELEASE_BRANCH>
 
 <!-- Add links to PRs that require this release (if needed) -->
 Needed by <PR(s)>
