@@ -6,7 +6,7 @@ If this is your first time opening a PR, be sure to check the contribution guide
 https://ignitionrobotics.org/docs/all/contributing
 -->
 
-# Bug fix
+# 🦟 Bug fix
 
 Fixes #<NUMBER>
 
@@ -25,9 +25,9 @@ before and after the PR.-->
 
 **Note to maintainers**: Remember to use **Squash-Merge**
 
----
+🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸
 
-# New feature
+# 🎉 New feature
 
 Closes #<NUMBER>
 
@@ -46,12 +46,12 @@ context (e.g., screenshots, gifs) if appropriate.-->
 - [ ] Updated migration guide (as needed)
 - [ ] `codecheck` passed (See [contributing](https://ignitionrobotics.org/docs/all/contributing#contributing-code))
 - [ ] All tests passed (See [test coverage](https://ignitionrobotics.org/docs/all/contributing#test-coverage))
-- [ ] While waiting for a review on your PR, please help review [another open pull request](https://github.com/pulls?q=is%3Aopen+is%3Apr+user%3Aignitionrobotics+repo%3Aosrf%2Fsdformat+archived%3Afalse+)
-to support the maintainers
+- [ ] While waiting for a review on your PR, please help review
+[another open pull request](https://github.com/pulls?q=is%3Aopen+is%3Apr+user%3Aignitionrobotics+repo%3Aosrf%2Fsdformat+archived%3Afalse+) to support the maintainers
 
 **Note to maintainers**: Remember to use **Squash-Merge**
 
----
+🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸
 
 # Forward port
 
@@ -61,7 +61,7 @@ Branch comparison: https://github.com/ignitionrobotics/ign-cmake/compare/<TO_BRA
 
 **Note to maintainers**: Remember to **Merge** with commit (not squash-merge or rebase)
 
----
+🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸
 
 <!-- For maintainers only -->
 
