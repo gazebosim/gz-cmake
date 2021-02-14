@@ -65,7 +65,14 @@ else()
   endif()
 
   # 2.1 Need glib library
+  find_path(GLIB_INCLUDE_DIR
+    NAMES glib.h
+    PATH_SUFFIXES glib-2.0)
+  find_path(GLIBCONFIG_INCLUDE_DIR
+    NAMES glibconfig.h
+    PATH_SUFFIXES lib/glib-2.0/include)
   find_library(GLIB_LIBRARY glib-2.0)
+  list(APPEND GTS_INCLUDE_DIRS "${GLIB_INCLUDE_DIR}" "${GLIBCONFIG_INCLUDE_DIR}")
   list(APPEND GTS_LIBRARIES "${GLIB_LIBRARY}")
 
   if (GTS_FOUND)
