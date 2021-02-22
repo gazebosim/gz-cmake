@@ -191,6 +191,7 @@ else()
         # Some Ogre libraries are not using the .lib extension
         set(postfix "")
         if(NOT ogre_lib MATCHES ".lib$")
+          # Do not consider imported targets as libraries
           if(NOT ogre_lib MATCHES "::")
             set(postfix ".lib")
           endif()
