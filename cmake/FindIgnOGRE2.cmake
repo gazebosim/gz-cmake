@@ -42,7 +42,7 @@
 # Example usage:
 #
 #     ign_find_package(IgnOGRE2
-#                      VERSION 2.1.0
+#                      VERSION 2.2.0
 #                      COMPONENTS HlmsPbs HlmsUnlit Overlay)
 
 # sanity check
@@ -92,12 +92,12 @@ endmacro()
 if (NOT WIN32)
   set(PKG_CONFIG_PATH_ORIGINAL $ENV{PKG_CONFIG_PATH})
 
-  # Note: OGRE2 installed from debs is named OGRE-2.1 while the version
-  # installed from source does not have the 2.1 suffix
+  # Note: OGRE2 installed from debs is named OGRE-2.2 while the version
+  # installed from source does not have the 2.2 suffix
   # look for OGRE2 installed from debs
-  ign_pkg_check_modules_quiet(OGRE2 "OGRE-2.1" NO_CMAKE_ENVIRONMENT_PATH QUIET)
+  ign_pkg_check_modules_quiet(OGRE2 "OGRE-2.2" NO_CMAKE_ENVIRONMENT_PATH QUIET)
   if (OGRE2_FOUND)
-    set(IGN_PKG_NAME "OGRE-2.1")
+    set(IGN_PKG_NAME "OGRE-2.2")
   else()
     # look for OGRE2 installed from source
     set(PKG_CONFIG_PATH_TMP ${PKG_CONFIG_PATH_ORIGINAL})
