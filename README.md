@@ -20,9 +20,9 @@ Windows       | [![Build Status](https://build.osrfoundation.org/buildStatus/ico
 
 [Installation](#install)
 
-* [Binary Installation](#binary-install)
+* [Binary Install](#binary-install)
 
-* [Source Installation](#source-install)
+* [Source Install](#source-install)
 
     * [Prerequisites](#prerequisites)
   
@@ -34,7 +34,7 @@ Windows       | [![Build Status](https://build.osrfoundation.org/buildStatus/ico
 
 [Code of Conduct](#code-of-conduct)
 
-[Contributing](#code-of-contributing)
+[Contributing](#contributing)
 
 [Versioning](#versioning)
 
@@ -48,11 +48,11 @@ These modules are tailored to the ignition projects, so their use for non-igniti
 
 # Install
 
-We recommend following the [Binary Installation](#binary-install) instructions to get up and running as quickly and painlessly as possible.
+We recommend following the [Binary Install](#binary-install) instructions to get up and running as quickly and painlessly as possible.
 
-The [Source Installation](#source-install) instructions should be used if you need the very latest software improvements, you need to modify the code, or you plan to make a contribution.
+The [Source Install](#source-install) instructions should be used if you need the very latest software improvements, you need to modify the code, or you plan to make a contribution.
 
-## Binary Installation
+## Binary Install
 
 On Ubuntu systems, `apt-get` can be used to install `ignition-cmake`:
 
@@ -62,7 +62,7 @@ $ sudo apt install libignition-cmake<#>-dev
 
 Be sure to replace `<#>` with a number value, such as `1` or `2`, depending on which version you need.
 
-## Source Installation
+## Source Install
 
 ### Prerequisites
 
