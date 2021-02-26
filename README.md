@@ -9,10 +9,10 @@
 
 Build | Status
 -- | --
-Test coverage | [![codecov](https://codecov.io/bb/ignitionrobotics/ign-cmake/branch/default/graph/badge.svg)](https://codecov.io/bb/ignitionrobotics/ign-cmake)
-Ubuntu Bionic | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_cmake-ci-default-bionic-amd64)](https://build.osrfoundation.org/job/ignition_cmake-ci-default-bionic-amd64)
-Homebrew      | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_cmake-ci-default-homebrew-amd64)](https://build.osrfoundation.org/job/ignition_cmake-ci-default-homebrew-amd64)
-Windows       | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_cmake-ci-default-windows7-amd64)](https://build.osrfoundation.org/job/ignition_cmake-ci-default-windows7-amd64)
+Test coverage | [![codecov](https://codecov.io/gh/ignitionrobotics/ign-cmake/branch/default/graph/badge.svg)](https://codecov.io/gh/ignitionrobotics/ign-cmake)
+Ubuntu Bionic | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_cmake-ci-main-bionic-amd64)](https://build.osrfoundation.org/job/ignition_cmake-ci-main-bionic-amd64)
+Homebrew      | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_cmake-ci-main-homebrew-amd64)](https://build.osrfoundation.org/job/ignition_cmake-ci-main-homebrew-amd64)
+Windows       | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_cmake-ci-main-windows7-amd64)](https://build.osrfoundation.org/job/ignition_cmake-ci-main-windows7-amd64)
 
 # Table of Contents
 

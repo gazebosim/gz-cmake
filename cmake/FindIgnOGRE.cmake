@@ -178,7 +178,7 @@ else()
         set(prefix "")
 	# vcpkg uses special directory (lib/manual-link/) to place libraries
 	# with main sysmbol like OgreMain.
-	if(ogre_lib MATCHES "OgreMain" AND NOT IS_ABSOLUTE "${ogre_lib}")
+	if(ogre_lib MATCHES "OgreMain" AND NOT IS_ABSOLUTE "${ogre_lib}" AND EXISTS "${OGRE_LIBRARY_DIRS}/manual-link/")
           set(prefix "${OGRE_LIBRARY_DIRS}/manual-link/")
 	elseif(ogre_lib MATCHES "Ogre" AND NOT IS_ABSOLUTE "${ogre_lib}")
           set(prefix "${OGRE_LIBRARY_DIRS}/")
@@ -191,7 +191,10 @@ else()
         # Some Ogre libraries are not using the .lib extension
         set(postfix "")
         if(NOT ogre_lib MATCHES ".lib$")
-          set(postfix ".lib")
+          # Do not consider imported targets as libraries
+          if(NOT ogre_lib MATCHES "::")
+            set(postfix ".lib")
+          endif()
         endif()
         set(lib_fullpath "${prefix}${ogre_lib}${postfix}")
       endif()

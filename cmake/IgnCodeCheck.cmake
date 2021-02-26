@@ -1,17 +1,12 @@
 # Setup the codecheck target, which will run cppcheck and cppplint.
 function(ign_setup_target_for_codecheck)
+  include(IgnPython)
 
   find_program(CPPCHECK_PATH cppcheck)
-  find_program(PYTHON_PATH python)
   find_program(FIND_PATH find)
   
   if(NOT CPPCHECK_PATH)
     message(STATUS "The program [cppcheck] was not found! Skipping codecheck setup")
-    return()
-  endif()
-  
-  if(NOT PYTHON_PATH)
-    message(STATUS "python not found! Skipping codecheck setup.")
     return()
   endif()
   
@@ -37,17 +32,23 @@ function(ign_setup_target_for_codecheck)
 
   message(STATUS "Adding codecheck target")
 
-  # Setup the codecheck target
-  add_custom_target(codecheck
-
+  add_custom_target(cppcheck
     # First cppcheck
     COMMAND ${CPPCHECK_PATH} ${CPPCHECK_BASE} ${CPPCHECK_EXTRA} -I ${CPPCHECK_INCLUDE_DIRS} ${CPPCHECK_RULES} `${CPPCHECK_FIND}`
 
     # Second cppcheck
     COMMAND ${CPPCHECK_PATH} ${CPPCHECK_BASE} --enable=missingInclude `${CPPCHECK_FIND}`
-
-    # cpplint cppcheck
-    COMMAND python ${IGNITION_CMAKE_CODECHECK_DIR}/cpplint.py --extensions=cc,hh --quiet `${CPPCHECK_FIND}`
   )
 
+  add_custom_target(codecheck
+    DEPENDS cppcheck
+  )
+
+  if(PYTHONINTERP_FOUND)
+    add_custom_target(cpplint
+      COMMAND ${PYTHON_EXECUTABLE} ${IGNITION_CMAKE_CODECHECK_DIR}/cpplint.py --extensions=cc,hh --quiet `${CPPCHECK_FIND}`
+    )
+
+    add_dependencies(codecheck cpplint)
+  endif()
 endfunction()

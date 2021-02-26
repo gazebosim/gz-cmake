@@ -198,12 +198,18 @@ function(_ign_create_pkgconfig)
   endif()
 
   set(pkgconfig_output "${CMAKE_BINARY_DIR}/cmake/pkgconfig/${target_name}.pc")
+  set(pkgconfig_install_dir "${IGN_LIB_INSTALL_DIR}/pkgconfig")
+  file(RELATIVE_PATH
+    PC_CONFIG_RELATIVE_PATH_TO_PREFIX
+    "${CMAKE_INSTALL_PREFIX}/${pkgconfig_install_dir}"
+    "${CMAKE_INSTALL_PREFIX}"
+  )
 
   configure_file(${pkgconfig_input} ${pkgconfig_output} @ONLY)
 
   install(
     FILES ${pkgconfig_output}
-    DESTINATION ${IGN_LIB_INSTALL_DIR}/pkgconfig
+    DESTINATION ${pkgconfig_install_dir}
     COMPONENT pkgconfig)
 
 endfunction()

@@ -16,4 +16,16 @@
 ########################################
 # Find AV format
 include(IgnPkgConfig)
-ign_pkg_check_modules(AVFORMAT libavformat)
+ign_pkg_check_modules_quiet(AVFORMAT libavformat)
+
+if(NOT AVFORMAT_FOUND)
+  include(IgnManualSearch)
+  ign_manual_search(AVFORMAT
+                    HEADER_NAMES "libavformat/avformat.h"
+                    LIBRARY_NAMES "avformat")
+endif()
+
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(
+  AVFORMAT
+  REQUIRED_VARS AVFORMAT_FOUND)
