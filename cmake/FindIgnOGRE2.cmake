@@ -56,8 +56,6 @@ endif()
 macro(append_library VAR LIB)
   if(EXISTS "${LIB}")
     list(APPEND ${VAR} ${LIB})
-  else()
-    message(FATAL_ERROR "Library does not exist: ${LIB}")
   endif()
 endmacro()
 
@@ -88,8 +86,6 @@ macro(select_lib_by_build_type LIBRARY_STR OUTPUT_VAR)
     set(${OUTPUT_VAR} "${LIB_DEBUG}")
   elseif(LIB_RELEASE)
     set(${OUTPUT_VAR} "${LIB_RELEASE}")
-  else()
-    message(FATAL_ERROR "Can not find libraries in ${LIBRARY_STR}")
   endif()
 endmacro()
 
@@ -215,7 +211,11 @@ if (NOT WIN32)
   # find ogre components
   include(IgnImportTarget)
   foreach(component ${IgnOGRE2_FIND_COMPONENTS})
-    find_library(OGRE2-${component} NAMES "Ogre${component}" HINTS ${OGRE2_LIBRARY_DIRS})
+    find_library(OGRE2-${component}
+      NAMES
+        "Ogre${component}.${OGRE2_VERSION}"
+        "Ogre${component}"
+      HINTS ${OGRE2_LIBRARY_DIRS})
     if (NOT "OGRE2-${component}" STREQUAL "OGRE2-${component}-NOTFOUND")
 
       # create a new target for each component

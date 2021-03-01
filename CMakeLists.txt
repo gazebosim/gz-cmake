@@ -20,7 +20,7 @@ include(IgnCMake)
 
 #--------------------------------------
 # Set up the project
-ign_configure_project()
+ign_configure_project(VERSION_SUFFIX pre1)
 
 #--------------------------------------
 # Set project-specific options
@@ -56,6 +56,7 @@ set(ign_version_output "${PROJECT_NAME_LOWER}-config-version.cmake")
 set(ign_config_install_dir "${CMAKE_INSTALL_DATAROOTDIR}/cmake/${PROJECT_NAME_LOWER}")
 set(ign_pkgconfig_input "${CMAKE_CURRENT_SOURCE_DIR}/config/ignition-cmake.pc.in")
 set(ign_pkgconfig_output "${CMAKE_BINARY_DIR}/ignition-cmake${PROJECT_VERSION_MAJOR}.pc")
+set(ign_pkgconfig_install_dir "${IGN_LIB_INSTALL_DIR}/pkgconfig")
 set(ign_utilities_target ${PROJECT_EXPORT_NAME}-utilities)
 set(ign_utilities_import_target_name ${PROJECT_EXPORT_NAME}::${ign_utilities_target})
 set(ign_utilities_target_output_filename "${ign_utilities_target}-targets.cmake")
@@ -86,11 +87,16 @@ install(
 
 #--------------------------------------
 # Configure and install the pkgconfig file (needed for utilities headers)
+file(RELATIVE_PATH
+  IGN_PC_CONFIG_RELATIVE_PATH_TO_PREFIX
+  "${CMAKE_INSTALL_PREFIX}/${ign_pkgconfig_install_dir}"
+  "${CMAKE_INSTALL_PREFIX}"
+)
 configure_file(${ign_pkgconfig_input} ${ign_pkgconfig_output} @ONLY)
 
 install(
   FILES ${ign_pkgconfig_output}
-  DESTINATION ${IGN_LIB_INSTALL_DIR}/pkgconfig
+  DESTINATION ${ign_pkgconfig_install_dir}
   COMPONENT pkgconfig)
 
 #============================================================================
@@ -182,3 +188,24 @@ if (BUILD_TESTING AND BUILDSYSTEM_TESTING)
 
   add_subdirectory(examples)
 endif()
+
+# Codecheck
+set(CPPCHECK_DIRS
+  ${CMAKE_SOURCE_DIR}/examples
+)
+set(CPPCHECK_INCLUDE_DIRS
+  ${CMAKE_SOURCE_DIR}/include
+  ${CMAKE_SOURCE_DIR}/examples
+)
+set(IGNITION_CMAKE_CODECHECK_DIR "${CMAKE_CURRENT_SOURCE_DIR}/codecheck")
+include(IgnCodeCheck)
+ign_setup_target_for_codecheck()
+
+# Docs
+set(IGNITION_CMAKE_DOXYGEN_DIR "${CMAKE_CURRENT_SOURCE_DIR}/doc/doxygen")
+configure_file(${CMAKE_SOURCE_DIR}/api.md.in ${CMAKE_BINARY_DIR}/api.md)
+configure_file(${CMAKE_SOURCE_DIR}/tutorials.md.in ${CMAKE_BINARY_DIR}/tutorials.md)
+ign_create_docs(
+  API_MAINPAGE_MD "${CMAKE_BINARY_DIR}/api.md"
+  TUTORIALS_MAINPAGE_MD "${CMAKE_BINARY_DIR}/tutorials.md"
+  )

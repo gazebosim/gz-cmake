@@ -73,7 +73,7 @@ if (NOT WIN32)
     endif(NOT FreeImage_INCLUDE_DIRS)
     mark_as_advanced(FreeImage_INCLUDE_DIRS)
 
-    find_library(FreeImage_LIBRARIES freeimage)
+    find_library(FreeImage_LIBRARIES NAMES freeimage FreeImage)
     if(FreeImage_LIBRARIES)
       set(FreeImage_FOUND true)
     else()

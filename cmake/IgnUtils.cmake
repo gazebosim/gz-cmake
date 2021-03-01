@@ -399,7 +399,7 @@ macro(ign_find_package PACKAGE_NAME)
 
           # Append the entry as a string onto the project-wide variable for
           # whichever requirement type we selected
-          ign_string_append(PROJECT_${${PACKAGE_NAME}_PKGCONFIG_TYPE} ${${PACKAGE_NAME}_PKGCONFIG_ENTRY})
+          ign_string_append(PROJECT_${PROJECT_${PACKAGE_NAME}_PKGCONFIG_TYPE} ${${PACKAGE_NAME}_PKGCONFIG_ENTRY})
 
         endif()
 
@@ -663,7 +663,7 @@ function(ign_install_all_headers)
   foreach(dir ${directories})
 
     # GLOB all the header files in dir
-    file(GLOB headers RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "${dir}/*.h" "${dir}/*.hh")
+    file(GLOB headers RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "${dir}/*.h" "${dir}/*.hh" "${dir}/*.hpp")
     list(SORT headers)
 
     # Remove the excluded headers
@@ -1072,6 +1072,10 @@ function(ign_add_component component_name)
   # Parse the arguments
   cmake_parse_arguments(ign_add_component "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
+  if(POLICY CMP0079)
+    cmake_policy(SET CMP0079 NEW)
+  endif()
+
   if(ign_add_component_SOURCES)
     set(sources ${ign_add_component_SOURCES})
   elseif(NOT ign_add_component_INTERFACE)
@@ -1103,6 +1107,8 @@ function(ign_add_component component_name)
   # Create an upper case version of the component name, to be used as an export
   # base name.
   string(TOUPPER ${component_name} component_name_upper)
+  # hyphen is not supported as macro name, replace it by underscore
+  string(REPLACE "-" "_" component_name_upper ${component_name_upper})
 
   #------------------------------------
   # Create the target for this component, and configure it to be installed
@@ -1248,7 +1254,6 @@ function(ign_add_component component_name)
     set_property(TARGET ${PROJECT_LIBRARY_TARGET_NAME}-all
       PROPERTY INTERFACE_IGN_ALL_KNOWN_COMPONENTS "${all_known_components};${component_target_name}")
   endif()
-
 endfunction()
 
 #################################################
@@ -1347,6 +1352,14 @@ macro(_ign_add_library_or_component)
     set(export_base ${_ign_add_library_EXPORT_BASE})
   else()
     _ign_add_library_or_component_arg_error(EXPORT_BASE)
+  endif()
+
+  # check that export_base has no invalid symbols
+  string(REPLACE "-" "_" export_base_replaced ${export_base})
+  if(NOT ${export_base} STREQUAL ${export_base_replaced})
+      message(FATAL_ERROR
+        "export_base has a hyphen which is not"
+        "supported by macros used for visibility")
   endif()
 
   #------------------------------------
@@ -1676,7 +1689,8 @@ macro(ign_build_tests)
 
     # Find the Python interpreter for running the
     # check_test_ran.py script
-    find_package(PythonInterp QUIET)
+
+    include(IgnPython)
 
     # Build all the tests
     foreach(target_name ${test_list})

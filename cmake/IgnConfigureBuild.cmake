@@ -46,19 +46,19 @@ macro(ign_configure_build)
   #============================================================================
   # Print warnings and errors
   if(build_warnings)
-    message("-- BUILD WARNINGS")
+    message(WARNING "-- BUILD WARNINGS")
     foreach (msg ${build_warnings})
-      message("-- ${msg}")
+      message(WARNING "-- ${msg}")
     endforeach ()
-    message("-- END BUILD WARNINGS\n")
+    message(WARNING "-- END BUILD WARNINGS\n")
   endif (build_warnings)
 
   if(build_errors)
-    message("-- BUILD ERRORS: These must be resolved before compiling.")
+    message(SEND_ERROR "-- BUILD ERRORS: These must be resolved before compiling.")
     foreach(msg ${build_errors})
-      message("-- ${msg}")
+      message(SEND_ERROR "-- ${msg}")
     endforeach()
-    message("-- END BUILD ERRORS\n")
+    message(SEND_ERROR "-- END BUILD ERRORS\n")
 
     set(error_str "Errors encountered in build. Please see BUILD ERRORS above.")
 

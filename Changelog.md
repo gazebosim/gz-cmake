@@ -1,6 +1,118 @@
 ## Ignition CMake 2.x
 
-### Ignition CMake 2.x.x
+### Ignition CMake 2.X.X (20XX-XX-XX)
+
+### Ignition CMake 2.7.0 (2021-XX-XX)
+
+1. Set cmake CMP0079 policy
+    * [Pull request 146](https://github.com/ignitionrobotics/ign-cmake/pull/146)
+
+1. Tutorial about building with cmake and colcon
+    * [Pull request 145](https://github.com/ignitionrobotics/ign-cmake/pull/145)
+
+1. Add an option to disable docs when building
+    * [Pull request 144](https://github.com/ignitionrobotics/ign-cmake/pull/144)
+
+1. Install hpp files as headers
+    * [Pull request 143](https://github.com/ignitionrobotics/ign-cmake/pull/143)
+
+1. Suppress warning C5205 on Windows
+    * [Pull request 141](https://github.com/ignitionrobotics/ign-cmake/pull/141)
+
+1. Windows installation instructions via conda-forge
+    * [Pull request 139](https://github.com/ignitionrobotics/ign-cmake/pull/139)
+
+1. Ensure relocatable config files
+    * [Pull request 129](https://github.com/ignitionrobotics/ign-cmake/pull/129)
+
+### Ignition CMake 2.6.2 (2020-12-29)
+
+1. FindUUID: Always define UUID::UUID on Apple platforms
+    * [Pull request 128](https://github.com/ignitionrobotics/ign-cmake/pull/128)
+
+1. Remove deprecated doxygen configurations
+    * [Pull request 136](https://github.com/ignitionrobotics/ign-cmake/pull/136)
+
+1. Generate doxygen tutorials for ign-cmake
+    * [Pull request 137](https://github.com/ignitionrobotics/ign-cmake/pull/137)
+
+1. Enable make codecheck for ign-cmake
+    * [Pull request 138](https://github.com/ignitionrobotics/ign-cmake/pull/138)
+
+1. Generate valid visibility macros by replacing hyphens in component name
+    * [Pull request 135](https://github.com/ignitionrobotics/ign-cmake/pull/135)
+
+### Ignition CMake 2.6.1 (2020-12-10)
+
+1. Revert python to optional dependency
+    * [Pull request 132](https://github.com/ignitionrobotics/ign-cmake/pull/132)
+
+### Ignition CMake 2.6.0 (2020-12-08)
+
+1. Added build-essential and cmake to packages.apt
+    * [Pull request 130](https://github.com/ignitionrobotics/ign-cmake/pull/130)
+
+1. Fix FindIgnOgre on Windows when not using vcpkg
+    * [Pull request 124](https://github.com/ignitionrobotics/ign-cmake/pull/124)
+
+1. FindIgnOGRE2: prefer versioned component libraries
+    * [Pull request 125](https://github.com/ignitionrobotics/ign-cmake/pull/125)
+
+1. Correct CMake logic and update cpplint to Python3
+    * [Pull request 117](https://github.com/ignitionrobotics/ign-cmake/pull/117)
+
+1. Improve fork experience
+    * [Pull request 118](https://github.com/ignitionrobotics/ign-cmake/pull/118)
+
+### Ignition CMake 2.5.0 (2020-09-05)
+
+1. Add additional input directories to parse when generating documentation
+    * [Pull request 111](https://github.com/ignitionrobotics/ign-cmake/pull/111)
+
+### Ignition CMake 2.4.0 (2020-08-20)
+
+1. Added an option to include generated code in the ign_create_docs function
+    * [Pull request 108](https://github.com/ignitionrobotics/ign-cmake/pull/108)
+
+### Ignition CMake 2.3.0 (2020-08-07)
+
+1. New macros to help with filter google-test in some platforms
+    * [Pull request 102](https://github.com/ignitionrobotics/ign-cmake/pull/102)
+
+1. Disable long-running buildsystem tests by default
+    * [Pull request 97](https://github.com/ignitionrobotics/ign-cmake/pull/97)
+
+1. Fix use of FindYAML.cmake and FindJSONCPP without pkg-config
+    * [Pull request 79](https://github.com/ignitionrobotics/ign-cmake/pull/79)
+
+1. Fix use of FindIgnOGRE2 on Windows if OGRE2 is not found
+    * [Pull request 94](https://github.com/ignitionrobotics/ign-cmake/pull/94)
+    * Thanks to Silvio Traversaro
+
+1. FindUUID: Export include path as expected by Ignition Libraries #104
+    * [Pull request 104](https://github.com/ignitionrobotics/ign-cmake/pull/104)
+    * Thanks to Silvio Traversaro
+
+1. Make the OGRE plugin path discovery portable
+    * [Pull request 101](https://github.com/ignitionrobotics/ign-cmake/pull/101)
+    * Thanks to Sean Yen
+
+### Ignition CMake 2.2.0
+
+1. Fix use of FindZIP without pkg-config.
+    * [BitBucket pull request 182](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-cmake/pull-requests/182)
+
+1. Use mathjax to render equations.
+    * [BitBucket pull request 181](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-cmake/pull-requests/181)
+
+1. Reduce example names to fix build on Windows
+    * [BitBucket pull request 180](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-cmake/pull-requests/180)
+
+1. Fix doxygen deprecation filter
+    * [BitBucket pull request 160](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-cmake/pull-requests/160)
+
+1. Change the diamond link icon to a material design link
+    * [BitBucket pull request 159](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-cmake/pull-requests/159)
 
 1. Disable long-running buildsystem tests by default.
     * [Pull request 97](https://github.com/ignitionrobotics/ign-cmake/pull/97)

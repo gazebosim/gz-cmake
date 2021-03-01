@@ -1,5 +1,4 @@
-#===============================================================================
-# Copyright (C) 2017 Open Source Robotics Foundation
+# Copyright 2020 Open Source Robotics Foundation, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,20 +11,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
-########################################
-# Find avutil
-include(IgnPkgConfig)
-ign_pkg_check_modules_quiet(AVUTIL libavutil)
 
-if(NOT AVUTIL_FOUND)
-  include(IgnManualSearch)
-  ign_manual_search(AVUTIL
-                    HEADER_NAMES "libavutil/avutil.h"
-                    LIBRARY_NAMES "avutil")
+# Copied from ament/ament_cmake: ament_cmake/ament_cmake_core/cmake/core/python.cmake
+
+set(PYTHON_VERSION "" CACHE STRING
+  "Specify specific Python version to use ('major.minor' or 'major')")
+
+# if not specified otherwise use Python 3
+if(NOT PYTHON_VERSION)
+  set(PYTHON_VERSION "3")
 endif()
 
-include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(
-  AVUTIL
-  REQUIRED_VARS AVUTIL_FOUND)
+find_package(PythonInterp ${PYTHON_VERSION} QUIET)

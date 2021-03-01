@@ -16,6 +16,55 @@
 ########################################
 # Find uuid
 if (UNIX)
-  include(IgnPkgConfig)
-  ign_pkg_check_modules(UUID uuid)
+  if(NOT APPLE)
+    include(IgnPkgConfig)
+    ign_pkg_check_modules_quiet(UUID uuid)
+
+    if(NOT UUID_FOUND)
+      include(IgnManualSearch)
+      ign_manual_search(UUID
+                        HEADER_NAMES "uuid.h"
+                        LIBRARY_NAMES "uuid libuuid"
+                        PATH_SUFFIXES "uuid")
+    endif()
+
+    # The pkg-config or the manual search will place
+    # <uuid_install_prefix>/include/uuid in INTERFACE_INCLUDE_DIRECTORIES,
+    # but some projects exepect to use <uuid_install_prefix>/include, so
+    # we add it as well.
+    # See https://github.com/ignitionrobotics/ign-cmake/issues/103
+    if(TARGET UUID::UUID)
+      get_property(uuid_include_dirs
+        TARGET UUID::UUID
+        PROPERTY INTERFACE_INCLUDE_DIRECTORIES)
+
+      set(uuid_include_dirs_extended ${uuid_include_dirs})
+
+      foreach(include_dir IN LISTS uuid_include_dirs)
+        if(include_dir MATCHES "uuid$")
+          get_filename_component(include_dir_parent ${include_dir} DIRECTORY)
+          list(APPEND uuid_include_dirs_extended ${include_dir_parent})
+        endif()
+      endforeach()
+
+      list(REMOVE_DUPLICATES uuid_include_dirs_extended)
+
+      set_property(
+        TARGET UUID::UUID
+        PROPERTY INTERFACE_INCLUDE_DIRECTORIES
+        ${uuid_include_dirs_extended})
+    endif()
+  else()
+    # On Apple platforms the UUID library is provided by the OS SDK
+    # See https://github.com/ignitionrobotics/ign-cmake/issues/127
+    set(UUID_FOUND TRUE)
+    if(NOT TARGET UUID::UUID)
+      add_library(UUID::UUID INTERFACE IMPORTED)
+    endif()
+  endif()
+
+  include(FindPackageHandleStandardArgs)
+  find_package_handle_standard_args(
+    UUID
+    REQUIRED_VARS UUID_FOUND)
 endif()
