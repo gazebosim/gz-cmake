@@ -9,10 +9,10 @@
 
 Build | Status
 -- | --
-Test coverage | [![codecov](https://codecov.io/gh/ignitionrobotics/ign-cmake/branch/master/graph/badge.svg)](https://codecov.io/gh/ignitionrobotics/ign-cmake)  
-Ubuntu Bionic | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_cmake-ci-master-bionic-amd64)](https://build.osrfoundation.org/job/ignition_cmake-ci-master-bionic-amd64)  
-Homebrew      | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_cmake-ci-master-homebrew-amd64)](https://build.osrfoundation.org/job/ignition_cmake-ci-master-homebrew-amd64)  
-Windows       | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_cmake-ci-master-windows7-amd64)](https://build.osrfoundation.org/job/ignition_cmake-ci-master-windows7-amd64)
+Test coverage | [![codecov](https://codecov.io/gh/ignitionrobotics/ign-cmake/branch/ign-cmake2/graph/badge.svg)](https://codecov.io/gh/ignitionrobotics/ign-cmake)
+Ubuntu Bionic | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_cmake-ci-ign-cmake2-bionic-amd64)](https://build.osrfoundation.org/job/ignition_cmake-ci-ign-cmake2-bionic-amd64)
+Homebrew      | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_cmake-ci-ign-cmake2-homebrew-amd64)](https://build.osrfoundation.org/job/ignition_cmake-ci-ign-cmake2-homebrew-amd64)
+Windows       | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_cmake-ci-ign-cmake2-windows7-amd64)](https://build.osrfoundation.org/job/ignition_cmake-ci-ign-cmake2-windows7-amd64)
 
 # Table of Contents
 
@@ -25,7 +25,7 @@ Windows       | [![Build Status](https://build.osrfoundation.org/buildStatus/ico
 * [Source Install](#source-install)
 
     * [Prerequisites](#prerequisites)
-  
+
     * [Building from Source](#building-from-source)
 
 [Usage](#usage)
@@ -111,7 +111,7 @@ Please see
 # Code of Conduct
 
 Please see
-[CODE_OF_CONDUCT.md](https://github.com/ignitionrobotics/ign-gazebo/blob/master/CODE_OF_CONDUCT.md).
+[CODE_OF_CONDUCT.md](https://github.com/ignitionrobotics/ign-gazebo/blob/main/CODE_OF_CONDUCT.md).
 
 # Versioning
 
@@ -119,4 +119,4 @@ This library uses [Semantic Versioning](https://semver.org/). Additionally, this
 
 # License
 
-This library is licensed under [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0). See also the [LICENSE](https://github.com/ignitionrobotics/ign-cmake/blob/master/LICENSE) file.
+This library is licensed under [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0). See also the [LICENSE](https://github.com/ignitionrobotics/ign-cmake/blob/main/LICENSE) file.
