@@ -9,10 +9,10 @@
 
 Build | Status
 -- | --
-Test coverage | [![codecov](https://codecov.io/gh/ignitionrobotics/ign-cmake/branch/master/graph/badge.svg)](https://codecov.io/gh/ignitionrobotics/ign-cmake)  
-Ubuntu Bionic | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_cmake-ci-master-bionic-amd64)](https://build.osrfoundation.org/job/ignition_cmake-ci-master-bionic-amd64)  
-Homebrew      | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_cmake-ci-master-homebrew-amd64)](https://build.osrfoundation.org/job/ignition_cmake-ci-master-homebrew-amd64)  
-Windows       | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_cmake-ci-master-windows7-amd64)](https://build.osrfoundation.org/job/ignition_cmake-ci-master-windows7-amd64)
+Test coverage | [![codecov](https://codecov.io/gh/ignitionrobotics/ign-cmake/branch/ign-cmake2/graph/badge.svg)](https://codecov.io/gh/ignitionrobotics/ign-cmake)
+Ubuntu Bionic | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_cmake-ci-ign-cmake2-bionic-amd64)](https://build.osrfoundation.org/job/ignition_cmake-ci-ign-cmake2-bionic-amd64)
+Homebrew      | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_cmake-ci-ign-cmake2-homebrew-amd64)](https://build.osrfoundation.org/job/ignition_cmake-ci-ign-cmake2-homebrew-amd64)
+Windows       | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_cmake-ci-ign-cmake2-windows7-amd64)](https://build.osrfoundation.org/job/ignition_cmake-ci-ign-cmake2-windows7-amd64)
 
 # Table of Contents
 
@@ -20,12 +20,12 @@ Windows       | [![Build Status](https://build.osrfoundation.org/buildStatus/ico
 
 [Installation](#install)
 
-* [Binary Installation](#binary-install)
+* [Binary Install](#binary-install)
 
-* [Source Installation](#source-install)
+* [Source Install](#source-install)
 
     * [Prerequisites](#prerequisites)
-  
+
     * [Building from Source](#building-from-source)
 
 [Usage](#usage)
@@ -34,7 +34,7 @@ Windows       | [![Build Status](https://build.osrfoundation.org/buildStatus/ico
 
 [Code of Conduct](#code-of-conduct)
 
-[Contributing](#code-of-contributing)
+[Contributing](#contributing)
 
 [Versioning](#versioning)
 
@@ -48,11 +48,11 @@ These modules are tailored to the ignition projects, so their use for non-igniti
 
 # Install
 
-We recommend following the [Binary Installation](#binary-install) instructions to get up and running as quickly and painlessly as possible.
+We recommend following the [Binary Install](#binary-install) instructions to get up and running as quickly and painlessly as possible.
 
-The [Source Installation](#source-install) instructions should be used if you need the very latest software improvements, you need to modify the code, or you plan to make a contribution.
+The [Source Install](#source-install) instructions should be used if you need the very latest software improvements, you need to modify the code, or you plan to make a contribution.
 
-## Binary Installation
+## Binary Install
 
 On Ubuntu systems, `apt-get` can be used to install `ignition-cmake`:
 
@@ -62,7 +62,7 @@ $ sudo apt install libignition-cmake<#>-dev
 
 Be sure to replace `<#>` with a number value, such as `1` or `2`, depending on which version you need.
 
-## Source Installation
+## Source Install
 
 ### Prerequisites
 
@@ -111,7 +111,7 @@ Please see
 # Code of Conduct
 
 Please see
-[CODE_OF_CONDUCT.md](https://github.com/ignitionrobotics/ign-gazebo/blob/master/CODE_OF_CONDUCT.md).
+[CODE_OF_CONDUCT.md](https://github.com/ignitionrobotics/ign-gazebo/blob/main/CODE_OF_CONDUCT.md).
 
 # Versioning
 
@@ -119,4 +119,4 @@ This library uses [Semantic Versioning](https://semver.org/). Additionally, this
 
 # License
 
-This library is licensed under [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0). See also the [LICENSE](https://github.com/ignitionrobotics/ign-cmake/blob/master/LICENSE) file.
+This library is licensed under [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0). See also the [LICENSE](https://github.com/ignitionrobotics/ign-cmake/blob/main/LICENSE) file.

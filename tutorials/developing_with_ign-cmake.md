@@ -202,7 +202,7 @@ To try this out, first create an Ignition source workspace:
 ```
 mkdir -p ~/ign_edifice/src
 cd ~/ign_edifice/
-wget https://raw.githubusercontent.com/ignition-tooling/gazebodistro/master/collection-edifice.yaml
+wget https://raw.githubusercontent.com/ignition-tooling/gazebodistro/main/collection-edifice.yaml
 vcs import src < collection-edifice.yaml
 ```
 
