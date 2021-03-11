@@ -72,7 +72,12 @@ else()
     NAMES glibconfig.h
     PATH_SUFFIXES lib/glib-2.0/include)
   find_library(GLIB_LIBRARY glib-2.0)
-  list(APPEND GTS_INCLUDE_DIRS "${GLIB_INCLUDE_DIR}" "${GLIBCONFIG_INCLUDE_DIR}")
+  if (GLIB_INCLUDE_DIR)
+    list(APPEND GTS_INCLUDE_DIRS "${GLIB_INCLUDE_DIR}")
+  endif()
+  if (GLIBCONFIG_INCLUDE_DIR)
+    list(APPEND GTS_INCLUDE_DIRS "${GLIBCONFIG_INCLUDE_DIR}")
+  endif()
   list(APPEND GTS_LIBRARIES "${GLIB_LIBRARY}")
 
   if (GTS_FOUND)
