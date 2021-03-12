@@ -66,6 +66,27 @@ else()
 
   # 2.1 Need glib library
   find_library(GLIB_LIBRARY glib-2.0)
+  if (NOT GLIB_LIBRARY)
+    if(NOT GTS_FIND_QUIETLY)
+      message(STATUS "Looking for glib library - not found")
+    endif()
+  else()
+    if(NOT GTS_FIND_QUIETLY)
+      message(STATUS "Looking for glib library - found")
+    endif()
+  endif()
+  find_path(GLIB_INCLUDE_DIR
+    NAMES glib.h
+    PATH_SUFFIXES glib-2.0)
+  if (GLIB_INCLUDE_DIR)
+    list(APPEND GTS_INCLUDE_DIRS "${GLIB_INCLUDE_DIR}")
+  endif()
+  find_path(GLIBCONFIG_INCLUDE_DIR
+    NAMES glibconfig.h
+    PATH_SUFFIXES lib/glib-2.0/include)
+  if (GLIBCONFIG_INCLUDE_DIR)
+    list(APPEND GTS_INCLUDE_DIRS "${GLIBCONFIG_INCLUDE_DIR}")
+  endif()
   list(APPEND GTS_LIBRARIES "${GLIB_LIBRARY}")
 
   if (GTS_FOUND)
