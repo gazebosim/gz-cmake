@@ -100,7 +100,7 @@ To find `condabin`, search for "Anaconda Prompt" in the Windows search near the 
 ### Prerequisites
 
 Add OSRF packages:
-``` 
+```
 sudo apt update
 sudo apt -y install wget lsb-release gnupg
 sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list'
@@ -170,7 +170,7 @@ To find `condabin`, search for "Anaconda Prompt" in the search field near the Wi
 
 2. Install dependencies
   ```
-  conda install git cmake pkg-config --channel conda-forge 
+  conda install git cmake pkg-config --channel conda-forge
   ```
 
 3. Navigate to where you would like to build the library, and then clone the repository.
@@ -223,7 +223,7 @@ You can also generate the documentation from a clone of this repository by follo
   firefox doxygen/html/index.html
   ```
 
-**Note** Alternatively, documentation for `ignition-cmake` can be found within the source code, and also in the [MIGRATION.md guide](https://github.com/ignitionrobotics/ign-cmake/blob/master/MIGRATION.md).
+**Note** Alternatively, documentation for `ignition-cmake` can be found within the source code, and also in the [MIGRATION.md guide](https://github.com/ignitionrobotics/ign-cmake/blob/main/MIGRATION.md).
 
 # Testing
 
