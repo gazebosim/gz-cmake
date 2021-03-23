@@ -53,6 +53,14 @@ if (${IgnOGRE2_FIND_VERSION_MAJOR})
   endif()
 endif()
 
+if (${IgnOGRE2_FIND_VERSION_MINOR} VERSION_EQUAL "2")
+  message(STATUS "-- Finding OGRE 2.2")
+  set(OGRE2_INSTALL_PATH "OGRE-2.2")
+else()
+  message(STATUS "-- Finding OGRE 2.1")
+  set(OGRE2_INSTALL_PATH "OGRE-2.1")
+endif()
+
 macro(append_library VAR LIB)
   if(EXISTS "${LIB}")
     list(APPEND ${VAR} ${LIB})
@@ -95,9 +103,10 @@ if (NOT WIN32)
   # Note: OGRE2 installed from debs is named OGRE-2.2 while the version
   # installed from source does not have the 2.2 suffix
   # look for OGRE2 installed from debs
-  ign_pkg_check_modules_quiet(OGRE2 "OGRE-2.2" NO_CMAKE_ENVIRONMENT_PATH QUIET)
+  ign_pkg_check_modules_quiet(OGRE2 ${OGRE2_INSTALL_PATH} NO_CMAKE_ENVIRONMENT_PATH QUIET)
+
   if (OGRE2_FOUND)
-    set(IGN_PKG_NAME "OGRE-2.2")
+    set(IGN_PKG_NAME ${OGRE2_INSTALL_PATH})
   else()
     # look for OGRE2 installed from source
     set(PKG_CONFIG_PATH_TMP ${PKG_CONFIG_PATH_ORIGINAL})
