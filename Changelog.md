@@ -4,6 +4,28 @@
 
 ### Ignition CMake 2.7.0 (2021-XX-XX)
 
+1. Support to find Ogre 2-2
+    * [Pull request #157](https://github.com/ignitionrobotics/ign-cmake/pull/157)
+
+1. glib fix for Windows
+    * [Pull request #154](https://github.com/ignitionrobotics/ign-cmake/pull/154)
+
+1. Fix cmake message types
+    * [Pull request #159](https://github.com/ignitionrobotics/ign-cmake/pull/159)
+
+1. Support imported targets in FindIgnOGRE.cmake
+    * [Pull request #150](https://github.com/ignitionrobotics/ign-cmake/pull/150)
+
+1. Infrastructure
+    * [Pull request #148](https://github.com/ignitionrobotics/ign-cmake/pull/148)
+    * [Pull request #149](https://github.com/ignitionrobotics/ign-cmake/pull/149)
+    * [Pull request #151](https://github.com/ignitionrobotics/ign-cmake/pull/151)
+    * [Pull request #152](https://github.com/ignitionrobotics/ign-cmake/pull/152)
+    * [Pull request #155](https://github.com/ignitionrobotics/ign-cmake/pull/155)
+    * [Pull request #153](https://github.com/ignitionrobotics/ign-cmake/pull/153)
+    * [Pull request #158](https://github.com/ignitionrobotics/ign-cmake/pull/158)
+    * [Pull request #160](https://github.com/ignitionrobotics/ign-cmake/pull/160)
+
 1. Set cmake CMP0079 policy
     * [Pull request 146](https://github.com/ignitionrobotics/ign-cmake/pull/146)
 
