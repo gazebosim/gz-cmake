@@ -2,7 +2,7 @@
 
 ### Ignition CMake 2.X.X (20XX-XX-XX)
 
-### Ignition CMake 2.7.0 (2021-XX-XX)
+### Ignition CMake 2.7.0 (2021-03-30)
 
 1. Support to find Ogre 2-2
     * [Pull request #157](https://github.com/ignitionrobotics/ign-cmake/pull/157)
