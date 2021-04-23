@@ -46,8 +46,8 @@
 #          <project>-config.cmake file.
 #
 # [QUIET]: Optional. If provided, it will be passed forward to cmake's
-#          find_package(~) command. This macro will still print its normal
-#          output.
+#          find_package(~) command. It also suppresses warnings emitted by this
+#          macro.
 #
 # [BUILD_ONLY]: Optional. Use this to indicate that the project only needs this
 #               package while building, and it does not need to be available to
@@ -221,7 +221,9 @@ macro(ign_find_package PACKAGE_NAME)
 
         # Otherwise, if it was only required by some of the components, create
         # a warning about which components will not be available.
-        ign_build_warning("Cannot build component [${component}] - ${${PACKAGE_NAME}_msg}")
+        if(NOT ign_find_package_QUIET)
+          ign_build_warning("Cannot build component [${component}] - ${${PACKAGE_NAME}_msg}")
+        endif()
 
         # Also create a variable to indicate that we should skip the component
         set(SKIP_${component} true)
@@ -231,7 +233,9 @@ macro(ign_find_package PACKAGE_NAME)
       endforeach()
 
     else()
-      ign_build_warning(${${PACKAGE_NAME}_msg})
+      if(NOT ign_find_package_QUIET)
+        ign_build_warning(${${PACKAGE_NAME}_msg})
+      endif()
     endif()
 
   endif()
