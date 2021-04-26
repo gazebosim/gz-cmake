@@ -223,9 +223,7 @@ macro(ign_find_package PACKAGE_NAME)
           # Otherwise, if it was only required by some of the components, create
           # a warning about which components will not be available, unless the
           # user explicitly requested that it be skipped
-          ign_build_warning(
-            "Skipping component [${component}]: ${${PACKAGE_NAME}_msg}. "
-            "Set SKIP_${component}=true in cmake to suppress this warning.")
+          ign_build_warning("Skipping component [${component}]: ${${PACKAGE_NAME}_msg}.\n    ^~~~~ Set SKIP_${component}=true in cmake to suppress this warning.\n ")
 
           # Create a variable to indicate that we need to skip the component
           set(INTERNAL_SKIP_${component} true)
@@ -779,8 +777,7 @@ endmacro(ign_build_error)
 # ign_build_warning macro
 macro(ign_build_warning)
   foreach(str ${ARGN})
-    set(msg "\t${str}" )
-    list(APPEND build_warnings ${msg})
+    list(APPEND build_warnings "${str}")
   endforeach(str ${ARGN})
 endmacro(ign_build_warning)
 
