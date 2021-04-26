@@ -46,7 +46,7 @@ macro(ign_configure_build)
   #============================================================================
   # Print warnings and errors
   if(build_warnings)
-    set(all_warnings " BUILD WARNINGS:")
+    set(all_warnings " CONFIGURATION WARNINGS:")
     foreach (msg ${build_warnings})
       ign_string_append(all_warnings " -- ${msg}" DELIM "\n")
     endforeach ()
