@@ -191,7 +191,7 @@ macro(ign_configure_build)
     # Add the source code directories of each component if they exist
     foreach(component ${ign_configure_build_COMPONENTS})
 
-      if(NOT SKIP_${component})
+      if(NOT SKIP_${component} AND NOT INTERNAL_SKIP_${component})
 
         set(found_${component}_src FALSE)
 
@@ -255,7 +255,9 @@ macro(ign_configure_build)
       else()
 
         set(skip_msg "Skipping the component [${component}]")
-        if(${component}_MISSING_DEPS)
+        if(SKIP_${component})
+          ign_string_append(skip_msg "by user request")
+        elseif(${component}_MISSING_DEPS)
           ign_string_append(skip_msg "because the following packages are missing: ${${component}_MISSING_DEPS}")
         endif()
 

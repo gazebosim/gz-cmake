@@ -197,7 +197,7 @@ macro(ign_find_package PACKAGE_NAME)
 
     #------------------------------------
     # Construct the warning/error message to produce
-    set(${PACKAGE_NAME}_msg "Missing: ${${PACKAGE_NAME}_pretty}")
+    set(${PACKAGE_NAME}_msg "Missing dependency [${${PACKAGE_NAME}_pretty}]")
 
     if(ign_find_package_COMPONENTS)
       ign_list_to_string(comp_str ign_find_package_COMPONENTS DELIM ", ")
@@ -219,19 +219,27 @@ macro(ign_find_package PACKAGE_NAME)
 
       foreach(component ${ign_find_package_REQUIRED_BY})
 
-        # Otherwise, if it was only required by some of the components, create
-        # a warning about which components will not be available.
-        ign_build_warning("Cannot build component [${component}] - ${${PACKAGE_NAME}_msg}")
+        if(NOT SKIP_${component})
+          # Otherwise, if it was only required by some of the components, create
+          # a warning about which components will not be available, unless the
+          # user explicitly requested that it be skipped
+          ign_build_warning(
+            "Skipping component [${component}]: ${${PACKAGE_NAME}_msg}. "
+            "Set SKIP_${component}=true in cmake to suppress this warning.")
 
-        # Also create a variable to indicate that we should skip the component
-        set(SKIP_${component} true)
+          # Create a variable to indicate that we need to skip the component
+          set(INTERNAL_SKIP_${component} true)
 
-        ign_string_append(${component}_MISSING_DEPS "${${PACKAGE_NAME}_pretty}" DELIM ", ")
+          # Track the missing dependencies
+          ign_string_append(${component}_MISSING_DEPS "${${PACKAGE_NAME}_pretty}" DELIM ", ")
+        endif()
 
       endforeach()
 
     else()
-      ign_build_warning(${${PACKAGE_NAME}_msg})
+      if(NOT ign_find_package_QUIET)
+        ign_build_warning(${${PACKAGE_NAME}_msg})
+      endif()
     endif()
 
   endif()
