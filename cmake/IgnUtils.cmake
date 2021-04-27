@@ -47,7 +47,8 @@
 #
 # [QUIET]: Optional. If provided, it will be passed forward to cmake's
 #          find_package(~) command. This macro will still print its normal
-#          output.
+#          output, except there will be no warning if the package is missing,
+#          unless REQUIRED or REQUIRED_BY is specified.
 #
 # [BUILD_ONLY]: Optional. Use this to indicate that the project only needs this
 #               package while building, and it does not need to be available to
