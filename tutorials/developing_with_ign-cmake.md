@@ -36,6 +36,35 @@ To change the build type, set the CMake flag:
 -DCMAKE_BUILD_TYPE=Debug
 ```
 
+### Disabling or suppressing warnings about optional components
+
+Many ignition packages come with optional component libraries.
+These optional components will typically have additional dependencies that the
+package's core library does not require. If you are missing the dependencies of
+any optional components, you will receive a cmake warning like
+
+```
+-- Skipping component [component_name]: Missing dependency [dependency_name].
+   ^~~~~ Set SKIP_component_name=true in cmake to suppress this warning.
+```
+
+If you do not care about the specified component, you can safely ignore this
+warning. The configuration and build steps will succeed without any problem. The
+only side effect is the optional component will not be built.
+
+If you do want to build the optional component, then you will need to install
+whichever dependencies were said to be missing and then rerun cmake.
+
+If you do *not* want to build the optional component and you want to suppress
+the warning about the missing dependencies, you can set the cmake flag:
+
+```
+-DSKIP_component_name=true
+```
+
+where you should replace `component_name` with the actual name of the component
+as specified inside the angle brackets `[]` of the warning.
+
 ### Creating a compilation database
 
 `CMake` can optionally generate a compilation data base that may be used with a variety of code completion tools.
