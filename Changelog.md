@@ -2,6 +2,17 @@
 
 ### Ignition CMake 2.X.X (20XX-XX-XX)
 
+### Ignition CMake 2.8.0 (2021-04-30)
+
+1. Fix hardcoded pkg-config library in examples
+    * [Pull request #163](https://github.com/ignitionrobotics/ign-cmake/pull/163)
+
+1. User-friendly skip component warning
+    * [Pull request #165](https://github.com/ignitionrobotics/ign-cmake/pull/165)
+
+1. Run ign-cmake's copy of check_test_ran
+    * [Pull request #168](https://github.com/ignitionrobotics/ign-cmake/pull/168)
+
 ### Ignition CMake 2.7.0 (2021-03-30)
 
 1. Support to find Ogre 2-2
