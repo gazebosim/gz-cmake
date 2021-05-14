@@ -9,7 +9,6 @@
 
 Build | Status
 -- | --
-Test coverage | [![codecov](https://codecov.io/gh/ignitionrobotics/ign-cmake/branch/ign-cmake2/graph/badge.svg)](https://codecov.io/gh/ignitionrobotics/ign-cmake)
 Ubuntu Bionic | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_cmake-ci-ign-cmake2-bionic-amd64)](https://build.osrfoundation.org/job/ignition_cmake-ci-ign-cmake2-bionic-amd64)
 Homebrew      | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_cmake-ci-ign-cmake2-homebrew-amd64)](https://build.osrfoundation.org/job/ignition_cmake-ci-ign-cmake2-homebrew-amd64)
 Windows       | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_cmake-ci-ign-cmake2-windows7-amd64)](https://build.osrfoundation.org/job/ignition_cmake-ci-ign-cmake2-windows7-amd64)
