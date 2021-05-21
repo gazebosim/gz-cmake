@@ -1,4 +1,5 @@
 include(ExternalProject)
+include(GNUInstallDirs)
 
 # test multiple build types
 set(build_types Release RelWithDebInfo Debug)
@@ -174,7 +175,16 @@ if (UNIX)
     "${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME}_fail.xml"
     @ONLY)
   set(_env_vars)
-  list(APPEND _env_vars "PKG_CONFIG_PATH=${example_INSTALL_DIR}/lib/pkgconfig:${FAKE_INSTALL_PREFIX}/lib/pkgconfig:$PKG_CONFIG_PATH")
+  # On Debian and if the install prefix is /usr, the default CMAKE_INSTALL_LIBDIR of this project
+  # as set by GNUInstallDirs will be different from the one of the example project, 
+  # so let's hardcode it in that case
+  if(EXISTS "/etc/debian_version" AND "${CMAKE_INSTALL_PREFIX}" MATCHES "^/usr/?$")
+    set(example_PKGCONFIG_INSTALL_LIBDIR "lib/pkgconfig")
+  else()
+    set(example_PKGCONFIG_INSTALL_LIBDIR "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
+  endif()
+
+  list(APPEND _env_vars "PKG_CONFIG_PATH=${example_INSTALL_DIR}/${example_PKGCONFIG_INSTALL_LIBDIR}:${FAKE_INSTALL_PREFIX}/${example_PKGCONFIG_INSTALL_LIBDIR}:$PKG_CONFIG_PATH")
   add_test(${TEST_NAME}
     ${CMAKE_CURRENT_SOURCE_DIR}/test_core_child_requires_core_no_deps.bash
   )

@@ -2,7 +2,40 @@
 
 ### Ignition CMake 2.X.X (20XX-XX-XX)
 
-### Ignition CMake 2.7.0 (2021-XX-XX)
+### Ignition CMake 2.8.0 (2021-04-30)
+
+1. Fix hardcoded pkg-config library in examples
+    * [Pull request #163](https://github.com/ignitionrobotics/ign-cmake/pull/163)
+
+1. User-friendly skip component warning
+    * [Pull request #165](https://github.com/ignitionrobotics/ign-cmake/pull/165)
+
+1. Run ign-cmake's copy of check_test_ran
+    * [Pull request #168](https://github.com/ignitionrobotics/ign-cmake/pull/168)
+
+### Ignition CMake 2.7.0 (2021-03-30)
+
+1. Support to find Ogre 2-2
+    * [Pull request #157](https://github.com/ignitionrobotics/ign-cmake/pull/157)
+
+1. glib fix for Windows
+    * [Pull request #154](https://github.com/ignitionrobotics/ign-cmake/pull/154)
+
+1. Fix cmake message types
+    * [Pull request #159](https://github.com/ignitionrobotics/ign-cmake/pull/159)
+
+1. Support imported targets in FindIgnOGRE.cmake
+    * [Pull request #150](https://github.com/ignitionrobotics/ign-cmake/pull/150)
+
+1. Infrastructure
+    * [Pull request #148](https://github.com/ignitionrobotics/ign-cmake/pull/148)
+    * [Pull request #149](https://github.com/ignitionrobotics/ign-cmake/pull/149)
+    * [Pull request #151](https://github.com/ignitionrobotics/ign-cmake/pull/151)
+    * [Pull request #152](https://github.com/ignitionrobotics/ign-cmake/pull/152)
+    * [Pull request #155](https://github.com/ignitionrobotics/ign-cmake/pull/155)
+    * [Pull request #153](https://github.com/ignitionrobotics/ign-cmake/pull/153)
+    * [Pull request #158](https://github.com/ignitionrobotics/ign-cmake/pull/158)
+    * [Pull request #160](https://github.com/ignitionrobotics/ign-cmake/pull/160)
 
 1. Set cmake CMP0079 policy
     * [Pull request 146](https://github.com/ignitionrobotics/ign-cmake/pull/146)

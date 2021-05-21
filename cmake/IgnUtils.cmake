@@ -47,7 +47,8 @@
 #
 # [QUIET]: Optional. If provided, it will be passed forward to cmake's
 #          find_package(~) command. This macro will still print its normal
-#          output.
+#          output, except there will be no warning if the package is missing,
+#          unless REQUIRED or REQUIRED_BY is specified.
 #
 # [BUILD_ONLY]: Optional. Use this to indicate that the project only needs this
 #               package while building, and it does not need to be available to
@@ -197,7 +198,7 @@ macro(ign_find_package PACKAGE_NAME)
 
     #------------------------------------
     # Construct the warning/error message to produce
-    set(${PACKAGE_NAME}_msg "Missing: ${${PACKAGE_NAME}_pretty}")
+    set(${PACKAGE_NAME}_msg "Missing dependency [${${PACKAGE_NAME}_pretty}]")
 
     if(ign_find_package_COMPONENTS)
       ign_list_to_string(comp_str ign_find_package_COMPONENTS DELIM ", ")
@@ -219,19 +220,25 @@ macro(ign_find_package PACKAGE_NAME)
 
       foreach(component ${ign_find_package_REQUIRED_BY})
 
-        # Otherwise, if it was only required by some of the components, create
-        # a warning about which components will not be available.
-        ign_build_warning("Cannot build component [${component}] - ${${PACKAGE_NAME}_msg}")
+        if(NOT SKIP_${component})
+          # Otherwise, if it was only required by some of the components, create
+          # a warning about which components will not be available, unless the
+          # user explicitly requested that it be skipped
+          ign_build_warning("Skipping component [${component}]: ${${PACKAGE_NAME}_msg}.\n    ^~~~~ Set SKIP_${component}=true in cmake to suppress this warning.\n ")
 
-        # Also create a variable to indicate that we should skip the component
-        set(SKIP_${component} true)
+          # Create a variable to indicate that we need to skip the component
+          set(INTERNAL_SKIP_${component} true)
 
-        ign_string_append(${component}_MISSING_DEPS "${${PACKAGE_NAME}_pretty}" DELIM ", ")
+          # Track the missing dependencies
+          ign_string_append(${component}_MISSING_DEPS "${${PACKAGE_NAME}_pretty}" DELIM ", ")
+        endif()
 
       endforeach()
 
     else()
-      ign_build_warning(${${PACKAGE_NAME}_msg})
+      if(NOT ign_find_package_QUIET)
+        ign_build_warning(${${PACKAGE_NAME}_msg})
+      endif()
     endif()
 
   endif()
@@ -771,8 +778,7 @@ endmacro(ign_build_error)
 # ign_build_warning macro
 macro(ign_build_warning)
   foreach(str ${ARGN})
-    set(msg "\t${str}" )
-    list(APPEND build_warnings ${msg})
+    list(APPEND build_warnings "${str}")
   endforeach(str ${ARGN})
 endmacro(ign_build_warning)
 
@@ -1712,7 +1718,7 @@ macro(ign_build_tests)
       if(PYTHONINTERP_FOUND)
         # Check that the test produced a result and create a failure if it didn't.
         # Guards against crashed and timed out tests.
-        add_test(check_${target_name} ${PYTHON_EXECUTABLE} ${PROJECT_SOURCE_DIR}/tools/check_test_ran.py
+        add_test(check_${target_name} ${PYTHON_EXECUTABLE} ${IGNITION_CMAKE_TOOLS_DIR}/check_test_ran.py
           ${CMAKE_BINARY_DIR}/test_results/${target_name}.xml)
       endif()
     endforeach()

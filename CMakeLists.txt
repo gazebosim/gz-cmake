@@ -43,6 +43,10 @@ install(DIRECTORY benchmark/
 install(DIRECTORY codecheck/
         DESTINATION ${IGN_DATA_INSTALL_DIR}/codecheck)
 
+#--------------------------------------
+# Install the tools files
+install(DIRECTORY tools/
+        DESTINATION ${IGN_DATA_INSTALL_DIR}/tools)
 
 #============================================================================
 # Configure the package to be installed
