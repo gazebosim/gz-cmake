@@ -69,7 +69,7 @@ if (NOT WIN32)
                   RESULT_VARIABLE _pkgconfig_failed)
   if(_pkgconfig_failed)
     IGN_BUILD_WARNING ("Failed to get pkg-config search paths")
-  elseif (NOT "_pkgconfig_invoke_result" STREQUAL "")
+  elseif (NOT _pkgconfig_invoke_result STREQUAL "")
     set (PKG_CONFIG_PATH_TMP "${PKG_CONFIG_PATH_TMP}:${_pkgconfig_invoke_result}")
   endif()
 
@@ -83,16 +83,13 @@ if (NOT WIN32)
 
   # loop through pkg config paths and find an ogre version that is < 2.0.0
   foreach(pkg_path ${PKG_CONFIG_PATH_TMP})
-
     if (NOT EXISTS ${pkg_path})
       continue()
     endif()
-
-    unset(OGRE_FOUND)
-    unset(OGRE_INCLUDE_DIRS)
-    unset(OGRE_LIBRARY_DIRS)
-    unset(OGRE_LIBRARIES)
-
+    set(OGRE_FOUND false)
+    set(OGRE_INCLUDE_DIRS "")
+    set(OGRE_LIBRARY_DIRS "")
+    set(OGRE_LIBRARIES "")
     set(ENV{PKG_CONFIG_PATH} ${pkg_path})
     ign_pkg_check_modules_quiet(OGRE "OGRE >= ${full_version}"
                                 NO_CMAKE_ENVIRONMENT_PATH
@@ -109,7 +106,7 @@ if (NOT WIN32)
           if(_pkgconfig_failed)
             IGN_BUILD_WARNING ("Failed to find OGRE's library directory.  The build will succeed, but there will likely be run-time errors.")
           else()
-            # set ogre library dir and strip line brak
+            # set ogre library dir and strip line break
             set(OGRE_LIBRARY_DIRS ${_pkgconfig_invoke_result})
             string(REGEX REPLACE "\n$" "" OGRE_LIBRARY_DIRS "${OGRE_LIBRARY_DIRS}")
 
@@ -145,7 +142,6 @@ if (NOT WIN32)
       ign_pkg_check_modules_quiet(IgnOGRE-${component} "OGRE-${component} >= ${full_version}" NO_CMAKE_ENVIRONMENT_PATH)
       if(IgnOGRE-${component}_FOUND)
         list(APPEND OGRE_LIBRARIES IgnOGRE-${component}::IgnOGRE-${component})
-
       elseif(IgnOGRE_FIND_REQUIRED_${component})
         set(OGRE_FOUND false)
       endif()

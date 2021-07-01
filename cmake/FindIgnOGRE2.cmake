@@ -110,7 +110,7 @@ if (NOT WIN32)
                     RESULT_VARIABLE _pkgconfig_failed)
     if(_pkgconfig_failed)
       IGN_BUILD_WARNING ("Failed to get pkg-config search paths")
-    elseif (NOT "_pkgconfig_invoke_result" STREQUAL "")
+    elseif (NOT _pkgconfig_invoke_result STREQUAL "")
       set (PKG_CONFIG_PATH_TMP "${PKG_CONFIG_PATH_TMP}:${_pkgconfig_invoke_result}")
     endif()
 
