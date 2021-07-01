@@ -275,6 +275,15 @@ if (NOT WIN32)
 
 else() #WIN32
   # reset ogre variables to be sure they dont conflict with OGRE1
+  # todo(anyone) May need to change this to set(<variable> "")
+  # and verify that it works on Windows.
+  # More info: when evaluating Variable References of the form ${VAR}, CMake
+  # first searches for a normal variable with that name. If no such normal
+  # variable exists, CMake will then search for a cache entry with that name.
+  # Because of this unsetting a normal variable can expose a cache variable
+  # that was previously hidden. To force a variable reference of the form ${VAR}
+  # to return an empty string, use set(<variable> ""), which clears the normal
+  # variable but leaves it defined.
   unset(OGRE_FOUND)
   unset(OGRE_INCLUDE_DIRS)
   unset(OGRE_LIBRARIES)
