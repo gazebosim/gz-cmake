@@ -217,6 +217,8 @@ if (NOT WIN32)
   foreach(component ${IgnOGRE2_FIND_COMPONENTS})
     find_library(OGRE2-${component}
       NAMES
+        "Ogre${component}_d.${OGRE2_VERSION}"
+        "Ogre${component}_d"
         "Ogre${component}.${OGRE2_VERSION}"
         "Ogre${component}"
       HINTS ${OGRE2_LIBRARY_DIRS})
