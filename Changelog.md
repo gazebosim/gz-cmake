@@ -2,6 +2,8 @@
 
 ### Ignition CMake 2.X.X (20XX-XX-XX)
 
+1. Fix problems on IgnOGRE.cmake when version is not found
+
 ### Ignition CMake 2.8.0 (2021-04-30)
 
 1. Fix hardcoded pkg-config library in examples
