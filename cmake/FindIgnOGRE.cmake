@@ -236,23 +236,24 @@ else()
     set(OGRE_LIBRARIES ${ogre_all_libs})
     set(OGRE_RESOURCE_PATH ${OGRE_CONFIG_DIR})
   endif()
-endif()
 
-# manually search and append the the RenderSystem/GL path to
-# OGRE_INCLUDE_DIRS so OGRE GL headers can be found
-foreach (dir ${OGRE_INCLUDE_DIRS})
-  get_filename_component(dir_name "${dir}" NAME)
-  if("${dir_name}" STREQUAL "OGRE")
-    if(${OGRE_VERSION} VERSION_LESS 1.11.0)
-      set(dir_include "${dir}/RenderSystems/GL")
+  # manually search and append the the RenderSystem/GL path to
+  # OGRE_INCLUDE_DIRS so OGRE GL headers can be found
+  foreach(dir ${OGRE_INCLUDE_DIRS})
+    get_filename_component(dir_name "${dir}" NAME)
+    if("${dir_name}" STREQUAL "OGRE")
+      if(${OGRE_VERSION} VERSION_LESS 1.11.0)
+        set(dir_include "${dir}/RenderSystems/GL")
+      else()
+        set(dir_include "${dir}/RenderSystems/GL" "${dir}/Paging")
+      endif()
     else()
-      set(dir_include "${dir}/RenderSystems/GL" "${dir}/Paging")
+      set(dir_include "${dir}")
     endif()
-  else()
-    set(dir_include "${dir}")
-  endif()
-  list(APPEND OGRE_INCLUDE_DIRS ${dir_include})
-endforeach()
+    list(APPEND OGRE_INCLUDE_DIRS ${dir_include})
+  endforeach()
+
+endif()
 
 set(IgnOGRE_FOUND false)
 if(OGRE_FOUND)
