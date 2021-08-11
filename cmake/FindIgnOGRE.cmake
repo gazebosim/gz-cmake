@@ -236,6 +236,11 @@ else()
     set(OGRE_LIBRARIES ${ogre_all_libs})
     set(OGRE_RESOURCE_PATH ${OGRE_CONFIG_DIR})
   endif()
+endif()
+
+set(IgnOGRE_FOUND false)
+if(OGRE_FOUND)
+  set(IgnOGRE_FOUND true)
 
   # manually search and append the the RenderSystem/GL path to
   # OGRE_INCLUDE_DIRS so OGRE GL headers can be found
@@ -253,14 +258,7 @@ else()
     list(APPEND OGRE_INCLUDE_DIRS ${dir_include})
   endforeach()
 
-endif()
-
-set(IgnOGRE_FOUND false)
-if(OGRE_FOUND)
-  set(IgnOGRE_FOUND true)
-
   include(IgnImportTarget)
-
   ign_import_target(IgnOGRE
     TARGET_NAME IgnOGRE::IgnOGRE
     LIB_VAR OGRE_LIBRARIES
