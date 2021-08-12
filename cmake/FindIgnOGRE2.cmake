@@ -293,7 +293,18 @@ else() #WIN32
     set(OGRE_${ogre_component}_FOUND FALSE)
   endforeach()
   # currently designed to work with osrf vcpkg ogre2 portfile
+  set(OGRE2_PATHS "")
+  if(${IgnOGRE2_FIND_VERSION_MINOR} EQUAL 2)
+    # Specific case for osrf ogre 2.2 vcpkg
+    foreach(_rootPath ${VCPKG_CMAKE_FIND_ROOT_PATH})
+      list(APPEND OGRE2_PATHS "${_rootPath}/share/ogre22")
+    endforeach()
+  else()
+    set(OGRE2_PATHS ${VCPKG_CMAKE_FIND_ROOT_PATH})
+  endif()
+
   find_package(OGRE2
+               PATHS ${OGRE2_PATHS}
                COMPONENTS ${IgnOGRE2_FIND_COMPONENTS})
   set(OGRE2_INCLUDE_DIRS ${OGRE_INCLUDE_DIRS})
   # Imported from OGRE1: link component libs outside of static build
