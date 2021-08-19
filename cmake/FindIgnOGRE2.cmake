@@ -361,7 +361,7 @@ else() #WIN32
         set(PREFIX OGRE2_${component})
         if(${PREFIX}_FOUND)
             set(component_TARGET_NAME "IgnOGRE2-${component}::IgnOGRE2-${component}")
-            set(component_INCLUDE_DIRS ${PREFIX}_INCLUDE_DIRS)
+            set(component_INCLUDE_DIRS ${${PREFIX}_INCLUDE_DIRS})
             # append the Hlms/Common include dir if it exists.
             string(FIND ${component} "Hlms" HLMS_POS)
             if(${HLMS_POS} GREATER -1)
