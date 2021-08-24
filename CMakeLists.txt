@@ -22,6 +22,10 @@ include(IgnCMake)
 # Set up the project
 ign_configure_project()
 
+#--------------------------------------
+# Set project-specific options
+option(BUILDSYSTEM_TESTING "Enable extended buildsystem testing" FALSE)
+
 #============================================================================
 # Configure the package to be installed
 #============================================================================
@@ -81,7 +85,9 @@ message(STATUS "Install prefix: ${CMAKE_INSTALL_PREFIX}")
 include(CTest)
 if (BUILD_TESTING)
   add_subdirectory(test)
+endif()
 
+if (BUILD_TESTING AND BUILDSYSTEM_TESTING)
   #============================================================================
   # Build examples
   #============================================================================
