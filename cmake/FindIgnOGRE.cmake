@@ -59,7 +59,7 @@ macro(ign_ogre_declare_plugin TYPE COMPONENT)
     list(APPEND OGRE_LIBRARIES ${TYPE}_${COMPONENT})
 endmacro()
 
-if (NOT WIN32)
+if (NOT PKG_CONFIG_FOUND)
   # pkg-config platforms
   set(PKG_CONFIG_PATH_ORIGINAL $ENV{PKG_CONFIG_PATH})
   set(PKG_CONFIG_PATH_TMP ${PKG_CONFIG_PATH_ORIGINAL})
