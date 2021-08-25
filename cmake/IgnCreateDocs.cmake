@@ -135,6 +135,7 @@ function(ign_create_docs)
   endforeach()
 
   set(IGNITION_DOXYGEN_IMAGE_PATH " ")
+
   foreach(dir ${ign_create_docs_IMAGE_PATH_DIRS})
     ign_string_append(IGNITION_DOXYGEN_IMAGE_PATH "${dir}")
   endforeach()
