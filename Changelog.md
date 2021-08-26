@@ -1,6 +1,9 @@
 ## Ignition CMake 2.x
 
-### Ignition CMake 2.X.X (20XX-XX-XX)
+### Ignition CMake 2.X.X (2021-08-23)
+
+1. Fix problems on IgnOGRE.cmake when version is not found
+    * [Pull request #175](https://github.com/ignitionrobotics/ign-cmake/pull/175)
 
 ### Ignition CMake 2.8.0 (2021-04-30)
 

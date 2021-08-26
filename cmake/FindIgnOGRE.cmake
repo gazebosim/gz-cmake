@@ -238,28 +238,27 @@ else()
   endif()
 endif()
 
-# manually search and append the the RenderSystem/GL path to
-# OGRE_INCLUDE_DIRS so OGRE GL headers can be found
-foreach (dir ${OGRE_INCLUDE_DIRS})
-  get_filename_component(dir_name "${dir}" NAME)
-  if("${dir_name}" STREQUAL "OGRE")
-    if(${OGRE_VERSION} VERSION_LESS 1.11.0)
-      set(dir_include "${dir}/RenderSystems/GL")
-    else()
-      set(dir_include "${dir}/RenderSystems/GL" "${dir}/Paging")
-    endif()
-  else()
-    set(dir_include "${dir}")
-  endif()
-  list(APPEND OGRE_INCLUDE_DIRS ${dir_include})
-endforeach()
-
 set(IgnOGRE_FOUND false)
 if(OGRE_FOUND)
   set(IgnOGRE_FOUND true)
 
-  include(IgnImportTarget)
+  # manually search and append the the RenderSystem/GL path to
+  # OGRE_INCLUDE_DIRS so OGRE GL headers can be found
+  foreach(dir ${OGRE_INCLUDE_DIRS})
+    get_filename_component(dir_name "${dir}" NAME)
+    if("${dir_name}" STREQUAL "OGRE")
+      if(${OGRE_VERSION} VERSION_LESS 1.11.0)
+        set(dir_include "${dir}/RenderSystems/GL")
+      else()
+        set(dir_include "${dir}/RenderSystems/GL" "${dir}/Paging")
+      endif()
+    else()
+      set(dir_include "${dir}")
+    endif()
+    list(APPEND OGRE_INCLUDE_DIRS ${dir_include})
+  endforeach()
 
+  include(IgnImportTarget)
   ign_import_target(IgnOGRE
     TARGET_NAME IgnOGRE::IgnOGRE
     LIB_VAR OGRE_LIBRARIES
