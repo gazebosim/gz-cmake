@@ -32,9 +32,15 @@ function(ign_setup_target_for_codecheck)
 
   message(STATUS "Adding codecheck target")
 
+  # Each include dir neeads an -I flag
+  set(CPPCHECK_INCLUDE_DIRS_FLAGS)
+  foreach(dir ${CPPCHECK_INCLUDE_DIRS})
+    list(APPEND CPPCHECK_INCLUDE_DIRS_FLAGS "-I${dir}")
+  endforeach()
+
   add_custom_target(cppcheck
     # First cppcheck
-    COMMAND ${CPPCHECK_PATH} ${CPPCHECK_BASE} ${CPPCHECK_EXTRA} -I ${CPPCHECK_INCLUDE_DIRS} ${CPPCHECK_RULES} `${CPPCHECK_FIND}`
+    COMMAND ${CPPCHECK_PATH} ${CPPCHECK_BASE} ${CPPCHECK_EXTRA} ${CPPCHECK_INCLUDE_DIRS_FLAGS} ${CPPCHECK_RULES} `${CPPCHECK_FIND}`
 
     # Second cppcheck
     COMMAND ${CPPCHECK_PATH} ${CPPCHECK_BASE} --enable=missingInclude `${CPPCHECK_FIND}`
