@@ -1,9 +1,38 @@
 ## Ignition CMake 2.x
 
-### Ignition CMake 2.X.X (2021-08-23)
+### Ignition CMake 2.X.X (2021-XX-XX)
 
-1. Fix problems on IgnOGRE.cmake when version is not found
+### Ignition CMake 2.9.0 (2021-09-01)
+
+1. Fix include directory flags for codecheck
+    * [Pull request #186](https://github.com/ignitionrobotics/ign-cmake/pull/186)
+
+1. Revert FindIgnOgre change
+    * [Pull request #184](https://github.com/ignitionrobotics/ign-cmake/pull/184)
+
+1. Fix problems on IgnOGRE when version is not found
     * [Pull request #175](https://github.com/ignitionrobotics/ign-cmake/pull/175)
+
+1. Include IMAGE_PATH directories in ign_create_docs
+    * [Pull request #183](https://github.com/ignitionrobotics/ign-cmake/pull/183)
+
+1. 0 ➡️ 2
+    * [Pull request #182](https://github.com/ignitionrobotics/ign-cmake/pull/182)
+
+1. Special case for ogre2.2 on Windows
+    * [Pull request #176](https://github.com/ignitionrobotics/ign-cmake/pull/176)
+    * [Pull request #177](https://github.com/ignitionrobotics/ign-cmake/pull/177)
+    * [Pull request #178](https://github.com/ignitionrobotics/ign-cmake/pull/178)
+    * [Pull request #180](https://github.com/ignitionrobotics/ign-cmake/pull/180)
+
+1. Fix building OGRE / OGRE2 from source in colcon workspace
+    * [Pull request #174](https://github.com/ignitionrobotics/ign-cmake/pull/174)
+
+1. Remove codecov badge from README
+    * [Pull request #172](https://github.com/ignitionrobotics/ign-cmake/pull/172)
+
+1. Port codecov to new configuration
+    * [Pull request #170](https://github.com/ignitionrobotics/ign-cmake/pull/170)
 
 ### Ignition CMake 2.8.0 (2021-04-30)
 
