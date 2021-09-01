@@ -32,7 +32,7 @@ function(ign_setup_target_for_codecheck)
 
   message(STATUS "Adding codecheck target")
 
-  # Each include dir neeads an -I flag
+  # Each include directory needs an -I flag
   set(CPPCHECK_INCLUDE_DIRS_FLAGS)
   foreach(dir ${CPPCHECK_INCLUDE_DIRS})
     list(APPEND CPPCHECK_INCLUDE_DIRS_FLAGS "-I${dir}")
