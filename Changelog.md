@@ -2,7 +2,7 @@
 
 ### Ignition CMake 2.X.X (2021-XX-XX)
 
-### Ignition CMake 2.9.0 (2021-09-01)
+### Ignition CMake 2.9.0 (2021-09-02)
 
 1. Fix include directory flags for codecheck
     * [Pull request #186](https://github.com/ignitionrobotics/ign-cmake/pull/186)
