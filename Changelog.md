@@ -7,17 +7,14 @@
 1. Fix include directory flags for codecheck
     * [Pull request #186](https://github.com/ignitionrobotics/ign-cmake/pull/186)
 
-1. Revert FindIgnOgre change
-    * [Pull request #184](https://github.com/ignitionrobotics/ign-cmake/pull/184)
-
 1. Fix problems on IgnOGRE when version is not found
     * [Pull request #175](https://github.com/ignitionrobotics/ign-cmake/pull/175)
 
+1. Remove bitbucket-pipelines.yml
+    * [Pull request #181](https://github.com/ignitionrobotics/ign-cmake/pull/181)
+
 1. Include IMAGE_PATH directories in ign_create_docs
     * [Pull request #183](https://github.com/ignitionrobotics/ign-cmake/pull/183)
-
-1. 0 ➡️ 2
-    * [Pull request #182](https://github.com/ignitionrobotics/ign-cmake/pull/182)
 
 1. Special case for ogre2.2 on Windows
     * [Pull request #176](https://github.com/ignitionrobotics/ign-cmake/pull/176)
