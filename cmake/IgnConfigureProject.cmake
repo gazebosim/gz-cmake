@@ -6,6 +6,8 @@
 #
 # Sets up an ignition library project.
 #
+# NO_IGNITION_PREFIX: Optional. Don't use ignition as prefix in
+#                     cmake project name.
 # VERSION_SUFFIX: Optional. Specify a prerelease version suffix.
 #
 #===============================================================================
@@ -29,7 +31,7 @@ macro(ign_configure_project)
 
   #------------------------------------
   # Define the expected arguments
-  set(options) # We are not using options yet
+  set(options NO_IGNITION_PREFIX)
   set(oneValueArgs VERSION_SUFFIX)
   set(multiValueArgs) # We are not using multiValueArgs yet
 
@@ -60,7 +62,11 @@ macro(ign_configure_project)
   # Set project variables
   #============================================================================
 
-  set(PROJECT_NAME_NO_VERSION "ignition-${IGN_DESIGNATION}")
+  if(ign_configure_project_NO_IGNITION_PREFIX)
+    set(PROJECT_NAME_NO_VERSION ${IGN_DESIGNATION})
+  else()
+    set(PROJECT_NAME_NO_VERSION "ignition-${IGN_DESIGNATION}")
+  endif()
   string(TOLOWER ${PROJECT_NAME_NO_VERSION} PROJECT_NAME_NO_VERSION_LOWER)
   string(TOUPPER ${PROJECT_NAME_NO_VERSION} PROJECT_NAME_NO_VERSION_UPPER)
   string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWER)
