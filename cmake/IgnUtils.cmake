@@ -682,13 +682,13 @@ function(ign_install_all_headers)
 
     # Add each header, prefixed by its directory, to the auto headers variable
     foreach(header ${headers})
-      set(ign_headers "${ign_headers}#include <ignition/${IGN_DESIGNATION}/${header}>\n")
+      set(ign_headers "${ign_headers}#include <${PROJECT_INCLUDE_DIR}/${header}>\n")
     endforeach()
 
     if("." STREQUAL ${dir})
-      set(destination "${IGN_INCLUDE_INSTALL_DIR_FULL}/ignition/${IGN_DESIGNATION}")
+      set(destination "${IGN_INCLUDE_INSTALL_DIR_FULL}/${PROJECT_INCLUDE_DIR}")
     else()
-      set(destination "${IGN_INCLUDE_INSTALL_DIR_FULL}/ignition/${IGN_DESIGNATION}/${dir}")
+      set(destination "${IGN_INCLUDE_INSTALL_DIR_FULL}/${PROJECT_INCLUDE_DIR}/${dir}")
     endif()
 
     install(
@@ -700,7 +700,7 @@ function(ign_install_all_headers)
 
   # Add generated headers to the list of includes
   foreach(header ${ign_install_all_headers_GENERATED_HEADERS})
-      set(ign_headers "${ign_headers}#include <ignition/${IGN_DESIGNATION}/${header}>\n")
+      set(ign_headers "${ign_headers}#include <${PROJECT_INCLUDE_DIR}/${header}>\n")
   endforeach()
 
   if(ign_install_all_headers_COMPONENT)
@@ -708,7 +708,7 @@ function(ign_install_all_headers)
     set(component_name ${ign_install_all_headers_COMPONENT})
 
     # Define the install directory for the component meta header
-    set(meta_header_install_dir ${IGN_INCLUDE_INSTALL_DIR_FULL}/ignition/${IGN_DESIGNATION}/${component_name})
+    set(meta_header_install_dir ${IGN_INCLUDE_INSTALL_DIR_FULL}/${PROJECT_INCLUDE_DIR}/${component_name})
 
     # Define the input/output of the configuration for the component "master" header
     set(master_header_in ${IGNITION_CMAKE_DIR}/ign_auto_headers.hh.in)
@@ -717,7 +717,7 @@ function(ign_install_all_headers)
   else()
 
     # Define the install directory for the core master meta header
-    set(meta_header_install_dir ${IGN_INCLUDE_INSTALL_DIR_FULL}/ignition/${IGN_DESIGNATION})
+    set(meta_header_install_dir ${IGN_INCLUDE_INSTALL_DIR_FULL}/${PROJECT_INCLUDE_DIR})
 
     # Define the input/output of the configuration for the core "master" header
     set(master_header_in ${IGNITION_CMAKE_DIR}/ign_auto_headers.hh.in)
@@ -936,7 +936,7 @@ function(ign_create_core_library)
   # Create the target for the core library, and configure it to be installed
   _ign_add_library_or_component(
     LIB_NAME ${PROJECT_LIBRARY_TARGET_NAME}
-    INCLUDE_DIR "ignition/${IGN_DESIGNATION_LOWER}"
+    INCLUDE_DIR "${PROJECT_INCLUDE_DIR}"
     EXPORT_BASE IGNITION_${IGN_DESIGNATION_UPPER}
     SOURCES ${sources}
     ${interface_option})
@@ -1120,7 +1120,7 @@ function(ign_add_component component_name)
   # Create the target for this component, and configure it to be installed
   _ign_add_library_or_component(
     LIB_NAME ${component_target_name}
-    INCLUDE_DIR "ignition/${IGN_DESIGNATION_LOWER}/${include_subdir}"
+    INCLUDE_DIR "${PROJECT_INCLUDE_DIR}/${include_subdir}"
     EXPORT_BASE IGNITION_${IGN_DESIGNATION_UPPER}_${component_name_upper}
     SOURCES ${sources}
     ${interface_option})
