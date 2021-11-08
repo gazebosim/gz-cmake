@@ -2,7 +2,7 @@
 
 ## Configuring project name
 
-This package uses the `NO_IGNITION_PREFIX` option to `ign_configure_project`
+This package uses the `NO_IGNITION_PREFIX` option in `ign_configure_project`
 to allow a cmake package name without the `ignition-` prefix.
 To confirm, configure this package and
 `package_source` and then observe that the tarball,
@@ -21,7 +21,7 @@ make package_source
 
 ## Configuring include directory names
 
-This package uses the `INCLUDE_DIR` option to `ign_configure_project`
+This package uses the `INCLUDE_DIR` option in `ign_configure_project`
 to allow a custom include path of `no_ign`, which doesn't start with `ignition/`.
 To confirm, build the package and observe that `AlmostEmpty.cc`
 compiles successfully while including `no_ign/Export.hh`:
