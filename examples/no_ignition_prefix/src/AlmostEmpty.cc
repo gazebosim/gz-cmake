@@ -15,6 +15,8 @@
  *
 */
 
+#include <no_ignition_prefix.hh>
+#include <no_ign/config.hh>
 #include <no_ign/Export.hh>
 
 namespace no_ignition_prefix
