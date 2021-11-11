@@ -14,9 +14,9 @@
 # limitations under the License.
 #
 include(IgnPkgConfig)
-if (URDF_FIND_VERSION)
-  set(signature "urdfdom >= ${URDF_FIND_VERSION}")
+if (IgnURDFDOM_FIND_VERSION)
+  set(signature "urdfdom >= ${IgnURDFDOM_FIND_VERSION}")
 else()
   set(signature "urdfdom")
 endif()
-ign_pkg_check_modules(URDF "${signature}")
+ign_pkg_check_modules(IgnURDFDOM "${signature}")
