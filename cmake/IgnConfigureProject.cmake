@@ -6,10 +6,11 @@
 #
 # Sets up an ignition library project.
 #
-# INCLUDE_DIR: Optional. Specify include folder names. Defaults to
-#     ignition/${IGN_DESIGNATION}
 # NO_IGNITION_PREFIX: Optional. Don't use ignition as prefix in
 #     cmake project name.
+# REPLACE_IGNITION_INCLUDE_PATH: Optional. Specify include folder
+#     names to replace the default value of
+#     ignition/${IGN_DESIGNATION}
 # VERSION_SUFFIX: Optional. Specify a prerelease version suffix.
 #
 #===============================================================================
@@ -34,7 +35,7 @@ macro(ign_configure_project)
   #------------------------------------
   # Define the expected arguments
   set(options NO_IGNITION_PREFIX)
-  set(oneValueArgs INCLUDE_DIR VERSION_SUFFIX)
+  set(oneValueArgs REPLACE_IGNITION_INCLUDE_PATH VERSION_SUFFIX)
   set(multiValueArgs) # We are not using multiValueArgs yet
 
   #------------------------------------
@@ -84,8 +85,8 @@ macro(ign_configure_project)
   set(PROJECT_EXPORT_NAME ${PROJECT_NAME_LOWER})
   set(PROJECT_LIBRARY_TARGET_NAME ${PROJECT_NAME_LOWER})
 
-  if(ign_configure_project_INCLUDE_DIR)
-    set(PROJECT_INCLUDE_DIR ${ign_configure_project_INCLUDE_DIR})
+  if(ign_configure_project_REPLACE_IGNITION_INCLUDE_PATH)
+    set(PROJECT_INCLUDE_DIR ${ign_configure_project_REPLACE_IGNITION_INCLUDE_PATH})
   else()
     set(PROJECT_INCLUDE_DIR ignition/${IGN_DESIGNATION})
   endif()
