@@ -13,10 +13,28 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-include(IgnPkgConfig)
+
 if (IgnURDFDOM_FIND_VERSION)
-  set(signature "urdfdom >= ${IgnURDFDOM_FIND_VERSION}")
+  set(find_version VERSION ${IgnURDFDOM_FIND_VERSION})
 else()
-  set(signature "urdfdom")
+  set(find_version "")
 endif()
-ign_pkg_check_modules(IgnURDFDOM "${signature}")
+# NOTE: urdfdom cmake does not support version checking
+ign_find_package(urdfdom ${find_version} QUIET)
+
+if (urdfdom_FOUND)
+  add_library(IgnURDFDOM::IgnURDFDOM INTERFACE IMPORTED)
+  target_include_directories(IgnURDFDOM::IgnURDFDOM INTERFACE ${urdfdom_INCLUDE_DIRS})
+  target_link_libraries(IgnURDFDOM::IgnURDFDOM INTERFACE ${urdfdom_LIBRARIES})
+  include(FindPackageHandleStandardArgs)
+  find_package_handle_standard_args(IgnURDFDOM DEFAULT_MSG)
+else()
+  message(VERBOSE "unable to find urdf cmake package, trying pkgconfig...")
+  include(IgnPkgConfig)
+  if (IgnURDFDOM_FIND_VERSION)
+    set(signature "urdfdom >= ${IgnURDFDOM_FIND_VERSION}")
+  else()
+    set(signature "urdfdom")
+  endif()
+  ign_pkg_check_modules(IgnURDFDOM "${signature}")
+endif()
