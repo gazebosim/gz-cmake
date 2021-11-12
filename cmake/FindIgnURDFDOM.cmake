@@ -24,8 +24,13 @@ ign_find_package(urdfdom ${find_version} QUIET)
 
 if (urdfdom_FOUND)
   add_library(IgnURDFDOM::IgnURDFDOM INTERFACE IMPORTED)
-  target_include_directories(IgnURDFDOM::IgnURDFDOM INTERFACE ${urdfdom_INCLUDE_DIRS})
-  target_link_libraries(IgnURDFDOM::IgnURDFDOM INTERFACE ${urdfdom_LIBRARIES})
+  target_link_libraries(IgnURDFDOM::IgnURDFDOM
+    INTERFACE
+      urdfdom::urdfdom_model
+      urdfdom::urdfdom_world
+      urdfdom::urdfdom_sensor
+      urdfdom::urdfdom_model_state
+  )
   include(FindPackageHandleStandardArgs)
   find_package_handle_standard_args(IgnURDFDOM DEFAULT_MSG)
 else()
