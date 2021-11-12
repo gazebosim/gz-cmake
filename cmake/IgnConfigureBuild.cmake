@@ -169,7 +169,7 @@ macro(ign_configure_build)
     set (CPPCHECK_INCLUDE_DIRS)
     set (potential_cppcheck_include_dirs
       ${CMAKE_BINARY_DIR}
-      ${CMAKE_SOURCE_DIR}/include/ignition/${IGN_DESIGNATION}
+      ${CMAKE_SOURCE_DIR}/include/${PROJECT_INCLUDE_DIR}
       ${CMAKE_SOURCE_DIR}/test/integration
       ${CMAKE_SOURCE_DIR}/test/regression
       ${CMAKE_SOURCE_DIR}/test/performance)
@@ -323,8 +323,8 @@ function(_ign_find_include_script)
       add_subdirectory("${include_start}/include")
     elseif(EXISTS "${include_start}/include/ignition/CMakeLists.txt")
       add_subdirectory("${include_start}/include/ignition")
-    elseif(EXISTS "${include_start}/include/ignition/${IGN_DESIGNATION}/CMakeLists.txt")
-      add_subdirectory("${include_start}/include/ignition/${IGN_DESIGNATION}")
+    elseif(EXISTS "${include_start}/include/${PROJECT_INCLUDE_DIR}/CMakeLists.txt")
+      add_subdirectory("${include_start}/include/${PROJECT_INCLUDE_DIR}")
     else()
       message(AUTHOR_WARNING
         "You have an include directory [${include_start}/include] without a "
