@@ -10,6 +10,7 @@ endif()
 
 set(example_directories
   ign_conf
+  no_ignition_prefix
   prerelease
   core_nodep
   core_child
@@ -28,6 +29,8 @@ foreach(example ${example_directories})
   set(run_codecheck false)
   if (${example} STREQUAL "ign_conf")
     set(example_tarball_name ignition-minimal-0.1.0.tar.bz2)
+  elseif (${example} STREQUAL "no_ignition_prefix")
+    set(example_tarball_name no_ignition_prefix-0.1.0.tar.bz2)
   elseif (${example} STREQUAL "prerelease")
     set(example_tarball_name ignition-minimal-1.0.0~pre1.tar.bz2)
   elseif (${example} STREQUAL "core_nodep")
