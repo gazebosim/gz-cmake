@@ -133,12 +133,6 @@ else()
     INTERFACE_LINK_LIBRARIES "${ign_all_components};@import_target_name@")
 endif()
 
-# On windows we produce .dll libraries with no prefix
-if(WIN32)
-  set(CMAKE_FIND_LIBRARY_PREFIXES "")
-  set(CMAKE_FIND_LIBRARY_SUFFIXES ".lib" ".dll")
-endif()
-
 # Package variables. Note that @PKG_NAME@_LIBRARIES and @PKG_NAME@_CORE_LIBRARY
 # contain imported targets, so @PKG_NAME@_INCLUDE_DIRS is never needed.
 set(@PKG_NAME@_CORE_LIBRARY @simple_import_name@)
