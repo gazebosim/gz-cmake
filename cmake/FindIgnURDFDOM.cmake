@@ -14,16 +14,10 @@
 # limitations under the License.
 #
 
-if(IgnURDFDOM_FIND_VERSION)
-  set(find_version VERSION ${IgnURDFDOM_FIND_VERSION})
-else()
-  set(find_version "")
-endif()
-
 # Prefer pkg-config over cmake if possible since version checking is not working
 # on urdfdom series from 1.x to 3.0.0 (at least)
 include(IgnPkgConfig)
-if (NOT PKG_CONFIG_FOUND)
+if(PKG_CONFIG_FOUND)
   if (IgnURDFDOM_FIND_VERSION)
     set(signature "urdfdom >= ${IgnURDFDOM_FIND_VERSION}")
   else()
@@ -35,6 +29,12 @@ else()
 endif()
 
 if(NOT IgnURDFDOM_FOUND)
+  if(IgnURDFDOM_FIND_VERSION)
+    set(find_version VERSION ${IgnURDFDOM_FIND_VERSION})
+  else()
+    set(find_version "")
+  endif()
+
   # NOTE: urdfdom cmake does not support version checking
   ign_find_package(urdfdom ${find_version} QUIET)
   if (urdfdom_FOUND)
