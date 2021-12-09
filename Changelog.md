@@ -1,6 +1,21 @@
 ## Ignition CMake 2.x
 
-### Ignition CMake 2.X.X (2021-XX-XX)
+### Ignition CMake 2.10.0 (2021-12-09)
+
+1. Add Ubuntu Jammy CI
+    * [Pull request #194](https://github.com/ignitionrobotics/ign-cmake/pull/194)
+
+1. FindIgnURDFDOM cmake module
+    * [Pull request #193](https://github.com/ignitionrobotics/ign-cmake/pull/193)
+
+1. Do not modify `CMAKE_FIND_LIBRARY_PREFIXES` and `CMAKE_FIND_LIBRARY_SUFFIXES` on Windows
+    * [Pull request #189](https://github.com/ignitionrobotics/ign-cmake/pull/189)
+
+1. Project option: `REPLACE_IGNITION_INCLUDE_PATH`
+    * [Pull request #190](https://github.com/ignitionrobotics/ign-cmake/pull/190)
+
+1. Project option: `NO_IGNITION_PREFIX`
+    * [Pull request #191](https://github.com/ignitionrobotics/ign-cmake/pull/191)
 
 ### Ignition CMake 2.9.0 (2021-09-02)
 
