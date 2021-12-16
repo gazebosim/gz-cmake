@@ -115,11 +115,18 @@ endmacro()
 # Set up compilation flags for GCC or Clang
 macro(ign_setup_gcc_or_clang)
 
+  option(USE_DEFAULT_VISIBILITY_HIDDEN "Hide symbols by default if they are not explicitly specified as visible" FALSE)
+  if(USE_DEFAULT_VISIBILITY_HIDDEN)
+    set(VISIBILITY_FLAG "-fvisibility=hidden")
+  else()
+    set(VISIBILITY_FLAG "-fvisibility")
+  endif()
+
   ign_filter_valid_compiler_options(
     CUSTOM_ALL_FLAGS
         -Wall -Wextra -Wno-long-long -Wno-unused-value -Wfloat-equal
         -Wshadow -Winit-self -Wswitch-default -Wmissing-include-dirs -pedantic
-        -fvisibility)
+        ${VISIBILITY_FLAG})
 
   # -ggdb3: Produce comprehensive debug information that can be utilized by gdb
   set(CUSTOM_DEBUG_FLAGS "-ggdb3")
