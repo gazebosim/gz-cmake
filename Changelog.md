@@ -2,6 +2,9 @@
 
 ### Ignition CMake 2.10.0 (2021-12-09)
 
+1. Add `HIDE_SYMBOLS_BY_DEFAULT` parameter to `ign_configure_build`
+    * [Pull request #196](https://github.com/ignitionrobotics/ign-cmake/pull/196)
+
 1. Add Ubuntu Jammy CI
     * [Pull request #194](https://github.com/ignitionrobotics/ign-cmake/pull/194)
 
