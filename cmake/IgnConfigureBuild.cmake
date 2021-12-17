@@ -23,13 +23,15 @@
 
 #################################################
 # Configure the build of the ignition project
+# Pass the argument HIDE_SYMBOLS_BY_DEFAULT to configure symbol visibility so
+# that symbols are hidden unless explicitly marked as visible.
 # Pass the argument QUIT_IF_BUILD_ERRORS to have this macro quit cmake when the
 # build_errors
 macro(ign_configure_build)
 
   #============================================================================
   # Parse the arguments that are passed in
-  set(options QUIT_IF_BUILD_ERRORS)
+  set(options HIDE_SYMBOLS_BY_DEFAULT QUIT_IF_BUILD_ERRORS)
   set(oneValueArgs)
   set(multiValueArgs COMPONENTS)
   cmake_parse_arguments(ign_configure_build "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
