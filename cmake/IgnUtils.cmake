@@ -872,6 +872,7 @@ endmacro()
 #                         [CXX_STANDARD <11|14|17>]
 #                         [PRIVATE_CXX_STANDARD <11|14|17>]
 #                         [INTERFACE_CXX_STANDARD <11|14|17>]
+#                         [LEGACY_PROJECT_PREFIX <prefix>]
 #                         [GET_TARGET_NAME <output_var>])
 #
 # This function will produce the "core" library for your project. There is no
@@ -885,6 +886,10 @@ endmacro()
 #                    set to the library target name that gets produced by this
 #                    function. The target name will always be
 #                    ${PROJECT_LIBRARY_TARGET_NAME}.
+#
+# [LEGACY_PROJECT_PREFIX]: Optional. The variable that follows this argument will be
+#                          used as a prefix for the legacy cmake config variables
+#                          <prefix>_LIBRARIES and <prefix>_INCLUDE_DIRS.
 #
 # If you need a specific C++ standard, you must also specify it in this
 # function in order to ensure that your library's target properties get set
@@ -911,7 +916,7 @@ function(ign_create_core_library)
   #------------------------------------
   # Define the expected arguments
   set(options INTERFACE)
-  set(oneValueArgs INCLUDE_SUBDIR CXX_STANDARD PRIVATE_CXX_STANDARD INTERFACE_CXX_STANDARD GET_TARGET_NAME)
+  set(oneValueArgs INCLUDE_SUBDIR LEGACY_PROJECT_PREFIX CXX_STANDARD PRIVATE_CXX_STANDARD INTERFACE_CXX_STANDARD GET_TARGET_NAME)
   set(multiValueArgs SOURCES)
 
   #------------------------------------
@@ -992,7 +997,7 @@ function(ign_create_core_library)
   endif()
 
   # Export and install the core library's cmake target and package information
-  _ign_create_cmake_package()
+  _ign_create_cmake_package(LEGACY_PROJECT_PREFIX ${ign_create_core_library_LEGACY_PROJECT_PREFIX})
 
   # Generate and install the core library's pkgconfig information
   _ign_create_pkgconfig()
