@@ -216,11 +216,16 @@ endfunction()
 
 
 #################################################
-# _ign_create_cmake_package([COMPONENT <component>])
+# _ign_create_cmake_package([COMPONENT <component>]
+#                           [LEGACY_PROJECT_PREFIX <prefix>])
 #
 # Provide the name of the target that will be installed and exported. If the
 # target is a component, pass in the COMPONENT argument followed by the
 # component's name.
+#
+# For packages like sdformat that use inconsistent case in the legacy cmake
+# variable names (like SDFormat_LIBRARIES), the LEGACY_PROJECT_PREFIX argument
+# can be used to specify the prefix of these variables.
 #
 # NOTE: This will be called automatically by ign_create_core_library(~) and
 #       ign_add_component(~), so users of ignition-cmake should not call this
@@ -239,7 +244,7 @@ function(_ign_create_cmake_package)
   #------------------------------------
   # Define the expected arguments
   set(options ALL)
-  set(oneValueArgs COMPONENT) # Unused
+  set(oneValueArgs COMPONENT LEGACY_PROJECT_PREFIX)
   set(multiValueArgs) # Unused
 
   #------------------------------------
@@ -276,7 +281,15 @@ function(_ign_create_cmake_package)
 
   endif()
 
+  if(_ign_create_cmake_package_LEGACY_PROJECT_PREFIX)
 
+    set(LEGACY_PROJECT_PREFIX ${_ign_create_cmake_package_LEGACY_PROJECT_PREFIX})
+
+  else()
+
+    set(LEGACY_PROJECT_PREFIX ${PROJECT_NAME_NO_VERSION_UPPER})
+
+  endif()
 
   # This gets used by the ignition-*.config.cmake.in files
   set(target_output_filename ${target_name}-targets.cmake)
