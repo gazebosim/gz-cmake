@@ -872,8 +872,8 @@ endmacro()
 #                         [CXX_STANDARD <11|14|17>]
 #                         [PRIVATE_CXX_STANDARD <11|14|17>]
 #                         [INTERFACE_CXX_STANDARD <11|14|17>]
-#                         [LEGACY_PROJECT_PREFIX <prefix>]
-#                         [GET_TARGET_NAME <output_var>])
+#                         [GET_TARGET_NAME <output_var>]
+#                         [LEGACY_PROJECT_PREFIX <prefix>])
 #
 # This function will produce the "core" library for your project. There is no
 # need to specify a name for the library, because that will be determined by
