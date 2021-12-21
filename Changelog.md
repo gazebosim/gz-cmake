@@ -2,6 +2,9 @@
 
 ### Ignition CMake 2.10.0 (2021-12-09)
 
+1. Add `LEGACY_PROJECT_PREFIX` parameter to `ign_create_core_library`
+    * [Pull request #199](https://github.com/ignitionrobotics/ign-cmake/pull/199)
+
 1. Add `HIDE_SYMBOLS_BY_DEFAULT` parameter to `ign_configure_build`
     * [Pull request #196](https://github.com/ignitionrobotics/ign-cmake/pull/196)
 
