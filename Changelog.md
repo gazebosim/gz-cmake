@@ -1,6 +1,9 @@
 ## Ignition CMake 2.x
 
-### Ignition CMake 2.10.0 (2021-12-09)
+### Ignition CMake 2.10.0 (2021-12-21)
+
+1. doxygen allow all .cc, .hh, and CMakeLists.txt, not just in examples/ dir
+    * [Pull request #198](https://github.com/ignitionrobotics/ign-cmake/pull/198)
 
 1. Add `LEGACY_PROJECT_PREFIX` parameter to `ign_create_core_library`
     * [Pull request #199](https://github.com/ignitionrobotics/ign-cmake/pull/199)
