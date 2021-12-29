@@ -1416,6 +1416,10 @@ macro(_ign_add_library_or_component)
     set(install_include_dir
       "${IGN_INCLUDE_INSTALL_DIR_FULL}/${include_dir}")
 
+    if (NOT BUILD_SHARED_LIBS)
+      target_compile_definitions(${lib_name} PUBLIC ${export_base}_STATIC_DEFINE)
+    endif()
+
     # Configure the installation of the automatically generated file.
     install(
       FILES "${implementation_file_name}"
