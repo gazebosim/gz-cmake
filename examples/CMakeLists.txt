@@ -13,8 +13,10 @@ set(example_directories
   no_ignition_prefix
   prerelease
   core_nodep
+  core_nodep_static
   core_child
   core_child_private
+  core_static_child
   comp_deps
   )
 if (NOT CMAKE_GENERATOR MATCHES "Visual Studio")
@@ -36,11 +38,17 @@ foreach(example ${example_directories})
   elseif (${example} STREQUAL "core_nodep")
     set(example_tarball_name ignition-core_no_deps-0.1.0.tar.bz2)
     set(run_codecheck true)
+  elseif (${example} STREQUAL "core_nodep_static")
+    set(example_tarball_name ignition-core_no_deps_static-0.1.0.tar.bz2)
+    set(run_codecheck true)
   elseif (${example} STREQUAL "core_child")
     set(example_tarball_name ignition-core_child-0.1.0.tar.bz2)
     set(run_codecheck true)
   elseif (${example} STREQUAL "core_child_private")
     set(example_tarball_name ignition-core_child_private-0.1.0.tar.bz2)
+    set(run_codecheck true)
+  elseif (${example} STREQUAL "core_static_child")
+    set(example_tarball_name ignition-core_static_child-0.1.0.tar.bz2)
     set(run_codecheck true)
   elseif (${example} STREQUAL "comp_deps")
     set(example_tarball_name ignition-component_deps-0.1.0.tar.bz2)
@@ -153,6 +161,7 @@ endforeach()
 foreach (build_type ${build_types})
   add_dependencies(core_child_${build_type} core_nodep_${build_type})
   add_dependencies(core_child_private_${build_type} core_nodep_${build_type})
+  add_dependencies(core_static_child_${build_type} core_nodep_static_${build_type})
   if (TARGET use_component_depsA_${build_type})
     add_dependencies(use_component_depsA_${build_type} comp_deps_${build_type})
   endif()
