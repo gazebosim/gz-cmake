@@ -1718,6 +1718,9 @@ macro(ign_build_tests)
         target_link_libraries(${target_name} pthread)
       endif()
 
+      target_compile_definitions(${target_name} PRIVATE
+        "TESTING_PROJECT_SOURCE_DIR=\"${PROJECT_SOURCE_DIR}\"")
+
       set_tests_properties(${target_name} PROPERTIES TIMEOUT 240)
 
       if(PYTHONINTERP_FOUND)
