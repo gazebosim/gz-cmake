@@ -1,5 +1,15 @@
 ## Ignition CMake 2.x
 
+### Ignition CMake 2.x.x (xxxx-xx-xx)
+
+### Ignition CMake 2.11.0 (2022-02-23)
+
+1. Set source path to be used by common::testing 
+    * [Pull request #206](https://github.com/ignitionrobotics/ign-cmake/pull/206)
+
+3. Add examples using static libraries
+    * [Pull request #202](https://github.com/ignitionrobotics/ign-cmake/pull/202)
+
 ### Ignition CMake 2.10.0 (2021-12-21)
 
 1. doxygen allow all .cc, .hh, and CMakeLists.txt, not just in examples/ dir
