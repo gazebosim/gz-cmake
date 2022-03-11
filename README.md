@@ -9,7 +9,7 @@
 
 Build | Status
 -- | --
-Ubuntu Bionic | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_cmake-ci-main-bionic-amd64)](https://build.osrfoundation.org/job/ignition_cmake-ci-main-bionic-amd64)
+Ubuntu Focal | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_cmake-ci-main-focal-amd64)](https://build.osrfoundation.org/job/ignition_cmake-ci-main-focal-amd64)
 Homebrew      | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_cmake-ci-main-homebrew-amd64)](https://build.osrfoundation.org/job/ignition_cmake-ci-main-homebrew-amd64)
 Windows       | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_cmake-ci-main-windows7-amd64)](https://build.osrfoundation.org/job/ignition_cmake-ci-main-windows7-amd64)
 
