@@ -95,7 +95,7 @@ To find `condabin`, search for "Anaconda Prompt" in the Windows search near the 
 
 # Source Install
 
-## Ubuntu Bionic 18.04 or above
+## Ubuntu Focal 20.04 or above
 
 ### Prerequisites
 
@@ -106,11 +106,6 @@ sudo apt -y install wget lsb-release gnupg
 sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list'
 wget http://packages.osrfoundation.org/gazebo.key -O - | apt-key add -
 sudo apt-add-repository -s "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -c -s) main"
-```
-
-Only on Bionic, update the GCC compiler version:
-```
-sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 800 --slave /usr/bin/g++ g++ /usr/bin/g++-8 --slave /usr/bin/gcov gcov /usr/bin/gcov-8
 ```
 
 ### Building from source
