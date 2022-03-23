@@ -13,24 +13,24 @@
 # limitations under the License.
 
 if(${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.19")
-  set(PYTHON_VERSION "" CACHE STRING
+  set(IGN_PYTHON_VERSION "" CACHE STRING
     "Specify specific Python3 version to use ('major.minor' or 'versionMin...[<]versionMax')")
 
-  find_package(Python3 ${PYTHON_VERSION} QUIET)
+  find_package(Python3 ${IGN_PYTHON_VERSION} QUIET)
 elseif(${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.12")
   # no support for finding specific versions
   find_package(Python3 QUIET)
 else()
   # TODO: remove this block as soon as the CMake version can safely be bumped to => 3.12
-  set(PYTHON_VERSION "" CACHE STRING
+  set(IGN_PYTHON_VERSION "" CACHE STRING
     "Specify specific Python version to use ('major.minor' or 'major')")
 
   # if not specified otherwise use Python 3
-  if(NOT PYTHON_VERSION)
-    set(PYTHON_VERSION "3")
+  if(NOT IGN_PYTHON_VERSION)
+    set(IGN_PYTHON_VERSION "3")
   endif()
 
-  find_package(PythonInterp ${PYTHON_VERSION} QUIET)
+  find_package(PythonInterp ${IGN_PYTHON_VERSION} QUIET)
 
   if(PYTHONINTERP_FOUND)
     set(Python3_Interpreter_FOUND ${PYTHONINTERP_FOUND})
