@@ -126,7 +126,7 @@ macro(ign_setup_gcc_or_clang)
 
   ign_filter_valid_compiler_options(
     CUSTOM_ALL_FLAGS
-        -Wall -Wextra -Wno-long-long -Wno-unused-value -Wfloat-equal
+        -Wall -Wextra -Wno-long-long -Wno-unused-value -Wfloat-equal -Wconversion
         -Wshadow -Winit-self -Wswitch-default -Wmissing-include-dirs -pedantic
         )
 
