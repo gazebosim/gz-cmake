@@ -17,8 +17,9 @@
 
 include(CheckCXXSourceCompiles)
 
-option(IGN_SANITIZER
-  "Compile with a sanitizer. Options are: Address, Memory, MemoryWithOrigins, Undefined, Thread, Leak, 'Address;Undefined', CFI"
+set(USE_SANITIZER ""
+    CACHE STRING
+    "Compile with a sanitizer. Options are: Address, Memory, MemoryWithOrigins, Undefined, Thread, Leak, 'Address;Undefined', CFI"
 )
 
 function(append value)
