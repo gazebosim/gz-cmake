@@ -29,7 +29,7 @@ A quick rundown of the tools available, and what they do:
 - [MemorySanitizer](https://clang.llvm.org/docs/MemorySanitizer.html) detects uninitialized reads.
 - [Control Flow Integrity](https://clang.llvm.org/docs/ControlFlowIntegrity.html) is designed to detect certain forms of undefined behaviour that can potentially allow attackers to subvert the program's control flow.
 
-These are used by declaring the `IGN_USE_SANITIZER` CMake variable as string containing any of:
+These are used by declaring the `IGN_SANITIZER` CMake variable as string containing any of:
 - Address
 - Memory
 - MemoryWithOrigins
@@ -38,4 +38,4 @@ These are used by declaring the `IGN_USE_SANITIZER` CMake variable as string con
 - Leak
 - CFI
 
-Multiple values are allowed, e.g. `-DIGN_USE_SANITIZER=Address,Leak` but some sanitizers cannot be combined together, e.g.`-DIGN_USE_SANITIZER=Address,Memory` will result in configuration error. The delimeter character is not required and `-DIGN_USE_SANITIZER=AddressLeak` would work as well.
+Multiple values are allowed, e.g. `-DIGN_SANITIZER=Address,Leak` but some sanitizers cannot be combined together, e.g.`-DIGN_SANITIZER=Address,Memory` will result in configuration error. The delimeter character is not required and `-DIGN_SANITIZER=AddressLeak` would work as well.

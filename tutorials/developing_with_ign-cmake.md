@@ -98,8 +98,8 @@ To change the build system type, set the CMake flag:
 
 ### Build sanitizers
 
-`USE_SANITIZER` CMake parameter can be used with different compilers to support the detection of different problems in the code.
-[Check the documentation for `USE_SANITIZER` flag](ign_cmake_sanitizers.md)
+`IGN_SANITIZER` CMake parameter can be used with different compilers to support the detection of different problems in the code.
+[Check the documentation for `IGN_SANITIZER` flag](ign_cmake_sanitizers.md)
 
 ### Using CCache
 
