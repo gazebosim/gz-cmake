@@ -54,11 +54,6 @@ if(IGN_SANITIZER)
   unset(SANITIZER_SELECTED_FLAGS)
 
   if(UNIX)
-
-    if(uppercase_CMAKE_BUILD_TYPE STREQUAL "DEBUG")
-      append("-O1" CMAKE_C_FLAGS CMAKE_CXX_FLAGS)
-    endif()
-
     if(IGN_SANITIZER MATCHES "([Aa]ddress)")
       # Optional: -fno-optimize-sibling-calls -fsanitize-address-use-after-scope
       message(STATUS "Testing with Address sanitizer")
