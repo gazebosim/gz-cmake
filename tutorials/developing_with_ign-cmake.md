@@ -96,26 +96,10 @@ To change the build system type, set the CMake flag:
 -GNinja
 ```
 
-### Address sanitizer (ASan)
+### Build sanitizers
 
-The `gcc` and `clang` compilers have a set of flags to generate instrumented builds for detecting memory leaks.
-
-By default, address sanitizer is *not used*.
-
-To enable address sanitizer, set all of the following flags:
-
-```
--DCMAKE_CXX_FLAGS="-fsanitize=address -fsanitize=leak -g"
--DCMAKE_C_FLAGS="-fsanitize=address -fsanitize=leak -g"
--DCMAKE_EXE_LINKER_FLAGS="-fsanitize=address -fsanitize=leak"
--DCMAKE_MODULE_LINKER_FLAGS="-fsanitize=address -fsanitize=leak"
-```
-
-This will report if memory is leaked during execution of binaries or tests.
-
-More information about address santizier can be found in the [ASan documentation](https://github.com/google/sanitizers/wiki/AddressSanitizer).
-
-Note: Address sanitizer may have an impact on the performance of execution.
+`USE_SANITIZER` CMake parameter can be used with different compilers to support the detection of different problems in the code.
+[Check the documentation for `USE_SANITIZER` flag](ign_cmake_sanitizers.md)
 
 ### Using CCache
 

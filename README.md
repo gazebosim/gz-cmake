@@ -89,7 +89,9 @@ Replace `/path/to/install/dir` to whatever directory you want to install this pa
 
 # Usage
 
-This library is used internally by the ignition projects. See other ignition projects for examples of how this gets used.
+Documentation can be accessed at https://ignitionrobotics.org/libs/cmake
+[Examples](examples/) are available in this repository.
+[Tutorials](tutorials/) are also available in this repository.
 
 # Folder Structure
 
