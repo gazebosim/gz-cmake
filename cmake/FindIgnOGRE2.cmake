@@ -45,9 +45,13 @@
 #                      VERSION 2.2.0
 #                      COMPONENTS HlmsPbs HlmsUnlit Overlay)
 
-# sanity check
+# Sanity check: exclude OGRE1 project releasing versions in two ways:
+#  - Legacy in from using 1.x.y until 1.12.y series
+#  - Modern versions using X.Y.Z starting with 13.y.z
+# Reduce valid versions to 2.x series
 if (${IgnOGRE2_FIND_VERSION_MAJOR})
-  if (${IgnOGRE2_FIND_VERSION_MAJOR} VERSION_LESS "2")
+  if (${IgnOGRE2_FIND_VERSION_MAJOR} VERSION_LESS "2" OR
+     (${IgnOGRE2_FIND_VERSION_MAJOR} VERSION_GREATER_EQUAL "3")
     set (OGRE2_FOUND false)
     return()
   endif()
