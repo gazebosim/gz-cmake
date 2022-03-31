@@ -51,7 +51,7 @@
 #          unless REQUIRED or REQUIRED_BY is specified.
 #
 # [CONFIG]:Optional. If provided, it will be passed forward to cmake's
-#          find_package(~) command.This wil trigger Config mode search rather than
+#          find_package(~) command. This will trigger Config mode search rather than
 #          Module mode.
 #
 # [BUILD_ONLY]: Optional. Use this to indicate that the project only needs this
