@@ -1695,7 +1695,6 @@ macro(ign_build_tests)
 
     # Find the Python interpreter for running the
     # check_test_ran.py script
-
     include(IgnPython)
 
     # Build all the tests
@@ -1715,10 +1714,10 @@ macro(ign_build_tests)
 
       set_tests_properties(${target_name} PROPERTIES TIMEOUT 240)
 
-      if(PYTHONINTERP_FOUND)
+      if(Python3_Interpreter_FOUND)
         # Check that the test produced a result and create a failure if it didn't.
         # Guards against crashed and timed out tests.
-        add_test(check_${target_name} ${PYTHON_EXECUTABLE} ${IGNITION_CMAKE_TOOLS_DIR}/check_test_ran.py
+        add_test(check_${target_name} ${Python3_EXECUTABLE} ${IGNITION_CMAKE_TOOLS_DIR}/check_test_ran.py
           ${CMAKE_BINARY_DIR}/test_results/${target_name}.xml)
       endif()
     endforeach()

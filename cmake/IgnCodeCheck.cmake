@@ -44,9 +44,9 @@ function(ign_setup_target_for_codecheck)
     DEPENDS cppcheck
   )
 
-  if(PYTHONINTERP_FOUND)
+  if(Python3_Interpreter_FOUND)
     add_custom_target(cpplint
-      COMMAND ${PYTHON_EXECUTABLE} ${IGNITION_CMAKE_CODECHECK_DIR}/cpplint.py --extensions=cc,hh --quiet `${CPPCHECK_FIND}`
+      COMMAND ${Python3_EXECUTABLE} ${IGNITION_CMAKE_CODECHECK_DIR}/cpplint.py --extensions=cc,hh --quiet `${CPPCHECK_FIND}`
     )
 
     add_dependencies(codecheck cpplint)
