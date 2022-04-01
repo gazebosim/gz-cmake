@@ -203,3 +203,31 @@ if (UNIX)
   set_tests_properties(${TEST_NAME} PROPERTIES
     ENVIRONMENT "${_env_vars}")
 endif()
+
+if(UNIX)
+  # Test for the sanitizers example
+  set(sanitizer_compiler_log ${CMAKE_BINARY_DIR}/examples/Sanitizers-prefix/src/Sanitizers-stamp/Sanitizers-build-out.log)
+  ExternalProject_Add(
+    Sanitizers
+
+    DEPENDS FAKE_INSTALL
+    SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/sanitizers"
+    LOG_BUILD ON
+    LOG_CONFIGURE ON
+    # BUILD_ALWAYS needed since cmake doesn't notice when
+    # example files change.
+    # See alternate approach in a2113e0997c9 if this becomes too slow
+    BUILD_ALWAYS 1
+    BUILD_COMMAND ${CMAKE_COMMAND} --build . --clean-first
+    CMAKE_ARGS
+      "-DCMAKE_PREFIX_PATH=${FAKE_INSTALL_PREFIX};${example_INSTALL_DIR}"
+      "-DCMAKE_BUILD_TYPE=RelWithDebInfo"
+      "-DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/install/Sanitizers"
+      "-DIGN_SANITIZER=Address"
+      "-DCMAKE_CXX_FLAGS=-Wno-unused-parameter"
+      "-DCMAKE_VERBOSE_MAKEFILE:BOOL=ON"
+    TEST_COMMAND
+      # Multiplatform python equivalent to grep "fsanitize=address" "${sanitizer_compiler_log}"
+      python3 -c "exec(\"import sys\\nwith open('${sanitizer_compiler_log}') as f:sys.exit(0) if 'fsanitize=address' in f.read() else sys.exit(1)\")"
+  )
+endif()
