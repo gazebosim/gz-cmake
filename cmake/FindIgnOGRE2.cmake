@@ -57,7 +57,7 @@ if (${IgnOGRE2_FIND_VERSION_MAJOR})
   endif()
 endif()
 
-message(STATUS "-- Finding OGRE 2.${IgnOGRE2_FIND_VERSION_MINOR}")
+message(STATUS " Version: 2.${IgnOGRE2_FIND_VERSION_MINOR}")
 set(OGRE2_INSTALL_PATH "OGRE-2.${IgnOGRE2_FIND_VERSION_MINOR}")
 
 macro(append_library VAR LIB)
@@ -226,8 +226,8 @@ if (NOT WIN32)
         "Ogre${component}.${OGRE2_VERSION}"
         "Ogre${component}"
       HINTS ${OGRE2_LIBRARY_DIRS})
-    if (NOT "OGRE2-${component}" STREQUAL "OGRE2-${component}-NOTFOUND")
-
+    if (NOT "${OGRE2-${component}}" STREQUAL "OGRE2-${component}-NOTFOUND")
+      message(STATUS " component ${component}: found")
       # create a new target for each component
       set(component_TARGET_NAME "IgnOGRE2-${component}::IgnOGRE2-${component}")
       set(component_INCLUDE_DIRS ${OGRE2_INCLUDE_DIRS})
@@ -256,6 +256,7 @@ if (NOT WIN32)
       list(APPEND OGRE2_LIBRARIES ${component_TARGET_NAME})
 
     elseif(IgnOGRE2_FIND_REQUIRED_${component})
+      message(STATUS " component ${component}: not found!")
       set(OGRE2_FOUND false)
     endif()
   endforeach()
