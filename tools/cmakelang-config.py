@@ -9,7 +9,8 @@ with section("format"):
 # ----------------------------
 with section("lint"):
     # regular expression pattern describing valid function names
-    function_pattern = '[0-9a-z_]+'
+    # ign-cmake customization: accept mix of uppercase/lowercase
+    function_pattern = '[0-9a-zA-Z_]+'
 
     # regular expression pattern describing valid names for privatedirectory
     # variables
@@ -18,6 +19,11 @@ with section("lint"):
     # TODO(jrivero): change all private variable to start with _ in new major
     # version ign-cmake3
     private_var_pattern = '_?[0-9A-Za-z_]+'
+
+    # regular expression pattern describing valid names for variables with global
+    # (cache) scope
+    # ign-cmake customization: accept mix of uppercase/lowercase
+    global_var_pattern = '[A-Z][0-9A-Za-z_]+'
 
     # regular expression pattern describing valid macro names
     # ign-cmake customization: accept lower case chars
