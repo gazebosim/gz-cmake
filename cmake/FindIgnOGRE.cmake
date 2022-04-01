@@ -53,10 +53,10 @@ set(minor_version ${IgnOGRE_FIND_VERSION_MINOR})
 set(full_version ${major_version}.${minor_version})
 
 # Copied from OGREConfig.cmake
-macro(ign_ogre_declare_plugin TYPE COMPONENT)
-    set(OGRE_${TYPE}_${COMPONENT}_FOUND TRUE)
-    set(OGRE_${TYPE}_${COMPONENT}_LIBRARIES ${TYPE}_${COMPONENT})
-    list(APPEND OGRE_LIBRARIES ${TYPE}_${COMPONENT})
+macro(ign_ogre_declare_plugin type component)
+  set(OGRE_${type}_${component}_FOUND TRUE)
+  set(OGRE_${type}_${component}_LIBRARIES ${type}_${component})
+  list(APPEND OGRE_LIBRARIES ${type}_${component})
 endmacro()
 
 if (NOT WIN32)
@@ -104,7 +104,9 @@ if (NOT WIN32)
                           OUTPUT_VARIABLE _pkgconfig_invoke_result
                           RESULT_VARIABLE _pkgconfig_failed)
           if(_pkgconfig_failed)
-            IGN_BUILD_WARNING ("Failed to find OGRE's library directory.  The build will succeed, but there will likely be run-time errors.")
+            IGN_BUILD_WARNING ("\
+              Failed to find OGRE's library directory. \
+              The build will succeed, but there will likely be run-time errors.")
           else()
             # set ogre library dir and strip line break
             set(OGRE_LIBRARY_DIRS ${_pkgconfig_invoke_result})
@@ -114,8 +116,8 @@ if (NOT WIN32)
             # in some cases the value of OGRE_LIBRARIES is "OgreMain;pthread"
             # Convert this to full path to library
             if (substr_found EQUAL -1)
-              foreach(OGRE_LIBRARY_NAME ${OGRE_LIBRARIES})
-                find_library(OGRE_LIBRARY NAMES ${OGRE_LIBRARY_NAME}
+              foreach(ogre_library_name ${OGRE_LIBRARIES})
+                find_library(OGRE_LIBRARY NAMES ${ogre_library_name}
                              HINTS ${OGRE_LIBRARY_DIRS} NO_DEFAULT_PATH)
                 list (APPEND TMP_OGRE_LIBRARIES "${OGRE_LIBRARY}")
               endforeach()
@@ -151,7 +153,8 @@ if (NOT WIN32)
                     OUTPUT_VARIABLE _pkgconfig_invoke_result
                     RESULT_VARIABLE _pkgconfig_failed)
     if(_pkgconfig_failed)
-      IGN_BUILD_WARNING ("Failed to find OGRE's plugin directory.  The build will succeed, but there will likely be run-time errors.")
+      IGN_BUILD_WARNING ("Failed to find OGRE's plugin directory. \
+        The build will succeed, but there will likely be run-time errors.")
     else()
       # This variable will be substituted into cmake/setup.sh.in
       set(OGRE_PLUGINDIR ${_pkgconfig_invoke_result})
@@ -208,11 +211,11 @@ else()
         string(REGEX REPLACE "\\$.*>" "" ogre_lib ${ogre_lib})
         # Be sure that all Ogre* libraries are using absolute paths
         set(prefix "")
-	# vcpkg uses special directory (lib/manual-link/) to place libraries
-	# with main sysmbol like OgreMain.
-	if(ogre_lib MATCHES "OgreMain" AND NOT IS_ABSOLUTE "${ogre_lib}" AND EXISTS "${OGRE_LIBRARY_DIRS}/manual-link/")
+        # vcpkg uses special directory (lib/manual-link/) to place libraries
+        # with main sysmbol like OgreMain.
+        if(ogre_lib MATCHES "OgreMain" AND NOT IS_ABSOLUTE "${ogre_lib}" AND EXISTS "${OGRE_LIBRARY_DIRS}/manual-link/")
           set(prefix "${OGRE_LIBRARY_DIRS}/manual-link/")
-	elseif(ogre_lib MATCHES "Ogre" AND NOT IS_ABSOLUTE "${ogre_lib}")
+        elseif(ogre_lib MATCHES "Ogre" AND NOT IS_ABSOLUTE "${ogre_lib}")
           set(prefix "${OGRE_LIBRARY_DIRS}/")
         endif()
         if(ogre_lib MATCHES "Plugin_" OR ogre_lib MATCHES "RenderSystem_")
