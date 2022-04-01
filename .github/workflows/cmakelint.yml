@@ -26,5 +26,5 @@ jobs:
           cmake-lint --version
           for f in cmake/*.cmake; do
             echo "Processing ${f}"
-            cmake-lint -c tools/cmakelang-config.py $f
+            cmake-lint -c tools/cmakelang-config.py -- $f
           done
