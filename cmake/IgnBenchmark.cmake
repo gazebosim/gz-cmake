@@ -35,12 +35,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Generate the version_info_target for generating version_info.json
 function(ign_add_version_info_target)
   # generate a version_info.json file that can be used to embed project
   # version information
   # While this command may look a bit unweildy, it creates a target
   # that forces the file to be regenerated at build time.
   add_custom_target(version_info_target
+    COMMENT "Generate version_info.json"
     COMMAND ${CMAKE_COMMAND}
       -Dinput_file=${IGNITION_CMAKE_DIR}/version_info.json.in
       -Doutput_file=${CMAKE_CURRENT_BINARY_DIR}/version_info.json
@@ -58,6 +60,12 @@ function(ign_add_version_info_target)
   )
 endfunction()
 
+#################################################
+# ign_add_benchmarks(
+#   SOURCES <source_files>)
+#
+# Generate benchmark tests using google benchmark
+#
 function(ign_add_benchmarks)
   cmake_parse_arguments(BENCHMARK "" "" "SOURCES" ${ARGN})
 
@@ -78,9 +86,9 @@ function(ign_add_benchmarks)
     EXEC_LIST BENCHMARK_TARGETS
   )
 
-  set(BENCHMARK_TARGETS_LIST "")
+  set(benchmark_targets_list "")
   foreach(benchmark ${BENCHMARK_TARGETS})
-    list(APPEND BENCHMARK_TARGETS_LIST "$<TARGET_FILE:${benchmark}>")
+    list(APPEND benchmark_targets_list "$<TARGET_FILE:${benchmark}>")
   endforeach()
 
   ign_add_version_info_target()
@@ -89,10 +97,11 @@ function(ign_add_benchmarks)
     OUTPUT
     "${CMAKE_CURRENT_BINARY_DIR}/benchmark_targets"
     CONTENT
-    "${BENCHMARK_TARGETS_LIST}")
+    "${benchmark_targets_list}")
 
   add_custom_target(
     run_benchmarks
+    COMMENT "Execute run_benchmarks script"
     COMMAND python3 ${IGNITION_CMAKE_BENCHMARK_DIR}/run_benchmarks.py
       --project-name ${PROJECT_NAME}
       --version-file ${CMAKE_CURRENT_BINARY_DIR}/version_info.json

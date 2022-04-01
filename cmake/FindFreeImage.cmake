@@ -44,7 +44,14 @@ if (NOT WIN32)
       set(FreeImage_test_output "")
       set(FreeImage_compile_output "")
       file(WRITE ${testFreeImageSource}
-        "#include <FreeImage.h>\nint main () { if (FREEIMAGE_MAJOR_VERSION >= ${major_version} && FREEIMAGE_MINOR_VERSION >= ${minor_version}) return 1; else return 0;} \n")
+        "#include <FreeImage.h>
+         int main () {
+           if (FREEIMAGE_MAJOR_VERSION >= ${major_version} &&
+               FREEIMAGE_MINOR_VERSION >= ${minor_version})
+             return 1;
+           else
+             return 0;
+         }")
 
       try_run(FREEIMAGE_RUNS
               FREEIMAGE_COMPILES

@@ -51,7 +51,7 @@
 # Reduce valid versions to 2.x series
 if (${IgnOGRE2_FIND_VERSION_MAJOR})
   if (${IgnOGRE2_FIND_VERSION_MAJOR} VERSION_LESS "2" OR
-     (${IgnOGRE2_FIND_VERSION_MAJOR} VERSION_GREATER_EQUAL "3")
+      ${IgnOGRE2_FIND_VERSION_MAJOR} VERSION_GREATER_EQUAL "3")
     set (OGRE2_FOUND false)
     return()
   endif()
