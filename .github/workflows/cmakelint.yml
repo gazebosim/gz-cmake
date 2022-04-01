@@ -25,6 +25,7 @@ jobs:
         run: |
           cmake-lint --version
           for f in cmake/*; do
+            echo "Processing ${f}"
             cmake-lint \
               --macro-pattern [0-9A-Za-z_]+ \
               --line-width=120 \
