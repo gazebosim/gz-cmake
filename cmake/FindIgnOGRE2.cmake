@@ -37,7 +37,8 @@
 # On Windows, we assume that all the OGRE* defines are passed in manually
 # to CMake.
 #
-# Supports finding the following OGRE2 components: HlmsPbs, HlmsUnlit, Overlay
+# Supports finding the following OGRE2 components: HlmsPbs, HlmsUnlit, Overlay,
+#  PlanarReflections
 #
 # Example usage:
 #
@@ -53,12 +54,27 @@ if (${IgnOGRE2_FIND_VERSION_MAJOR})
   endif()
 endif()
 
-message(STATUS "-- Finding OGRE 2.${IgnOGRE2_FIND_VERSION_MINOR}")
-set(OGRE2_INSTALL_PATH "OGRE-2.${IgnOGRE2_FIND_VERSION_MINOR}")
+message(STATUS " Version: OGRE 2.${IgnOGRE2_FIND_VERSION_MINOR}")
 
 macro(append_library VAR LIB)
   if(EXISTS "${LIB}")
     list(APPEND ${VAR} ${LIB})
+  endif()
+endmacro()
+
+macro(fix_pkgconfig_prefix_jammy_bug FILESYSTEM_PATH OUTPUT_VAR)
+  if (NOT EXISTS "${FILESYSTEM_PATH}")
+    string(REPLACE "/usr//usr" "/usr"
+      ${OUTPUT_VAR}
+      ${FILESYSTEM_PATH})
+  endif()
+endmacro()
+
+macro(fix_pkgconfig_resource_path_jammy_bug FILESYSTEM_PATH OUTPUT_VAR)
+  if (NOT EXISTS "${FILESYSTEM_PATH}")
+    string(REPLACE "OGRE/OGRE-Next" "OGRE-Next"
+      ${OUTPUT_VAR}
+      ${FILESYSTEM_PATH})
   endif()
 endmacro()
 
@@ -109,14 +125,27 @@ endmacro()
 
 if (NOT WIN32)
   set(PKG_CONFIG_PATH_ORIGINAL $ENV{PKG_CONFIG_PATH})
+  # TODO: define default
+  #set(OGRE2NAME "")
+  if (OGRE2NAME STREQUAL "OGRE2")
+    set(OGRE2_INSTALL_PATH "OGRE-2.${IgnOGRE2_FIND_VERSION_MINOR}")
+    set(OGRE2LIBNAME "Ogre")
+  else()
+    set(OGRE2_INSTALL_PATH "OGRE-Next")
+    set(OGRE2LIBNAME "OgreNext")
+  endif()
 
   # Note: OGRE2 installed from debs is named OGRE-2.2 while the version
   # installed from source does not have the 2.2 suffix
   # look for OGRE2 installed from debs
-  ign_pkg_check_modules_quiet(OGRE2 ${OGRE2_INSTALL_PATH} NO_CMAKE_ENVIRONMENT_PATH QUIET)
+  ign_pkg_check_modules_quiet(${OGRE2NAME} ${OGRE2_INSTALL_PATH} NO_CMAKE_ENVIRONMENT_PATH QUIET)
 
-  if (OGRE2_FOUND)
+  if (${OGRE2NAME}_FOUND)
     set(IGN_PKG_NAME ${OGRE2_INSTALL_PATH})
+    # TODO: cleanup
+    set(OGRE2_FOUND ${${OGRE2NAME}_FOUND})  # sync possible OGRE-Next to OGRE2
+    fix_pkgconfig_prefix_jammy_bug("${${OGRE2NAME}_LIBRARY_DIRS}" OGRE2_LIBRARY_DIRS)
+    set(OGRE2_LIBRARIES ${${OGRE2NAME}_LIBRARIES})  # sync possible Ogre-Next ot OGRE2
   else()
     # look for OGRE2 installed from source
     set(PKG_CONFIG_PATH_TMP ${PKG_CONFIG_PATH_ORIGINAL})
@@ -175,11 +204,13 @@ if (NOT WIN32)
   if(_pkgconfig_failed)
     IGN_BUILD_WARNING ("Failed to find OGRE's plugin directory. The build will succeed, but there will likely be run-time errors.")
   else()
-    set(OGRE2_PLUGINDIR ${_pkgconfig_invoke_result})
+    fix_pkgconfig_prefix_jammy_bug("${_pkgconfig_invoke_result}" OGRE2_PLUGINDIR)
   endif()
 
   # reset pkg config path
   set(ENV{PKG_CONFIG_PATH} ${PKG_CONFIG_PATH_ORIGINAL})
+
+  set(OGRE2_INCLUDE_DIRS ${${OGRE2NAME}_INCLUDE_DIRS})  # sync possible OGRE-Next to OGRE2
 
   # verify ogre header can be found in the include path
   find_path(OGRE2_INCLUDE
@@ -202,6 +233,7 @@ if (NOT WIN32)
     else()
       set(dir_include "${dir}")
     endif()
+
     list(APPEND OGRE2_INCLUDE_DIRS ${dir_include})
   endforeach()
 
@@ -217,30 +249,34 @@ if (NOT WIN32)
   foreach(component ${IgnOGRE2_FIND_COMPONENTS})
     find_library(OGRE2-${component}
       NAMES
-        "Ogre${component}_d.${OGRE2_VERSION}"
-        "Ogre${component}_d"
-        "Ogre${component}.${OGRE2_VERSION}"
-        "Ogre${component}"
+        "${OGRE2LIBNAME}${component}_d.${OGRE2_VERSION}"
+        "${OGRE2LIBNAME}${component}_d"
+        "${OGRE2LIBNAME}${component}.${OGRE2_VERSION}"
+        "${OGRE2LIBNAME}${component}"
       HINTS ${OGRE2_LIBRARY_DIRS})
-    if (NOT "OGRE2-${component}" STREQUAL "OGRE2-${component}-NOTFOUND")
-
+    if (NOT "${OGRE2-${component}}" STREQUAL "OGRE2-${component}-NOTFOUND")
+      message(STATUS " component ${component}: found")
       # create a new target for each component
       set(component_TARGET_NAME "IgnOGRE2-${component}::IgnOGRE2-${component}")
       set(component_INCLUDE_DIRS ${OGRE2_INCLUDE_DIRS})
 
-      # append the Hlms/Common include dir if it exists.
-      string(FIND ${component} "Hlms" HLMS_POS)
-      if(${HLMS_POS} GREATER -1)
         foreach (dir ${OGRE2_INCLUDE_DIRS})
           get_filename_component(dir_name "${dir}" NAME)
           if ("${dir_name}" STREQUAL ${IGN_PKG_NAME})
-            set(dir_include "${dir}/Hlms/Common")
-            if (EXISTS ${dir_include})
-              list(APPEND component_INCLUDE_DIRS ${dir_include})
+            # 1. append the Hlms/Common include dir if it exists.
+            string(FIND ${component} "Hlms" HLMS_POS)
+            if(${HLMS_POS} GREATER -1)
+              set(dir_include "${dir}/Hlms/Common")
+              if (EXISTS ${dir_include})
+                list(APPEND component_INCLUDE_DIRS ${dir_include})
+              endif()
+            endif()
+            # 2. append the PlanarReflections include
+            if(${component} STREQUAL "PlanarReflections")
+               list(APPEND component_INCLUDE_DIRS "${dir}/PlanarReflections")
             endif()
           endif()
         endforeach()
-      endif()
 
       set(component_LIBRARY_DIRS ${OGRE2_LIBRARY_DIRS})
       set(component_LIBRARIES ${OGRE2-${component}})
@@ -252,6 +288,7 @@ if (NOT WIN32)
       list(APPEND OGRE2_LIBRARIES ${component_TARGET_NAME})
 
     elseif(IgnOGRE2_FIND_REQUIRED_${component})
+      message(STATUS " component ${component}: not found!")
       set(OGRE2_FOUND false)
     endif()
   endforeach()
@@ -269,6 +306,7 @@ if (NOT WIN32)
     # when we pass it to the compiler later.
     string(REPLACE "\n" "" OGRE2_RESOURCE_PATH ${OGRE2_RESOURCE_PATH})
   endif()
+  fix_pkgconfig_resource_path_jammy_bug("${OGRE2_RESOURCE_PATH}" OGRE2_RESOURCE_PATH)
 
   # We need to manually specify the pkgconfig entry (and type of entry),
   # because ign_pkg_check_modules does not work for it.
