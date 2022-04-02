@@ -258,7 +258,6 @@ if (NOT WIN32)
     else()
       set(dir_include "${dir}")
     endif()
-
     list(APPEND OGRE2_INCLUDE_DIRS ${dir_include})
   endforeach()
 
