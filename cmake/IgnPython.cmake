@@ -37,3 +37,8 @@ else()
     set(Python3_EXECUTABLE ${PYTHON_EXECUTABLE})
   endif()
 endif()
+
+# Tick-tock PYTHON_EXECUTABLE until Python3_EXECUTABLE is released
+if(Python3_EXECUTABLE AND NOT PYTHON_EXECUTABLE)
+  set(PYTHON_EXECUTABLE ${Python3_EXECUTABLE})
+endif()
