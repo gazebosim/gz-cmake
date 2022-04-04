@@ -67,7 +67,7 @@ if (${IgnOGRE2_FIND_VERSION_MAJOR})
   endif()
 endif()
 
-message(STATUS " Version: OGRE 2.${IgnOGRE2_FIND_VERSION_MINOR}")
+message(STATUS " Version: 2.${IgnOGRE2_FIND_VERSION_MINOR}")
 
 macro(append_library VAR LIB)
   if(EXISTS "${LIB}")
