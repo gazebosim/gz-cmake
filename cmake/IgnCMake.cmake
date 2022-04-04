@@ -30,6 +30,7 @@ include(IgnSetCompilerFlags)
 include(IgnConfigureBuild)
 include(IgnImportTarget)
 include(IgnPkgConfig)
+include(IgnSanitizers)
 
 #============================================================================
 # Native cmake modules
