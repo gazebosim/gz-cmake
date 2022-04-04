@@ -22,6 +22,15 @@
 #
 #     ign_find_package(IgnOGRE2)
 #
+# Variables used by this module, they can change the default behaviour and need
+# to be set before calling find_package:
+#
+#  IGN_OGRE2_PROJECT_NAME    Possible values: OGRE2 (default) or OGRE-Next
+#                            (Only on UNIX, not in use for Windows)
+#                            Specify the project name used in the packaging.
+#                            It will impact directly in the name of the
+#                            CMake/pkg-config modules beind used.
+#
 # Variables defined by this module:
 #
 #  OGRE2_FOUND              System has OGRE libs/headers
@@ -62,6 +71,8 @@ macro(append_library VAR LIB)
   endif()
 endmacro()
 
+# Ubuntu Jammy version 2.2.5+dfsg3-0ubuntu2 is buggy in the pkg-config files
+# duplicating usr/usr for some paths in pkg-config
 macro(fix_pkgconfig_prefix_jammy_bug FILESYSTEM_PATH OUTPUT_VAR)
   if (NOT EXISTS "${FILESYSTEM_PATH}")
     string(REPLACE "/usr//usr" "/usr"
@@ -70,6 +81,9 @@ macro(fix_pkgconfig_prefix_jammy_bug FILESYSTEM_PATH OUTPUT_VAR)
   endif()
 endmacro()
 
+# Ubuntu Jammy version 2.2.5+dfsg3-0ubuntu2 is buggy in the pkg-config files
+# using a non existing path /usr/lib/${arch}/OGRE/OGRE-Next insted of the path
+# /usr/lib/${arch}/OGRE-Next which is the right one
 macro(fix_pkgconfig_resource_path_jammy_bug FILESYSTEM_PATH OUTPUT_VAR)
   if (NOT EXISTS "${FILESYSTEM_PATH}")
     string(REPLACE "OGRE/OGRE-Next" "OGRE-Next"
@@ -124,30 +138,35 @@ macro(get_preprocessor_entry CONTENTS KEYWORD VARIABLE)
 endmacro()
 
 if (NOT WIN32)
-  set(PKG_CONFIG_PATH_ORIGINAL $ENV{PKG_CONFIG_PATH})
   # Default to initial version of the file released in ign-cmake2 that uses
   # OGRE2 as the name of the package.
-  if (NOT OGRE2NAME)
-    set(OGRE2NAME "OGRE2")
+  if (NOT IGN_OGRE2_PROJECT_NAME)
+    set(IGN_OGRE2_PROJECT_NAME "OGRE2")
   endif()
-  if (OGRE2NAME STREQUAL "OGRE2")
+  if (IGN_OGRE2_PROJECT_NAME STREQUAL "OGRE2")
     set(OGRE2_INSTALL_PATH "OGRE-2.${IgnOGRE2_FIND_VERSION_MINOR}")
     set(OGRE2LIBNAME "Ogre")
-  else()
+  elseif(IGN_OGRE2_PROJECT_NAME STREQUAL "OGRE-Next")
     set(OGRE2_INSTALL_PATH "OGRE-Next")
     set(OGRE2LIBNAME "OgreNext")
+  else()
+    message(FATAL_ERROR
+      "IGN_OGRE2_PROJECT_NAME parameter value: "
+      "'${IGN_OGRE2_PROJECT_NAME}' is not one of the valid inputs: "
+      "OGRE2 or OGRE-Next")
   endif()
 
+  set(PKG_CONFIG_PATH_ORIGINAL $ENV{PKG_CONFIG_PATH})
   # Note: OGRE2 installed from debs is named OGRE-2.2 while the version
   # installed from source does not have the 2.2 suffix
   # look for OGRE2 installed from debs
-  ign_pkg_check_modules_quiet(${OGRE2NAME} ${OGRE2_INSTALL_PATH} NO_CMAKE_ENVIRONMENT_PATH QUIET)
+  ign_pkg_check_modules_quiet(${IGN_OGRE2_PROJECT_NAME} ${OGRE2_INSTALL_PATH} NO_CMAKE_ENVIRONMENT_PATH QUIET)
 
-  if (${OGRE2NAME}_FOUND)
+  if (${IGN_OGRE2_PROJECT_NAME}_FOUND)
     set(IGN_PKG_NAME ${OGRE2_INSTALL_PATH})
-    set(OGRE2_FOUND ${${OGRE2NAME}_FOUND})  # sync possible OGRE-Next to OGRE2
-    fix_pkgconfig_prefix_jammy_bug("${${OGRE2NAME}_LIBRARY_DIRS}" OGRE2_LIBRARY_DIRS)
-    set(OGRE2_LIBRARIES ${${OGRE2NAME}_LIBRARIES})  # sync possible Ogre-Next ot OGRE2
+    set(OGRE2_FOUND ${${IGN_OGRE2_PROJECT_NAME}_FOUND})  # sync possible OGRE-Next to OGRE2
+    fix_pkgconfig_prefix_jammy_bug("${${IGN_OGRE2_PROJECT_NAME}_LIBRARY_DIRS}" OGRE2_LIBRARY_DIRS)
+    set(OGRE2_LIBRARIES ${${IGN_OGRE2_PROJECT_NAME}_LIBRARIES})  # sync possible Ogre-Next ot OGRE2
   else()
     # look for OGRE2 installed from source
     set(PKG_CONFIG_PATH_TMP ${PKG_CONFIG_PATH_ORIGINAL})
@@ -212,7 +231,7 @@ if (NOT WIN32)
   # reset pkg config path
   set(ENV{PKG_CONFIG_PATH} ${PKG_CONFIG_PATH_ORIGINAL})
 
-  set(OGRE2_INCLUDE_DIRS ${${OGRE2NAME}_INCLUDE_DIRS})  # sync possible OGRE-Next to OGRE2
+  set(OGRE2_INCLUDE_DIRS ${${IGN_OGRE2_PROJECT_NAME}_INCLUDE_DIRS})  # sync possible OGRE-Next to OGRE2
 
   # verify ogre header can be found in the include path
   find_path(OGRE2_INCLUDE
