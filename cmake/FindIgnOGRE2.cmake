@@ -125,8 +125,11 @@ endmacro()
 
 if (NOT WIN32)
   set(PKG_CONFIG_PATH_ORIGINAL $ENV{PKG_CONFIG_PATH})
-  # TODO: define default
-  #set(OGRE2NAME "")
+  # Default to initial version of the file released in ign-cmake2 that uses
+  # OGRE2 as the name of the package.
+  if (NOT OGRE2NAME)
+    set(OGRE2NAME "OGRE2")
+  endif()
   if (OGRE2NAME STREQUAL "OGRE2")
     set(OGRE2_INSTALL_PATH "OGRE-2.${IgnOGRE2_FIND_VERSION_MINOR}")
     set(OGRE2LIBNAME "Ogre")
@@ -142,7 +145,6 @@ if (NOT WIN32)
 
   if (${OGRE2NAME}_FOUND)
     set(IGN_PKG_NAME ${OGRE2_INSTALL_PATH})
-    # TODO: cleanup
     set(OGRE2_FOUND ${${OGRE2NAME}_FOUND})  # sync possible OGRE-Next to OGRE2
     fix_pkgconfig_prefix_jammy_bug("${${OGRE2NAME}_LIBRARY_DIRS}" OGRE2_LIBRARY_DIRS)
     set(OGRE2_LIBRARIES ${${OGRE2NAME}_LIBRARIES})  # sync possible Ogre-Next ot OGRE2
