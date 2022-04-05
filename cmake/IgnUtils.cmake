@@ -1,7 +1,7 @@
 
 #################################################
 # ign_find_package(<PACKAGE_NAME>
-#                  [REQUIRED] [PRIVATE] [EXACT] [QUIET] [CONFIG][BUILD_ONLY] [PKGCONFIG_IGNORE]
+#                  [REQUIRED] [PRIVATE] [EXACT] [QUIET] [CONFIG] [BUILD_ONLY] [PKGCONFIG_IGNORE]
 #                  [COMPONENTS <components_of_PACKAGE_NAME>]
 #                  [OPTIONAL_COMPONENTS <components_of_PACKAGE_NAME>]
 #                  [REQUIRED_BY <components_of_project>]
