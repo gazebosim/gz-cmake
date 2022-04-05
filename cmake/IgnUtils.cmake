@@ -50,7 +50,7 @@
 #          output, except there will be no warning if the package is missing,
 #          unless REQUIRED or REQUIRED_BY is specified.
 #
-# [CONFIG]:Optional. If provided, it will be passed forward to cmake's
+# [CONFIG]: Optional. If provided, it will be passed forward to cmake's
 #          find_package(~) command. This will trigger Config mode search rather than
 #          Module mode.
 #
