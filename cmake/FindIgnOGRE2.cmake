@@ -29,7 +29,7 @@
 #                            (Only on UNIX, not in use for Windows)
 #                            Specify the project name used in the packaging.
 #                            It will impact directly in the name of the
-#                            CMake/pkg-config modules beind used.
+#                            CMake/pkg-config modules being used.
 #
 # Variables defined by this module:
 #
