@@ -1,6 +1,69 @@
 ## Ignition CMake 2.x
 
-### Ignition CMake 2.X.X (20XX-XX-XX)
+### Ignition CMake 2.x.x (xxxx-xx-xx)
+
+### Ignition CMake 2.11.0 (2022-02-23)
+
+1. Set source path to be used by common::testing 
+    * [Pull request #206](https://github.com/ignitionrobotics/ign-cmake/pull/206)
+
+3. Add examples using static libraries
+    * [Pull request #202](https://github.com/ignitionrobotics/ign-cmake/pull/202)
+
+### Ignition CMake 2.10.0 (2021-12-21)
+
+1. doxygen allow all .cc, .hh, and CMakeLists.txt, not just in examples/ dir
+    * [Pull request #198](https://github.com/ignitionrobotics/ign-cmake/pull/198)
+
+1. Add `LEGACY_PROJECT_PREFIX` parameter to `ign_create_core_library`
+    * [Pull request #199](https://github.com/ignitionrobotics/ign-cmake/pull/199)
+
+1. Add `HIDE_SYMBOLS_BY_DEFAULT` parameter to `ign_configure_build`
+    * [Pull request #196](https://github.com/ignitionrobotics/ign-cmake/pull/196)
+
+1. Add Ubuntu Jammy CI
+    * [Pull request #194](https://github.com/ignitionrobotics/ign-cmake/pull/194)
+
+1. FindIgnURDFDOM cmake module
+    * [Pull request #193](https://github.com/ignitionrobotics/ign-cmake/pull/193)
+
+1. Do not modify `CMAKE_FIND_LIBRARY_PREFIXES` and `CMAKE_FIND_LIBRARY_SUFFIXES` on Windows
+    * [Pull request #189](https://github.com/ignitionrobotics/ign-cmake/pull/189)
+
+1. Project option: `REPLACE_IGNITION_INCLUDE_PATH`
+    * [Pull request #190](https://github.com/ignitionrobotics/ign-cmake/pull/190)
+
+1. Project option: `NO_IGNITION_PREFIX`
+    * [Pull request #191](https://github.com/ignitionrobotics/ign-cmake/pull/191)
+
+### Ignition CMake 2.9.0 (2021-09-02)
+
+1. Fix include directory flags for codecheck
+    * [Pull request #186](https://github.com/ignitionrobotics/ign-cmake/pull/186)
+
+1. Fix problems on IgnOGRE when version is not found
+    * [Pull request #175](https://github.com/ignitionrobotics/ign-cmake/pull/175)
+
+1. Remove bitbucket-pipelines.yml
+    * [Pull request #181](https://github.com/ignitionrobotics/ign-cmake/pull/181)
+
+1. Include IMAGE_PATH directories in ign_create_docs
+    * [Pull request #183](https://github.com/ignitionrobotics/ign-cmake/pull/183)
+
+1. Special case for ogre2.2 on Windows
+    * [Pull request #176](https://github.com/ignitionrobotics/ign-cmake/pull/176)
+    * [Pull request #177](https://github.com/ignitionrobotics/ign-cmake/pull/177)
+    * [Pull request #178](https://github.com/ignitionrobotics/ign-cmake/pull/178)
+    * [Pull request #180](https://github.com/ignitionrobotics/ign-cmake/pull/180)
+
+1. Fix building OGRE / OGRE2 from source in colcon workspace
+    * [Pull request #174](https://github.com/ignitionrobotics/ign-cmake/pull/174)
+
+1. Remove codecov badge from README
+    * [Pull request #172](https://github.com/ignitionrobotics/ign-cmake/pull/172)
+
+1. Port codecov to new configuration
+    * [Pull request #170](https://github.com/ignitionrobotics/ign-cmake/pull/170)
 
 ### Ignition CMake 2.8.0 (2021-04-30)
 

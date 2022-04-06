@@ -69,7 +69,7 @@ if (NOT WIN32)
                   RESULT_VARIABLE _pkgconfig_failed)
   if(_pkgconfig_failed)
     IGN_BUILD_WARNING ("Failed to get pkg-config search paths")
-  elseif (NOT "_pkgconfig_invoke_result" STREQUAL "")
+  elseif (NOT _pkgconfig_invoke_result STREQUAL "")
     set (PKG_CONFIG_PATH_TMP "${PKG_CONFIG_PATH_TMP}:${_pkgconfig_invoke_result}")
   endif()
 
@@ -83,6 +83,13 @@ if (NOT WIN32)
 
   # loop through pkg config paths and find an ogre version that is < 2.0.0
   foreach(pkg_path ${PKG_CONFIG_PATH_TMP})
+    if (NOT EXISTS ${pkg_path})
+      continue()
+    endif()
+    set(OGRE_FOUND false)
+    set(OGRE_INCLUDE_DIRS "")
+    set(OGRE_LIBRARY_DIRS "")
+    set(OGRE_LIBRARIES "")
     set(ENV{PKG_CONFIG_PATH} ${pkg_path})
     ign_pkg_check_modules_quiet(OGRE "OGRE >= ${full_version}"
                                 NO_CMAKE_ENVIRONMENT_PATH
@@ -91,6 +98,31 @@ if (NOT WIN32)
       if (NOT ${OGRE_VERSION} VERSION_LESS 2.0.0)
         set (OGRE_FOUND false)
       else ()
+        # set library dirs if the value is empty
+        if (NOT ${OGRE_LIBRARY_DIRS} OR ${OGRE_LIBRARY_DIRS} STREQUAL "")
+          execute_process(COMMAND pkg-config --variable=libdir OGRE
+                          OUTPUT_VARIABLE _pkgconfig_invoke_result
+                          RESULT_VARIABLE _pkgconfig_failed)
+          if(_pkgconfig_failed)
+            IGN_BUILD_WARNING ("Failed to find OGRE's library directory.  The build will succeed, but there will likely be run-time errors.")
+          else()
+            # set ogre library dir and strip line break
+            set(OGRE_LIBRARY_DIRS ${_pkgconfig_invoke_result})
+            string(REGEX REPLACE "\n$" "" OGRE_LIBRARY_DIRS "${OGRE_LIBRARY_DIRS}")
+
+            string(FIND "${OGRE_LIBRARIES}" "${OGRE_LIBRARY_DIRS}" substr_found)
+            # in some cases the value of OGRE_LIBRARIES is "OgreMain;pthread"
+            # Convert this to full path to library
+            if (substr_found EQUAL -1)
+              foreach(OGRE_LIBRARY_NAME ${OGRE_LIBRARIES})
+                find_library(OGRE_LIBRARY NAMES ${OGRE_LIBRARY_NAME}
+                             HINTS ${OGRE_LIBRARY_DIRS} NO_DEFAULT_PATH)
+                list (APPEND TMP_OGRE_LIBRARIES "${OGRE_LIBRARY}")
+              endforeach()
+              set(OGRE_LIBRARIES ${TMP_OGRE_LIBRARIES})
+            endif()
+          endif()
+        endif()
         break()
       endif()
     endif()
@@ -107,7 +139,7 @@ if (NOT WIN32)
 
     # find ogre components
     foreach(component ${IgnOGRE_FIND_COMPONENTS})
-      ign_pkg_check_modules_quiet(IgnOGRE-${component} "OGRE-${component} >= ${full_version}")
+      ign_pkg_check_modules_quiet(IgnOGRE-${component} "OGRE-${component} >= ${full_version}" NO_CMAKE_ENVIRONMENT_PATH)
       if(IgnOGRE-${component}_FOUND)
         list(APPEND OGRE_LIBRARIES IgnOGRE-${component}::IgnOGRE-${component})
       elseif(IgnOGRE_FIND_REQUIRED_${component})
@@ -206,28 +238,27 @@ else()
   endif()
 endif()
 
-# manually search and append the the RenderSystem/GL path to
-# OGRE_INCLUDE_DIRS so OGRE GL headers can be found
-foreach (dir ${OGRE_INCLUDE_DIRS})
-  get_filename_component(dir_name "${dir}" NAME)
-  if("${dir_name}" STREQUAL "OGRE")
-    if(${OGRE_VERSION} VERSION_LESS 1.11.0)
-      set(dir_include "${dir}/RenderSystems/GL")
-    else()
-      set(dir_include "${dir}/RenderSystems/GL" "${dir}/Paging")
-    endif()
-  else()
-    set(dir_include "${dir}")
-  endif()
-  list(APPEND OGRE_INCLUDE_DIRS ${dir_include})
-endforeach()
-
 set(IgnOGRE_FOUND false)
 if(OGRE_FOUND)
   set(IgnOGRE_FOUND true)
 
-  include(IgnImportTarget)
+  # manually search and append the the RenderSystem/GL path to
+  # OGRE_INCLUDE_DIRS so OGRE GL headers can be found
+  foreach(dir ${OGRE_INCLUDE_DIRS})
+    get_filename_component(dir_name "${dir}" NAME)
+    if("${dir_name}" STREQUAL "OGRE")
+      if(${OGRE_VERSION} VERSION_LESS 1.11.0)
+        set(dir_include "${dir}/RenderSystems/GL")
+      else()
+        set(dir_include "${dir}/RenderSystems/GL" "${dir}/Paging")
+      endif()
+    else()
+      set(dir_include "${dir}")
+    endif()
+    list(APPEND OGRE_INCLUDE_DIRS ${dir_include})
+  endforeach()
 
+  include(IgnImportTarget)
   ign_import_target(IgnOGRE
     TARGET_NAME IgnOGRE::IgnOGRE
     LIB_VAR OGRE_LIBRARIES

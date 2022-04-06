@@ -30,7 +30,7 @@ That's right, just throw it all out.
 We're migrating to 3.10 because it provides many valuable features that we are
 now taking advantage of.
 
-### Then call `find_package(ignition-cmake2 REQUIRED)`
+### Then call `find_package(ignition-cmake3 REQUIRED)`
 
 This will find `ignition-cmake` and load up all its useful features for you.
 

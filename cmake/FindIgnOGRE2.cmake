@@ -45,15 +45,19 @@
 #                      VERSION 2.2.0
 #                      COMPONENTS HlmsPbs HlmsUnlit Overlay)
 
-# sanity check
+# Sanity check: exclude OGRE1 project releasing versions in two ways:
+#  - Legacy in from using 1.x.y until 1.12.y series
+#  - Modern versions using X.Y.Z starting with 13.y.z
+# Reduce valid versions to 2.x series
 if (${IgnOGRE2_FIND_VERSION_MAJOR})
-  if (${IgnOGRE2_FIND_VERSION_MAJOR} VERSION_LESS "2")
+  if (${IgnOGRE2_FIND_VERSION_MAJOR} VERSION_LESS "2" OR
+      ${IgnOGRE2_FIND_VERSION_MAJOR} VERSION_GREATER_EQUAL "3")
     set (OGRE2_FOUND false)
     return()
   endif()
 endif()
 
-message(STATUS "-- Finding OGRE 2.${IgnOGRE2_FIND_VERSION_MINOR}")
+message(STATUS " Version: 2.${IgnOGRE2_FIND_VERSION_MINOR}")
 set(OGRE2_INSTALL_PATH "OGRE-2.${IgnOGRE2_FIND_VERSION_MINOR}")
 
 macro(append_library VAR LIB)
@@ -92,6 +96,21 @@ macro(select_lib_by_build_type LIBRARY_STR OUTPUT_VAR)
   endif()
 endmacro()
 
+# this macro and the version parsing logic below is taken from the
+# FindOGRE.cmake file distributed by ogre
+macro(get_preprocessor_entry CONTENTS KEYWORD VARIABLE)
+  string(REGEX MATCH
+    "# *define +${KEYWORD} +((\"([^\n]*)\")|([^ \n]*))"
+    PREPROC_TEMP_VAR
+    ${${CONTENTS}}
+  )
+  if (CMAKE_MATCH_3)
+    set(${VARIABLE} ${CMAKE_MATCH_3})
+  else ()
+    set(${VARIABLE} ${CMAKE_MATCH_4})
+  endif ()
+endmacro()
+
 if (NOT WIN32)
   set(PKG_CONFIG_PATH_ORIGINAL $ENV{PKG_CONFIG_PATH})
 
@@ -110,7 +129,7 @@ if (NOT WIN32)
                     RESULT_VARIABLE _pkgconfig_failed)
     if(_pkgconfig_failed)
       IGN_BUILD_WARNING ("Failed to get pkg-config search paths")
-    elseif (NOT "_pkgconfig_invoke_result" STREQUAL "")
+    elseif (NOT _pkgconfig_invoke_result STREQUAL "")
       set (PKG_CONFIG_PATH_TMP "${PKG_CONFIG_PATH_TMP}:${_pkgconfig_invoke_result}")
     endif()
 
@@ -190,21 +209,6 @@ if (NOT WIN32)
     list(APPEND OGRE2_INCLUDE_DIRS ${dir_include})
   endforeach()
 
-  # this macro and the version parsing logic below is taken from the
-  # FindOGRE.cmake file distributed by ogre
-  macro(get_preprocessor_entry CONTENTS KEYWORD VARIABLE)
-    string(REGEX MATCH
-      "# *define +${KEYWORD} +((\"([^\n]*)\")|([^ \n]*))"
-      PREPROC_TEMP_VAR
-      ${${CONTENTS}}
-    )
-    if (CMAKE_MATCH_3)
-      set(${VARIABLE} ${CMAKE_MATCH_3})
-    else ()
-      set(${VARIABLE} ${CMAKE_MATCH_4})
-    endif ()
-  endmacro()
-
   file(READ ${OGRE2_INCLUDE}/OgrePrerequisites.h OGRE_TEMP_VERSION_CONTENT)
   get_preprocessor_entry(OGRE_TEMP_VERSION_CONTENT OGRE_VERSION_MAJOR OGRE2_VERSION_MAJOR)
   get_preprocessor_entry(OGRE_TEMP_VERSION_CONTENT OGRE_VERSION_MINOR OGRE2_VERSION_MINOR)
@@ -217,11 +221,13 @@ if (NOT WIN32)
   foreach(component ${IgnOGRE2_FIND_COMPONENTS})
     find_library(OGRE2-${component}
       NAMES
+        "Ogre${component}_d.${OGRE2_VERSION}"
+        "Ogre${component}_d"
         "Ogre${component}.${OGRE2_VERSION}"
         "Ogre${component}"
       HINTS ${OGRE2_LIBRARY_DIRS})
-    if (NOT "OGRE2-${component}" STREQUAL "OGRE2-${component}-NOTFOUND")
-
+    if (NOT "${OGRE2-${component}}" STREQUAL "OGRE2-${component}-NOTFOUND")
+      message(STATUS " component ${component}: found")
       # create a new target for each component
       set(component_TARGET_NAME "IgnOGRE2-${component}::IgnOGRE2-${component}")
       set(component_INCLUDE_DIRS ${OGRE2_INCLUDE_DIRS})
@@ -250,6 +256,7 @@ if (NOT WIN32)
       list(APPEND OGRE2_LIBRARIES ${component_TARGET_NAME})
 
     elseif(IgnOGRE2_FIND_REQUIRED_${component})
+      message(STATUS " component ${component}: not found!")
       set(OGRE2_FOUND false)
     endif()
   endforeach()
@@ -274,37 +281,162 @@ if (NOT WIN32)
   ign_pkg_config_library_entry(IgnOGRE2 OgreMain)
 
 else() #WIN32
-  # reset ogre variables to be sure they dont conflict with OGRE1
-  unset(OGRE_FOUND)
-  unset(OGRE_INCLUDE_DIRS)
-  unset(OGRE_LIBRARIES)
-  foreach(ogre_component ${IgnOGRE2_FIND_COMPONENTS})
-    set(OGRE_${ogre_component}_FOUND FALSE)
+
+  set(OGRE2_FOUND TRUE)
+  set(OGRE_LIBRARIES "")
+  set(OGRE2_VERSION "")
+  set(OGRE2_VERSION_MAJOR "")
+  set(OGRE2_VERSION_MINOR "")
+  set(OGRE2_RESOURCE_PATH "")
+
+  set(OGRE2_SEARCH_VER "OGRE-${IgnOGRE2_FIND_VERSION_MAJOR}.${IgnOGRE2_FIND_VERSION_MINOR}")
+  set(OGRE2_PATHS "")
+  set(OGRE2_INC_PATHS "")
+  foreach(_rootPath ${VCPKG_CMAKE_FIND_ROOT_PATH})
+      list(APPEND OGRE2_PATHS "${_rootPath}/lib/${OGRE2_SEARCH_VER}/")
+      list(APPEND OGRE2_PATHS "${_rootPath}/lib/${OGRE2_SEARCH_VER}/manual-link/")
+      list(APPEND OGRE2_INC_PATHS "${_rootPath}/include/${OGRE2_SEARCH_VER}")
   endforeach()
-  # currently designed to work with osrf vcpkg ogre2 portfile
-  find_package(OGRE2
-               COMPONENTS ${IgnOGRE2_FIND_COMPONENTS})
-  set(OGRE2_INCLUDE_DIRS ${OGRE_INCLUDE_DIRS})
-  # Imported from OGRE1: link component libs outside of static build
-  foreach(ogre_component ${IgnOGRE2_FIND_COMPONENTS})
-    if (OGRE_${ogre_component}_FOUND)
-       list(APPEND OGRE_LIBRARIES "${OGRE_${ogre_component}_LIBRARIES}")
+
+  find_library(OGRE2_LIBRARY
+    NAMES "OgreMain"
+    HINTS ${OGRE2_PATHS}
+    NO_DEFAULT_PATH)
+
+  find_path(OGRE2_INCLUDE
+    NAMES "Ogre.h"
+    HINTS ${OGRE2_INC_PATHS})
+
+  if("${OGRE2_LIBRARY}" STREQUAL "OGRE2_LIBRARY-NOTFOUND")
+    set(OGRE2_FOUND false)
+  else()
+    set(OGRE2_LIBRARIES ${OGRE2_LIBRARY})
+  endif()
+
+  if(NOT OGRE2_INCLUDE)
+    set(OGRE2_FOUND false)
+  endif()
+
+  if (OGRE2_FOUND)
+    set(OGRE2_INCLUDE_DIRS ${OGRE2_INCLUDE})
+    set(OGRE2_LIBRARY_DIRS ${OGRE2_PATHS})
+
+    file(READ ${OGRE2_INCLUDE}/OgrePrerequisites.h OGRE_TEMP_VERSION_CONTENT)
+    get_preprocessor_entry(OGRE_TEMP_VERSION_CONTENT OGRE_VERSION_MAJOR OGRE2_VERSION_MAJOR)
+    get_preprocessor_entry(OGRE_TEMP_VERSION_CONTENT OGRE_VERSION_MINOR OGRE2_VERSION_MINOR)
+    get_preprocessor_entry(OGRE_TEMP_VERSION_CONTENT OGRE_VERSION_PATCH OGRE2_VERSION_PATCH)
+    get_preprocessor_entry(OGRE_TEMP_VERSION_CONTENT OGRE_VERSION_NAME OGRE2_VERSION_NAME)
+    set(OGRE2_VERSION "${OGRE2_VERSION_MAJOR}.${OGRE2_VERSION_MINOR}.${OGRE2_VERSION_PATCH}")
+    set(OGRE_TEMP_VERSION_CONTENT "")
+
+    macro(ogre_find_component COMPONENT HEADER PATH_HINTS)
+      set(PREFIX OGRE2_${COMPONENT})
+      find_path(${PREFIX}_INCLUDE_DIR
+          NAMES ${HEADER}
+          HINTS ${OGRE2_INCLUDE_DIRS}
+          PATH_SUFFIXES
+              ${PATH_HINTS} ${COMPONENT} ${OGRE2_SEARCH_VER}/${COMPONENT})
+
+      find_library(${PREFIX}_LIBRARY
+          NAMES
+              "Ogre${COMPONENT}"
+              "Ogre${COMPONENT}_d"
+          HINTS
+              ${OGRE2_LIBRARY_DIRS}
+          NO_DEFAULT_PATH)
+
+      if (NOT ${PREFIX}_FOUND)
+        if (${PREFIX}_INCLUDE_DIR AND ${PREFIX}_LIBRARY)
+          set(${PREFIX}_FOUND TRUE)
+          set(${PREFIX}_INCLUDE_DIRS ${${PREFIX}_INCLUDE_DIR})
+          set(${PREFIX}_LIBRARIES ${${PREFIX}_LIBRARY})
+          message(STATUS "Found ${PREFIX}: ${${PREFIX}_LIBRARIES}")
+        endif()
+      endif()
+  endmacro()
+
+  macro(ogre_find_plugin PLUGIN HEADER)
+    set(PREFIX OGRE2_${PLUGIN})
+    string(REPLACE "RenderSystem_" "" PLUGIN_TEMP ${PLUGIN})
+    string(REPLACE "Plugin_" "" PLUGIN_NAME ${PLUGIN_TEMP})
+      # header files for plugins are not usually needed, but find them anyway if they are present
+    set(OGRE2_PLUGIN_PATH_SUFFIXES
+      PlugIns
+      PlugIns/${PLUGIN_NAME}
+      Plugins
+      Plugins/${PLUGIN_NAME}
+      ${PLUGIN}
+      RenderSystems
+      RenderSystems/${PLUGIN_NAME}
+      ${ARGN})
+    find_path(
+      ${PREFIX}_INCLUDE_DIR
+      NAMES
+        ${HEADER}
+      HINTS
+        ${OGRE2_INCLUDE_DIRS} ${OGRE_PREFIX_SOURCE}
+      PATH_SUFFIXES
+        ${OGRE2_PLUGIN_PATH_SUFFIXES})
+    find_library(${PREFIX}_LIBRARY
+      NAMES ${PLUGIN}
+      HINTS  ${OGRE2_LIBRARY_DIRS}
+      PATH_SUFFIXES "" opt "${OGRE2_SEARCH_VER}" "${OGRE2_SEARCH_VER}/opt")
+
+    if (NOT ${PREFIX}_FOUND)
+      if (${PREFIX}_INCLUDE_DIR AND ${PREFIX}_LIBRARY)
+          set(${PREFIX}_FOUND TRUE)
+          set(${PREFIX}_INCLUDE_DIRS ${${PREFIX}_INCLUDE_DIR})
+          set(${PREFIX}_LIBRARIES ${${PREFIX}_LIBRARY})
+          message(STATUS "Found ${PREFIX}: ${${PREFIX}_LIBRARIES}")
+      endif()
+    endif()
+  endmacro()
+
+  ogre_find_component(Overlay OgreOverlaySystem.h "Overlay")
+  ogre_find_component(HlmsPbs OgreHlmsPbs.h Hlms/Pbs/)
+  ogre_find_component(HlmsUnlit OgreHlmsUnlit.h Hlms/Unlit)
+
+  ogre_find_plugin(Plugin_ParticleFX OgreParticleFXPrerequisites.h PlugIns/ParticleFX/include)
+  ogre_find_plugin(RenderSystem_GL3Plus OgreGL3PlusRenderSystem.h RenderSystems/GL3Plus/include)
+  ogre_find_plugin(RenderSystem_Direct3D11 OgreD3D11RenderSystem.h RenderSystems/Direct3D11/include)
+
+  foreach(component ${IgnOGRE2_FIND_COMPONENTS})
+    set(PREFIX OGRE2_${component})
+    if(${PREFIX}_FOUND)
+      set(component_TARGET_NAME "IgnOGRE2-${component}::IgnOGRE2-${component}")
+      set(component_INCLUDE_DIRS ${${PREFIX}_INCLUDE_DIRS})
+      # append the Hlms/Common include dir if it exists.
+      string(FIND ${component} "Hlms" HLMS_POS)
+      if(${HLMS_POS} GREATER -1)
+        foreach (dir ${OGRE2_INCLUDE_DIRS})
+          get_filename_component(dir_name "${dir}" NAME)
+          if ("${dir_name}" STREQUAL "OGRE-${OGRE2_VERSION_MAJOR}.${OGRE2_VERSION_MINOR}")
+            set(dir_include "${dir}/Hlms/Common")
+            if (EXISTS ${dir_include})
+              list(APPEND component_INCLUDE_DIRS ${dir_include})
+            endif()
+          endif()
+        endforeach()
+      endif()
+
+      set(component_LIBRARIES ${${PREFIX}_LIBRARIES})
+
+      ign_import_target(${component}
+        TARGET_NAME ${component_TARGET_NAME}
+        LIB_VAR component_LIBRARIES
+        INCLUDE_VAR component_INCLUDE_DIRS
+      )
+      list(APPEND OGRE2_LIBRARIES ${component_TARGET_NAME})
     endif()
   endforeach()
 
-  select_lib_by_build_type("${OGRE_LIBRARIES}" OGRE2_LIBRARIES)
-
-  set(OGRE2_PLUGINS_VCPKG Plugin_ParticleFX RenderSystem_GL RenderSystem_GL3Plus RenderSystem_Direct3D11)
-
+  set(OGRE2_PLUGINS_VCPKG Plugin_ParticleFX RenderSystem_GL3Plus RenderSystem_Direct3D11)
   foreach(PLUGIN ${OGRE2_PLUGINS_VCPKG})
-    if(OGRE_${PLUGIN}_FOUND)
-      message("Plugin found: ${PLUGIN}")
-      list(APPEND OGRE2_INCLUDE_DIRS ${OGRE_${PLUGIN}_INCLUDE_DIRS})
+    if(OGRE2_${PLUGIN}_FOUND)
+      list(APPEND OGRE2_INCLUDE_DIRS ${OGRE2_${PLUGIN}_INCLUDE_DIRS})
     endif()
   endforeach()
-
-  include(IgnPkgConfig)
-  ign_pkg_config_library_entry(IgnOGRE2 OgreMain)
+  endif()
 endif()
 
 set(IgnOGRE2_FOUND false)
