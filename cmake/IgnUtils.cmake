@@ -682,13 +682,13 @@ function(ign_install_all_headers)
 
     # Add each header, prefixed by its directory, to the auto headers variable
     foreach(header ${headers})
-      set(ign_headers "${ign_headers}#include <ignition/${IGN_DESIGNATION}/${header}>\n")
+      set(ign_headers "${ign_headers}#include <${PROJECT_INCLUDE_DIR}/${header}>\n")
     endforeach()
 
     if("." STREQUAL ${dir})
-      set(destination "${IGN_INCLUDE_INSTALL_DIR_FULL}/ignition/${IGN_DESIGNATION}")
+      set(destination "${IGN_INCLUDE_INSTALL_DIR_FULL}/${PROJECT_INCLUDE_DIR}")
     else()
-      set(destination "${IGN_INCLUDE_INSTALL_DIR_FULL}/ignition/${IGN_DESIGNATION}/${dir}")
+      set(destination "${IGN_INCLUDE_INSTALL_DIR_FULL}/${PROJECT_INCLUDE_DIR}/${dir}")
     endif()
 
     install(
@@ -700,7 +700,7 @@ function(ign_install_all_headers)
 
   # Add generated headers to the list of includes
   foreach(header ${ign_install_all_headers_GENERATED_HEADERS})
-      set(ign_headers "${ign_headers}#include <ignition/${IGN_DESIGNATION}/${header}>\n")
+      set(ign_headers "${ign_headers}#include <${PROJECT_INCLUDE_DIR}/${header}>\n")
   endforeach()
 
   if(ign_install_all_headers_COMPONENT)
@@ -708,7 +708,7 @@ function(ign_install_all_headers)
     set(component_name ${ign_install_all_headers_COMPONENT})
 
     # Define the install directory for the component meta header
-    set(meta_header_install_dir ${IGN_INCLUDE_INSTALL_DIR_FULL}/ignition/${IGN_DESIGNATION}/${component_name})
+    set(meta_header_install_dir ${IGN_INCLUDE_INSTALL_DIR_FULL}/${PROJECT_INCLUDE_DIR}/${component_name})
 
     # Define the input/output of the configuration for the component "master" header
     set(master_header_in ${IGNITION_CMAKE_DIR}/ign_auto_headers.hh.in)
@@ -717,7 +717,7 @@ function(ign_install_all_headers)
   else()
 
     # Define the install directory for the core master meta header
-    set(meta_header_install_dir ${IGN_INCLUDE_INSTALL_DIR_FULL}/ignition/${IGN_DESIGNATION})
+    set(meta_header_install_dir ${IGN_INCLUDE_INSTALL_DIR_FULL}/${PROJECT_INCLUDE_DIR})
 
     # Define the input/output of the configuration for the core "master" header
     set(master_header_in ${IGNITION_CMAKE_DIR}/ign_auto_headers.hh.in)
@@ -872,7 +872,8 @@ endmacro()
 #                         [CXX_STANDARD <11|14|17>]
 #                         [PRIVATE_CXX_STANDARD <11|14|17>]
 #                         [INTERFACE_CXX_STANDARD <11|14|17>]
-#                         [GET_TARGET_NAME <output_var>])
+#                         [GET_TARGET_NAME <output_var>]
+#                         [LEGACY_PROJECT_PREFIX <prefix>])
 #
 # This function will produce the "core" library for your project. There is no
 # need to specify a name for the library, because that will be determined by
@@ -885,6 +886,10 @@ endmacro()
 #                    set to the library target name that gets produced by this
 #                    function. The target name will always be
 #                    ${PROJECT_LIBRARY_TARGET_NAME}.
+#
+# [LEGACY_PROJECT_PREFIX]: Optional. The variable that follows this argument will be
+#                          used as a prefix for the legacy cmake config variables
+#                          <prefix>_LIBRARIES and <prefix>_INCLUDE_DIRS.
 #
 # If you need a specific C++ standard, you must also specify it in this
 # function in order to ensure that your library's target properties get set
@@ -911,7 +916,7 @@ function(ign_create_core_library)
   #------------------------------------
   # Define the expected arguments
   set(options INTERFACE)
-  set(oneValueArgs INCLUDE_SUBDIR CXX_STANDARD PRIVATE_CXX_STANDARD INTERFACE_CXX_STANDARD GET_TARGET_NAME)
+  set(oneValueArgs INCLUDE_SUBDIR LEGACY_PROJECT_PREFIX CXX_STANDARD PRIVATE_CXX_STANDARD INTERFACE_CXX_STANDARD GET_TARGET_NAME)
   set(multiValueArgs SOURCES)
 
   #------------------------------------
@@ -936,7 +941,7 @@ function(ign_create_core_library)
   # Create the target for the core library, and configure it to be installed
   _ign_add_library_or_component(
     LIB_NAME ${PROJECT_LIBRARY_TARGET_NAME}
-    INCLUDE_DIR "ignition/${IGN_DESIGNATION_LOWER}"
+    INCLUDE_DIR "${PROJECT_INCLUDE_DIR}"
     EXPORT_BASE IGNITION_${IGN_DESIGNATION_UPPER}
     SOURCES ${sources}
     ${interface_option})
@@ -992,7 +997,7 @@ function(ign_create_core_library)
   endif()
 
   # Export and install the core library's cmake target and package information
-  _ign_create_cmake_package()
+  _ign_create_cmake_package(LEGACY_PROJECT_PREFIX ${ign_create_core_library_LEGACY_PROJECT_PREFIX})
 
   # Generate and install the core library's pkgconfig information
   _ign_create_pkgconfig()
@@ -1120,7 +1125,7 @@ function(ign_add_component component_name)
   # Create the target for this component, and configure it to be installed
   _ign_add_library_or_component(
     LIB_NAME ${component_target_name}
-    INCLUDE_DIR "ignition/${IGN_DESIGNATION_LOWER}/${include_subdir}"
+    INCLUDE_DIR "${PROJECT_INCLUDE_DIR}/${include_subdir}"
     EXPORT_BASE IGNITION_${IGN_DESIGNATION_UPPER}_${component_name_upper}
     SOURCES ${sources}
     ${interface_option})
@@ -1711,6 +1716,9 @@ macro(ign_build_tests)
         # gtest requies pthread when compiled on a Unix machine
         target_link_libraries(${target_name} pthread)
       endif()
+
+      target_compile_definitions(${target_name} PRIVATE
+        "TESTING_PROJECT_SOURCE_DIR=\"${PROJECT_SOURCE_DIR}\"")
 
       set_tests_properties(${target_name} PROPERTIES TIMEOUT 240)
 
