@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10.2 FATAL_ERROR)
 project(ignition-ogre-2.1 VERSION 0.1.0)
 
-find_package(ignition-cmake2 REQUIRED)
+find_package(ignition-cmake3 REQUIRED)
 
 message(STATUS "Finding OGRE 2.1")
 

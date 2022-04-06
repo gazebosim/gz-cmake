@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10.2 FATAL_ERROR)
 project(ignition-core_no_deps_static VERSION 0.1.0)
-find_package(ignition-cmake2 REQUIRED)
+find_package(ignition-cmake3 REQUIRED)
 ign_configure_project()
 OPTION(BUILD_SHARED_LIBS OFF)
 ign_configure_build(QUIT_IF_BUILD_ERRORS)
