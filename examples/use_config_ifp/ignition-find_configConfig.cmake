@@ -1,0 +1,1 @@
+message(STATUS "This package was found using CONFIG mode")
