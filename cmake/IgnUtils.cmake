@@ -1804,3 +1804,32 @@ macro(_ign_cmake_parse_arguments prefix options oneValueArgs multiValueArgs)
   endif()
 
 endmacro()
+ 
+#####GSOC########
+macro(ign_add_resources path_to_resources)
+
+  install(DIRECTORY
+  ${path_to_resources}
+  DESTINATION share/${PROJECT_NAME})
+
+  list(APPEND resources_path  ${path_to_resources} )
+
+endmacro() 
+######
+macro(ign_environment_hook )
+
+  foreach(resource_path ${resources_path})
+    file( APPEND  ${CMAKE_CURRENT_SOURCE_DIR}/hooks/hook.dsv.in 
+    "prepend-non-duplicate;IGN_GAZEBO_RESOURCE_PATH;@CMAKE_INSTALL_PREFIX@/share/@PROJECT_NAME@/${resource_path}\n")
+  endforeach()
+  file( WRITE ${CMAKE_CURRENT_SOURCE_DIR}/colcon.pkg "{\n  \"hooks\": [\"share/my_package/hooks/hook.dsv\"]\n}" )
+
+  configure_file(
+    "hooks/hook.dsv.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/hooks/hook.dsv" @ONLY
+  )
+  install(DIRECTORY
+  ${CMAKE_CURRENT_BINARY_DIR}/hooks
+  DESTINATION share/${PROJECT_NAME})
+
+endmacro()  
