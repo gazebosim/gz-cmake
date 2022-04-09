@@ -7,3 +7,7 @@ set(ignition-find_config_DIR "${CMAKE_SOURCE_DIR}/")
 ign_find_package(ignition-find_config)
 #After CONFIG arguemnt ign_find_package will skip MODULE mode and search for ignition-find_configConfig.cmake directly
 ign_find_package(ignition-find_config CONFIG)
+ign_configure_project()
+ign_configure_build(QUIT_IF_BUILD_ERRORS)
+ign_create_packages()
+
