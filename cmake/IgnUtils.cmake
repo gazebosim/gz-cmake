@@ -1805,7 +1805,10 @@ macro(_ign_cmake_parse_arguments prefix options oneValueArgs multiValueArgs)
 
 endmacro()
  
-#####GSOC########
+#####GSOC##########################################
+
+#ign_add_resources(path_to_resources)
+#Installs the folder and provides it's path to ign_environment_hook()
 macro(ign_add_resources path_to_resources)
 
   install(DIRECTORY
@@ -1815,13 +1818,24 @@ macro(ign_add_resources path_to_resources)
   list(APPEND resources_path  ${path_to_resources} )
 
 endmacro() 
-######
+#####################################################
+#ign_environment_hook()
+#Get's path from other macros and creates hooks to export them
+#Currently it creates colcon.pkg along with hooks.dsv for exporting them
+#Mechanisms for plain cmake packages is under development 
 macro(ign_environment_hook )
+  list(REMOVE_DUPLICATES resources_path)
+  list(REMOVE_DUPLICATES plugins_path)
+
 
   foreach(resource_path ${resources_path})
     file( APPEND  ${CMAKE_CURRENT_SOURCE_DIR}/hooks/hook.dsv.in 
     "prepend-non-duplicate;IGN_GAZEBO_RESOURCE_PATH;@CMAKE_INSTALL_PREFIX@/share/@PROJECT_NAME@/${resource_path}\n")
   endforeach()
+  foreach(plugin_path ${plugins_path})
+  file( APPEND  ${CMAKE_CURRENT_SOURCE_DIR}/hooks/hook.dsv.in 
+  "prepend-non-duplicate;IGN_GAZEBO_SYSTEM_PLUGIN_PATH;@CMAKE_INSTALL_PREFIX@/${plugin_path}\n")
+endforeach()
   file( WRITE ${CMAKE_CURRENT_SOURCE_DIR}/colcon.pkg "{\n  \"hooks\": [\"share/my_package/hooks/hook.dsv\"]\n}" )
 
   configure_file(
@@ -1832,4 +1846,58 @@ macro(ign_environment_hook )
   ${CMAKE_CURRENT_BINARY_DIR}/hooks
   DESTINATION share/${PROJECT_NAME})
 
-endmacro()  
+endmacro()
+#####################################################
+#ign_add_plugins(path_to_plugin)
+#Installs all the plugins inside the folder using various arguments from the user
+#Also provides the path to ign_environment_hook()
+macro(ign_add_plugins path_to_plugin )  
+
+  file(GLOB source_list CONFIGURE_DEPENDS
+      "${path_to_plugin}/*.cc"
+  )
+
+  set(oneValueArgs INSTALL_DESTINATION)
+  set(options PRIVATE)
+  set(multiValueArgs COMMON_PUBLIC_LIBRARIES COMMON_PRIVATE_LINK_LIBRARIES)
+
+  _ign_cmake_parse_arguments(ign_add_plugin "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+  foreach(PLUGIN_PATH ${source_list})
+    get_filename_component(PLUGIN_NAME "${PLUGIN_PATH}" NAME_WLE )
+
+    if (ign_add_plugin_PRIVATE)
+      add_library(${PLUGIN_NAME} PRIVATE ${PLUGIN_PATH})
+    else()
+      add_library(${PLUGIN_NAME} SHARED ${PLUGIN_PATH})
+    endif()
+
+    set_property(TARGET ${PLUGIN_NAME} PROPERTY CXX_STANDARD 17)
+
+    target_link_libraries(${PLUGIN_NAME} 
+      PUBLIC
+        ${ign_add_plugin_COMMON_PUBLIC_LIBRARIES}
+        ${${PLUGIN_NAME}_PUBLIC_LIBRARIES}
+      PRIVATE
+        ${ign_add_plugin_COMMON_PRIVATE_LINK_LIBRARIES}   
+        ${${PLUGIN_NAME}_PRIVATE_LIBRARIES}
+    )
+
+    if(ign_add_plugin_INSTALL_DESTINATION)
+      install(
+      TARGETS ${PLUGIN_NAME}
+      DESTINATION ${ign_add_plugin_INSTALL_DESTINATION})
+      list(APPEND plugins_path ${ign_add_plugin_INSTALL_DESTINATION} )
+
+    else()
+      install(
+      TARGETS ${PLUGIN_NAME}
+      DESTINATION lib)
+      list(APPEND plugins_path "lib" )
+
+    endif()  
+
+
+  endforeach()
+  
+endmacro()
