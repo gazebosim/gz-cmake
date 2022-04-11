@@ -1833,10 +1833,13 @@ macro(ign_environment_hook )
     "prepend-non-duplicate;IGN_GAZEBO_RESOURCE_PATH;@CMAKE_INSTALL_PREFIX@/share/@PROJECT_NAME@/${resource_path}\n")
   endforeach()
   foreach(plugin_path ${plugins_path})
-  file( APPEND  ${CMAKE_CURRENT_SOURCE_DIR}/hooks/hook.dsv.in 
-  "prepend-non-duplicate;IGN_GAZEBO_SYSTEM_PLUGIN_PATH;@CMAKE_INSTALL_PREFIX@/${plugin_path}\n")
-endforeach()
+    file( APPEND  ${CMAKE_CURRENT_SOURCE_DIR}/hooks/hook.dsv.in 
+    "prepend-non-duplicate;IGN_GAZEBO_SYSTEM_PLUGIN_PATH;@CMAKE_INSTALL_PREFIX@/${plugin_path}\n")
+  endforeach()
   file( WRITE ${CMAKE_CURRENT_SOURCE_DIR}/colcon.pkg "{\n  \"hooks\": [\"share/my_package/hooks/hook.dsv\"]\n}" )
+  file( APPEND  ${CMAKE_CURRENT_SOURCE_DIR}/hooks/hook.dsv.in 
+  "prepend-non-duplicate;LD_LIBRARY_PATH;@CMAKE_INSTALL_PREFIX@/lib\n")
+  
 
   configure_file(
     "hooks/hook.dsv.in"
@@ -1851,14 +1854,16 @@ endmacro()
 #ign_add_plugins(path_to_plugin)
 #Installs all the plugins inside the folder using various arguments from the user
 #Also provides the path to ign_environment_hook()
+#For adding target_link_libraries or target_include_directories for a specific plugin 
+#set ${PLUGIN_NAME}_(PUBLIC/PRIVATE)_(LIBRARIES/DIRECTORIES) as required plugins or directories in your package
+
 macro(ign_add_plugins path_to_plugin )  
 
   file(GLOB source_list CONFIGURE_DEPENDS
       "${path_to_plugin}/*.cc"
   )
 
-  set(oneValueArgs INSTALL_DESTINATION)
-  set(options PRIVATE)
+  set(oneValueArgs INSTALL_DESTINATION TYPE)
   set(multiValueArgs COMMON_PUBLIC_LIBRARIES COMMON_PRIVATE_LINK_LIBRARIES COMMON_PUBLIC_DIRECTORIES COMMON_PRIVATE_LINK_DIRECTORIES)
 
   _ign_cmake_parse_arguments(ign_add_plugin "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
@@ -1866,8 +1871,8 @@ macro(ign_add_plugins path_to_plugin )
   foreach(PLUGIN_PATH ${source_list})
     get_filename_component(PLUGIN_NAME "${PLUGIN_PATH}" NAME_WLE )
 
-    if (ign_add_plugin_PRIVATE)
-      add_library(${PLUGIN_NAME} PRIVATE ${PLUGIN_PATH})
+    if (ign_add_plugin_TYPE)
+      add_library(${PLUGIN_NAME} ${ign_add_plugin_TYPE} ${PLUGIN_PATH})
     else()
       add_library(${PLUGIN_NAME} SHARED ${PLUGIN_PATH})
     endif()
@@ -1902,6 +1907,65 @@ macro(ign_add_plugins path_to_plugin )
       TARGETS ${PLUGIN_NAME}
       DESTINATION lib)
       list(APPEND plugins_path "lib" )
+
+    endif()  
+
+
+  endforeach()
+  
+endmacro()
+
+#####################################################
+#ign_add_executables(path_to_executable)
+#Installs all the executables inside the folder using various arguments from the user
+#For adding target_link_libraries or target_include_directories for a specific executable
+#set ${EXECUTABLE_NAME}_(PUBLIC/PRIVATE)_(LIBRARIES/DIRECTORIES) as required plugins or directories in your package
+
+macro(ign_add_executables path_to_executable )  
+
+  file(GLOB source_list CONFIGURE_DEPENDS
+      "${path_to_executable}/*.cc"
+  )
+
+  set(oneValueArgs INSTALL_DESTINATION)
+  set(multiValueArgs COMMON_PUBLIC_LIBRARIES COMMON_PRIVATE_LINK_LIBRARIES COMMON_PUBLIC_DIRECTORIES COMMON_PRIVATE_LINK_DIRECTORIES)
+
+  _ign_cmake_parse_arguments(ign_add_executable "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+  foreach(executable_PATH ${source_list})
+    get_filename_component(executable_NAME "${executable_PATH}" NAME_WLE )
+    add_executable(${executable_NAME}  ${executable_PATH})
+
+
+    set_property(TARGET ${executable_NAME} PROPERTY CXX_STANDARD 17)
+
+    target_link_libraries(${executable_NAME} 
+      PUBLIC
+        ${ign_add_executable_COMMON_PUBLIC_LIBRARIES}
+        ${${executable_NAME}_PUBLIC_LIBRARIES}
+      PRIVATE
+        ${ign_add_executable_COMMON_PRIVATE_LINK_LIBRARIES}   
+        ${${executable_NAME}_PRIVATE_LIBRARIES}
+    )
+    target_include_directories()(${executable_NAME} 
+      PUBLIC
+        ${ign_add_executable_COMMON_PUBLIC_DIRECTORIES}
+        ${${executable_NAME}_PUBLIC_DIRECTORIES}
+      PRIVATE
+        ${ign_add_executable_COMMON_PRIVATE_LINK_DIRECTORIES}   
+        ${${executable_NAME}_PRIVATE_DIRECTORIES}
+    )    
+
+    if(ign_add_executable_INSTALL_DESTINATION)
+      install(
+      TARGETS ${executable_NAME}
+      DESTINATION ${ign_add_executable_INSTALL_DESTINATION})
+
+    else()
+      install(
+      TARGETS ${executable_NAME}
+      DESTINATION bin)
+
 
     endif()  
 
