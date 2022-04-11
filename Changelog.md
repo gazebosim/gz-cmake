@@ -1,10 +1,30 @@
 ## Ignition CMake 2.x
 
-### Ignition CMake 2.x.x (xxxx-xx-xx)
+### Ignition CMake 2.12.0 (2022-04-11)
+
+1. Adding CONFIG option
+    * [Pull request #211](https://github.com/ignitionrobotics/ign-cmake/pull/211)
+
+1. IgnFindOGRE2: support for the ogre-next package on Ubuntu Jammy
+    * [Pull request #224](https://github.com/ignitionrobotics/ign-cmake/pull/224)
+
+1. Fix check for missing components in OGRE2. Be more verbose with components
+    * [Pull request #220](https://github.com/ignitionrobotics/ign-cmake/pull/220)
+
+1. FindIgnOGRE2: exclude ogre versions different than 2.x
+    * [Pull request #219](https://github.com/ignitionrobotics/ign-cmake/pull/219)
+    * [Pull request #221](https://github.com/ignitionrobotics/ign-cmake/pull/221)
+
+1. Specify sanitizers using IGN_SANITIZERS cmake variable
+    * [Pull request #210](https://github.com/ignitionrobotics/ign-cmake/pull/210)
+
+1. Replace deprecated PythonInterp with Python3 (#213)
+    * [Pull request #213](https://github.com/ignitionrobotics/ign-cmake/pull/213)
+    * [Pull request #223](https://github.com/ignitionrobotics/ign-cmake/pull/223)
 
 ### Ignition CMake 2.11.0 (2022-02-23)
 
-1. Set source path to be used by common::testing 
+1. Set source path to be used by common::testing
     * [Pull request #206](https://github.com/ignitionrobotics/ign-cmake/pull/206)
 
 3. Add examples using static libraries
