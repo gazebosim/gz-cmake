@@ -1859,7 +1859,7 @@ macro(ign_add_plugins path_to_plugin )
 
   set(oneValueArgs INSTALL_DESTINATION)
   set(options PRIVATE)
-  set(multiValueArgs COMMON_PUBLIC_LIBRARIES COMMON_PRIVATE_LINK_LIBRARIES)
+  set(multiValueArgs COMMON_PUBLIC_LIBRARIES COMMON_PRIVATE_LINK_LIBRARIES COMMON_PUBLIC_DIRECTORIES COMMON_PRIVATE_LINK_DIRECTORIES)
 
   _ign_cmake_parse_arguments(ign_add_plugin "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
@@ -1882,6 +1882,14 @@ macro(ign_add_plugins path_to_plugin )
         ${ign_add_plugin_COMMON_PRIVATE_LINK_LIBRARIES}   
         ${${PLUGIN_NAME}_PRIVATE_LIBRARIES}
     )
+    target_include_directories()(${PLUGIN_NAME} 
+      PUBLIC
+        ${ign_add_plugin_COMMON_PUBLIC_DIRECTORIES}
+        ${${PLUGIN_NAME}_PUBLIC_DIRECTORIES}
+      PRIVATE
+        ${ign_add_plugin_COMMON_PRIVATE_LINK_DIRECTORIES}   
+        ${${PLUGIN_NAME}_PRIVATE_DIRECTORIES}
+    )    
 
     if(ign_add_plugin_INSTALL_DESTINATION)
       install(
