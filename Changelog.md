@@ -1,6 +1,12 @@
 ## Ignition CMake 2.x
 
-### Ignition CMake 2.x.x (xxxx-xx-xx)
+### Ignition CMake 2.12.0 (2022-04-11)
+
+1. Adding CONFIG option
+    * [Pull request #211](https://github.com/ignitionrobotics/ign-cmake/pull/211)
+
+1. IgnFindOGRE2: support for the ogre-next package on Ubuntu Jammy
+    * [Pull request #224](https://github.com/ignitionrobotics/ign-cmake/pull/224)
 
 1. Fix check for missing components in OGRE2. Be more verbose with components
     * [Pull request #220](https://github.com/ignitionrobotics/ign-cmake/pull/220)
