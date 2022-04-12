@@ -18,6 +18,7 @@ set(example_directories
   core_child_private
   core_static_child
   comp_deps
+  use_config_ifp
   )
 if (NOT CMAKE_GENERATOR MATCHES "Visual Studio")
   list(APPEND example_directories
@@ -58,6 +59,9 @@ foreach(example ${example_directories})
     set(example_tarball_name ignition-use_component_depsb-0.1.0.tar.bz2)
   elseif (${example} STREQUAL "use_component_depsC")
     set(example_tarball_name ignition-use_component_depsc-0.1.0.tar.bz2)
+  elseif (${example} STREQUAL "use_config_ifp")
+    set(example_tarball_name  ignition-find_config-0.1.0.tar.bz2)
+
   else()
     set(example_tarball_name)
   endif()
