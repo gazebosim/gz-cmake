@@ -1,5 +1,13 @@
 ## Ignition CMake 2.x
 
+### Ignition CMake 2.12.1 (2022-04-12)
+
+1. Allow to recreate targets created by IgnPkgConfig
+    * [Pull request #231](https://github.com/ignitionrobotics/ign-cmake/pull/231)
+
+1. Adding tests for CONFIG argument
+    * [Pull request #230](https://github.com/ignitionrobotics/ign-cmake/pull/230)
+
 ### Ignition CMake 2.12.0 (2022-04-11)
 
 1. Adding CONFIG option
