@@ -20,6 +20,8 @@
 
 #include <ignition/utilities/detail/SuppressWarning.hh>
 
+#pragma message("ign-cmake (utilities) SuppressWarning is deprecated, use ign-utils")
+
 // This header contains cross-platform macros for suppressing warnings. Please
 // only use these macros responsibly when you are certain that the compiler is
 // producing a warning that is not applicable to the specific instance. Do not

@@ -20,6 +20,8 @@
 
 #include <ignition/utilities/detail/ExtraTestMacros.hh>
 
+#pragma message("ign-cmake (utilities) ExtraTestMacros is deprecated, use ign-utils")
+
 /// \brief Restrict the execution of the test for the Windows platform.
 /// The test will be compiled on Windows too but will never be run as
 /// part of the test suite. The macro uses the Disabled_ prefix provided

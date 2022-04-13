@@ -1,4 +1,4 @@
-# Migration Instructions
+# Migration Instructions (from Gazebo classic)
 
 This file provides instructions for `ignition` library developers to adopt the
 `ignition-cmake` package into their own library's build system. This document
