@@ -106,6 +106,7 @@ install(
 #============================================================================
 # Create and install the utilities component
 #============================================================================
+# Deprecated: Remove the utilities component in ign-cmake4
 add_library(${ign_utilities_target} INTERFACE)
 target_include_directories(${ign_utilities_target}
   INTERFACE
