@@ -1887,7 +1887,7 @@ macro(ign_add_plugins path_to_plugin )
         ${ign_add_plugin_COMMON_PRIVATE_LINK_LIBRARIES}   
         ${${PLUGIN_NAME}_PRIVATE_LIBRARIES}
     )
-    target_include_directories()(${PLUGIN_NAME} 
+    target_include_directories(${PLUGIN_NAME} 
       PUBLIC
         ${ign_add_plugin_COMMON_PUBLIC_DIRECTORIES}
         ${${PLUGIN_NAME}_PUBLIC_DIRECTORIES}
@@ -1947,7 +1947,7 @@ macro(ign_add_executables path_to_executable )
         ${ign_add_executable_COMMON_PRIVATE_LINK_LIBRARIES}   
         ${${executable_NAME}_PRIVATE_LIBRARIES}
     )
-    target_include_directories()(${executable_NAME} 
+    target_include_directories(${executable_NAME} 
       PUBLIC
         ${ign_add_executable_COMMON_PUBLIC_DIRECTORIES}
         ${${executable_NAME}_PUBLIC_DIRECTORIES}
