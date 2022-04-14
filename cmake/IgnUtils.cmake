@@ -602,6 +602,7 @@ endfunction()
 #   [EXCLUDE_FILES <excluded_headers>]
 #   [EXCLUDE_DIRS  <dirs>]
 #   [GENERATED_HEADERS <headers>]
+#   [INSTALL_BUT_DONT_INCLUDE <headers>]
 #   [COMPONENT] <component>)
 #
 # From the current directory, install all header files, including files from all
@@ -623,13 +624,17 @@ endfunction()
 # If the COMPONENT option is specified, this will skip over configuring a
 # config.hh file since it would be redundant with the core library.
 #
+# INSTALL_BUT_DONT_INCLUDE should be headers that are meant to be installed, but
+# not included in ${IGN_DESIGNATION}.hh. This is useful for deprecated headers,
+# for example.
+#
 function(ign_install_all_headers)
 
   #------------------------------------
   # Define the expected arguments
   set(options)
   set(oneValueArgs COMPONENT) # We are not using oneValueArgs yet
-  set(multiValueArgs EXCLUDE_FILES EXCLUDE_DIRS GENERATED_HEADERS)
+  set(multiValueArgs EXCLUDE_FILES EXCLUDE_DIRS GENERATED_HEADERS INSTALL_BUT_DONT_INCLUDE)
 
   #------------------------------------
   # Parse the arguments
@@ -695,7 +700,9 @@ function(ign_install_all_headers)
 
     # Add each header, prefixed by its directory, to the auto headers variable
     foreach(header ${headers})
-      set(ign_headers "${ign_headers}#include <${PROJECT_INCLUDE_DIR}/${header}>\n")
+      if (NOT ${header} IN_LIST ign_install_all_headers_INSTALL_BUT_DONT_INCLUDE)
+        set(ign_headers "${ign_headers}#include <${PROJECT_INCLUDE_DIR}/${header}>\n")
+      endif()
     endforeach()
 
     if("." STREQUAL ${dir})
