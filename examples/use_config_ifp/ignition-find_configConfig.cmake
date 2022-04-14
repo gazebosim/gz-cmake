@@ -1,1 +1,1 @@
-message(STATUS "The package was found using CONFIG mode")
+set(CONFIG_TEST "The package was found using CONFIG mode")
