@@ -112,7 +112,7 @@ macro(ign_pkg_check_modules_quiet package signature)
     #       use the plain pkg_check_modules, which provides an option called
     #       IMPORTED_TARGET that will create the imported targets the way we do
     #       here.
-    if(${package}_FOUND AND NOT TARGET ${ign_pkg_check_modules_TARGET_NAME})
+    if(${package}_FOUND)
 
       # Because of some idiosyncrasies of pkg-config, pkg_check_modules does not
       # put /usr/include in the <prefix>_INCLUDE_DIRS variable. E.g. try running
