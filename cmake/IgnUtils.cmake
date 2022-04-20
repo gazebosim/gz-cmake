@@ -138,7 +138,12 @@
 #                             is provided using VERSION, then this will be left
 #                             out, whether or not it is provided.
 #
-macro(ign_find_package PACKAGE_NAME)
+macro(ign_find_package MACRO_PACKAGE_NAME)
+  # This is to allow "remapping" of the macro arg for function-like capability, but also access to
+  # the parent scope
+  # TODO(CH3): Remove this on tock, along the later sections,
+  #            and change MACRO_PACKAGE_NAME back to PACKAGE_NAME
+  set(PACKAGE_NAME ${MACRO_PACKAGE_NAME})
 
   #------------------------------------
   # Define the expected arguments
@@ -149,6 +154,79 @@ macro(ign_find_package PACKAGE_NAME)
   #------------------------------------
   # Parse the arguments
   _ign_cmake_parse_arguments(ign_find_package "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+  #------------------------------------
+  # Handle ticktock
+  # TODO(CH3): Remove on tock
+  if(${PACKAGE_NAME} MATCHES "^ign(ition)?-")
+    message(DEPRECATION
+      "\nThe use of 'ign-' and 'ignition-' prefixed libraries has been "
+      "deprecated in favor of 'gz-' and will be removed in the next version!\n"
+    )
+    set(PACKAGE_NAME_BAK ${PACKAGE_NAME})
+
+    string(REGEX REPLACE "^ign(ition)?-" "gz-" PACKAGE_NAME ${PACKAGE_NAME_BAK})
+    message(NOTICE "...Trying to use the gz- version of the library you specified: '${PACKAGE_NAME}'\n")
+
+    #------------------------------------
+    # Construct the arguments to pass to find_package
+    # The duplication is necessary for the ticktock...
+    # TODO(CH3): Remove on tock
+    set(gz_find_package_args ${PACKAGE_NAME})
+
+    if(ign_find_package_VERSION)
+      list(APPEND gz_find_package_args ${ign_find_package_VERSION})
+    endif()
+
+    if(ign_find_package_QUIET)
+      list(APPEND gz_find_package_args QUIET)
+    endif()
+
+    if(ign_find_package_EXACT)
+      list(APPEND gz_find_package_args EXACT)
+    endif()
+
+    if(ign_find_package_CONFIG)
+      list(APPEND gz_find_package_args CONFIG)
+    endif()
+
+    if(ign_find_package_COMPONENTS)
+      list(APPEND gz_find_package_args COMPONENTS ${ign_find_package_COMPONENTS})
+    endif()
+
+    if(ign_find_package_OPTIONAL_COMPONENTS)
+      list(APPEND gz_find_package_args OPTIONAL_COMPONENTS ${ign_find_package_OPTIONAL_COMPONENTS})
+    endif()
+
+    if(ign_find_package_EXTRA_ARGS)
+      list(APPEND gz_find_package_args ${ign_find_package_EXTRA_ARGS})
+    endif()
+
+    find_package(${gz_find_package_args} QUIET)
+
+    if(${PACKAGE_NAME}_FOUND)
+      message(NOTICE "Found! Using it instead of '${PACKAGE_NAME_BAK}'")
+
+      # Manually set ignition- prefix version numbers for ticktock
+      # TODO(CH3): Remove on tock
+      set(${PACKAGE_NAME_BAK}_VERSION ${${PACKAGE_NAME}_VERSION})
+      set(${PACKAGE_NAME_BAK}_VERSION_MAJOR ${${PACKAGE_NAME}_VERSION_MAJOR})
+      set(${PACKAGE_NAME_BAK}_VERSION_MINOR ${${PACKAGE_NAME}_VERSION_MINOR})
+      set(${PACKAGE_NAME_BAK}_VERSION_PATCH ${${PACKAGE_NAME}_VERSION_PATCH})
+      set(${PACKAGE_NAME_BAK}_VERSION_TWEAK ${${PACKAGE_NAME}_VERSION_TWEAK})
+
+    else()
+      message(WARNING
+        "\n'${PACKAGE_NAME}' not found! Falling back to '${PACKAGE_NAME_BAK}'...\n"
+        "== NOTE ==\n"
+        "gz- library finding will sometimes deterministically fail because the dynamic substitution "
+        "doesn't get picked up by colcon-cmake.\n"
+        "To avoid these failures, substitute your 'ign(ition)-' prefixes with 'gz-' in your CMake "
+        "files, or call `colcon build --executor sequential` instead!\n")
+
+      set(PACKAGE_NAME ${PACKAGE_NAME_BAK})
+    endif()
+  endif()
 
   #------------------------------------
   # Construct the arguments to pass to find_package
@@ -309,7 +387,7 @@ macro(ign_find_package PACKAGE_NAME)
 
     # TODO: When we migrate to cmake-3.9+ bring back find_dependency(~) because
     #       at that point it will be able to support COMPONENTS and EXTRA_ARGS
-#    set(${PACKAGE_NAME}_find_dependency "find_dependency(${${PACKAGE_NAME}_dependency_args})")
+    # set(${PACKAGE_NAME}_find_dependency "find_dependency(${${PACKAGE_NAME}_dependency_args})")
 
     set(${PACKAGE_NAME}_find_dependency "find_package(${${PACKAGE_NAME}_dependency_args})")
 
@@ -952,12 +1030,56 @@ function(ign_create_core_library)
 
   #------------------------------------
   # Create the target for the core library, and configure it to be installed
-  _ign_add_library_or_component(
-    LIB_NAME ${PROJECT_LIBRARY_TARGET_NAME}
-    INCLUDE_DIR "${PROJECT_INCLUDE_DIR}"
-    EXPORT_BASE IGNITION_${IGN_DESIGNATION_UPPER}
-    SOURCES ${sources}
-    ${interface_option})
+
+  # Support "gz-"
+  if(${PROJECT_LIBRARY_TARGET_NAME} MATCHES "^gz-")
+    _ign_add_library_or_component(
+      LIB_NAME ${PROJECT_LIBRARY_TARGET_NAME}
+      INCLUDE_DIR "${PROJECT_INCLUDE_DIR}"
+      EXPORT_BASE GZ_${IGN_DESIGNATION_UPPER}
+      SOURCES ${sources}
+      ${interface_option})
+
+    # For ticktocking: Export an "ignition-" target as well, allowing linking against
+    # the ignition- prefixed name
+    # TODO(CH3): To remove on tock
+    string(REGEX REPLACE "^gz-" "ignition-" IGN_LIBRARY_TARGET_NAME ${PROJECT_LIBRARY_TARGET_NAME})
+    _ign_add_library_or_component(
+      LIB_NAME ${IGN_LIBRARY_TARGET_NAME}
+      INCLUDE_DIR "${PROJECT_INCLUDE_DIR}"
+      EXPORT_BASE IGNITION_${IGN_DESIGNATION_UPPER}
+      SOURCES ${sources}
+      ${interface_option})
+
+    target_include_directories(${IGN_LIBRARY_TARGET_NAME}
+      ${property_type}
+        # This is the publicly installed headers directory.
+        "$<INSTALL_INTERFACE:${IGN_INCLUDE_INSTALL_DIR_FULL}>"
+        # This is the in-build version of the core library headers directory.
+        # Generated headers for the core library get placed here.
+        "$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>"
+        # Generated headers for the core library might also get placed here.
+        "$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/core/include>")
+
+    #------------------------------------
+    # Handle cmake and pkgconfig packaging
+    # TODO(CH3): Remove on tock
+    string(REGEX REPLACE "^gz-" "ignition-" IGN_PROJECT_NAME_LOWER ${PROJECT_NAME_LOWER})
+
+    if(ign_create_core_library_INTERFACE)
+      set(project_pkgconfig_core_lib) # Intentionally blank
+    else()
+      set(project_pkgconfig_core_lib "-l${IGN_PROJECT_NAME_LOWER}")
+    endif()
+
+  else()
+    _ign_add_library_or_component(
+      LIB_NAME ${PROJECT_LIBRARY_TARGET_NAME}
+      INCLUDE_DIR "${PROJECT_INCLUDE_DIR}"
+      EXPORT_BASE IGNITION_${IGN_DESIGNATION_UPPER}
+      SOURCES ${sources}
+      ${interface_option})
+  endif()
 
   # These generator expressions are necessary for multi-configuration generators
   # such as MSVC on Windows. They also ensure that our target exports its
@@ -1006,7 +1128,9 @@ function(ign_create_core_library)
   if(ign_create_core_library_INTERFACE)
     set(project_pkgconfig_core_lib) # Intentionally blank
   else()
-    set(project_pkgconfig_core_lib "-l${PROJECT_NAME_LOWER}")
+    # We append here so the project target can live alongside the ignition- alias
+    # TODO(CH3): Change back to set() on tock and remove the set() in the other TODO above
+    ign_string_append(project_pkgconfig_core_lib "-l${PROJECT_NAME_LOWER}")
   endif()
 
   # Export and install the core library's cmake target and package information
@@ -1136,10 +1260,18 @@ function(ign_add_component component_name)
 
   #------------------------------------
   # Create the target for this component, and configure it to be installed
+
+  # Support "gz-"
+  if(${PROJECT_LIBRARY_TARGET_NAME} MATCHES "^gz-")
+   set(EXPORT_PREFIX "GZ")
+  else()
+   set(EXPORT_PREFIX "IGNITION")
+  endif()
+
   _ign_add_library_or_component(
     LIB_NAME ${component_target_name}
     INCLUDE_DIR "${PROJECT_INCLUDE_DIR}/${include_subdir}"
-    EXPORT_BASE IGNITION_${IGN_DESIGNATION_UPPER}_${component_name_upper}
+    EXPORT_BASE ${EXPORT_PREFIX}_${IGN_DESIGNATION_UPPER}_${component_name_upper}
     SOURCES ${sources}
     ${interface_option})
 

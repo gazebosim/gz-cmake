@@ -94,6 +94,12 @@ endif()
 
 @PACKAGE_INIT@
 
+# Add 'ignition-' prefixed package name if package is 'gz-' prefixed
+# TODO(CH3): Remove on tock
+if(@PKG_NAME@ MATCHES "^gz-")
+  string(REGEX REPLACE "^gz-" "ignition-" IGN_PKG_NAME @PKG_NAME@)
+endif()
+
 if(NOT TARGET @import_target_name@)
   include("${CMAKE_CURRENT_LIST_DIR}/@target_output_filename@")
 
@@ -102,6 +108,16 @@ if(NOT TARGET @import_target_name@)
   add_library(@simple_import_name@ INTERFACE IMPORTED)
   set_target_properties(@simple_import_name@ PROPERTIES
     INTERFACE_LINK_LIBRARIES @import_target_name@)
+
+  # Add 'ignition-' prefixed "alias" for the core library
+  # TODO(CH3): Remove on tock
+  if(IGN_PKG_NAME)
+    string(REGEX REPLACE "^gz-" "ignition-" ign_simple_import_name @simple_import_name@)
+    add_library(${ign_simple_import_name} INTERFACE IMPORTED)
+    set_target_properties(${ign_simple_import_name} PROPERTIES
+      INTERFACE_LINK_LIBRARIES @import_target_name@)
+  endif()
+
   # Note: In a future version of cmake, we can replace this with an ALIAS target
 
   # In case someone tries to link against the plain library name, we want to
@@ -112,11 +128,26 @@ if(NOT TARGET @import_target_name@)
   set_target_properties(@PKG_NAME@ PROPERTIES
     INTERFACE_LINK_LIBRARIES @import_target_name@)
 
+  # Add 'ignition-' prefixed "alias"
+  # TODO(CH3): Remove on tock
+  if(IGN_PKG_NAME)
+    add_library(${IGN_PKG_NAME} INTERFACE IMPORTED)
+    set_target_properties(${IGN_PKG_NAME} PROPERTIES
+      INTERFACE_LINK_LIBRARIES @import_target_name@)
+  endif()
+
 endif()
 
 # Create the "all" target if it does not already exist
 if(NOT TARGET @ign_namespace@requested)
   add_library(@ign_namespace@requested INTERFACE IMPORTED)
+
+  # TODO(CH3): Remove on tock
+  if(IGN_PKG_NAME)
+    # This is a really bad name...
+    string(REGEX REPLACE "^gz-" "ignition-" ign_ign_namespace @ign_namespace@)
+    add_library(${ign_ign_namespace}requested INTERFACE IMPORTED)
+  endif()
 endif()
 
 # Link the core library to the "all" target. We set the property explicitly
@@ -128,16 +159,41 @@ if(NOT ign_all_components)
   # should NOT pass into the INTERFACE_LINK_LIBRARIES property.
   set_target_properties(@ign_namespace@requested PROPERTIES
     INTERFACE_LINK_LIBRARIES "@import_target_name@")
+
+  # TODO(CH3): Remove on tock
+  if(IGN_PKG_NAME)
+    # This is a really bad name...
+    set_target_properties(${ign_ign_namespace}requested PROPERTIES
+      INTERFACE_LINK_LIBRARIES "@import_target_name@")
+  endif()
 else()
   set_target_properties(@ign_namespace@requested PROPERTIES
     INTERFACE_LINK_LIBRARIES "${ign_all_components};@import_target_name@")
+
+  # TODO(CH3): Remove on tock
+  if(IGN_PKG_NAME)
+    # This is a really bad name...
+    set_target_properties(${ign_ign_namespace}requested PROPERTIES
+      INTERFACE_LINK_LIBRARIES "${ign_all_components};@import_target_name@")
+  endif()
 endif()
 
 # Package variables. Note that @PKG_NAME@_LIBRARIES and @PKG_NAME@_CORE_LIBRARY
 # contain imported targets, so @PKG_NAME@_INCLUDE_DIRS is never needed.
 set(@PKG_NAME@_CORE_LIBRARY @simple_import_name@)
 set(@PKG_NAME@_LIBRARIES @ign_namespace@requested)
+
 set_and_check(@PKG_NAME@_INCLUDE_DIRS "@PACKAGE_IGN_INCLUDE_INSTALL_DIR_FULL@")
+
+# Add ignition- prefixed package variables and include directories pointing to the gz- headers
+# TODO(CH3): Remove on tock
+if(IGN_PKG_NAME)
+  set(${IGN_PKG_NAME}_CORE_LIBRARY @simple_import_name@)
+  set(${IGN_PKG_NAME}_LIBRARIES @ign_namespace@requested)
+
+  set_and_check(@PKG_NAME@_INCLUDE_DIRS "@PACKAGE_IGN_INCLUDE_INSTALL_DIR_FULL@")
+  set_and_check(${IGN_PKG_NAME}_INCLUDE_DIRS "@PACKAGE_IGN_INCLUDE_INSTALL_DIR_FULL@")
+endif()
 
 # Backwards compatibility variables
 set(@LEGACY_PROJECT_PREFIX@_LIBRARIES ${@PKG_NAME@_LIBRARIES})
