@@ -195,7 +195,6 @@ if(IGN_PKG_NAME)
   set(${IGN_PKG_NAME}_CORE_LIBRARY @simple_import_name@)
   set(${IGN_PKG_NAME}_LIBRARIES @ign_namespace@requested)
 
-  set_and_check(@PKG_NAME@_INCLUDE_DIRS "@PACKAGE_IGN_INCLUDE_INSTALL_DIR_FULL@")
   set_and_check(${IGN_PKG_NAME}_INCLUDE_DIRS "@PACKAGE_IGN_INCLUDE_INSTALL_DIR_FULL@")
 endif()
 
