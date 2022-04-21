@@ -138,14 +138,18 @@ if(NOT TARGET @import_target_name@)
 
 endif()
 
+# TODO(CH3): Remove on tock
+if(IGN_PKG_NAME)
+  # This is a really bad name...
+  string(REGEX REPLACE "^gz-" "ignition-" ign_ign_namespace @ign_namespace@)
+endif()
+
 # Create the "all" target if it does not already exist
 if(NOT TARGET @ign_namespace@requested)
   add_library(@ign_namespace@requested INTERFACE IMPORTED)
 
   # TODO(CH3): Remove on tock
   if(IGN_PKG_NAME)
-    # This is a really bad name...
-    string(REGEX REPLACE "^gz-" "ignition-" ign_ign_namespace @ign_namespace@)
     add_library(${ign_ign_namespace}requested INTERFACE IMPORTED)
   endif()
 endif()
