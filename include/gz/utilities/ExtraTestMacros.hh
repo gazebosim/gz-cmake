@@ -15,10 +15,10 @@
  *
  */
 
-#ifndef IGNITION_UTILITIES_EXTRATESTMACROS_HH
-#define IGNITION_UTILITIES_EXTRATESTMACROS_HH
+#ifndef GZ_UTILITIES_EXTRATESTMACROS_HH
+#define GZ_UTILITIES_EXTRATESTMACROS_HH
 
-#include <ignition/utilities/detail/ExtraTestMacros.hh>
+#include <gz/utilities/detail/ExtraTestMacros.hh>
 
 #pragma message("ign-cmake (utilities) ExtraTestMacros is deprecated, use ign-utils")
 

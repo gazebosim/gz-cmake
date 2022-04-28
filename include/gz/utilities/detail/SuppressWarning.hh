@@ -16,10 +16,10 @@
  */
 
 
-#ifndef IGNITION_UTILITIES_DETAIL_SUPPRESSWARNING_HH_
-#define IGNITION_UTILITIES_DETAIL_SUPPRESSWARNING_HH_
+#ifndef GZ_UTILITIES_DETAIL_SUPPRESSWARNING_HH_
+#define GZ_UTILITIES_DETAIL_SUPPRESSWARNING_HH_
 
-#include <ignition/utilities/SuppressWarning.hh>
+#include <gz/utilities/SuppressWarning.hh>
 
 #define DETAIL_IGN_UTILS_STRINGIFY(x) #x
 
