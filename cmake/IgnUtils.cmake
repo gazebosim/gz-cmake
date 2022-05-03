@@ -148,45 +148,45 @@ macro(ign_find_package PACKAGE_NAME)
 
   #------------------------------------
   # Parse the arguments
-  _ign_cmake_parse_arguments(ign_find_package "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  _ign_cmake_parse_arguments(gz_find_package "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   #------------------------------------
   # Construct the arguments to pass to find_package
   set(${PACKAGE_NAME}_find_package_args ${PACKAGE_NAME})
 
-  if(ign_find_package_VERSION)
-    list(APPEND ${PACKAGE_NAME}_find_package_args ${ign_find_package_VERSION})
+  if(gz_find_package_VERSION)
+    list(APPEND ${PACKAGE_NAME}_find_package_args ${gz_find_package_VERSION})
   endif()
 
-  if(ign_find_package_QUIET)
+  if(gz_find_package_QUIET)
     list(APPEND ${PACKAGE_NAME}_find_package_args QUIET)
   endif()
 
-  if(ign_find_package_EXACT)
+  if(gz_find_package_EXACT)
     list(APPEND ${PACKAGE_NAME}_find_package_args EXACT)
   endif()
 
-  if(ign_find_package_CONFIG)
+  if(gz_find_package_CONFIG)
     list(APPEND ${PACKAGE_NAME}_find_package_args CONFIG)
   endif()
 
-  if(ign_find_package_COMPONENTS)
-    list(APPEND ${PACKAGE_NAME}_find_package_args COMPONENTS ${ign_find_package_COMPONENTS})
+  if(gz_find_package_COMPONENTS)
+    list(APPEND ${PACKAGE_NAME}_find_package_args COMPONENTS ${gz_find_package_COMPONENTS})
   endif()
 
-  if(ign_find_package_OPTIONAL_COMPONENTS)
-    list(APPEND ${PACKAGE_NAME}_find_package_args OPTIONAL_COMPONENTS ${ign_find_package_OPTIONAL_COMPONENTS})
+  if(gz_find_package_OPTIONAL_COMPONENTS)
+    list(APPEND ${PACKAGE_NAME}_find_package_args OPTIONAL_COMPONENTS ${gz_find_package_OPTIONAL_COMPONENTS})
   endif()
 
-  if(ign_find_package_EXTRA_ARGS)
-    list(APPEND ${PACKAGE_NAME}_find_package_args ${ign_find_package_EXTRA_ARGS})
+  if(gz_find_package_EXTRA_ARGS)
+    list(APPEND ${PACKAGE_NAME}_find_package_args ${gz_find_package_EXTRA_ARGS})
   endif()
 
 
   #------------------------------------
   # Figure out which name to print
-  if(ign_find_package_PRETTY)
-    set(${PACKAGE_NAME}_pretty ${ign_find_package_PRETTY})
+  if(gz_find_package_PRETTY)
+    set(${PACKAGE_NAME}_pretty ${gz_find_package_PRETTY})
   else()
     set(${PACKAGE_NAME}_pretty ${PACKAGE_NAME})
   endif()
@@ -208,25 +208,25 @@ macro(ign_find_package PACKAGE_NAME)
     # Construct the warning/error message to produce
     set(${PACKAGE_NAME}_msg "Missing dependency [${${PACKAGE_NAME}_pretty}]")
 
-    if(ign_find_package_COMPONENTS)
-      ign_list_to_string(comp_str ign_find_package_COMPONENTS DELIM ", ")
+    if(gz_find_package_COMPONENTS)
+      ign_list_to_string(comp_str gz_find_package_COMPONENTS DELIM ", ")
       set(${PACKAGE_NAME}_msg "${${PACKAGE_NAME}_msg} (Components: ${comp_str})")
     endif()
 
-    if(DEFINED ign_find_package_PURPOSE)
-      set(${PACKAGE_NAME}_msg "${${PACKAGE_NAME}_msg} - ${ign_find_package_PURPOSE}")
+    if(DEFINED gz_find_package_PURPOSE)
+      set(${PACKAGE_NAME}_msg "${${PACKAGE_NAME}_msg} - ${gz_find_package_PURPOSE}")
     endif()
 
     #------------------------------------
     # If the package is unavailable, tell the user.
-    if(ign_find_package_REQUIRED)
+    if(gz_find_package_REQUIRED)
 
       # If it was required by the project, we will create an error.
       ign_build_error(${${PACKAGE_NAME}_msg})
 
-    elseif(ign_find_package_REQUIRED_BY)
+    elseif(gz_find_package_REQUIRED_BY)
 
-      foreach(component ${ign_find_package_REQUIRED_BY})
+      foreach(component ${gz_find_package_REQUIRED_BY})
 
         if(NOT SKIP_${component})
           # Otherwise, if it was only required by some of the components, create
@@ -244,7 +244,7 @@ macro(ign_find_package PACKAGE_NAME)
       endforeach()
 
     else()
-      if(NOT ign_find_package_QUIET)
+      if(NOT gz_find_package_QUIET)
         ign_build_warning(${${PACKAGE_NAME}_msg})
       endif()
     endif()
@@ -258,8 +258,8 @@ macro(ign_find_package PACKAGE_NAME)
   # Also, add this package or library as an entry to the pkgconfig file that we
   # will produce for our project.
   if( ${PACKAGE_NAME}_FOUND
-      AND (ign_find_package_REQUIRED OR ign_find_package_REQUIRED_BY)
-      AND NOT ign_find_package_BUILD_ONLY)
+      AND (gz_find_package_REQUIRED OR gz_find_package_REQUIRED_BY)
+      AND NOT gz_find_package_BUILD_ONLY)
 
     # Set up the arguments we want to pass to the find_dependency invokation for
     # our ignition project. We always need to pass the name of the dependency.
@@ -274,17 +274,17 @@ macro(ign_find_package PACKAGE_NAME)
     set(${PACKAGE_NAME}_dependency_args "${PACKAGE_NAME}")
 
     # If a version is provided here, we should pass that as well.
-    if(ign_find_package_VERSION)
-      ign_string_append(${PACKAGE_NAME}_dependency_args ${ign_find_package_VERSION})
+    if(gz_find_package_VERSION)
+      ign_string_append(${PACKAGE_NAME}_dependency_args ${gz_find_package_VERSION})
     endif()
 
     # If we have specified the exact version, we should provide that as well.
-    if(ign_find_package_EXACT)
+    if(gz_find_package_EXACT)
       ign_string_append(${PACKAGE_NAME}_dependency_args EXACT)
     endif()
 
     # If we have specified to use CONFIG mode, we should provide that as well.
-    if(ign_find_package_CONFIG)
+    if(gz_find_package_CONFIG)
       ign_string_append(${PACKAGE_NAME}_dependency_args CONFIG)
     endif()
 
@@ -297,14 +297,14 @@ macro(ign_find_package PACKAGE_NAME)
     ign_string_append(${PACKAGE_NAME}_dependency_args "\\\\\\\${ign_package_quiet} \\\\\\\${ign_package_required}")
 
     # If we have specified components of the dependency, mention those.
-    if(ign_find_package_COMPONENTS)
-      ign_string_append(${PACKAGE_NAME}_dependency_args "COMPONENTS ${ign_find_package_COMPONENTS}")
+    if(gz_find_package_COMPONENTS)
+      ign_string_append(${PACKAGE_NAME}_dependency_args "COMPONENTS ${gz_find_package_COMPONENTS}")
     endif()
 
     # If there are any additional arguments for the find_package(~) command,
     # forward them along.
-    if(ign_find_package_EXTRA_ARGS)
-      ign_string_append(${PACKAGE_NAME}_dependency_args "${ign_find_package_EXTRA_ARGS}")
+    if(gz_find_package_EXTRA_ARGS)
+      ign_string_append(${PACKAGE_NAME}_dependency_args "${gz_find_package_EXTRA_ARGS}")
     endif()
 
     # TODO: When we migrate to cmake-3.9+ bring back find_dependency(~) because
@@ -314,22 +314,22 @@ macro(ign_find_package PACKAGE_NAME)
     set(${PACKAGE_NAME}_find_dependency "find_package(${${PACKAGE_NAME}_dependency_args})")
 
 
-    if(ign_find_package_REQUIRED)
+    if(gz_find_package_REQUIRED)
       # If this is REQUIRED, add it to PROJECT_CMAKE_DEPENDENCIES
       ign_string_append(PROJECT_CMAKE_DEPENDENCIES "${${PACKAGE_NAME}_find_dependency}" DELIM "\n")
     endif()
 
-    if(ign_find_package_REQUIRED_BY)
+    if(gz_find_package_REQUIRED_BY)
 
       # Identify which components are privately requiring this package
-      foreach(component ${ign_find_package_PRIVATE_FOR})
+      foreach(component ${gz_find_package_PRIVATE_FOR})
         set(${component}_${PACKAGE_NAME}_PRIVATE true)
       endforeach()
 
       # If this is required by some components, add it to the
       # ${component}_CMAKE_DEPENDENCIES variables that are specific to those
       # componenets
-      foreach(component ${ign_find_package_REQUIRED_BY})
+      foreach(component ${gz_find_package_REQUIRED_BY})
         if(NOT ${component}_${PACKAGE_NAME}_PRIVATE)
           ign_string_append(${component}_CMAKE_DEPENDENCIES "${${PACKAGE_NAME}_find_dependency}" DELIM "\n")
         endif()
@@ -340,7 +340,7 @@ macro(ign_find_package PACKAGE_NAME)
     #------------------------------------
     # Add this library or project to its relevant pkgconfig entry, unless we
     # have been explicitly instructed to ignore it.
-    if(NOT ign_find_package_PKGCONFIG_IGNORE)
+    if(NOT gz_find_package_PKGCONFIG_IGNORE)
 
       # Here we will set up the pkgconfig entry for this package. Ordinarily,
       # these variables should be set by the ign-cmake custom find-module for
@@ -355,32 +355,32 @@ macro(ign_find_package PACKAGE_NAME)
       # If the caller has specified the arguments PKGCONFIG_LIB or PKGCONFIG,
       # then we will overwrite these pkgconfig variables with the information
       # provided by the caller.
-      if(ign_find_package_PKGCONFIG_LIB)
+      if(gz_find_package_PKGCONFIG_LIB)
 
         # Libraries must be prepended with -l
-        set(${PACKAGE_NAME}_PKGCONFIG_ENTRY "-l${ign_find_package_PKGCONFIG_LIB}")
+        set(${PACKAGE_NAME}_PKGCONFIG_ENTRY "-l${gz_find_package_PKGCONFIG_LIB}")
         set(${PACKAGE_NAME}_PKGCONFIG_TYPE PKGCONFIG_LIBS)
 
-      elseif(ign_find_package_PKGCONFIG)
+      elseif(gz_find_package_PKGCONFIG)
 
         # Modules (a.k.a. packages) can just be specified by their package
         # name without any prefixes like -l
-        set(${PACKAGE_NAME}_PKGCONFIG_ENTRY "${ign_find_package_PKGCONFIG}")
+        set(${PACKAGE_NAME}_PKGCONFIG_ENTRY "${gz_find_package_PKGCONFIG}")
         set(${PACKAGE_NAME}_PKGCONFIG_TYPE PKGCONFIG_REQUIRES)
 
         # Add the version requirements to the entry.
-        if(ign_find_package_VERSION)
+        if(gz_find_package_VERSION)
           # Use equivalency by default
           set(comparison "=")
 
           # If the caller has specified a version comparison operator, use that
           # instead of equivalency.
-          if(ign_find_package_PKGCONFIG_VER_COMPARISON)
-            set(comparison ${ign_find_package_PKGCONFIG_VER_COMPARISON})
+          if(gz_find_package_PKGCONFIG_VER_COMPARISON)
+            set(comparison ${gz_find_package_PKGCONFIG_VER_COMPARISON})
           endif()
 
           # Append the comparison and the version onto the pkgconfig entry
-          set(${PACKAGE_NAME}_PKGCONFIG_ENTRY "${${PACKAGE_NAME}_PKGCONFIG_ENTRY} ${comparison} ${ign_find_package_VERSION}")
+          set(${PACKAGE_NAME}_PKGCONFIG_ENTRY "${${PACKAGE_NAME}_PKGCONFIG_ENTRY} ${comparison} ${gz_find_package_VERSION}")
 
         endif()
 
@@ -407,9 +407,9 @@ macro(ign_find_package PACKAGE_NAME)
 
         # We have pkg-config information for this package
 
-        if(ign_find_package_REQUIRED)
+        if(gz_find_package_REQUIRED)
 
-          if(ign_find_package_PRIVATE)
+          if(gz_find_package_PRIVATE)
             # If this is a private library or module, use the _PRIVATE suffix
             set(PROJECT_${PACKAGE_NAME}_PKGCONFIG_TYPE ${${PACKAGE_NAME}_PKGCONFIG_TYPE}_PRIVATE)
           else()
@@ -423,12 +423,12 @@ macro(ign_find_package PACKAGE_NAME)
 
         endif()
 
-        if(ign_find_package_REQUIRED_BY)
+        if(gz_find_package_REQUIRED_BY)
 
           # For each of the components that requires this package, append its
           # entry as a string onto the component-specific variable for whichever
           # requirement type we selected
-          foreach(component ${ign_find_package_REQUIRED_BY})
+          foreach(component ${gz_find_package_REQUIRED_BY})
 
             if(${component}_${PACKAGE_NAME}_PRIVATE)
               # If this is a private library or module, use the _PRIVATE suffix
@@ -478,10 +478,10 @@ macro(ign_string_append output_var val)
 
   #------------------------------------
   # Parse the arguments
-  _ign_cmake_parse_arguments(ign_string_append "PARENT_SCOPE;${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  _ign_cmake_parse_arguments(gz_string_append "PARENT_SCOPE;${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
-  if(ign_string_append_DELIM)
-    set(delim "${ign_string_append_DELIM}")
+  if(gz_string_append_DELIM)
+    set(delim "${gz_string_append_DELIM}")
   else()
     set(delim " ")
   endif()
@@ -495,7 +495,7 @@ macro(ign_string_append output_var val)
     set(${output_var} "${${output_var}}${delim}${val}")
   endif()
 
-  if(ign_string_append_PARENT_SCOPE)
+  if(gz_string_append_PARENT_SCOPE)
     set(${output_var} "${${output_var}}" PARENT_SCOPE)
   endif()
 
@@ -633,7 +633,7 @@ function(ign_install_all_headers)
 
   #------------------------------------
   # Parse the arguments
-  _ign_cmake_parse_arguments(ign_install_all_headers "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  _ign_cmake_parse_arguments(gz_install_all_headers "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
 
   #------------------------------------
@@ -647,10 +647,10 @@ function(ign_install_all_headers)
     if(IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${f})
 
       # Check if it is in the list of excluded directories
-      list(FIND ign_install_all_headers_EXCLUDE_DIRS ${f} f_index)
+      list(FIND gz_install_all_headers_EXCLUDE_DIRS ${f} f_index)
 
       set(append_file TRUE)
-      foreach(subdir ${ign_install_all_headers_EXCLUDE_DIRS})
+      foreach(subdir ${gz_install_all_headers_EXCLUDE_DIRS})
 
         # Check if ${f} contains ${subdir} as a substring
         string(FIND ${f} ${subdir} pos)
@@ -688,7 +688,7 @@ function(ign_install_all_headers)
 
     # Remove the excluded headers
     if(headers)
-      foreach(exclude ${ign_install_all_headers_EXCLUDE_FILES})
+      foreach(exclude ${gz_install_all_headers_EXCLUDE_FILES})
         list(REMOVE_ITEM headers ${exclude})
       endforeach()
     endif()
@@ -712,13 +712,13 @@ function(ign_install_all_headers)
   endforeach()
 
   # Add generated headers to the list of includes
-  foreach(header ${ign_install_all_headers_GENERATED_HEADERS})
+  foreach(header ${gz_install_all_headers_GENERATED_HEADERS})
       set(ign_headers "${ign_headers}#include <${PROJECT_INCLUDE_DIR}/${header}>\n")
   endforeach()
 
-  if(ign_install_all_headers_COMPONENT)
+  if(gz_install_all_headers_COMPONENT)
 
-    set(component_name ${ign_install_all_headers_COMPONENT})
+    set(component_name ${gz_install_all_headers_COMPONENT})
 
     # Define the install directory for the component meta header
     set(meta_header_install_dir ${IGN_INCLUDE_INSTALL_DIR_FULL}/${PROJECT_INCLUDE_DIR}/${component_name})
@@ -751,7 +751,7 @@ function(ign_install_all_headers)
   set(config_header_in ${CMAKE_CURRENT_SOURCE_DIR}/config.hh.in)
   set(config_header_out ${CMAKE_CURRENT_BINARY_DIR}/config.hh)
 
-  if(NOT ign_install_all_headers_COMPONENT)
+  if(NOT gz_install_all_headers_COMPONENT)
 
     # Produce an error if the config file is missing
     #
@@ -934,15 +934,15 @@ function(ign_create_core_library)
 
   #------------------------------------
   # Parse the arguments
-  cmake_parse_arguments(ign_create_core_library "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  cmake_parse_arguments(gz_create_core_library "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
-  if(ign_create_core_library_SOURCES)
-    set(sources ${ign_create_core_library_SOURCES})
-  elseif(NOT ign_create_core_library_INTERFACE)
+  if(gz_create_core_library_SOURCES)
+    set(sources ${gz_create_core_library_SOURCES})
+  elseif(NOT gz_create_core_library_INTERFACE)
     message(FATAL_ERROR "You must specify SOURCES for ign_create_core_library(~)!")
   endif()
 
-  if(ign_create_core_library_INTERFACE)
+  if(gz_create_core_library_INTERFACE)
     set(interface_option INTERFACE)
     set(property_type INTERFACE)
   else()
@@ -1003,14 +1003,14 @@ function(ign_create_core_library)
 
   #------------------------------------
   # Handle cmake and pkgconfig packaging
-  if(ign_create_core_library_INTERFACE)
+  if(gz_create_core_library_INTERFACE)
     set(project_pkgconfig_core_lib) # Intentionally blank
   else()
     set(project_pkgconfig_core_lib "-l${PROJECT_NAME_LOWER}")
   endif()
 
   # Export and install the core library's cmake target and package information
-  _ign_create_cmake_package(LEGACY_PROJECT_PREFIX ${ign_create_core_library_LEGACY_PROJECT_PREFIX})
+  _ign_create_cmake_package(LEGACY_PROJECT_PREFIX ${gz_create_core_library_LEGACY_PROJECT_PREFIX})
 
   # Generate and install the core library's pkgconfig information
   _ign_create_pkgconfig()
@@ -1018,8 +1018,8 @@ function(ign_create_core_library)
 
   #------------------------------------
   # Pass back the target name if they ask for it.
-  if(ign_create_core_library_GET_TARGET_NAME)
-    set(${ign_create_core_library_GET_TARGET_NAME} ${PROJECT_LIBRARY_TARGET_NAME} PARENT_SCOPE)
+  if(gz_create_core_library_GET_TARGET_NAME)
+    set(${gz_create_core_library_GET_TARGET_NAME} ${PROJECT_LIBRARY_TARGET_NAME} PARENT_SCOPE)
   endif()
 
 endfunction()
@@ -1094,25 +1094,25 @@ function(ign_add_component component_name)
 
   #------------------------------------
   # Parse the arguments
-  cmake_parse_arguments(ign_add_component "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  cmake_parse_arguments(gz_add_component "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   if(POLICY CMP0079)
     cmake_policy(SET CMP0079 NEW)
   endif()
 
-  if(ign_add_component_SOURCES)
-    set(sources ${ign_add_component_SOURCES})
-  elseif(NOT ign_add_component_INTERFACE)
+  if(gz_add_component_SOURCES)
+    set(sources ${gz_add_component_SOURCES})
+  elseif(NOT gz_add_component_INTERFACE)
     message(FATAL_ERROR "You must specify SOURCES for ign_add_component(~)!")
   endif()
 
-  if(ign_add_component_INCLUDE_SUBDIR)
-    set(include_subdir ${ign_add_component_INCLUDE_SUBDIR})
+  if(gz_add_component_INCLUDE_SUBDIR)
+    set(include_subdir ${gz_add_component_INCLUDE_SUBDIR})
   else()
     set(include_subdir ${component_name})
   endif()
 
-  if(ign_add_component_INTERFACE)
+  if(gz_add_component_INTERFACE)
     set(interface_option INTERFACE)
     set(property_type INTERFACE)
   else()
@@ -1124,8 +1124,8 @@ function(ign_add_component component_name)
   set(component_target_name ${PROJECT_LIBRARY_TARGET_NAME}-${component_name})
 
   # Pass the component's target name back to the caller if requested
-  if(ign_add_component_GET_TARGET_NAME)
-    set(${ign_add_component_GET_TARGET_NAME} ${component_target_name} PARENT_SCOPE)
+  if(gz_add_component_GET_TARGET_NAME)
+    set(${gz_add_component_GET_TARGET_NAME} ${component_target_name} PARENT_SCOPE)
   endif()
 
   # Create an upper case version of the component name, to be used as an export
@@ -1143,8 +1143,8 @@ function(ign_add_component component_name)
     SOURCES ${sources}
     ${interface_option})
 
-  if(ign_add_component_INDEPENDENT_FROM_PROJECT_LIB  OR
-     ign_add_component_PRIVATELY_DEPENDS_ON_PROJECT_LIB)
+  if(gz_add_component_INDEPENDENT_FROM_PROJECT_LIB  OR
+     gz_add_component_PRIVATELY_DEPENDS_ON_PROJECT_LIB)
 
     # If we are not linking this component to the core library, then we need to
     # add these include directories to this component library directly. This is
@@ -1192,30 +1192,30 @@ function(ign_add_component component_name)
   #------------------------------------
   # Adjust the packaging variables based on how this component depends (or not)
   # on the core library.
-  if(ign_add_component_PRIVATELY_DEPENDS_ON_PROJECT_LIB)
+  if(gz_add_component_PRIVATELY_DEPENDS_ON_PROJECT_LIB)
 
     target_link_libraries(${component_target_name}
       PRIVATE ${PROJECT_LIBRARY_TARGET_NAME})
 
   endif()
 
-  if(ign_add_component_INTERFACE_DEPENDS_ON_PROJECT_LIB)
+  if(gz_add_component_INTERFACE_DEPENDS_ON_PROJECT_LIB)
 
     target_link_libraries(${component_target_name}
       INTERFACE ${PROJECT_LIBRARY_TARGET_NAME})
 
   endif()
 
-  if(NOT ign_add_component_INDEPENDENT_FROM_PROJECT_LIB AND
-     NOT ign_add_component_PRIVATELY_DEPENDS_ON_PROJECT_LIB AND
-     NOT ign_add_component_INTERFACE_DEPENDS_ON_PROJECT_LIB)
+  if(NOT gz_add_component_INDEPENDENT_FROM_PROJECT_LIB AND
+     NOT gz_add_component_PRIVATELY_DEPENDS_ON_PROJECT_LIB AND
+     NOT gz_add_component_INTERFACE_DEPENDS_ON_PROJECT_LIB)
 
     target_link_libraries(${component_target_name}
       ${property_type} ${PROJECT_LIBRARY_TARGET_NAME})
 
   endif()
 
-  if(NOT ign_add_component_INDEPENDENT_FROM_PROJECT_LIB)
+  if(NOT gz_add_component_INDEPENDENT_FROM_PROJECT_LIB)
 
     # Add the core library as a cmake dependency for this component
     # NOTE: It seems we need to triple-escape "${ign_package_required}" and
@@ -1225,8 +1225,8 @@ function(ign_add_component component_name)
 
     # Choose what type of pkgconfig entry the core library belongs to
     set(lib_pkgconfig_type ${component_name}_PKGCONFIG_REQUIRES)
-    if(ign_add_component_PRIVATELY_DEPENDS_ON_PROJECT_LIB
-        AND NOT ign_add_component_INTERFACE_DEPENDS_ON_PROJECT_LIB)
+    if(gz_add_component_PRIVATELY_DEPENDS_ON_PROJECT_LIB
+        AND NOT gz_add_component_INTERFACE_DEPENDS_ON_PROJECT_LIB)
       set(lib_pkgconfig_type ${lib_pkgconfig_type}_PRIVATE)
     endif()
 
@@ -1234,15 +1234,15 @@ function(ign_add_component component_name)
 
   endif()
 
-  if(ign_add_component_DEPENDS_ON_COMPONENTS)
+  if(gz_add_component_DEPENDS_ON_COMPONENTS)
     ign_string_append(${component_name}_CMAKE_DEPENDENCIES
-      "find_package(${PKG_NAME} ${PROJECT_VERSION_FULL_NO_SUFFIX} EXACT \\\${ign_package_quiet} \\\${ign_package_required} COMPONENTS ${ign_add_component_DEPENDS_ON_COMPONENTS})" DELIM "\n")
+      "find_package(${PKG_NAME} ${PROJECT_VERSION_FULL_NO_SUFFIX} EXACT \\\${ign_package_quiet} \\\${ign_package_required} COMPONENTS ${gz_add_component_DEPENDS_ON_COMPONENTS})" DELIM "\n")
   endif()
 
   #------------------------------------
   # Set variables that are needed by cmake/ignition-component-config.cmake.in
   set(component_pkg_name ${component_target_name})
-  if(ign_add_component_INTERFACE)
+  if(gz_add_component_INTERFACE)
     set(component_pkgconfig_lib)
   else()
     set(component_pkgconfig_lib "-l${component_pkg_name}")
@@ -1348,34 +1348,34 @@ macro(_ign_add_library_or_component)
 
   #------------------------------------
   # Parse the arguments
-  cmake_parse_arguments(_ign_add_library "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  cmake_parse_arguments(_gz_add_library "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
-  if(_ign_add_library_LIB_NAME)
-    set(lib_name ${_ign_add_library_LIB_NAME})
+  if(_gz_add_library_LIB_NAME)
+    set(lib_name ${_gz_add_library_LIB_NAME})
   else()
-    _ign_add_library_or_component_arg_error(LIB_NAME)
+    _gz_add_library_or_component_arg_error(LIB_NAME)
   endif()
 
-  if(NOT _ign_add_library_INTERFACE)
-    if(_ign_add_library_SOURCES)
-      set(sources ${_ign_add_library_SOURCES})
+  if(NOT _gz_add_library_INTERFACE)
+    if(_gz_add_library_SOURCES)
+      set(sources ${_gz_add_library_SOURCES})
     else()
-      _ign_add_library_or_component_arg_error(SOURCES)
+      _gz_add_library_or_component_arg_error(SOURCES)
     endif()
   else()
     set(sources)
   endif()
 
-  if(_ign_add_library_INCLUDE_DIR)
-    set(include_dir ${_ign_add_library_INCLUDE_DIR})
+  if(_gz_add_library_INCLUDE_DIR)
+    set(include_dir ${_gz_add_library_INCLUDE_DIR})
   else()
-    _ign_add_library_or_component_arg_error(INCLUDE_DIR)
+    _gz_add_library_or_component_arg_error(INCLUDE_DIR)
   endif()
 
-  if(_ign_add_library_EXPORT_BASE)
-    set(export_base ${_ign_add_library_EXPORT_BASE})
+  if(_gz_add_library_EXPORT_BASE)
+    set(export_base ${_gz_add_library_EXPORT_BASE})
   else()
-    _ign_add_library_or_component_arg_error(EXPORT_BASE)
+    _gz_add_library_or_component_arg_error(EXPORT_BASE)
   endif()
 
   # check that export_base has no invalid symbols
@@ -1391,7 +1391,7 @@ macro(_ign_add_library_or_component)
 
   message(STATUS "Configuring library: ${lib_name}")
 
-  if(_ign_add_library_INTERFACE)
+  if(_gz_add_library_INTERFACE)
     add_library(${lib_name} INTERFACE)
   else()
     add_library(${lib_name} ${sources})
@@ -1399,11 +1399,11 @@ macro(_ign_add_library_or_component)
 
   #------------------------------------
   # Add fPIC if we are supposed to
-  if(IGN_ADD_fPIC_TO_LIBRARIES AND NOT _ign_add_library_INTERFACE)
+  if(IGN_ADD_fPIC_TO_LIBRARIES AND NOT _gz_add_library_INTERFACE)
     target_compile_options(${lib_name} PRIVATE -fPIC)
   endif()
 
-  if(NOT _ign_add_library_INTERFACE)
+  if(NOT _gz_add_library_INTERFACE)
 
     #------------------------------------
     # Generate export macro headers
@@ -1579,39 +1579,39 @@ macro(ign_build_executables)
   set(oneValueArgs PREFIX EXEC_LIST)
   set(multiValueArgs SOURCES LIB_DEPS INCLUDE_DIRS)
 
-  if(ign_build_executables_EXEC_LIST)
-    set(${ign_build_executables_EXEC_LIST} "")
+  if(gz_build_executables_EXEC_LIST)
+    set(${gz_build_executables_EXEC_LIST} "")
   endif()
 
 
   #------------------------------------
   # Parse the arguments
-  _ign_cmake_parse_arguments(ign_build_executables "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  _ign_cmake_parse_arguments(gz_build_executables "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
-  foreach(exec_file ${ign_build_executables_SOURCES})
+  foreach(exec_file ${gz_build_executables_SOURCES})
 
     get_filename_component(BINARY_NAME ${exec_file} NAME_WE)
-    set(BINARY_NAME ${ign_build_executables_PREFIX}${BINARY_NAME})
+    set(BINARY_NAME ${gz_build_executables_PREFIX}${BINARY_NAME})
 
     add_executable(${BINARY_NAME} ${exec_file})
 
-    if(ign_build_executables_EXEC_LIST)
-      list(APPEND ${ign_build_executables_EXEC_LIST} ${BINARY_NAME})
+    if(gz_build_executables_EXEC_LIST)
+      list(APPEND ${gz_build_executables_EXEC_LIST} ${BINARY_NAME})
     endif()
 
-    if(NOT ign_build_executables_EXCLUDE_PROJECT_LIB)
+    if(NOT gz_build_executables_EXCLUDE_PROJECT_LIB)
       target_link_libraries(${BINARY_NAME} ${PROJECT_LIBRARY_TARGET_NAME})
     endif()
 
-    if(ign_build_executables_LIB_DEPS)
-      target_link_libraries(${BINARY_NAME} ${ign_build_executables_LIB_DEPS})
+    if(gz_build_executables_LIB_DEPS)
+      target_link_libraries(${BINARY_NAME} ${gz_build_executables_LIB_DEPS})
     endif()
 
     target_include_directories(${BINARY_NAME}
       PRIVATE
         ${PROJECT_SOURCE_DIR}
         ${PROJECT_BINARY_DIR}
-        ${ign_build_executables_INCLUDE_DIRS})
+        ${gz_build_executables_INCLUDE_DIRS})
 
   endforeach()
 
@@ -1658,16 +1658,16 @@ macro(ign_build_tests)
 
   #------------------------------------
   # Parse the arguments
-  _ign_cmake_parse_arguments(ign_build_tests "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  _ign_cmake_parse_arguments(gz_build_tests "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
-  if(NOT ign_build_tests_TYPE)
+  if(NOT gz_build_tests_TYPE)
     # If you have encountered this error, you are probably migrating to the
     # new ignition-cmake system. Be sure to also provide a SOURCES argument
     # when calling ign_build_tests.
     message(FATAL_ERROR "Developer error: You must specify a TYPE for your tests!")
   endif()
 
-  if(ign_build_tests_SOURCE)
+  if(gz_build_tests_SOURCE)
 
     # We have encountered cases where someone accidentally passes a SOURCE
     # argument instead of a SOURCES argument into ign_build_tests, and the macro
@@ -1679,36 +1679,36 @@ macro(ign_build_tests)
 
   endif()
 
-  set(TEST_TYPE ${ign_build_tests_TYPE})
+  set(TEST_TYPE ${gz_build_tests_TYPE})
 
   if(BUILD_TESTING)
 
-    if(NOT DEFINED ign_build_tests_SOURCES)
+    if(NOT DEFINED gz_build_tests_SOURCES)
       message(STATUS "No tests have been specified for ${TEST_TYPE}")
     else()
-      list(LENGTH ign_build_tests_SOURCES num_tests)
+      list(LENGTH gz_build_tests_SOURCES num_tests)
       message(STATUS "Adding ${num_tests} ${TEST_TYPE} tests")
     endif()
 
-    if(NOT ign_build_tests_EXCLUDE_PROJECT_LIB)
+    if(NOT gz_build_tests_EXCLUDE_PROJECT_LIB)
       ign_build_executables(
         PREFIX "${TEST_TYPE}_"
-        SOURCES ${ign_build_tests_SOURCES}
-        LIB_DEPS gtest gtest_main ${ign_build_tests_LIB_DEPS}
-        INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/test/gtest/include ${ign_build_tests_INCLUDE_DIRS}
+        SOURCES ${gz_build_tests_SOURCES}
+        LIB_DEPS gtest gtest_main ${gz_build_tests_LIB_DEPS}
+        INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/test/gtest/include ${gz_build_tests_INCLUDE_DIRS}
         EXEC_LIST test_list)
     else()
       ign_build_executables(
         PREFIX "${TEST_TYPE}_"
-        SOURCES ${ign_build_tests_SOURCES}
-        LIB_DEPS gtest gtest_main ${ign_build_tests_LIB_DEPS}
-        INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/test/gtest/include ${ign_build_tests_INCLUDE_DIRS}
+        SOURCES ${gz_build_tests_SOURCES}
+        LIB_DEPS gtest gtest_main ${gz_build_tests_LIB_DEPS}
+        INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/test/gtest/include ${gz_build_tests_INCLUDE_DIRS}
         EXEC_LIST test_list
         EXCLUDE_PROJECT_LIB)
     endif()
 
-    if(ign_build_tests_TEST_LIST)
-      set(${ign_build_tests_TEST_LIST} ${test_list})
+    if(gz_build_tests_TEST_LIST)
+      set(${gz_build_tests_TEST_LIST} ${test_list})
     endif()
 
     # Find the Python interpreter for running the
