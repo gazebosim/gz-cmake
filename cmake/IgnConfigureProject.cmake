@@ -56,11 +56,12 @@ macro(ign_configure_project)
   # Extract the designation
   #============================================================================
   set(IGN_DESIGNATION ${PROJECT_NAME})
-  # Remove the leading project prefix ("ignition-" by default)
-  set(PROJECT_PREFIX "ignition")
-  # Also support "gz-"
-  if(${IGN_DESIGNATION} MATCHES "^gz-")
-    set(PROJECT_PREFIX "gz")
+  # Remove the leading project prefix ("gz-" by default)
+  set(PROJECT_PREFIX "gz")
+  # Also support "ignition-"
+  # TODO: remove this `if` block once all package names start with gz
+  if(${IGN_DESIGNATION} MATCHES "^ignition-")
+    set(PROJECT_PREFIX "ignition")
   endif()
   string(REGEX REPLACE "${PROJECT_PREFIX}-" "" IGN_DESIGNATION ${IGN_DESIGNATION})
 
