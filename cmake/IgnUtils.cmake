@@ -209,7 +209,7 @@ macro(ign_find_package PACKAGE_NAME)
     set(${PACKAGE_NAME}_msg "Missing dependency [${${PACKAGE_NAME}_pretty}]")
 
     if(gz_find_package_COMPONENTS)
-      ign_list_to_string(comp_str gz_find_package_COMPONENTS DELIM ", ")
+      _gz_list_to_string(comp_str gz_find_package_COMPONENTS DELIM ", ")
       set(${PACKAGE_NAME}_msg "${${PACKAGE_NAME}_msg} (Components: ${comp_str})")
     endif()
 
@@ -232,7 +232,7 @@ macro(ign_find_package PACKAGE_NAME)
           # Otherwise, if it was only required by some of the components, create
           # a warning about which components will not be available, unless the
           # user explicitly requested that it be skipped
-          ign_build_warning("Skipping component [${component}]: ${${PACKAGE_NAME}_msg}.\n    ^~~~~ Set SKIP_${component}=true in cmake to suppress this warning.\n ")
+          _gz_build_warning("Skipping component [${component}]: ${${PACKAGE_NAME}_msg}.\n    ^~~~~ Set SKIP_${component}=true in cmake to suppress this warning.\n ")
 
           # Create a variable to indicate that we need to skip the component
           set(INTERNAL_SKIP_${component} true)
@@ -245,7 +245,7 @@ macro(ign_find_package PACKAGE_NAME)
 
     else()
       if(NOT gz_find_package_QUIET)
-        ign_build_warning(${${PACKAGE_NAME}_msg})
+        _gz_build_warning(${${PACKAGE_NAME}_msg})
       endif()
     endif()
 
@@ -503,7 +503,8 @@ endmacro()
 
 #################################################
 # Macro to turn a list into a string
-macro(ign_list_to_string _output _input_list)
+# Internal to gz-cmake.
+macro(_gz_list_to_string _output _input_list)
 
   set(${_output})
   foreach(_item ${${_input_list}})
@@ -1281,7 +1282,8 @@ function(ign_add_component component_name)
 endfunction()
 
 #################################################
-function(ign_create_all_target)
+# Creates the `all` target. This function is private to gz-cmake.
+function(_gz_create_all_target)
 
   add_library(${PROJECT_LIBRARY_TARGET_NAME}-all INTERFACE)
 
@@ -1296,7 +1298,8 @@ function(ign_create_all_target)
 endfunction()
 
 #################################################
-function(ign_export_target_all)
+# Exports the `all` target. This function is private to gz-cmake.
+function(_gz_export_target_all)
 
   # find_all_pkg_components is used as a variable in ignition-all-config.cmake.in
   set(find_all_pkg_components "")
@@ -1519,7 +1522,8 @@ endmacro()
 #################################################
 # Macro to setup supported compiler warnings
 # Based on work of Florent Lamiraux, Thomas Moulard, JRL, CNRS/AIST.
-macro(ign_filter_valid_compiler_options var)
+# Internal to gz-cmake
+macro(_gz_filter_valid_compiler_options var)
 
   include(CheckCXXCompilerFlag)
   # Store the current setting for CMAKE_REQUIRED_QUIET

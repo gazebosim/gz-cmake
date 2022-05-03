@@ -2,7 +2,7 @@
 # IgnSetCompilerFlags
 # -------------------
 #
-# ign_set_compiler_flags()
+# _gz_set_compiler_flags()
 #
 # Sets up compiler flags for an ignition library project
 #
@@ -23,18 +23,19 @@
 #
 #################################################
 # Set up compiler flags
-macro(ign_set_compiler_flags)
+# Internal to gz-cmake.
+macro(_gz_set_compiler_flags)
 
   option(USE_IGN_RECOMMENDED_FLAGS "Build project using the compiler flags recommended by the ignition developers" ON)
 
   if(MSVC)
-    ign_setup_msvc()
+    _gz_setup_msvc()
   elseif(UNIX)
-    ign_setup_unix()
+    _gz_setup_unix()
   endif()
 
   if(APPLE)
-    ign_setup_apple()
+    _gz_setup_apple()
   endif()
 
   # Check if we are compiling with Clang and cache it
@@ -56,12 +57,12 @@ macro(ign_set_compiler_flags)
   if(GCC_OR_CLANG)
 
     if(USE_IGN_RECOMMENDED_FLAGS)
-      ign_setup_gcc_or_clang()
+      _gz_setup_gcc_or_clang()
     endif()
 
     option(USE_HOST_SSE_FLAGS "Explicitly use compiler flags to indicate the SSE version of the host machine" TRUE)
     if(USE_HOST_SSE_FLAGS)
-      ign_set_sse_flags()
+      _gz_set_sse_flags()
     endif()
 
   endif()
@@ -70,7 +71,8 @@ endmacro()
 
 #################################################
 # Configure settings for Unix
-macro(ign_setup_unix)
+# Internal to gz-cmake.
+macro(_gz_setup_unix)
 
   find_program(CMAKE_UNAME uname /bin /usr/bin /usr/local/bin )
   if(CMAKE_UNAME)
@@ -85,7 +87,8 @@ macro(ign_setup_unix)
 endmacro()
 
 #################################################
-macro(ign_setup_apple)
+# Internal to gz-cmake.
+macro(_gz_setup_apple)
 
   # NOTE MacOSX provides different system versions than CMake is parsing.
   #      The following table lists the most recent OSX versions
@@ -113,7 +116,8 @@ endmacro()
 
 #################################################
 # Set up compilation flags for GCC or Clang
-macro(ign_setup_gcc_or_clang)
+# Internal to gz-cmake.
+macro(_gz_setup_gcc_or_clang)
 
   if(ign_configure_build_HIDE_SYMBOLS_BY_DEFAULT)
     set(CMAKE_C_VISIBILITY_PRESET "hidden")
@@ -124,7 +128,7 @@ macro(ign_setup_gcc_or_clang)
   endif()
 
 
-  ign_filter_valid_compiler_options(
+  _gz_filter_valid_compiler_options(
     CUSTOM_ALL_FLAGS
         -Wall -Wextra -Wno-long-long -Wno-unused-value -Wfloat-equal
         -Wshadow -Winit-self -Wswitch-default -Wmissing-include-dirs -pedantic
@@ -172,7 +176,7 @@ macro(ign_setup_gcc_or_clang)
   #                      inline functions.
   #                      ...TODO: Is this redundant with -fno-inline?
   # -fno-implicit-inline-templates: TODO: Why do we use this?
-  ign_filter_valid_compiler_options(
+  _gz_filter_valid_compiler_options(
     CUSTOM_CXX_COVERAGE_FLAGS
         -fno-elide-constructors
         -fno-default-inline
@@ -242,7 +246,8 @@ endmacro()
 #################################################
 # Identify what type of Streaming SIMD Extension is being used by the system and
 # then set the compiler's SSE flags appropriately.
-macro(ign_set_sse_flags)
+# Internal to gz-cmake.
+macro(_gz_set_sse_flags)
 
   message(STATUS "\n-- Searching for host SSE information")
   include(IgnCheckSSE)
@@ -280,7 +285,8 @@ endmacro()
 
 #################################################
 # Set up compilation flags for Microsoft Visual Studio/C++
-macro(ign_setup_msvc)
+# Internal to gz-cmake.
+macro(_gz_setup_msvc)
 
   # Reduce overhead by ignoring unnecessary Windows headers
   add_definitions(-DWIN32_LEAN_AND_MEAN)

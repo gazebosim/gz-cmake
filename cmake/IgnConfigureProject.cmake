@@ -117,7 +117,7 @@ macro(ign_configure_project)
 
   #============================================================================
   # Create package information
-  ign_setup_packages()
+  _gz_setup_packages()
 
   #============================================================================
   # Initialize build errors/warnings

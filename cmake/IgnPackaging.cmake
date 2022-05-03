@@ -2,9 +2,10 @@
 # IgnPackaging
 # ----------------
 #
-# ign_setup_packages
+# _gz_setup_packages
 #
 # Sets up package information for an ignition library project.
+# This function is internal to gz-cmake.
 #
 # ign_create_package
 #
@@ -27,7 +28,7 @@
 
 #################################################
 # Set up package information
-macro(ign_setup_packages)
+macro(_gz_setup_packages)
 
   #============================================================================
   # Use GNUInstallDirs to get canonical paths.
@@ -150,7 +151,7 @@ macro(ign_create_packages)
 
   #============================================================================
   # Load platform-specific build hooks if present.
-  ign_load_build_hooks()
+  _gz_load_build_hooks()
 
   #============================================================================
   # Tell the user what their settings are
@@ -364,7 +365,9 @@ endfunction()
 # Pass an argument to specify the directory where the CMakeLists.txt for the
 #   build hooks is located. If no argument is provided, we default to:
 #   ${PROJECT_SOURCE_DIR}/packager-hooks
-function(ign_load_build_hooks)
+#
+# This function is private to gz-cmake.
+function(_gz_load_build_hooks)
 
   if(ARGV0)
     set(hook_dir ${ARGV0})

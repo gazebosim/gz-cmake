@@ -2,9 +2,10 @@
 # IgnBenchmark
 # ------------
 #
-# ign_add_version_info_target()
+# _gz_add_version_info_target()
 #
-# Adds a target to generate build and system configuration information.
+# Adds a target to generate build and system configuration information. This
+# function is private to gz-cmake.
 #
 # ign_add_benchmarks()
 #
@@ -35,7 +36,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-function(ign_add_version_info_target)
+function(_gz_add_version_info_target)
   # generate a version_info.json file that can be used to embed project
   # version information
   # While this command may look a bit unweildy, it creates a target
@@ -83,7 +84,7 @@ function(ign_add_benchmarks)
     list(APPEND BENCHMARK_TARGETS_LIST "$<TARGET_FILE:${benchmark}>")
   endforeach()
 
-  ign_add_version_info_target()
+  _gz_add_version_info_target()
 
   file(GENERATE
     OUTPUT

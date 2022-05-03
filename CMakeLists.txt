@@ -204,7 +204,7 @@ set(CPPCHECK_INCLUDE_DIRS
 )
 set(IGNITION_CMAKE_CODECHECK_DIR "${CMAKE_CURRENT_SOURCE_DIR}/codecheck")
 include(IgnCodeCheck)
-ign_setup_target_for_codecheck()
+_gz_setup_target_for_codecheck()
 
 # Docs
 set(IGNITION_CMAKE_DOXYGEN_DIR "${CMAKE_CURRENT_SOURCE_DIR}/doc/doxygen")
