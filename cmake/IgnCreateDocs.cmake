@@ -56,7 +56,7 @@ function(ign_create_docs)
 
   #------------------------------------
   # Parse the arguments
-  _ign_cmake_parse_arguments(gz_create_docs "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  _gz_cmake_parse_arguments(gz_create_docs "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   set(required_html_files
     "doxygen/html/annotated.html"

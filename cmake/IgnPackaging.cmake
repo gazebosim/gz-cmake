@@ -161,7 +161,7 @@ endmacro()
 
 
 #################################################
-# _ign_create_pkgconfig([COMPONENT <component>])
+# _gz_create_pkgconfig([COMPONENT <component>])
 #
 # Provide the name of the target for which we will generate package config info.
 # If the target is a component, pass in the COMPONENT argument followed by the
@@ -175,7 +175,7 @@ endmacro()
 #       ignition-component.pc.in MUST be set before calling this function.
 #
 # Create a pkgconfig file for your target, and install it.
-function(_ign_create_pkgconfig)
+function(_gz_create_pkgconfig)
 
   #------------------------------------
   # Define the expected arguments
@@ -216,7 +216,7 @@ endfunction()
 
 
 #################################################
-# _ign_create_cmake_package([COMPONENT <component>]
+# _gz_create_cmake_package([COMPONENT <component>]
 #                           [LEGACY_PROJECT_PREFIX <prefix>])
 #
 # Provide the name of the target that will be installed and exported. If the
@@ -239,7 +239,7 @@ endfunction()
 #       - target_output_filename
 #
 # Make the cmake config files for this target
-function(_ign_create_cmake_package)
+function(_gz_create_cmake_package)
 
   #------------------------------------
   # Define the expected arguments

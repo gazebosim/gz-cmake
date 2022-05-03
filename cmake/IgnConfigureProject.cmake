@@ -40,7 +40,7 @@ macro(ign_configure_project)
 
   #------------------------------------
   # Parse the arguments
-  _ign_cmake_parse_arguments(gz_configure_project "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  _gz_cmake_parse_arguments(gz_configure_project "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   # Note: The following are automatically defined by project(~) in cmake v3:
   # PROJECT_NAME

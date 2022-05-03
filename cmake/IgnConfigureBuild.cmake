@@ -140,7 +140,7 @@ macro(ign_configure_build)
     else()
 
       add_subdirectory(src)
-      _ign_find_include_script()
+      _gz_find_include_script()
 
     endif()
 
@@ -239,7 +239,7 @@ macro(ign_configure_build)
             set(found_${component}_src TRUE)
           endif()
 
-          _ign_find_include_script(COMPONENT ${component})
+          _gz_find_include_script(COMPONENT ${component})
 
           # Add the tests
           if(BUILD_TESTING AND
@@ -296,7 +296,7 @@ macro(ign_set_cxx_feature_flags)
 
 endmacro()
 
-function(_ign_find_include_script)
+function(_gz_find_include_script)
 
   #------------------------------------
   # Define the expected arguments
