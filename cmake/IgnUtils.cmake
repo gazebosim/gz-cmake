@@ -1,7 +1,7 @@
 
 #################################################
 # ign_find_package(<PACKAGE_NAME>
-#                  [REQUIRED] [PRIVATE] [EXACT] [QUIET] [BUILD_ONLY] [PKGCONFIG_IGNORE]
+#                  [REQUIRED] [PRIVATE] [EXACT] [QUIET] [CONFIG] [BUILD_ONLY] [PKGCONFIG_IGNORE]
 #                  [COMPONENTS <components_of_PACKAGE_NAME>]
 #                  [OPTIONAL_COMPONENTS <components_of_PACKAGE_NAME>]
 #                  [REQUIRED_BY <components_of_project>]
@@ -49,6 +49,10 @@
 #          find_package(~) command. This macro will still print its normal
 #          output, except there will be no warning if the package is missing,
 #          unless REQUIRED or REQUIRED_BY is specified.
+#
+# [CONFIG]: Optional. If provided, it will be passed forward to cmake's
+#          find_package(~) command. This will trigger Config mode search rather than
+#          Module mode.
 #
 # [BUILD_ONLY]: Optional. Use this to indicate that the project only needs this
 #               package while building, and it does not need to be available to
@@ -138,7 +142,7 @@ macro(ign_find_package PACKAGE_NAME)
 
   #------------------------------------
   # Define the expected arguments
-  set(options REQUIRED PRIVATE EXACT QUIET BUILD_ONLY PKGCONFIG_IGNORE)
+  set(options REQUIRED PRIVATE EXACT QUIET CONFIG BUILD_ONLY PKGCONFIG_IGNORE)
   set(oneValueArgs VERSION PRETTY PURPOSE EXTRA_ARGS PKGCONFIG PKGCONFIG_LIB PKGCONFIG_VER_COMPARISON)
   set(multiValueArgs REQUIRED_BY PRIVATE_FOR COMPONENTS OPTIONAL_COMPONENTS)
 
@@ -160,6 +164,10 @@ macro(ign_find_package PACKAGE_NAME)
 
   if(ign_find_package_EXACT)
     list(APPEND ${PACKAGE_NAME}_find_package_args EXACT)
+  endif()
+
+  if(ign_find_package_CONFIG)
+    list(APPEND ${PACKAGE_NAME}_find_package_args CONFIG)
   endif()
 
   if(ign_find_package_COMPONENTS)
@@ -273,6 +281,11 @@ macro(ign_find_package PACKAGE_NAME)
     # If we have specified the exact version, we should provide that as well.
     if(ign_find_package_EXACT)
       ign_string_append(${PACKAGE_NAME}_dependency_args EXACT)
+    endif()
+
+    # If we have specified to use CONFIG mode, we should provide that as well.
+    if(ign_find_package_CONFIG)
+      ign_string_append(${PACKAGE_NAME}_dependency_args CONFIG)
     endif()
 
     # NOTE (MXG): 7 seems to be the number of escapes required to get
@@ -682,13 +695,13 @@ function(ign_install_all_headers)
 
     # Add each header, prefixed by its directory, to the auto headers variable
     foreach(header ${headers})
-      set(ign_headers "${ign_headers}#include <ignition/${IGN_DESIGNATION}/${header}>\n")
+      set(ign_headers "${ign_headers}#include <${PROJECT_INCLUDE_DIR}/${header}>\n")
     endforeach()
 
     if("." STREQUAL ${dir})
-      set(destination "${IGN_INCLUDE_INSTALL_DIR_FULL}/ignition/${IGN_DESIGNATION}")
+      set(destination "${IGN_INCLUDE_INSTALL_DIR_FULL}/${PROJECT_INCLUDE_DIR}")
     else()
-      set(destination "${IGN_INCLUDE_INSTALL_DIR_FULL}/ignition/${IGN_DESIGNATION}/${dir}")
+      set(destination "${IGN_INCLUDE_INSTALL_DIR_FULL}/${PROJECT_INCLUDE_DIR}/${dir}")
     endif()
 
     install(
@@ -700,7 +713,7 @@ function(ign_install_all_headers)
 
   # Add generated headers to the list of includes
   foreach(header ${ign_install_all_headers_GENERATED_HEADERS})
-      set(ign_headers "${ign_headers}#include <ignition/${IGN_DESIGNATION}/${header}>\n")
+      set(ign_headers "${ign_headers}#include <${PROJECT_INCLUDE_DIR}/${header}>\n")
   endforeach()
 
   if(ign_install_all_headers_COMPONENT)
@@ -708,7 +721,7 @@ function(ign_install_all_headers)
     set(component_name ${ign_install_all_headers_COMPONENT})
 
     # Define the install directory for the component meta header
-    set(meta_header_install_dir ${IGN_INCLUDE_INSTALL_DIR_FULL}/ignition/${IGN_DESIGNATION}/${component_name})
+    set(meta_header_install_dir ${IGN_INCLUDE_INSTALL_DIR_FULL}/${PROJECT_INCLUDE_DIR}/${component_name})
 
     # Define the input/output of the configuration for the component "master" header
     set(master_header_in ${IGNITION_CMAKE_DIR}/ign_auto_headers.hh.in)
@@ -717,7 +730,7 @@ function(ign_install_all_headers)
   else()
 
     # Define the install directory for the core master meta header
-    set(meta_header_install_dir ${IGN_INCLUDE_INSTALL_DIR_FULL}/ignition/${IGN_DESIGNATION})
+    set(meta_header_install_dir ${IGN_INCLUDE_INSTALL_DIR_FULL}/${PROJECT_INCLUDE_DIR})
 
     # Define the input/output of the configuration for the core "master" header
     set(master_header_in ${IGNITION_CMAKE_DIR}/ign_auto_headers.hh.in)
@@ -872,7 +885,8 @@ endmacro()
 #                         [CXX_STANDARD <11|14|17>]
 #                         [PRIVATE_CXX_STANDARD <11|14|17>]
 #                         [INTERFACE_CXX_STANDARD <11|14|17>]
-#                         [GET_TARGET_NAME <output_var>])
+#                         [GET_TARGET_NAME <output_var>]
+#                         [LEGACY_PROJECT_PREFIX <prefix>])
 #
 # This function will produce the "core" library for your project. There is no
 # need to specify a name for the library, because that will be determined by
@@ -885,6 +899,10 @@ endmacro()
 #                    set to the library target name that gets produced by this
 #                    function. The target name will always be
 #                    ${PROJECT_LIBRARY_TARGET_NAME}.
+#
+# [LEGACY_PROJECT_PREFIX]: Optional. The variable that follows this argument will be
+#                          used as a prefix for the legacy cmake config variables
+#                          <prefix>_LIBRARIES and <prefix>_INCLUDE_DIRS.
 #
 # If you need a specific C++ standard, you must also specify it in this
 # function in order to ensure that your library's target properties get set
@@ -911,7 +929,7 @@ function(ign_create_core_library)
   #------------------------------------
   # Define the expected arguments
   set(options INTERFACE)
-  set(oneValueArgs INCLUDE_SUBDIR CXX_STANDARD PRIVATE_CXX_STANDARD INTERFACE_CXX_STANDARD GET_TARGET_NAME)
+  set(oneValueArgs INCLUDE_SUBDIR LEGACY_PROJECT_PREFIX CXX_STANDARD PRIVATE_CXX_STANDARD INTERFACE_CXX_STANDARD GET_TARGET_NAME)
   set(multiValueArgs SOURCES)
 
   #------------------------------------
@@ -936,7 +954,7 @@ function(ign_create_core_library)
   # Create the target for the core library, and configure it to be installed
   _ign_add_library_or_component(
     LIB_NAME ${PROJECT_LIBRARY_TARGET_NAME}
-    INCLUDE_DIR "ignition/${IGN_DESIGNATION_LOWER}"
+    INCLUDE_DIR "${PROJECT_INCLUDE_DIR}"
     EXPORT_BASE IGNITION_${IGN_DESIGNATION_UPPER}
     SOURCES ${sources}
     ${interface_option})
@@ -992,7 +1010,7 @@ function(ign_create_core_library)
   endif()
 
   # Export and install the core library's cmake target and package information
-  _ign_create_cmake_package()
+  _ign_create_cmake_package(LEGACY_PROJECT_PREFIX ${ign_create_core_library_LEGACY_PROJECT_PREFIX})
 
   # Generate and install the core library's pkgconfig information
   _ign_create_pkgconfig()
@@ -1120,7 +1138,7 @@ function(ign_add_component component_name)
   # Create the target for this component, and configure it to be installed
   _ign_add_library_or_component(
     LIB_NAME ${component_target_name}
-    INCLUDE_DIR "ignition/${IGN_DESIGNATION_LOWER}/${include_subdir}"
+    INCLUDE_DIR "${PROJECT_INCLUDE_DIR}/${include_subdir}"
     EXPORT_BASE IGNITION_${IGN_DESIGNATION_UPPER}_${component_name_upper}
     SOURCES ${sources}
     ${interface_option})
@@ -1695,7 +1713,6 @@ macro(ign_build_tests)
 
     # Find the Python interpreter for running the
     # check_test_ran.py script
-
     include(IgnPython)
 
     # Build all the tests
@@ -1713,12 +1730,15 @@ macro(ign_build_tests)
         target_link_libraries(${target_name} pthread)
       endif()
 
+      target_compile_definitions(${target_name} PRIVATE
+        "TESTING_PROJECT_SOURCE_DIR=\"${PROJECT_SOURCE_DIR}\"")
+
       set_tests_properties(${target_name} PROPERTIES TIMEOUT 240)
 
-      if(PYTHONINTERP_FOUND)
+      if(Python3_Interpreter_FOUND)
         # Check that the test produced a result and create a failure if it didn't.
         # Guards against crashed and timed out tests.
-        add_test(check_${target_name} ${PYTHON_EXECUTABLE} ${IGNITION_CMAKE_TOOLS_DIR}/check_test_ran.py
+        add_test(check_${target_name} ${Python3_EXECUTABLE} ${IGNITION_CMAKE_TOOLS_DIR}/check_test_ran.py
           ${CMAKE_BINARY_DIR}/test_results/${target_name}.xml)
       endif()
     endforeach()

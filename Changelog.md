@@ -1,6 +1,68 @@
 ## Ignition CMake 2.x
 
-### Ignition CMake 2.X.X (2021-XX-XX)
+### Ignition CMake 2.12.1 (2022-04-12)
+
+1. Allow to recreate targets created by IgnPkgConfig
+    * [Pull request #231](https://github.com/ignitionrobotics/ign-cmake/pull/231)
+
+1. Adding tests for CONFIG argument
+    * [Pull request #230](https://github.com/ignitionrobotics/ign-cmake/pull/230)
+
+### Ignition CMake 2.12.0 (2022-04-11)
+
+1. Adding CONFIG option
+    * [Pull request #211](https://github.com/ignitionrobotics/ign-cmake/pull/211)
+
+1. IgnFindOGRE2: support for the ogre-next package on Ubuntu Jammy
+    * [Pull request #224](https://github.com/ignitionrobotics/ign-cmake/pull/224)
+
+1. Fix check for missing components in OGRE2. Be more verbose with components
+    * [Pull request #220](https://github.com/ignitionrobotics/ign-cmake/pull/220)
+
+1. FindIgnOGRE2: exclude ogre versions different than 2.x
+    * [Pull request #219](https://github.com/ignitionrobotics/ign-cmake/pull/219)
+    * [Pull request #221](https://github.com/ignitionrobotics/ign-cmake/pull/221)
+
+1. Specify sanitizers using IGN_SANITIZERS cmake variable
+    * [Pull request #210](https://github.com/ignitionrobotics/ign-cmake/pull/210)
+
+1. Replace deprecated PythonInterp with Python3 (#213)
+    * [Pull request #213](https://github.com/ignitionrobotics/ign-cmake/pull/213)
+    * [Pull request #223](https://github.com/ignitionrobotics/ign-cmake/pull/223)
+
+### Ignition CMake 2.11.0 (2022-02-23)
+
+1. Set source path to be used by common::testing
+    * [Pull request #206](https://github.com/ignitionrobotics/ign-cmake/pull/206)
+
+3. Add examples using static libraries
+    * [Pull request #202](https://github.com/ignitionrobotics/ign-cmake/pull/202)
+
+### Ignition CMake 2.10.0 (2021-12-21)
+
+1. doxygen allow all .cc, .hh, and CMakeLists.txt, not just in examples/ dir
+    * [Pull request #198](https://github.com/ignitionrobotics/ign-cmake/pull/198)
+
+1. Add `LEGACY_PROJECT_PREFIX` parameter to `ign_create_core_library`
+    * [Pull request #199](https://github.com/ignitionrobotics/ign-cmake/pull/199)
+
+1. Add `HIDE_SYMBOLS_BY_DEFAULT` parameter to `ign_configure_build`
+    * [Pull request #196](https://github.com/ignitionrobotics/ign-cmake/pull/196)
+
+1. Add Ubuntu Jammy CI
+    * [Pull request #194](https://github.com/ignitionrobotics/ign-cmake/pull/194)
+
+1. FindIgnURDFDOM cmake module
+    * [Pull request #193](https://github.com/ignitionrobotics/ign-cmake/pull/193)
+
+1. Do not modify `CMAKE_FIND_LIBRARY_PREFIXES` and `CMAKE_FIND_LIBRARY_SUFFIXES` on Windows
+    * [Pull request #189](https://github.com/ignitionrobotics/ign-cmake/pull/189)
+
+1. Project option: `REPLACE_IGNITION_INCLUDE_PATH`
+    * [Pull request #190](https://github.com/ignitionrobotics/ign-cmake/pull/190)
+
+1. Project option: `NO_IGNITION_PREFIX`
+    * [Pull request #191](https://github.com/ignitionrobotics/ign-cmake/pull/191)
 
 ### Ignition CMake 2.9.0 (2021-09-02)
 

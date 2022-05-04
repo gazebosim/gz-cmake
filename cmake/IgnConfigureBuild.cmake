@@ -23,13 +23,15 @@
 
 #################################################
 # Configure the build of the ignition project
+# Pass the argument HIDE_SYMBOLS_BY_DEFAULT to configure symbol visibility so
+# that symbols are hidden unless explicitly marked as visible.
 # Pass the argument QUIT_IF_BUILD_ERRORS to have this macro quit cmake when the
 # build_errors
 macro(ign_configure_build)
 
   #============================================================================
   # Parse the arguments that are passed in
-  set(options QUIT_IF_BUILD_ERRORS)
+  set(options HIDE_SYMBOLS_BY_DEFAULT QUIT_IF_BUILD_ERRORS)
   set(oneValueArgs)
   set(multiValueArgs COMPONENTS)
   cmake_parse_arguments(ign_configure_build "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
@@ -169,7 +171,7 @@ macro(ign_configure_build)
     set (CPPCHECK_INCLUDE_DIRS)
     set (potential_cppcheck_include_dirs
       ${CMAKE_BINARY_DIR}
-      ${CMAKE_SOURCE_DIR}/include/ignition/${IGN_DESIGNATION}
+      ${CMAKE_SOURCE_DIR}/include/${PROJECT_INCLUDE_DIR}
       ${CMAKE_SOURCE_DIR}/test/integration
       ${CMAKE_SOURCE_DIR}/test/regression
       ${CMAKE_SOURCE_DIR}/test/performance)
@@ -323,8 +325,8 @@ function(_ign_find_include_script)
       add_subdirectory("${include_start}/include")
     elseif(EXISTS "${include_start}/include/ignition/CMakeLists.txt")
       add_subdirectory("${include_start}/include/ignition")
-    elseif(EXISTS "${include_start}/include/ignition/${IGN_DESIGNATION}/CMakeLists.txt")
-      add_subdirectory("${include_start}/include/ignition/${IGN_DESIGNATION}")
+    elseif(EXISTS "${include_start}/include/${PROJECT_INCLUDE_DIR}/CMakeLists.txt")
+      add_subdirectory("${include_start}/include/${PROJECT_INCLUDE_DIR}")
     else()
       message(AUTHOR_WARNING
         "You have an include directory [${include_start}/include] without a "

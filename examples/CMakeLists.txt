@@ -10,11 +10,15 @@ endif()
 
 set(example_directories
   ign_conf
+  no_ignition_prefix
   prerelease
   core_nodep
+  core_nodep_static
   core_child
   core_child_private
+  core_static_child
   comp_deps
+  use_config_ifp
   )
 if (NOT CMAKE_GENERATOR MATCHES "Visual Studio")
   list(APPEND example_directories
@@ -28,16 +32,24 @@ foreach(example ${example_directories})
   set(run_codecheck false)
   if (${example} STREQUAL "ign_conf")
     set(example_tarball_name ignition-minimal-0.1.0.tar.bz2)
+  elseif (${example} STREQUAL "no_ignition_prefix")
+    set(example_tarball_name no_ignition_prefix-0.1.0.tar.bz2)
   elseif (${example} STREQUAL "prerelease")
     set(example_tarball_name ignition-minimal-1.0.0~pre1.tar.bz2)
   elseif (${example} STREQUAL "core_nodep")
     set(example_tarball_name ignition-core_no_deps-0.1.0.tar.bz2)
+    set(run_codecheck true)
+  elseif (${example} STREQUAL "core_nodep_static")
+    set(example_tarball_name ignition-core_no_deps_static-0.1.0.tar.bz2)
     set(run_codecheck true)
   elseif (${example} STREQUAL "core_child")
     set(example_tarball_name ignition-core_child-0.1.0.tar.bz2)
     set(run_codecheck true)
   elseif (${example} STREQUAL "core_child_private")
     set(example_tarball_name ignition-core_child_private-0.1.0.tar.bz2)
+    set(run_codecheck true)
+  elseif (${example} STREQUAL "core_static_child")
+    set(example_tarball_name ignition-core_static_child-0.1.0.tar.bz2)
     set(run_codecheck true)
   elseif (${example} STREQUAL "comp_deps")
     set(example_tarball_name ignition-component_deps-0.1.0.tar.bz2)
@@ -47,6 +59,9 @@ foreach(example ${example_directories})
     set(example_tarball_name ignition-use_component_depsb-0.1.0.tar.bz2)
   elseif (${example} STREQUAL "use_component_depsC")
     set(example_tarball_name ignition-use_component_depsc-0.1.0.tar.bz2)
+  elseif (${example} STREQUAL "use_config_ifp")
+    set(example_tarball_name  ignition-find_config-0.1.0.tar.bz2)
+
   else()
     set(example_tarball_name)
   endif()
@@ -150,6 +165,7 @@ endforeach()
 foreach (build_type ${build_types})
   add_dependencies(core_child_${build_type} core_nodep_${build_type})
   add_dependencies(core_child_private_${build_type} core_nodep_${build_type})
+  add_dependencies(core_static_child_${build_type} core_nodep_static_${build_type})
   if (TARGET use_component_depsA_${build_type})
     add_dependencies(use_component_depsA_${build_type} comp_deps_${build_type})
   endif()
@@ -190,4 +206,32 @@ if (UNIX)
   )
   set_tests_properties(${TEST_NAME} PROPERTIES
     ENVIRONMENT "${_env_vars}")
+endif()
+
+if(UNIX)
+  # Test for the sanitizers example
+  set(sanitizer_compiler_log ${CMAKE_BINARY_DIR}/examples/Sanitizers-prefix/src/Sanitizers-stamp/Sanitizers-build-out.log)
+  ExternalProject_Add(
+    Sanitizers
+
+    DEPENDS FAKE_INSTALL
+    SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/sanitizers"
+    LOG_BUILD ON
+    LOG_CONFIGURE ON
+    # BUILD_ALWAYS needed since cmake doesn't notice when
+    # example files change.
+    # See alternate approach in a2113e0997c9 if this becomes too slow
+    BUILD_ALWAYS 1
+    BUILD_COMMAND ${CMAKE_COMMAND} --build . --clean-first
+    CMAKE_ARGS
+      "-DCMAKE_PREFIX_PATH=${FAKE_INSTALL_PREFIX};${example_INSTALL_DIR}"
+      "-DCMAKE_BUILD_TYPE=RelWithDebInfo"
+      "-DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/install/Sanitizers"
+      "-DIGN_SANITIZER=Address"
+      "-DCMAKE_CXX_FLAGS=-Wno-unused-parameter"
+      "-DCMAKE_VERBOSE_MAKEFILE:BOOL=ON"
+    TEST_COMMAND
+      # Multiplatform python equivalent to grep "fsanitize=address" "${sanitizer_compiler_log}"
+      python3 -c "exec(\"import sys\\nwith open('${sanitizer_compiler_log}') as f:sys.exit(0) if 'fsanitize=address' in f.read() else sys.exit(1)\")"
+  )
 endif()
