@@ -997,7 +997,7 @@ function(ign_create_core_library)
 
   #------------------------------------
   # Adjust variables if a specific C++ standard was requested
-  _ign_handle_cxx_standard(ign_create_core_library
+  _ign_handle_cxx_standard(gz_create_core_library
     ${PROJECT_LIBRARY_TARGET_NAME} PROJECT_PKGCONFIG_CFLAGS)
 
 
