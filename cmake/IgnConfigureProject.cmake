@@ -40,7 +40,7 @@ macro(ign_configure_project)
 
   #------------------------------------
   # Parse the arguments
-  _ign_cmake_parse_arguments(ign_configure_project "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  _ign_cmake_parse_arguments(gz_configure_project "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   # Note: The following are automatically defined by project(~) in cmake v3:
   # PROJECT_NAME
@@ -48,8 +48,8 @@ macro(ign_configure_project)
   # PROJECT_VERSION_MINOR
   # PROJECT_VERSION_PATCH
 
-  if(ign_configure_project_VERSION_SUFFIX)
-    set(PROJECT_VERSION_SUFFIX ${ign_configure_project_VERSION_SUFFIX})
+  if(gz_configure_project_VERSION_SUFFIX)
+    set(PROJECT_VERSION_SUFFIX ${gz_configure_project_VERSION_SUFFIX})
   endif()
 
   #============================================================================
@@ -72,7 +72,7 @@ macro(ign_configure_project)
   # Set project variables
   #============================================================================
 
-  if(ign_configure_project_NO_IGNITION_PREFIX)
+  if(gz_configure_project_NO_IGNITION_PREFIX)
     set(PROJECT_NAME_NO_VERSION ${IGN_DESIGNATION})
   else()
     set(PROJECT_NAME_NO_VERSION "${PROJECT_PREFIX}-${IGN_DESIGNATION}")
@@ -92,8 +92,8 @@ macro(ign_configure_project)
   set(PROJECT_EXPORT_NAME ${PROJECT_NAME_LOWER})
   set(PROJECT_LIBRARY_TARGET_NAME ${PROJECT_NAME_LOWER})
 
-  if(ign_configure_project_REPLACE_IGNITION_INCLUDE_PATH)
-    set(PROJECT_INCLUDE_DIR ${ign_configure_project_REPLACE_IGNITION_INCLUDE_PATH})
+  if(gz_configure_project_REPLACE_IGNITION_INCLUDE_PATH)
+    set(PROJECT_INCLUDE_DIR ${gz_configure_project_REPLACE_IGNITION_INCLUDE_PATH})
   else()
     set(PROJECT_INCLUDE_DIR ignition/${IGN_DESIGNATION})
   endif()

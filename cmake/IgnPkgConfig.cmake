@@ -72,16 +72,16 @@ macro(ign_pkg_check_modules_quiet package signature)
 
   #------------------------------------
   # Parse the arguments
-  _ign_cmake_parse_arguments(ign_pkg_check_modules "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  _ign_cmake_parse_arguments(gz_pkg_check_modules "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
-  if(ign_pkg_check_modules_INTERFACE)
-    set(_ign_pkg_check_modules_interface_option INTERFACE)
+  if(gz_pkg_check_modules_INTERFACE)
+    set(_gz_pkg_check_modules_interface_option INTERFACE)
   else()
-    set(_ign_pkg_check_modules_interface_option) # Intentionally blank
+    set(_gz_pkg_check_modules_interface_option) # Intentionally blank
   endif()
 
-  if(NOT ign_pkg_check_modules_TARGET_NAME)
-    set(ign_pkg_check_modules_TARGET_NAME "${package}::${package}")
+  if(NOT gz_pkg_check_modules_TARGET_NAME)
+    set(gz_pkg_check_modules_TARGET_NAME "${package}::${package}")
   endif()
 
   find_package(PkgConfig QUIET)
@@ -90,22 +90,22 @@ macro(ign_pkg_check_modules_quiet package signature)
 
   if(PKG_CONFIG_FOUND)
 
-    if(${ign_pkg_check_modules_NO_CMAKE_ENVIRONMENT_PATH})
-      set(ign_pkg_check_modules_no_cmake_environment_path_arg
+    if(${gz_pkg_check_modules_NO_CMAKE_ENVIRONMENT_PATH})
+      set(gz_pkg_check_modules_no_cmake_environment_path_arg
           NO_CMAKE_ENVIRONMENT_PATH)
     else()
-      set(ign_pkg_check_modules_no_cmake_environment_path_arg)
+      set(gz_pkg_check_modules_no_cmake_environment_path_arg)
     endif()
 
-    if(${ign_pkg_check_modules_QUIET} OR ${package}_FIND_QUIETLY)
-      set(ign_pkg_check_modules_quiet_arg QUIET)
+    if(${gz_pkg_check_modules_QUIET} OR ${package}_FIND_QUIETLY)
+      set(gz_pkg_check_modules_quiet_arg QUIET)
     else()
-      set(ign_pkg_check_modules_quiet_arg)
+      set(gz_pkg_check_modules_quiet_arg)
     endif()
 
     pkg_check_modules(${package}
-                      ${ign_pkg_check_modules_quiet_arg}
-                      ${ign_pkg_check_modules_no_cmake_environment_path_arg}
+                      ${gz_pkg_check_modules_quiet_arg}
+                      ${gz_pkg_check_modules_no_cmake_environment_path_arg}
                       ${signature})
 
     # TODO: When we require cmake-3.6+, we should remove this procedure and just
@@ -161,8 +161,8 @@ macro(ign_pkg_check_modules_quiet package signature)
         "${${package}_LIBRARY_DIRS}")
 
       include(IgnImportTarget)
-      ign_import_target(${package} ${_ign_pkg_check_modules_interface_option}
-        TARGET_NAME ${ign_pkg_check_modules_TARGET_NAME})
+      ign_import_target(${package} ${_gz_pkg_check_modules_interface_option}
+        TARGET_NAME ${gz_pkg_check_modules_TARGET_NAME})
 
     endif()
 

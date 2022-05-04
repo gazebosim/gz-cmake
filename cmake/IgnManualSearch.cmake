@@ -51,32 +51,32 @@ macro(ign_manual_search package)
 
   #------------------------------------
   # Parse the arguments
-  _ign_cmake_parse_arguments(ign_manual_search "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  _ign_cmake_parse_arguments(gz_manual_search "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
-  if(ign_manual_search_INTERFACE)
-    set(_ign_manual_search_interface_option INTERFACE)
+  if(gz_manual_search_INTERFACE)
+    set(_gz_manual_search_interface_option INTERFACE)
   else()
-    set(_ign_manual_search_interface_option) # Intentionally blank
+    set(_gz_manual_search_interface_option) # Intentionally blank
   endif()
 
-  if(NOT ign_manual_search_HEADER_NAMES)
-    set(ign_manual_search_HEADER_NAMES "${package}.h")
+  if(NOT gz_manual_search_HEADER_NAMES)
+    set(gz_manual_search_HEADER_NAMES "${package}.h")
   endif()
 
-  if(NOT ign_manual_search_LIBRARY_NAMES)
-    set(ign_manual_search_LIBRARY_NAMES "${package}")
+  if(NOT gz_manual_search_LIBRARY_NAMES)
+    set(gz_manual_search_LIBRARY_NAMES "${package}")
   endif()
 
-  if(NOT ign_manual_search_TARGET_NAME)
-    set(ign_manual_search_TARGET_NAME "${package}::${package}")
+  if(NOT gz_manual_search_TARGET_NAME)
+    set(gz_manual_search_TARGET_NAME "${package}::${package}")
   endif()
 
   find_path(${package}_INCLUDE_DIRS
-            NAMES ${ign_manual_search_HEADER_NAMES}
-            PATH_SUFFIXES ${ign_manual_search_PATH_SUFFIXES})
+            NAMES ${gz_manual_search_HEADER_NAMES}
+            PATH_SUFFIXES ${gz_manual_search_PATH_SUFFIXES})
   find_library(${package}_LIBRARIES
-               NAMES ${ign_manual_search_LIBRARY_NAMES}
-               PATH_SUFFIXES ${ign_manual_search_PATH_SUFFIXES})
+               NAMES ${gz_manual_search_LIBRARY_NAMES}
+               PATH_SUFFIXES ${gz_manual_search_PATH_SUFFIXES})
 
   mark_as_advanced(${package}_INCLUDE_DIRS)
   mark_as_advanced(${package}_LIBRARIES)

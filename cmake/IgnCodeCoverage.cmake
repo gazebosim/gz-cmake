@@ -98,13 +98,13 @@ FUNCTION(ign_setup_target_for_coverage)
 
   #------------------------------------
   # Parse the arguments
-  _ign_cmake_parse_arguments(ign_coverage "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  _ign_cmake_parse_arguments(gz_coverage "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
-  set(_outputname ${ign_coverage_OUTPUT_NAME})
-  set(_targetname ${ign_coverage_TARGET_NAME})
-  set(_testrunner ${ign_coverage_TEST_RUNNER})
+  set(_outputname ${gz_coverage_OUTPUT_NAME})
+  set(_targetname ${gz_coverage_TARGET_NAME})
+  set(_testrunner ${gz_coverage_TEST_RUNNER})
 
-  if(ign_coverage_BRANCH_COVERAGE)
+  if(gz_coverage_BRANCH_COVERAGE)
     set(_branch_flags --rc lcov_branch_coverage=1)
   endif()
 
