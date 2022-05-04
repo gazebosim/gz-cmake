@@ -158,21 +158,21 @@ macro(ign_find_package MACRO_PACKAGE_NAME)
   #------------------------------------
   # Handle ticktock
   # TODO(CH3): Remove on tock
-  if(${PACKAGE_NAME} MATCHES "^ign(ition)?-")
+  if(${PACKAGE_NAME} MATCHES "^ignition-")
     message(DEPRECATION
       "\nThe use of 'ign-' and 'ignition-' prefixed libraries has been "
       "deprecated in favor of 'gz-' and will be removed in the next version!\n"
     )
-    set(PACKAGE_NAME_BAK ${PACKAGE_NAME})
+    set(GZ_PACKAGE_NAME ${PACKAGE_NAME})
 
-    string(REGEX REPLACE "^ign(ition)?-" "gz-" PACKAGE_NAME ${PACKAGE_NAME_BAK})
-    message(NOTICE "...Trying to use the gz- version of the library you specified: '${PACKAGE_NAME}'\n")
+    string(REGEX REPLACE "^ign(ition)?-" "gz-" GZ_PACKAGE_NAME ${PACKAGE_NAME})
+    message(NOTICE "...Trying to use the gz- version of the library you specified: '${GZ_PACKAGE_NAME}'\n")
 
     #------------------------------------
     # Construct the arguments to pass to find_package
     # The duplication is necessary for the ticktock...
     # TODO(CH3): Remove on tock
-    set(gz_find_package_args ${PACKAGE_NAME})
+    set(gz_find_package_args ${GZ_PACKAGE_NAME})
 
     if(ign_find_package_VERSION)
       list(APPEND gz_find_package_args ${ign_find_package_VERSION})
@@ -204,27 +204,25 @@ macro(ign_find_package MACRO_PACKAGE_NAME)
 
     find_package(${gz_find_package_args} QUIET)
 
-    if(${PACKAGE_NAME}_FOUND)
+    if(${GZ_PACKAGE_NAME}_FOUND)
       message(NOTICE "Found! Using it instead of '${PACKAGE_NAME_BAK}'")
 
       # Manually set ignition- prefix version numbers for ticktock
       # TODO(CH3): Remove on tock
-      set(${PACKAGE_NAME_BAK}_VERSION ${${PACKAGE_NAME}_VERSION})
-      set(${PACKAGE_NAME_BAK}_VERSION_MAJOR ${${PACKAGE_NAME}_VERSION_MAJOR})
-      set(${PACKAGE_NAME_BAK}_VERSION_MINOR ${${PACKAGE_NAME}_VERSION_MINOR})
-      set(${PACKAGE_NAME_BAK}_VERSION_PATCH ${${PACKAGE_NAME}_VERSION_PATCH})
-      set(${PACKAGE_NAME_BAK}_VERSION_TWEAK ${${PACKAGE_NAME}_VERSION_TWEAK})
+      set(${PACKAGE_NAME}_VERSION ${${GZ_PACKAGE_NAME}_VERSION})
+      set(${PACKAGE_NAME}_VERSION_MAJOR ${${GZ_PACKAGE_NAME}_VERSION_MAJOR})
+      set(${PACKAGE_NAME}_VERSION_MINOR ${${GZ_PACKAGE_NAME}_VERSION_MINOR})
+      set(${PACKAGE_NAME}_VERSION_PATCH ${${GZ_PACKAGE_NAME}_VERSION_PATCH})
+      set(${PACKAGE_NAME}_VERSION_TWEAK ${${GZ_PACKAGE_NAME}_VERSION_TWEAK})
 
     else()
       message(WARNING
-        "\n'${PACKAGE_NAME}' not found! Falling back to '${PACKAGE_NAME_BAK}'...\n"
+        "\n'${GZ_PACKAGE_NAME}' not found! Falling back to '${PACKAGE_NAME}'...\n"
         "== NOTE ==\n"
         "gz- library finding will sometimes deterministically fail because the dynamic substitution "
         "doesn't get picked up by colcon-cmake.\n"
         "To avoid these failures, substitute your 'ign(ition)-' prefixes with 'gz-' in your CMake "
         "files, or call `colcon build --executor sequential` instead!\n")
-
-      set(PACKAGE_NAME ${PACKAGE_NAME_BAK})
     endif()
   endif()
 
