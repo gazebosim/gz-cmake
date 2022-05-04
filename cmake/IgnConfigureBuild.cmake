@@ -85,7 +85,7 @@ macro(ign_configure_build)
 
     #--------------------------------------
     # Set up the compiler flags
-    ign_set_compiler_flags()
+    _gz_set_compiler_flags()
 
 
     #--------------------------------------
