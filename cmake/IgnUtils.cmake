@@ -975,6 +975,58 @@ function(ign_create_core_library)
     SOURCES ${sources}
     ${interface_option})
 
+  # Support "gz-"
+  if(${PROJECT_LIBRARY_TARGET_NAME} MATCHES "^gz-")
+    _ign_add_library_or_component(
+      LIB_NAME ${PROJECT_LIBRARY_TARGET_NAME}
+      INCLUDE_DIR "${PROJECT_INCLUDE_DIR}"
+      EXPORT_BASE GZ_${IGN_DESIGNATION_UPPER}
+      SOURCES ${sources}
+      ${interface_option})
+
+    # For ticktocking: Export an "ignition-" target as well, allowing linking against
+    # the ignition- prefixed name
+    # TODO(CH3): To remove on tock
+    string(REGEX REPLACE "^gz-" "ignition-" IGN_LIBRARY_TARGET_NAME ${PROJECT_LIBRARY_TARGET_NAME})
+    _ign_add_library_or_component(
+      LIB_NAME ${IGN_LIBRARY_TARGET_NAME}
+      INCLUDE_DIR "${PROJECT_INCLUDE_DIR}"
+
+      # Using GZ_ is deliberate, Export.hh.in has logic to deal with this
+      EXPORT_BASE GZ_${IGN_DESIGNATION_UPPER}
+      SOURCES ${sources}
+      ${interface_option})
+
+    target_include_directories(${IGN_LIBRARY_TARGET_NAME}
+      ${property_type}
+        # This is the publicly installed headers directory.
+        "$<INSTALL_INTERFACE:${IGN_INCLUDE_INSTALL_DIR_FULL}>"
+        # This is the in-build version of the core library headers directory.
+        # Generated headers for the core library get placed here.
+        "$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>"
+        # Generated headers for the core library might also get placed here.
+        "$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/core/include>")
+
+    #------------------------------------
+    # Handle cmake and pkgconfig packaging
+    # TODO(CH3): Remove on tock
+    string(REGEX REPLACE "^gz-" "ignition-" IGN_PROJECT_NAME_LOWER ${PROJECT_NAME_LOWER})
+
+    if(ign_create_core_library_INTERFACE)
+      set(project_pkgconfig_core_lib) # Intentionally blank
+    else()
+      set(project_pkgconfig_core_lib "-l${IGN_PROJECT_NAME_LOWER}")
+    endif()
+
+  else()
+    _ign_add_library_or_component(
+      LIB_NAME ${PROJECT_LIBRARY_TARGET_NAME}
+      INCLUDE_DIR "${PROJECT_INCLUDE_DIR}"
+      EXPORT_BASE GZ_${IGN_DESIGNATION_UPPER}
+      SOURCES ${sources}
+      ${interface_option})
+  endif()
+
   # These generator expressions are necessary for multi-configuration generators
   # such as MSVC on Windows. They also ensure that our target exports its
   # headers correctly
@@ -1155,7 +1207,7 @@ function(ign_add_component component_name)
   _gz_add_library_or_component(
     LIB_NAME ${component_target_name}
     INCLUDE_DIR "${PROJECT_INCLUDE_DIR}/${include_subdir}"
-    EXPORT_BASE IGNITION_${IGN_DESIGNATION_UPPER}_${component_name_upper}
+    EXPORT_BASE ${EXPORT_PREFIX}_${IGN_DESIGNATION_UPPER}_${component_name_upper}
     SOURCES ${sources}
     ${interface_option})
 
@@ -1357,6 +1409,9 @@ macro(_gz_add_library_or_component)
   # - include_dir
   # - export_base
   # - lib_name
+  #
+  # - _using_gz_export_base
+  # - _ign_export_base
 
   #------------------------------------
   # Define the expected arguments
@@ -1442,7 +1497,7 @@ macro(_gz_add_library_or_component)
       EXPORT_FILE_NAME ${implementation_file_name}
       EXPORT_MACRO_NAME DETAIL_${export_base}_VISIBLE
       NO_EXPORT_MACRO_NAME DETAIL_${export_base}_HIDDEN
-      DEPRECATED_MACRO_NAME IGN_DEPRECATED_ALL_VERSIONS)
+      DEPRECATED_MACRO_NAME GZ_DEPRECATED_ALL_VERSIONS)
 
     set(install_include_dir
       "${IGN_INCLUDE_INSTALL_DIR_FULL}/${include_dir}")
@@ -1456,6 +1511,18 @@ macro(_gz_add_library_or_component)
     # Configure the public-facing header for exporting and deprecating. This
     # header provides commentary for the macros so that developers can know their
     # purpose.
+
+    # TODO(CH3): Remove this on ticktock
+    # This is to allow IGNITION_ prefixed export macros to generate in Export.hh
+    # _using_gz_export_base is used in Export.hh.in's configuration!
+    if(${export_base} MATCHES "^GZ_")
+      set(_using_gz_export_base 1)
+    else()
+      set(_using_gz_export_base 0)
+    endif()
+
+    string(REGEX REPLACE "^GZ_" "IGNITION_" _ign_export_base ${export_base})
+
     configure_file(
       "${IGNITION_CMAKE_DIR}/Export.hh.in"
       "${binary_include_dir}/Export.hh")

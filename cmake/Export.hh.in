@@ -53,11 +53,49 @@
 
 
 #ifndef IGN_DEPRECATED
+// TODO(CH3): Remove on ticktock
+// NOTE(CH3): This has no docstring since we'll make GZ_DEPRECATED the default
+#define IGN_DEPRECATED(version) GZ_DEPRECATED_ALL_VERSIONS
+#endif
+
+#ifndef GZ_DEPRECATED
 /// For @lib_name@ developers: Use this macro to indicate that a
 /// function or class has been deprecated and should no longer be used. A
 /// version should be specified to provide context to the user about when the
 /// function became deprecated.
-#define IGN_DEPRECATED(version) IGN_DEPRECATED_ALL_VERSIONS
+
+// NOTE(CH3): GZ_DEPRECATED_ALL_VERSIONS can't be ticktocked, it's generated
+// On the bright side, it seems to be private
+#define GZ_DEPRECATED(version) GZ_DEPRECATED_ALL_VERSIONS
 #endif
 
+
+// TICKTOCK IGNITION ========================================================
+// TODO(CH3): Remove on ticktock, supports defining IGNITION macros if we're
+//            a lib is using GZ_ prefixed export macros
+#define _@export_base@_USING_GZ_EXPORT_BASE @_using_gz_export_base@
+#if _USING_GZ_EXPORT_BASE
+
+
+#ifndef @_ign_export_base@_VISIBLE
+/// For @lib_name@ developers: Apply this macro to @lib_name@
+/// functions and classes which consumers of this library will need to be able
+/// to call from their own programs or libraries.
+#define @_ign_export_base@_VISIBLE \
+  DETAIL_@export_base@_VISIBLE
 #endif
+
+
+#ifndef @_ign_export_base@_HIDDEN
+/// For @lib_name@ developers: Apply this macro to @lib_name@
+/// functions and classes which must not be used by consumers of this library.
+/// By default, this property is applied to all classes and functions which are
+/// not tagged with @_ign_export_base@_VISIBLE, so this does not
+/// generally need to be used.
+#define @_ign_export_base@_HIDDEN \
+  DETAIL_@export_base@_HIDDEN
+#endif
+
+
+#endif  // _@export_base@_USING_GZ_EXPORT_BASE
+#endif  // @export_base@_EXPORT_HH_
