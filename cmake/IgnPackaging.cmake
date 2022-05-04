@@ -185,13 +185,13 @@ function(_ign_create_pkgconfig)
 
   #------------------------------------
   # Parse the arguments
-  cmake_parse_arguments(_ign_create_pkgconfig "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  cmake_parse_arguments(_gz_create_pkgconfig "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   #------------------------------------
   # Choose which input file to use
-  if(_ign_create_pkgconfig_COMPONENT)
+  if(_gz_create_pkgconfig_COMPONENT)
     set(pkgconfig_input "${IGNITION_CMAKE_DIR}/pkgconfig/ignition-component.pc.in")
-    set(target_name ${PROJECT_LIBRARY_TARGET_NAME}-${_ign_create_pkgconfig_COMPONENT})
+    set(target_name ${PROJECT_LIBRARY_TARGET_NAME}-${_gz_create_pkgconfig_COMPONENT})
   else()
     set(pkgconfig_input "${IGNITION_CMAKE_DIR}/pkgconfig/ignition.pc.in")
     set(target_name ${PROJECT_LIBRARY_TARGET_NAME})
@@ -249,24 +249,24 @@ function(_ign_create_cmake_package)
 
   #------------------------------------
   # Parse the arguments
-  cmake_parse_arguments(_ign_create_cmake_package "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  cmake_parse_arguments(_gz_create_cmake_package "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
-  if(_ign_create_cmake_package_COMPONENT AND _ign_create_cmake_package_ALL)
+  if(_gz_create_cmake_package_COMPONENT AND _gz_create_cmake_package_ALL)
     message(FATAL_ERROR
-      "_ign_create_cmake_package was called with both ALL and COMPONENT "
+      "_gz_create_cmake_package was called with both ALL and COMPONENT "
       "specified. This is not allowed!")
   endif()
 
   #------------------------------------
   # Set configuration arguments
-  if(_ign_create_cmake_package_COMPONENT)
+  if(_gz_create_cmake_package_COMPONENT)
 
-    set(component ${_ign_create_cmake_package_COMPONENT})
+    set(component ${_gz_create_cmake_package_COMPONENT})
     set(target_name ${PROJECT_LIBRARY_TARGET_NAME}-${component})
     set(ign_config_input "${IGNITION_CMAKE_DIR}/ignition-component-config.cmake.in")
     set(simple_import_name ${component})
 
-  elseif(_ign_create_cmake_package_ALL)
+  elseif(_gz_create_cmake_package_ALL)
 
     set(ign_config_input "${IGNITION_CMAKE_DIR}/ignition-all-config.cmake.in")
     set(target_name ${PROJECT_LIBRARY_TARGET_NAME}-all)
@@ -281,9 +281,9 @@ function(_ign_create_cmake_package)
 
   endif()
 
-  if(_ign_create_cmake_package_LEGACY_PROJECT_PREFIX)
+  if(_gz_create_cmake_package_LEGACY_PROJECT_PREFIX)
 
-    set(LEGACY_PROJECT_PREFIX ${_ign_create_cmake_package_LEGACY_PROJECT_PREFIX})
+    set(LEGACY_PROJECT_PREFIX ${_gz_create_cmake_package_LEGACY_PROJECT_PREFIX})
 
   else()
 

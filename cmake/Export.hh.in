@@ -64,38 +64,34 @@
 #endif
 
 
+// TICKTOCK IGNITION ========================================================
+// TODO(CH3): Remove on ticktock, supports defining IGNITION macros if we're
+//            a lib is using GZ_ prefixed export macros
+#ifndef @_ign_export_base@_VISIBLE
+/// For @lib_name@ developers: Apply this macro to @lib_name@
+/// functions and classes which consumers of this library will need to be able
+/// to call from their own programs or libraries.
+#define @_ign_export_base@_VISIBLE \
+  DETAIL_@export_base@_VISIBLE
+#endif
+
+
+#ifndef @_ign_export_base@_HIDDEN
+/// For @lib_name@ developers: Apply this macro to @lib_name@
+/// functions and classes which must not be used by consumers of this library.
+/// By default, this property is applied to all classes and functions which are
+/// not tagged with @_ign_export_base@_VISIBLE, so this does not
+/// generally need to be used.
+#define @_ign_export_base@_HIDDEN \
+  DETAIL_@export_base@_HIDDEN
+#endif
+
+
 #ifndef IGN_DEPRECATED
 // TODO(CH3): Remove on ticktock
 // NOTE(CH3): This has no docstring since we'll make GZ_DEPRECATED the default
 #define IGN_DEPRECATED(version) GZ_DEPRECATED_ALL_VERSIONS
 #endif
-
-
-// TICKTOCK IGNITION ========================================================
-// TODO(CH3): Remove on ticktock, supports defining IGNITION macros if we're
-//            a lib is using GZ_ prefixed export macros
-#define _GZ_EXPORT_BASE @_gz_export_base@
-
-#if _GZ_EXPORT_BASE
-#ifndef IGNITION_VISIBLE
-/// For @lib_name@ developers: Apply this macro to @lib_name@
-/// functions and classes which consumers of this library will need to be able
-/// to call from their own programs or libraries.
-#define IGNITION_VISIBLE \
-  DETAIL_@export_base@_VISIBLE
-#endif
-
-
-#ifndef IGNITION_HIDDEN
-/// For @lib_name@ developers: Apply this macro to @lib_name@
-/// functions and classes which must not be used by consumers of this library.
-/// By default, this property is applied to all classes and functions which are
-/// not tagged with IGNITION_VISIBLE, so this does not
-/// generally need to be used.
-#define IGNITION_HIDDEN \
-  DETAIL_@export_base@_HIDDEN
-#endif
-#endif  // _GZ_EXPORT_BASE
 
 
 #endif  // @export_base@_EXPORT_HH_

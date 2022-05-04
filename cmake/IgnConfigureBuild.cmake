@@ -34,7 +34,7 @@ macro(ign_configure_build)
   set(options HIDE_SYMBOLS_BY_DEFAULT QUIT_IF_BUILD_ERRORS)
   set(oneValueArgs)
   set(multiValueArgs COMPONENTS)
-  cmake_parse_arguments(ign_configure_build "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  cmake_parse_arguments(gz_configure_build "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   #============================================================================
   # Examine the build type. If we do not recognize the type, we will generate
@@ -64,7 +64,7 @@ macro(ign_configure_build)
 
     set(error_str "Errors encountered in build. Please see BUILD ERRORS above.")
 
-    if(ign_configure_build_QUIT_IF_BUILD_ERRORS)
+    if(gz_configure_build_QUIT_IF_BUILD_ERRORS)
       message(FATAL_ERROR "${error_str}")
     else()
       message(WARNING "${error_str}")
@@ -135,7 +135,7 @@ macro(ign_configure_build)
       # We treat "core" the same way as we treat the component subdirectories.
       # It's inserted into the beginning of the list to make sure that the core
       # subdirectory is handled before any other.
-      list(INSERT ign_configure_build_COMPONENTS 0 core)
+      list(INSERT gz_configure_build_COMPONENTS 0 core)
 
     else()
 
@@ -191,7 +191,7 @@ macro(ign_configure_build)
 
     #--------------------------------------
     # Add the source code directories of each component if they exist
-    foreach(component ${ign_configure_build_COMPONENTS})
+    foreach(component ${gz_configure_build_COMPONENTS})
 
       if(NOT SKIP_${component} AND NOT INTERNAL_SKIP_${component})
 
@@ -306,14 +306,14 @@ function(_ign_find_include_script)
 
   #------------------------------------
   # Parse the arguments
-  cmake_parse_arguments(_ign_find_include_script "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  cmake_parse_arguments(_gz_find_include_script "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   #------------------------------------
   # Set the starting point
   set(include_start "${CMAKE_CURRENT_LIST_DIR}")
 
-  if(_ign_find_include_script_COMPONENT)
-    ign_string_append(include_start ${_ign_find_include_script_COMPONENT} DELIM "/")
+  if(_gz_find_include_script_COMPONENT)
+    ign_string_append(include_start ${_gz_find_include_script_COMPONENT} DELIM "/")
   endif()
 
   # Check each level of depth to find the first CMakeLists.txt. This allows us

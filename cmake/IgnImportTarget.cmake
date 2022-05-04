@@ -53,13 +53,13 @@ macro(ign_import_target package)
 
   #------------------------------------
   # Parse the arguments
-  _ign_cmake_parse_arguments(ign_import_target "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  _ign_cmake_parse_arguments(gz_import_target "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   #------------------------------------
   # Check if a target name has been provided, otherwise use
   # ${package}::{$package} as the target name.
-  if(ign_import_target_TARGET_NAME)
-    set(target_name ${ign_import_target_TARGET_NAME})
+  if(gz_import_target_TARGET_NAME)
+    set(target_name ${gz_import_target_TARGET_NAME})
   else()
     set(target_name ${package}::${package})
   endif()
@@ -69,16 +69,16 @@ macro(ign_import_target package)
     #------------------------------------
     # Use default versions of these build variables if custom versions were not
     # provided.
-    if(NOT ign_import_target_LIB_VAR)
-      set(ign_import_target_LIB_VAR ${package}_LIBRARIES)
+    if(NOT gz_import_target_LIB_VAR)
+      set(gz_import_target_LIB_VAR ${package}_LIBRARIES)
     endif()
 
-    if(NOT ign_import_target_INCLUDE_VAR)
-      set(ign_import_target_INCLUDE_VAR ${package}_INCLUDE_DIRS)
+    if(NOT gz_import_target_INCLUDE_VAR)
+      set(gz_import_target_INCLUDE_VAR ${package}_INCLUDE_DIRS)
     endif()
 
-    if(NOT ign_import_target_CFLAGS_VAR)
-      set(ign_import_target_CFLAGS_VAR ${package}_CFLAGS)
+    if(NOT gz_import_target_CFLAGS_VAR)
+      set(gz_import_target_CFLAGS_VAR ${package}_CFLAGS)
     endif()
 
     #------------------------------------
@@ -86,7 +86,7 @@ macro(ign_import_target package)
     # target_link_libraries(mytarget package::package), instead of linking
     # against the variable package_LIBRARIES with the old-fashioned
     # target_link_libraries(mytarget ${package_LIBRARIES}
-    if(NOT ign_import_target_INTERFACE)
+    if(NOT gz_import_target_INTERFACE)
       add_library(${target_name} UNKNOWN IMPORTED)
     else()
       add_library(${target_name} INTERFACE IMPORTED)
@@ -94,24 +94,24 @@ macro(ign_import_target package)
 
     # Do not bother with the IMPORTED_LOCATION or IMPORTED_IMPLIB variables if it
     # is an INTERFACE target.
-    if(NOT ign_import_target_INTERFACE)
+    if(NOT gz_import_target_INTERFACE)
 
-      if(${ign_import_target_LIB_VAR})
-        _ign_sort_libraries(${target_name} ${${ign_import_target_LIB_VAR}})
+      if(${gz_import_target_LIB_VAR})
+        _ign_sort_libraries(${target_name} ${${gz_import_target_LIB_VAR}})
       endif()
 
     endif()
 
-    if(${ign_import_target_LIB_VAR})
+    if(${gz_import_target_LIB_VAR})
       set_target_properties(${target_name} PROPERTIES
-        INTERFACE_LINK_LIBRARIES "${${ign_import_target_LIB_VAR}}")
+        INTERFACE_LINK_LIBRARIES "${${gz_import_target_LIB_VAR}}")
     endif()
 
-    if(${ign_import_target_INCLUDE_VAR})
+    if(${gz_import_target_INCLUDE_VAR})
       # TODO: In a later version of cmake, it should be possible to replace this
       # with
       #
-      # target_include_directories(${target_name} INTERFACE ${${ign_import_target_INCLUDE_VAR}})
+      # target_include_directories(${target_name} INTERFACE ${${gz_import_target_INCLUDE_VAR}})
       #
       # But this will not be possible until we are using whichever version of cmake
       # the PR https://gitlab.kitware.com/cmake/cmake/merge_requests/1264
@@ -119,16 +119,16 @@ macro(ign_import_target package)
       set_property(
         TARGET ${target_name}
         PROPERTY INTERFACE_INCLUDE_DIRECTORIES
-          ${${ign_import_target_INCLUDE_VAR}})
+          ${${gz_import_target_INCLUDE_VAR}})
     endif()
 
-    if(${ign_import_target_CFLAGS_VAR})
+    if(${gz_import_target_CFLAGS_VAR})
       # TODO: See note above. We should eventually be able to replace this with
-      # target_compile_options(${target_name} INTERFACE ${${ign_import_target_CFLAGS_VAR}})
+      # target_compile_options(${target_name} INTERFACE ${${gz_import_target_CFLAGS_VAR}})
       set_property(
         TARGET ${target_name}
         PROPERTY INTERFACE_COMPILE_OPTIONS
-          ${${ign_import_target_CFLAGS_VAR}})
+          ${${gz_import_target_CFLAGS_VAR}})
     endif()
 
     # What about linker flags? Is there no target property for that?
