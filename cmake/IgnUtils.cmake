@@ -1182,18 +1182,10 @@ function(ign_add_component component_name)
 
   #------------------------------------
   # Create the target for this component, and configure it to be installed
-
-  # Support "gz-"
-  if(${PROJECT_LIBRARY_TARGET_NAME} MATCHES "^gz-")
-   set(EXPORT_PREFIX "GZ")
-  else()
-   set(EXPORT_PREFIX "IGNITION")
-  endif()
-
   _ign_add_library_or_component(
     LIB_NAME ${component_target_name}
     INCLUDE_DIR "${PROJECT_INCLUDE_DIR}/${include_subdir}"
-    EXPORT_BASE ${EXPORT_PREFIX}_${IGN_DESIGNATION_UPPER}_${component_name_upper}
+    EXPORT_BASE GZ_${IGN_DESIGNATION_UPPER}_${component_name_upper}
     SOURCES ${sources}
     ${interface_option})
 
@@ -1394,7 +1386,6 @@ macro(_ign_add_library_or_component)
   # - export_base
   # - lib_name
   #
-  # - _using_gz_export_base
   # - _ign_export_base
 
   #------------------------------------
@@ -1499,12 +1490,6 @@ macro(_ign_add_library_or_component)
     # TODO(CH3): Remove this on ticktock
     # This is to allow IGNITION_ prefixed export macros to generate in Export.hh
     # _using_gz_export_base is used in Export.hh.in's configuration!
-    if(${export_base} MATCHES "^GZ_")
-      set(_using_gz_export_base 1)
-    else()
-      set(_using_gz_export_base 0)
-    endif()
-
     string(REGEX REPLACE "^GZ_" "IGNITION_" _ign_export_base ${export_base})
 
     configure_file(
