@@ -4,5 +4,5 @@ find_package(ignition-cmake3 REQUIRED)
 ign_configure_project()
 ign_configure_build(QUIT_IF_BUILD_ERRORS
   COMPONENTS child parent)
-ign_create_packages()
+gz_create_packages()
 gz_create_docs()
