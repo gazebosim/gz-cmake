@@ -516,15 +516,24 @@ macro(_gz_list_to_string _output _input_list)
 endmacro()
 
 #################################################
-# ign_get_sources_and_unittests(<lib_srcs> <tests>)
+# gz_get_libsources_and_unittests(<lib_srcs> <tests>)
 #
 # Grab all the files ending in "*.cc" from either the "src/" subdirectory or the
 # current subdirectory if "src/" does not exist. They will be collated into
 # library source files <lib_sources_var> and unittest source files <tests_var>.
 #
 # These output variables can be consumed directly by ign_create_core_library(~),
-# ign_add_component(~), ign_build_tests(~), and ign_build_executables(~).
+# ign_add_component(~), gz_build_tests(~), and ign_build_executables(~).
 function(ign_get_libsources_and_unittests lib_sources_var tests_var)
+  # TODO(chapulina) Enable warnings after all libraries have migrated.
+  # message(WARNING "ign_get_libsources_and_unittests is deprecated, use gz_get_libsources_and_unittests instead.")
+
+  gz_get_libsources_and_unittests(${lib_sources_var} ${tests_var})
+
+  set(${lib_sources_var} ${${lib_sources_var}} PARENT_SCOPE)
+  set(${tests_var} ${${tests_var}} PARENT_SCOPE)
+endfunction()
+function(gz_get_libsources_and_unittests lib_sources_var tests_var)
 
   # Glob all the source files
   if(EXISTS ${CMAKE_CURRENT_LIST_DIR}/src)
@@ -1597,7 +1606,7 @@ macro(ign_build_executables)
 endmacro()
 
 #################################################
-# ign_build_tests(TYPE <test_type>
+# gz_build_tests(TYPE <test_type>
 #                 SOURCES <sources>
 #                 [LIB_DEPS <library_dependencies>]
 #                 [INCLUDE_DIRS <include_dependencies>]
@@ -1627,33 +1636,47 @@ endmacro()
 #                      into your executable's directory.
 #
 macro(ign_build_tests)
+  # TODO(chapulina) Enable warnings after all libraries have migrated.
+  # message(WARNING "ign_build_tests is deprecated, use gz_build_tests instead.")
 
-  #------------------------------------
-  # Define the expected arguments
   set(options SOURCE EXCLUDE_PROJECT_LIB) # NOTE: DO NOT USE "SOURCE", we're adding it here to catch typos
   set(oneValueArgs TYPE TEST_LIST)
   set(multiValueArgs SOURCES LIB_DEPS INCLUDE_DIRS)
-
-
-  #------------------------------------
-  # Parse the arguments
   _gz_cmake_parse_arguments(gz_build_tests "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+  set(gz_build_tests_skip_parsing true)
+  gz_build_tests(${PACKAGE_NAME})
+endmacro()
+macro(gz_build_tests)
+
+  # Deprecated, remove skip parsing logic in version 4
+  if (NOT gz_build_tests_skip_parsing)
+    #------------------------------------
+    # Define the expected arguments
+    set(options SOURCE EXCLUDE_PROJECT_LIB) # NOTE: DO NOT USE "SOURCE", we're adding it here to catch typos
+    set(oneValueArgs TYPE TEST_LIST)
+    set(multiValueArgs SOURCES LIB_DEPS INCLUDE_DIRS)
+
+    #------------------------------------
+    # Parse the arguments
+    _gz_cmake_parse_arguments(gz_build_tests "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  endif()
 
   if(NOT gz_build_tests_TYPE)
     # If you have encountered this error, you are probably migrating to the
     # new ignition-cmake system. Be sure to also provide a SOURCES argument
-    # when calling ign_build_tests.
+    # when calling gz_build_tests.
     message(FATAL_ERROR "Developer error: You must specify a TYPE for your tests!")
   endif()
 
   if(gz_build_tests_SOURCE)
 
     # We have encountered cases where someone accidentally passes a SOURCE
-    # argument instead of a SOURCES argument into ign_build_tests, and the macro
+    # argument instead of a SOURCES argument into gz_build_tests, and the macro
     # didn't report any problem with it. Adding this warning should make it more
     # clear when that particular typo occurs.
     message(AUTHOR_WARNING
-      "Your script has specified SOURCE for ign_build_tests, which is not an "
+      "Your script has specified SOURCE for gz_build_tests, which is not an "
       "option. Did you mean to specify SOURCES (note the plural)?")
 
   endif()
