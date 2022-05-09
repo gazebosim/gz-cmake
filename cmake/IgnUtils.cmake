@@ -616,7 +616,7 @@ function(gz_get_sources sources_var)
 endfunction()
 
 #################################################
-# ign_install_all_headers(
+# gz_install_all_headers(
 #   [EXCLUDE_FILES <excluded_headers>]
 #   [EXCLUDE_DIRS  <dirs>]
 #   [GENERATED_HEADERS <headers>]
@@ -642,17 +642,31 @@ endfunction()
 # config.hh file since it would be redundant with the core library.
 #
 function(ign_install_all_headers)
+  # TODO(chapulina) Enable warnings after all libraries have migrated.
+  # message(WARNING "ign_install_all_headers is deprecated, use gz_install_all_headers instead.")
 
-  #------------------------------------
-  # Define the expected arguments
   set(options)
-  set(oneValueArgs COMPONENT) # We are not using oneValueArgs yet
+  set(oneValueArgs COMPONENT)
   set(multiValueArgs EXCLUDE_FILES EXCLUDE_DIRS GENERATED_HEADERS)
-
-  #------------------------------------
-  # Parse the arguments
   _gz_cmake_parse_arguments(gz_install_all_headers "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
+  set(gz_install_all_headers_skip_parsing true)
+  gz_install_all_headers()
+endfunction()
+function(gz_install_all_headers)
+
+  # Deprecated, remove skip parsing logic in version 4
+  if (NOT gz_install_all_headers_skip_parsing)
+    #------------------------------------
+    # Define the expected arguments
+    set(options)
+    set(oneValueArgs COMPONENT)
+    set(multiValueArgs EXCLUDE_FILES EXCLUDE_DIRS GENERATED_HEADERS)
+
+    #------------------------------------
+    # Parse the arguments
+    _gz_cmake_parse_arguments(gz_install_all_headers "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  endif()
 
   #------------------------------------
   # Build the list of directories
