@@ -797,22 +797,6 @@ macro(ign_build_warning)
 endmacro(ign_build_warning)
 
 #################################################
-macro(ign_add_library lib_target_name)
-
-  message(FATAL_ERROR
-    "ign_add_library(<target_name> <sources>) is deprecated. Instead, use "
-    "ign_create_core_library(SOURCES <sources>). It will determine the library "
-    "target name automatically from the project name. To add a component "
-    "library, use ign_add_component(~). Be sure to pass the CXX_STANDARD "
-    "argument to these functions in order to set the C++ standard that they "
-    "require.")
-
-
-  ign_create_core_library(SOURCES ${ARGN})
-
-endmacro()
-
-#################################################
 # _gz_check_known_cxx_standards(<11|14|17>)
 #
 # Creates a fatal error if the variable passed in does not represent a supported
@@ -1504,15 +1488,6 @@ macro(ign_install_includes _subdir)
 endmacro()
 
 #################################################
-macro(ign_install_library)
-
-  message(FATAL_ERROR
-    "ign_install_library is deprecated. "
-    "Please remove it from your cmake script!")
-
-endmacro()
-
-#################################################
 macro(ign_install_executable _name )
   set_target_properties(${_name} PROPERTIES VERSION ${PROJECT_VERSION_FULL})
   install (TARGETS ${_name} DESTINATION ${IGN_BIN_INSTALL_DIR})
@@ -1752,32 +1727,6 @@ macro(ign_build_tests)
     message(STATUS "Testing is disabled -- skipping ${TEST_TYPE} tests")
 
   endif()
-
-endmacro()
-
-#################################################
-# ign_set_target_public_cxx_standard(<11|14|17>)
-#
-# NOTE: This was a temporary workaround for an earlier prerelease and is
-#       deprecated as of the "Components" pull request.
-#
-macro(ign_set_project_public_cxx_standard standard)
-
-  message(FATAL_ERROR
-    "The ign_set_project_public_cxx_standard(~) macro is deprecated. "
-    "Instead, use the CXX_STANDARD argument of ign_create_core_library(~).")
-
-  _gz_check_known_cxx_standards(${standard})
-
-  target_compile_features(${PROJECT_LIBRARY_TARGET_NAME} PUBLIC ${IGN_CXX_${standard}_FEATURES})
-
-  # Note: We have to reconfigure the pkg-config information for the core library
-  # because this macro can only be called after ign_create_core_library(~). This
-  # is somewhat wasteful, so we should strongly prefer to use the CXX_STANDARD
-  # argument of ign_create_core_library(~).
-
-  ign_string_append(PROJECT_PKGCONFIG_CFLAGS "-std=c++${standard}")
-  _gz_create_pkgconfig()
 
 endmacro()
 
