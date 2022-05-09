@@ -580,12 +580,20 @@ function(gz_get_libsources_and_unittests lib_sources_var tests_var)
 endfunction()
 
 #################################################
-# ign_get_sources(<sources>)
+# gz_get_sources(<sources>)
 #
 # From the current directory, grab all the source files and place them into
 # <sources>. Remove their paths to make them suitable for passing into
 # ign_add_[library/tests].
 function(ign_get_sources sources_var)
+  # TODO(chapulina) Enable warnings after all libraries have migrated.
+  # message(WARNING "ign_get_sources is deprecated, use gz_get_sources instead.")
+
+  gz_get_sources(${sources_var})
+
+  set(${sources_var} ${${sources_var}} PARENT_SCOPE)
+endfunction()
+function(gz_get_sources sources_var)
 
   # GLOB all the source files
   file(GLOB source_files "*.cc")
