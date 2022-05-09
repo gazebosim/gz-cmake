@@ -7,7 +7,7 @@
 # Sets up package information for an ignition library project.
 # This function is internal to gz-cmake.
 #
-# ign_create_package
+# gz_create_packages
 #
 # Creates a package for an ignition library project
 #
@@ -148,6 +148,12 @@ macro(_gz_setup_packages)
 endmacro()
 
 macro(ign_create_packages)
+  # TODO(chapulina) Enable warnings after all libraries have migrated.
+  # message(WARNING "ign_create_packages is deprecated, use gz_create_packages instead.")
+
+  gz_create_packages()
+endmacro()
+macro(gz_create_packages)
 
   #============================================================================
   # Load platform-specific build hooks if present.
