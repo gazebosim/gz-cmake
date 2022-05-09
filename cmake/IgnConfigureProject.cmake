@@ -40,7 +40,7 @@ macro(ign_configure_project)
 
   #------------------------------------
   # Parse the arguments
-  _ign_cmake_parse_arguments(gz_configure_project "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  _gz_cmake_parse_arguments(gz_configure_project "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   # Note: The following are automatically defined by project(~) in cmake v3:
   # PROJECT_NAME
@@ -124,7 +124,7 @@ macro(ign_configure_project)
 
   #============================================================================
   # Create package information
-  ign_setup_packages()
+  _gz_setup_packages()
 
   #============================================================================
   # Initialize build errors/warnings

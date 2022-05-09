@@ -51,7 +51,7 @@ macro(ign_manual_search package)
 
   #------------------------------------
   # Parse the arguments
-  _ign_cmake_parse_arguments(gz_manual_search "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  _gz_cmake_parse_arguments(gz_manual_search "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   if(gz_manual_search_INTERFACE)
     set(_gz_manual_search_interface_option INTERFACE)
@@ -93,7 +93,7 @@ macro(ign_manual_search package)
 
   if(${package}_FOUND)
     include(IgnImportTarget)
-    ign_import_target(${package} ${_ign_pkg_check_modules_interface_option}
+    ign_import_target(${package} ${_gz_pkg_check_modules_interface_option}
       TARGET_NAME ${ign_pkg_check_modules_TARGET_NAME})
   endif()
 

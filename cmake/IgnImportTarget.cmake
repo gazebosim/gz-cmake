@@ -53,7 +53,7 @@ macro(ign_import_target package)
 
   #------------------------------------
   # Parse the arguments
-  _ign_cmake_parse_arguments(gz_import_target "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  _gz_cmake_parse_arguments(gz_import_target "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   #------------------------------------
   # Check if a target name has been provided, otherwise use
@@ -97,7 +97,7 @@ macro(ign_import_target package)
     if(NOT gz_import_target_INTERFACE)
 
       if(${gz_import_target_LIB_VAR})
-        _ign_sort_libraries(${target_name} ${${gz_import_target_LIB_VAR}})
+        _gz_sort_libraries(${target_name} ${${gz_import_target_LIB_VAR}})
       endif()
 
     endif()
@@ -148,7 +148,7 @@ endmacro()
 #
 # TODO: Figure out if there is a better way to fill in the various library
 # properties of an imported target.
-function(_ign_sort_libraries target_name first_lib)
+function(_gz_sort_libraries target_name first_lib)
 
   if(MSVC)
     # Note: For MSVC, we only care about the "import library" which is the

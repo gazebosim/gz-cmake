@@ -53,7 +53,8 @@ set(minor_version ${IgnOGRE_FIND_VERSION_MINOR})
 set(full_version ${major_version}.${minor_version})
 
 # Copied from OGREConfig.cmake
-macro(ign_ogre_declare_plugin TYPE COMPONENT)
+# Internal to gz-cmake.
+macro(_gz_ogre_declare_plugin TYPE COMPONENT)
     set(OGRE_${TYPE}_${COMPONENT}_FOUND TRUE)
     set(OGRE_${TYPE}_${COMPONENT}_LIBRARIES ${TYPE}_${COMPONENT})
     list(APPEND OGRE_LIBRARIES ${TYPE}_${COMPONENT})
@@ -183,7 +184,7 @@ else()
         string(SUBSTRING "${ogre_component}" "0" "${split_pos}" component_type)
         string(SUBSTRING "${ogre_component}" "${split_pos2}" "${len}" component_name)
 
-        ign_ogre_declare_plugin("${component_type}" "${component_name}")
+        _gz_ogre_declare_plugin("${component_type}" "${component_name}")
       endif()
     endforeach()
 

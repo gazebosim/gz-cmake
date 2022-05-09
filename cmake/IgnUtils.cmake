@@ -148,7 +148,7 @@ macro(ign_find_package PACKAGE_NAME)
 
   #------------------------------------
   # Parse the arguments
-  _ign_cmake_parse_arguments(gz_find_package "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  _gz_cmake_parse_arguments(gz_find_package "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   #------------------------------------
   # Construct the arguments to pass to find_package
@@ -209,7 +209,7 @@ macro(ign_find_package PACKAGE_NAME)
     set(${PACKAGE_NAME}_msg "Missing dependency [${${PACKAGE_NAME}_pretty}]")
 
     if(gz_find_package_COMPONENTS)
-      ign_list_to_string(comp_str gz_find_package_COMPONENTS DELIM ", ")
+      _gz_list_to_string(comp_str gz_find_package_COMPONENTS DELIM ", ")
       set(${PACKAGE_NAME}_msg "${${PACKAGE_NAME}_msg} (Components: ${comp_str})")
     endif()
 
@@ -478,7 +478,7 @@ macro(ign_string_append output_var val)
 
   #------------------------------------
   # Parse the arguments
-  _ign_cmake_parse_arguments(gz_string_append "PARENT_SCOPE;${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  _gz_cmake_parse_arguments(gz_string_append "PARENT_SCOPE;${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   if(gz_string_append_DELIM)
     set(delim "${gz_string_append_DELIM}")
@@ -503,7 +503,8 @@ endmacro()
 
 #################################################
 # Macro to turn a list into a string
-macro(ign_list_to_string _output _input_list)
+# Internal to gz-cmake.
+macro(_gz_list_to_string _output _input_list)
 
   set(${_output})
   foreach(_item ${${_input_list}})
@@ -633,7 +634,7 @@ function(ign_install_all_headers)
 
   #------------------------------------
   # Parse the arguments
-  _ign_cmake_parse_arguments(gz_install_all_headers "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  _gz_cmake_parse_arguments(gz_install_all_headers "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
 
   #------------------------------------
@@ -796,14 +797,14 @@ macro(ign_build_warning)
 endmacro(ign_build_warning)
 
 #################################################
-# _ign_check_known_cxx_standards(<11|14|17>)
+# _gz_check_known_cxx_standards(<11|14|17>)
 #
 # Creates a fatal error if the variable passed in does not represent a supported
 # version of the C++ standard.
 #
 # NOTE: This function is meant for internal ign-cmake use
 #
-function(_ign_check_known_cxx_standards standard)
+function(_gz_check_known_cxx_standards standard)
 
   list(FIND IGN_KNOWN_CXX_STANDARDS ${standard} known)
   if(${known} EQUAL -1)
@@ -815,7 +816,7 @@ function(_ign_check_known_cxx_standards standard)
 endfunction()
 
 #################################################
-# _ign_handle_cxx_standard(<function_prefix>
+# _gz_handle_cxx_standard(<function_prefix>
 #                          <target_name>
 #                          <pkgconfig_cflags_variable>)
 #
@@ -824,18 +825,18 @@ endfunction()
 #
 # NOTE: This is only meant for internal ign-cmake use.
 #
-macro(_ign_handle_cxx_standard prefix target pkgconfig_cflags)
+macro(_gz_handle_cxx_standard prefix target pkgconfig_cflags)
 
   if(${prefix}_CXX_STANDARD)
-    _ign_check_known_cxx_standards(${${prefix}_CXX_STANDARD})
+    _gz_check_known_cxx_standards(${${prefix}_CXX_STANDARD})
   endif()
 
   if(${prefix}_PRIVATE_CXX_STANDARD)
-    _ign_check_known_cxx_standards(${${prefix}_PRIVATE_CXX_STANDARD})
+    _gz_check_known_cxx_standards(${${prefix}_PRIVATE_CXX_STANDARD})
   endif()
 
   if(${prefix}_INTERFACE_CXX_STANDARD)
-    _ign_check_known_cxx_standards(${${prefix}_INTERFACE_CXX_STANDARD})
+    _gz_check_known_cxx_standards(${${prefix}_INTERFACE_CXX_STANDARD})
   endif()
 
   if(${prefix}_CXX_STANDARD
@@ -936,7 +937,7 @@ function(ign_create_core_library)
 
   #------------------------------------
   # Create the target for the core library, and configure it to be installed
-  _ign_add_library_or_component(
+  _gz_add_library_or_component(
     LIB_NAME ${PROJECT_LIBRARY_TARGET_NAME}
     INCLUDE_DIR "${PROJECT_INCLUDE_DIR}"
     EXPORT_BASE IGNITION_${IGN_DESIGNATION_UPPER}
@@ -981,7 +982,7 @@ function(ign_create_core_library)
 
   #------------------------------------
   # Adjust variables if a specific C++ standard was requested
-  _ign_handle_cxx_standard(gz_create_core_library
+  _gz_handle_cxx_standard(gz_create_core_library
     ${PROJECT_LIBRARY_TARGET_NAME} PROJECT_PKGCONFIG_CFLAGS)
 
 
@@ -994,10 +995,10 @@ function(ign_create_core_library)
   endif()
 
   # Export and install the core library's cmake target and package information
-  _ign_create_cmake_package(LEGACY_PROJECT_PREFIX ${gz_create_core_library_LEGACY_PROJECT_PREFIX})
+  _gz_create_cmake_package(LEGACY_PROJECT_PREFIX ${gz_create_core_library_LEGACY_PROJECT_PREFIX})
 
   # Generate and install the core library's pkgconfig information
-  _ign_create_pkgconfig()
+  _gz_create_pkgconfig()
 
 
   #------------------------------------
@@ -1120,7 +1121,7 @@ function(ign_add_component component_name)
 
   #------------------------------------
   # Create the target for this component, and configure it to be installed
-  _ign_add_library_or_component(
+  _gz_add_library_or_component(
     LIB_NAME ${component_target_name}
     INCLUDE_DIR "${PROJECT_INCLUDE_DIR}/${include_subdir}"
     EXPORT_BASE IGNITION_${IGN_DESIGNATION_UPPER}_${component_name_upper}
@@ -1169,7 +1170,7 @@ function(ign_add_component component_name)
 
   #------------------------------------
   # Adjust variables if a specific C++ standard was requested
-  _ign_handle_cxx_standard(ign_add_component
+  _gz_handle_cxx_standard(ign_add_component
     ${component_target_name} ${component_name}_PKGCONFIG_CFLAGS)
 
 
@@ -1244,10 +1245,10 @@ function(ign_add_component component_name)
   set(component_pkgconfig_cflags ${${component_name}_PKGCONFIG_CFLAGS})
 
   # Export and install the cmake target and package information
-  _ign_create_cmake_package(COMPONENT ${component_name})
+  _gz_create_cmake_package(COMPONENT ${component_name})
 
   # Generate and install the pkgconfig information for this component
-  _ign_create_pkgconfig(COMPONENT ${component_name})
+  _gz_create_pkgconfig(COMPONENT ${component_name})
 
 
   #------------------------------------
@@ -1265,7 +1266,8 @@ function(ign_add_component component_name)
 endfunction()
 
 #################################################
-function(ign_create_all_target)
+# Creates the `all` target. This function is private to gz-cmake.
+function(_gz_create_all_target)
 
   add_library(${PROJECT_LIBRARY_TARGET_NAME}-all INTERFACE)
 
@@ -1280,7 +1282,8 @@ function(ign_create_all_target)
 endfunction()
 
 #################################################
-function(ign_export_target_all)
+# Exports the `all` target. This function is private to gz-cmake.
+function(_gz_export_target_all)
 
   # find_all_pkg_components is used as a variable in ignition-all-config.cmake.in
   set(find_all_pkg_components "")
@@ -1293,16 +1296,16 @@ function(ign_export_target_all)
     endforeach()
   endif()
 
-  _ign_create_cmake_package(ALL)
+  _gz_create_cmake_package(ALL)
 
 endfunction()
 
 #################################################
-# Used internally by _ign_add_library_or_component to report argument errors
-macro(_ign_add_library_or_component_arg_error missing_arg)
+# Used internally by _gz_add_library_or_component to report argument errors
+macro(_gz_add_library_or_component_arg_error missing_arg)
 
   message(FATAL_ERROR "ignition-cmake developer error: Must specify "
-                      "${missing_arg} to _ign_add_library_or_component!")
+                      "${missing_arg} to _gz_add_library_or_component!")
 
 endmacro()
 
@@ -1311,12 +1314,12 @@ endmacro()
 # of ignition-cmake, please use ign_create_core_library(~) or
 # ign_add_component(~) instead of this.
 #
-# _ign_add_library_or_component(LIB_NAME <lib_name>
+# _gz_add_library_or_component(LIB_NAME <lib_name>
 #                               INCLUDE_DIR <dir_name>
 #                               EXPORT_BASE <export_base>
 #                               SOURCES <sources>)
 #
-macro(_ign_add_library_or_component)
+macro(_gz_add_library_or_component)
 
   # NOTE: The following local variables are used in the Export.hh.in file, so if
   # you change their names here, you must also change their names there:
@@ -1494,7 +1497,8 @@ endmacro()
 #################################################
 # Macro to setup supported compiler warnings
 # Based on work of Florent Lamiraux, Thomas Moulard, JRL, CNRS/AIST.
-macro(ign_filter_valid_compiler_options var)
+# Internal to gz-cmake
+macro(_gz_filter_valid_compiler_options var)
 
   include(CheckCXXCompilerFlag)
   # Store the current setting for CMAKE_REQUIRED_QUIET
@@ -1561,7 +1565,7 @@ macro(ign_build_executables)
 
   #------------------------------------
   # Parse the arguments
-  _ign_cmake_parse_arguments(gz_build_executables "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  _gz_cmake_parse_arguments(gz_build_executables "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   foreach(exec_file ${gz_build_executables_SOURCES})
 
@@ -1633,7 +1637,7 @@ macro(ign_build_tests)
 
   #------------------------------------
   # Parse the arguments
-  _ign_cmake_parse_arguments(gz_build_tests "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  _gz_cmake_parse_arguments(gz_build_tests "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   if(NOT gz_build_tests_TYPE)
     # If you have encountered this error, you are probably migrating to the
@@ -1727,7 +1731,7 @@ macro(ign_build_tests)
 endmacro()
 
 #################################################
-# _ign_cmake_parse_arguments(<prefix> <options> <oneValueArgs> <multiValueArgs> [ARGN])
+# _gz_cmake_parse_arguments(<prefix> <options> <oneValueArgs> <multiValueArgs> [ARGN])
 #
 # Set <prefix> to match the prefix that is given to cmake_parse_arguments(~).
 # This should also match the name of the function or macro that called it.
@@ -1735,7 +1739,7 @@ endmacro()
 # NOTE: This should only be used by functions inside of ign-cmake specifically.
 # Other ignition projects should not use this macro.
 #
-macro(_ign_cmake_parse_arguments prefix options oneValueArgs multiValueArgs)
+macro(_gz_cmake_parse_arguments prefix options oneValueArgs multiValueArgs)
 
   cmake_parse_arguments(${prefix} "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 

@@ -72,7 +72,7 @@ macro(ign_pkg_check_modules_quiet package signature)
 
   #------------------------------------
   # Parse the arguments
-  _ign_cmake_parse_arguments(gz_pkg_check_modules "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  _gz_cmake_parse_arguments(gz_pkg_check_modules "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   if(gz_pkg_check_modules_INTERFACE)
     set(_gz_pkg_check_modules_interface_option INTERFACE)
@@ -154,7 +154,7 @@ macro(ign_pkg_check_modules_quiet package signature)
       #
       # TODO: How would we deal with multiple modules that are in different
       # directories? How does cmake-3.6+ handle that situation?
-      _ign_pkgconfig_find_libraries(
+      _gz_pkgconfig_find_libraries(
         ${package}_LIBRARIES
         ${package}
         "${${package}_LIBRARIES}"
@@ -196,7 +196,7 @@ endmacro()
 
 # Based on discussion here: https://cmake.org/Bug/view.php?id=15804
 # and a patch written by Sam Thursfield
-function(_ign_pkgconfig_find_libraries output_var package library_names library_dirs)
+function(_gz_pkgconfig_find_libraries output_var package library_names library_dirs)
 
   foreach(libname ${library_names})
 

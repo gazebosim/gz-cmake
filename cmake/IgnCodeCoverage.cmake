@@ -98,7 +98,7 @@ FUNCTION(ign_setup_target_for_coverage)
 
   #------------------------------------
   # Parse the arguments
-  _ign_cmake_parse_arguments(gz_coverage "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  _gz_cmake_parse_arguments(gz_coverage "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   set(_outputname ${gz_coverage_OUTPUT_NAME})
   set(_targetname ${gz_coverage_TARGET_NAME})
