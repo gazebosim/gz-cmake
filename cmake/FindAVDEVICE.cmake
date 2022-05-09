@@ -24,7 +24,7 @@ ign_pkg_check_modules_quiet(AVDEVICE "libavdevice >= ${av_major}.${av_minor}.${a
 
 if(NOT AVDEVICE_FOUND)
   include(IgnManualSearch)
-  ign_manual_search(AVDEVICE
+  gz_manual_search(AVDEVICE
                     HEADER_NAMES "libavdevice/avdevice.h"
                     LIBRARY_NAMES "avdevice")
 

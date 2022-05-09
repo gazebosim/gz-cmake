@@ -20,7 +20,7 @@ ign_pkg_check_modules_quiet(AVFORMAT libavformat)
 
 if(NOT AVFORMAT_FOUND)
   include(IgnManualSearch)
-  ign_manual_search(AVFORMAT
+  gz_manual_search(AVFORMAT
                     HEADER_NAMES "libavformat/avformat.h"
                     LIBRARY_NAMES "avformat")
 endif()

@@ -22,7 +22,7 @@ if (UNIX)
 
     if(NOT UUID_FOUND)
       include(IgnManualSearch)
-      ign_manual_search(UUID
+      gz_manual_search(UUID
                         HEADER_NAMES "uuid.h"
                         LIBRARY_NAMES "uuid libuuid"
                         PATH_SUFFIXES "uuid")
