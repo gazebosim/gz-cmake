@@ -174,7 +174,7 @@ endmacro()
 # If the target is a component, pass in the COMPONENT argument followed by the
 # component's name.
 #
-# NOTE: This will be called automatically by ign_create_core_library(~) and
+# NOTE: This will be called automatically by gz_create_core_library(~) and
 #       ign_add_component(~), so users of ignition-cmake should not call this
 #       function.
 #
@@ -234,7 +234,7 @@ endfunction()
 # variable names (like SDFormat_LIBRARIES), the LEGACY_PROJECT_PREFIX argument
 # can be used to specify the prefix of these variables.
 #
-# NOTE: This will be called automatically by ign_create_core_library(~) and
+# NOTE: This will be called automatically by gz_create_core_library(~) and
 #       ign_add_component(~), so users of ignition-cmake should not call this
 #       function.
 #

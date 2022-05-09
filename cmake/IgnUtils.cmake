@@ -522,7 +522,7 @@ endmacro()
 # current subdirectory if "src/" does not exist. They will be collated into
 # library source files <lib_sources_var> and unittest source files <tests_var>.
 #
-# These output variables can be consumed directly by ign_create_core_library(~),
+# These output variables can be consumed directly by gz_create_core_library(~),
 # ign_add_component(~), ign_build_tests(~), and ign_build_executables(~).
 function(ign_get_libsources_and_unittests lib_sources_var tests_var)
 
@@ -820,7 +820,7 @@ endfunction()
 #                          <target_name>
 #                          <pkgconfig_cflags_variable>)
 #
-# Handles the C++ standard argument for ign_create_core_library(~) and
+# Handles the C++ standard argument for gz_create_core_library(~) and
 # ign_add_component(~).
 #
 # NOTE: This is only meant for internal ign-cmake use.
@@ -866,7 +866,7 @@ macro(_gz_handle_cxx_standard prefix target pkgconfig_cflags)
 endmacro()
 
 #################################################
-# ign_create_core_library(SOURCES <sources>
+# gz_create_core_library(SOURCES <sources>
 #                         [CXX_STANDARD <11|14|17>]
 #                         [PRIVATE_CXX_STANDARD <11|14|17>]
 #                         [INTERFACE_CXX_STANDARD <11|14|17>]
@@ -910,21 +910,40 @@ endmacro()
 # are not allowed to use either of them if you use the CXX_STANDARD argument.
 #
 function(ign_create_core_library)
+  # TODO(chapulina) Enable warnings after all libraries have migrated.
+  # message(WARNING "ign_create_core_library is deprecated, use gz_create_core_library instead.")
 
-  #------------------------------------
-  # Define the expected arguments
   set(options INTERFACE)
   set(oneValueArgs INCLUDE_SUBDIR LEGACY_PROJECT_PREFIX CXX_STANDARD PRIVATE_CXX_STANDARD INTERFACE_CXX_STANDARD GET_TARGET_NAME)
   set(multiValueArgs SOURCES)
-
-  #------------------------------------
-  # Parse the arguments
   cmake_parse_arguments(gz_create_core_library "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+  set(gz_create_core_library_skip_parsing true)
+  gz_create_core_library()
+
+  if(gz_create_core_library_GET_TARGET_NAME)
+    set(${gz_create_core_library_GET_TARGET_NAME} ${${gz_create_core_library_GET_TARGET_NAME}} PARENT_SCOPE)
+  endif()
+endfunction()
+function(gz_create_core_library)
+
+  # Deprecated, remove skip parsing logic in version 4
+  if (NOT gz_create_core_library_skip_parsing)
+    #------------------------------------
+    # Define the expected arguments
+    set(options INTERFACE)
+    set(oneValueArgs INCLUDE_SUBDIR LEGACY_PROJECT_PREFIX CXX_STANDARD PRIVATE_CXX_STANDARD INTERFACE_CXX_STANDARD GET_TARGET_NAME)
+    set(multiValueArgs SOURCES)
+
+    #------------------------------------
+    # Parse the arguments
+    cmake_parse_arguments(gz_create_core_library "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  endif()
 
   if(gz_create_core_library_SOURCES)
     set(sources ${gz_create_core_library_SOURCES})
   elseif(NOT gz_create_core_library_INTERFACE)
-    message(FATAL_ERROR "You must specify SOURCES for ign_create_core_library(~)!")
+    message(FATAL_ERROR "You must specify SOURCES for gz_create_core_library(~)!")
   endif()
 
   if(gz_create_core_library_INTERFACE)
@@ -1065,7 +1084,7 @@ endfunction()
 #     with the core library), but the component itself does not need to link to
 #     the core library.
 #
-# See the documentation of ign_create_core_library(~) for more information about
+# See the documentation of gz_create_core_library(~) for more information about
 # specifying the C++ standard. If your component publicly depends on the core
 # library, then you probably do not need to specify the standard, because it
 # will get inherited from the core library.
@@ -1311,7 +1330,7 @@ endmacro()
 
 #################################################
 # This is only meant for internal use by ignition-cmake. If you are a consumer
-# of ignition-cmake, please use ign_create_core_library(~) or
+# of ignition-cmake, please use gz_create_core_library(~) or
 # ign_add_component(~) instead of this.
 #
 # _gz_add_library_or_component(LIB_NAME <lib_name>
