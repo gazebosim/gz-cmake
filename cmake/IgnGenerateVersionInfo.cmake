@@ -2,7 +2,7 @@
 # IgnGenerateVersionInfo
 # ----------------------
 #
-# Intended to be invoked as part of the ign_add_version_info_target function
+# Intended to be invoked as part of the _gz_add_version_info_target function
 # in IgnBenchmark.
 #
 # Populates information in the version_info.json file.

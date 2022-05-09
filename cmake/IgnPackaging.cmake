@@ -2,9 +2,10 @@
 # IgnPackaging
 # ----------------
 #
-# ign_setup_packages
+# _gz_setup_packages
 #
 # Sets up package information for an ignition library project.
+# This function is internal to gz-cmake.
 #
 # ign_create_package
 #
@@ -27,7 +28,7 @@
 
 #################################################
 # Set up package information
-macro(ign_setup_packages)
+macro(_gz_setup_packages)
 
   #============================================================================
   # Use GNUInstallDirs to get canonical paths.
@@ -150,7 +151,7 @@ macro(ign_create_packages)
 
   #============================================================================
   # Load platform-specific build hooks if present.
-  ign_load_build_hooks()
+  _gz_load_build_hooks()
 
   #============================================================================
   # Tell the user what their settings are
@@ -161,7 +162,7 @@ endmacro()
 
 
 #################################################
-# _ign_create_pkgconfig([COMPONENT <component>])
+# _gz_create_pkgconfig([COMPONENT <component>])
 #
 # Provide the name of the target for which we will generate package config info.
 # If the target is a component, pass in the COMPONENT argument followed by the
@@ -175,7 +176,7 @@ endmacro()
 #       ignition-component.pc.in MUST be set before calling this function.
 #
 # Create a pkgconfig file for your target, and install it.
-function(_ign_create_pkgconfig)
+function(_gz_create_pkgconfig)
 
   #------------------------------------
   # Define the expected arguments
@@ -216,7 +217,7 @@ endfunction()
 
 
 #################################################
-# _ign_create_cmake_package([COMPONENT <component>]
+# _gz_create_cmake_package([COMPONENT <component>]
 #                           [LEGACY_PROJECT_PREFIX <prefix>])
 #
 # Provide the name of the target that will be installed and exported. If the
@@ -239,7 +240,7 @@ endfunction()
 #       - target_output_filename
 #
 # Make the cmake config files for this target
-function(_ign_create_cmake_package)
+function(_gz_create_cmake_package)
 
   #------------------------------------
   # Define the expected arguments
@@ -364,7 +365,9 @@ endfunction()
 # Pass an argument to specify the directory where the CMakeLists.txt for the
 #   build hooks is located. If no argument is provided, we default to:
 #   ${PROJECT_SOURCE_DIR}/packager-hooks
-function(ign_load_build_hooks)
+#
+# This function is private to gz-cmake.
+function(_gz_load_build_hooks)
 
   if(ARGV0)
     set(hook_dir ${ARGV0})

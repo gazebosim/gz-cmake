@@ -39,7 +39,7 @@ macro(ign_configure_build)
   #============================================================================
   # Examine the build type. If we do not recognize the type, we will generate
   # an error, so this must come before the error handling.
-  ign_parse_build_type()
+  _gz_parse_build_type()
 
   #============================================================================
   # Ask whether we should make a shared or static library.
@@ -85,12 +85,12 @@ macro(ign_configure_build)
 
     #--------------------------------------
     # Set up the compiler flags
-    ign_set_compiler_flags()
+    _gz_set_compiler_flags()
 
 
     #--------------------------------------
     # Set up the compiler feature flags to help us choose our standard
-    ign_set_cxx_feature_flags()
+    _gz_set_cxx_feature_flags()
 
 
     #--------------------------------------
@@ -121,7 +121,7 @@ macro(ign_configure_build)
 
     #--------------------------------------
     # Create the "all" meta-target
-    ign_create_all_target()
+    _gz_create_all_target()
 
 
     #--------------------------------------
@@ -140,7 +140,7 @@ macro(ign_configure_build)
     else()
 
       add_subdirectory(src)
-      _ign_find_include_script()
+      _gz_find_include_script()
 
     endif()
 
@@ -239,7 +239,7 @@ macro(ign_configure_build)
             set(found_${component}_src TRUE)
           endif()
 
-          _ign_find_include_script(COMPONENT ${component})
+          _gz_find_include_script(COMPONENT ${component})
 
           # Add the tests
           if(BUILD_TESTING AND
@@ -271,12 +271,12 @@ macro(ign_configure_build)
 
     #--------------------------------------
     # Export the "all" meta-target
-    ign_export_target_all()
+    _gz_export_target_all()
 
     #--------------------------------------
     # Create codecheck target
     include(IgnCodeCheck)
-    ign_setup_target_for_codecheck()
+    _gz_setup_target_for_codecheck()
 
     #--------------------------------------
     # If we made it this far, the configuration was successful
@@ -286,7 +286,7 @@ macro(ign_configure_build)
 
 endmacro()
 
-macro(ign_set_cxx_feature_flags)
+macro(_gz_set_cxx_feature_flags)
 
   set(IGN_KNOWN_CXX_STANDARDS 11 14 17)
 
@@ -296,7 +296,7 @@ macro(ign_set_cxx_feature_flags)
 
 endmacro()
 
-function(_ign_find_include_script)
+function(_gz_find_include_script)
 
   #------------------------------------
   # Define the expected arguments
@@ -336,7 +336,7 @@ function(_ign_find_include_script)
 
 endfunction()
 
-macro(ign_parse_build_type)
+macro(_gz_parse_build_type)
 
   #============================================================================
   # If a build type is not specified, set it to RelWithDebInfo by default

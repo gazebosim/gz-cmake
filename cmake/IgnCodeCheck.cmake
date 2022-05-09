@@ -1,15 +1,16 @@
 # Setup the codecheck target, which will run cppcheck and cppplint.
-function(ign_setup_target_for_codecheck)
+# This function is private to gz-cmake.
+function(_gz_setup_target_for_codecheck)
   include(IgnPython)
 
   find_program(CPPCHECK_PATH cppcheck)
   find_program(FIND_PATH find)
-  
+
   if(NOT CPPCHECK_PATH)
     message(STATUS "The program [cppcheck] was not found! Skipping codecheck setup")
     return()
   endif()
-  
+
   if(NOT FIND_PATH)
     message(STATUS "The program [find] was not found! Skipping codecheck setup.")
     return()
