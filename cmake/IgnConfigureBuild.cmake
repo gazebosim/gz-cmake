@@ -2,7 +2,7 @@
 # IgnBuildProject
 # -------------------
 #
-# ign_configure_build()
+# gz_configure_build()
 #
 # Configures the build rules of an ignition library project.
 #
@@ -28,13 +28,27 @@
 # Pass the argument QUIT_IF_BUILD_ERRORS to have this macro quit cmake when the
 # build_errors
 macro(ign_configure_build)
-
-  #============================================================================
-  # Parse the arguments that are passed in
+  # TODO(chapulina) Enable warnings after all libraries have migrated.
+  # message(WARNING "ign_configure_build is deprecated, use gz_configure_build instead.")
   set(options HIDE_SYMBOLS_BY_DEFAULT QUIT_IF_BUILD_ERRORS)
   set(oneValueArgs)
   set(multiValueArgs COMPONENTS)
   cmake_parse_arguments(gz_configure_build "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+  set(gz_configure_build_skip_parsing true)
+  gz_configure_build()
+endmacro()
+macro(gz_configure_build)
+
+  # Deprecated, remove skip parsing logic in version 4
+  if (NOT gz_configure_build_skip_parsing)
+    #============================================================================
+    # Parse the arguments that are passed in
+    set(options HIDE_SYMBOLS_BY_DEFAULT QUIT_IF_BUILD_ERRORS)
+    set(oneValueArgs)
+    set(multiValueArgs COMPONENTS)
+    cmake_parse_arguments(gz_configure_build "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  endif()
 
   #============================================================================
   # Examine the build type. If we do not recognize the type, we will generate

@@ -7,7 +7,7 @@
 # Sets up package information for an ignition library project.
 # This function is internal to gz-cmake.
 #
-# ign_create_package
+# gz_create_package
 #
 # Creates a package for an ignition library project
 #
@@ -148,6 +148,12 @@ macro(_gz_setup_packages)
 endmacro()
 
 macro(ign_create_packages)
+  # TODO(chapulina) Enable warnings after all libraries have migrated.
+  # message(WARNING "ign_create_packages is deprecated, use gz_create_packages instead.")
+
+  gz_create_packages()
+endmacro()
+macro(gz_create_packages)
 
   #============================================================================
   # Load platform-specific build hooks if present.
@@ -168,8 +174,8 @@ endmacro()
 # If the target is a component, pass in the COMPONENT argument followed by the
 # component's name.
 #
-# NOTE: This will be called automatically by ign_create_core_library(~) and
-#       ign_add_component(~), so users of ignition-cmake should not call this
+# NOTE: This will be called automatically by gz_create_core_library(~) and
+#       gz_add_component(~), so users of ignition-cmake should not call this
 #       function.
 #
 # NOTE: For ignition-cmake developers, the variables needed by ignition.pc.in or
@@ -228,8 +234,8 @@ endfunction()
 # variable names (like SDFormat_LIBRARIES), the LEGACY_PROJECT_PREFIX argument
 # can be used to specify the prefix of these variables.
 #
-# NOTE: This will be called automatically by ign_create_core_library(~) and
-#       ign_add_component(~), so users of ignition-cmake should not call this
+# NOTE: This will be called automatically by gz_create_core_library(~) and
+#       gz_add_component(~), so users of ignition-cmake should not call this
 #       function.
 #
 # NOTE: For ignition-cmake developers, some of the variables needed by
