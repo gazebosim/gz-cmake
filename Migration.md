@@ -11,3 +11,5 @@ release will remove the deprecated code.
    **Replacement**: include/ignition/utils/SuppressWarning.hh
 1. **Deprecated**: include/ignition/utilities/ExtraTestMacros.hh
    **Replacement**: include/ignition/utils/ExtraTestMacros.hh
+1. **Deprecated**: CMake functions and macros starting with `ign_`
+   **Replacement**: CMake functions and macros starting with `gz_`
