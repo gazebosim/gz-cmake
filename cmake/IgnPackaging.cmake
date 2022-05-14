@@ -175,7 +175,7 @@ endmacro()
 # component's name.
 #
 # NOTE: This will be called automatically by gz_create_core_library(~) and
-#       ign_add_component(~), so users of ignition-cmake should not call this
+#       gz_add_component(~), so users of ignition-cmake should not call this
 #       function.
 #
 # NOTE: For ignition-cmake developers, the variables needed by ignition.pc.in or
@@ -235,7 +235,7 @@ endfunction()
 # can be used to specify the prefix of these variables.
 #
 # NOTE: This will be called automatically by gz_create_core_library(~) and
-#       ign_add_component(~), so users of ignition-cmake should not call this
+#       gz_add_component(~), so users of ignition-cmake should not call this
 #       function.
 #
 # NOTE: For ignition-cmake developers, some of the variables needed by
