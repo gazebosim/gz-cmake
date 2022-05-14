@@ -62,8 +62,8 @@
 
 
 // TICKTOCK IGNITION ========================================================
-// TODO(CH3): Remove on ticktock, supports defining IGNITION macros if we're
-//            a lib is using GZ_ prefixed export macros
+// TODO(CH3): Remove on ticktock, supports defining IGNITION macros if a lib
+//            is using GZ_ prefixed export macros
 #ifndef @_ign_export_base@_VISIBLE
 #define @_ign_export_base@_VISIBLE @export_base@_VISIBLE
 #endif
