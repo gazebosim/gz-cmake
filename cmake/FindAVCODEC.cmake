@@ -21,8 +21,8 @@ ign_pkg_check_modules_quiet(AVCODEC libavcodec)
 if(NOT AVCODEC_FOUND)
   include(IgnManualSearch)
   gz_manual_search(AVCODEC
-                    HEADER_NAMES "libavcodec/avcodec.h"
-                    LIBRARY_NAMES "avcodec")
+                   HEADER_NAMES "libavcodec/avcodec.h"
+                   LIBRARY_NAMES "avcodec")
 endif()
 
 include(FindPackageHandleStandardArgs)
