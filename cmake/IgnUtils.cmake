@@ -990,7 +990,7 @@ function(gz_create_core_library)
   _gz_add_library_or_component(
     LIB_NAME ${PROJECT_LIBRARY_TARGET_NAME}
     INCLUDE_DIR "${PROJECT_INCLUDE_DIR}"
-    EXPORT_BASE IGNITION_${IGN_DESIGNATION_UPPER}
+    EXPORT_BASE GZ_${IGN_DESIGNATION_UPPER}
     SOURCES ${sources}
     ${interface_option})
 
@@ -1174,7 +1174,7 @@ function(ign_add_component component_name)
   _gz_add_library_or_component(
     LIB_NAME ${component_target_name}
     INCLUDE_DIR "${PROJECT_INCLUDE_DIR}/${include_subdir}"
-    EXPORT_BASE IGNITION_${IGN_DESIGNATION_UPPER}_${component_name_upper}
+    EXPORT_BASE GZ_${IGN_DESIGNATION_UPPER}_${component_name_upper}
     SOURCES ${sources}
     ${interface_option})
 
@@ -1376,6 +1376,8 @@ macro(_gz_add_library_or_component)
   # - include_dir
   # - export_base
   # - lib_name
+  #
+  # - _ign_export_base
 
   #------------------------------------
   # Define the expected arguments
@@ -1461,7 +1463,7 @@ macro(_gz_add_library_or_component)
       EXPORT_FILE_NAME ${implementation_file_name}
       EXPORT_MACRO_NAME DETAIL_${export_base}_VISIBLE
       NO_EXPORT_MACRO_NAME DETAIL_${export_base}_HIDDEN
-      DEPRECATED_MACRO_NAME IGN_DEPRECATED_ALL_VERSIONS)
+      DEPRECATED_MACRO_NAME GZ_DEPRECATED_ALL_VERSIONS)
 
     set(install_include_dir
       "${IGN_INCLUDE_INSTALL_DIR_FULL}/${include_dir}")
@@ -1475,6 +1477,12 @@ macro(_gz_add_library_or_component)
     # Configure the public-facing header for exporting and deprecating. This
     # header provides commentary for the macros so that developers can know their
     # purpose.
+
+    # TODO(CH3): Remove this on ticktock
+    # This is to allow IGNITION_ prefixed export macros to generate in Export.hh
+    # _using_gz_export_base is used in Export.hh.in's configuration!
+    string(REGEX REPLACE "^GZ_" "IGNITION_" _ign_export_base ${export_base})
+
     configure_file(
       "${IGNITION_CMAKE_DIR}/Export.hh.in"
       "${binary_include_dir}/Export.hh")
