@@ -2,7 +2,7 @@
 # IgnConfigureProject
 # -------------------
 #
-# ign_configure_project([VERSION_SUFFIX <pre|alpha|beta|etc>])
+# gz_configure_project([VERSION_SUFFIX <pre|alpha|beta|etc>])
 #
 # Sets up an ignition library project.
 #
@@ -31,16 +31,31 @@
 #################################################
 # Initialize the ignition project
 macro(ign_configure_project)
+  # TODO(chapulina) Enable warnings after all libraries have migrated.
+  # message(WARNING "ign_configure_project is deprecated, use gz_configure_project instead.")
 
-  #------------------------------------
-  # Define the expected arguments
   set(options NO_IGNITION_PREFIX)
   set(oneValueArgs REPLACE_IGNITION_INCLUDE_PATH VERSION_SUFFIX)
   set(multiValueArgs) # We are not using multiValueArgs yet
-
-  #------------------------------------
-  # Parse the arguments
   _gz_cmake_parse_arguments(gz_configure_project "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+  set(gz_configure_project_skip_parsing true)
+  gz_configure_project()
+endmacro()
+macro(gz_configure_project)
+
+  # Deprecated, remove skip parsing logic in version 4
+  if (NOT gz_configure_project_skip_parsing)
+    #------------------------------------
+    # Define the expected arguments
+    set(options NO_IGNITION_PREFIX)
+    set(oneValueArgs REPLACE_IGNITION_INCLUDE_PATH VERSION_SUFFIX)
+    set(multiValueArgs) # We are not using multiValueArgs yet
+
+    #------------------------------------
+    # Parse the arguments
+    _gz_cmake_parse_arguments(gz_configure_project "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  endif()
 
   # Note: The following are automatically defined by project(~) in cmake v3:
   # PROJECT_NAME
@@ -120,7 +135,7 @@ macro(ign_configure_project)
 
   #============================================================================
   # Identify the operating system
-  ign_check_os()
+  gz_check_os()
 
   #============================================================================
   # Create package information
@@ -182,6 +197,11 @@ endmacro()
 #################################################
 # Check the OS type.
 macro(ign_check_os)
+  # TODO(chapulina) Enable warnings after all libraries have migrated.
+  # message(WARNING "ign_check_os is deprecated, use gz_check_os instead.")
+  gz_check_os()
+endmacro()
+macro(gz_check_os)
 
   # CMake does not distinguish Linux from other Unices.
   string(REGEX MATCH "Linux" PLAYER_OS_LINUX ${CMAKE_SYSTEM_NAME})

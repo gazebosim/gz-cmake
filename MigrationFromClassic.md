@@ -34,7 +34,7 @@ now taking advantage of.
 
 This will find `ignition-cmake` and load up all its useful features for you.
 
-### Then call `ign_configure_project(<project> <version>)`
+### Then call `gz_configure_project(<project> <version>)`
 
 This is a wrapper for cmake's native `project(~)` command which additionally
 sets a bunch of variables that will be needed by the `ignition-cmake` macros and
