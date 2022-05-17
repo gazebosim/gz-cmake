@@ -16,7 +16,7 @@
 ########################################
 # Find avcodec
 include(IgnPkgConfig)
-ign_pkg_check_modules_quiet(AVCODEC libavcodec)
+gz_pkg_check_modules_quiet(AVCODEC libavcodec)
 
 if(NOT AVCODEC_FOUND)
   include(IgnManualSearch)

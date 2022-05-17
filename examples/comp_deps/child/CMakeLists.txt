@@ -1,5 +1,5 @@
 
-ign_add_component(child INTERFACE
+gz_add_component(child INTERFACE
   DEPENDS_ON_COMPONENTS parent
   GET_TARGET_NAME child)
 

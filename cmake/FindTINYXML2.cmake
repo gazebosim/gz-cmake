@@ -19,7 +19,7 @@
 include(IgnPkgConfig)
 
 # Use pkg_check_modules to start
-ign_pkg_check_modules_quiet(TINYXML2 tinyxml2)
+gz_pkg_check_modules_quiet(TINYXML2 tinyxml2)
 
 # If that failed, then fall back to manual detection (necessary for MacOS)
 if(NOT TINYXML2_FOUND)

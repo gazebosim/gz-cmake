@@ -18,7 +18,7 @@
 if (UNIX)
   if(NOT APPLE)
     include(IgnPkgConfig)
-    ign_pkg_check_modules_quiet(UUID uuid)
+    gz_pkg_check_modules_quiet(UUID uuid)
 
     if(NOT UUID_FOUND)
       include(IgnManualSearch)

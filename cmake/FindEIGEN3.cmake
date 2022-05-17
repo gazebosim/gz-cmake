@@ -36,9 +36,9 @@ if(EIGEN3_FOUND)
     TARGET_NAME Eigen3::Eigen)
 
   if(EIGEN3_FIND_VERSION)
-    ign_pkg_config_entry(EIGEN3 "eigen3 >= ${EIGEN3_FIND_VERSION}")
+    gz_pkg_config_entry(EIGEN3 "eigen3 >= ${EIGEN3_FIND_VERSION}")
   else()
-    ign_pkg_config_entry(EIGEN3 "eigen3")
+    gz_pkg_config_entry(EIGEN3 "eigen3")
   endif()
 
   return()
@@ -46,11 +46,11 @@ if(EIGEN3_FOUND)
 endif()
 
 if(EIGEN3_FIND_VERSION)
-  ign_pkg_check_modules_quiet(EIGEN3 "eigen3 >= ${EIGEN3_FIND_VERSION}"
+  gz_pkg_check_modules_quiet(EIGEN3 "eigen3 >= ${EIGEN3_FIND_VERSION}"
     INTERFACE
     TARGET_NAME Eigen3::Eigen)
 else()
-  ign_pkg_check_modules_quiet(EIGEN3 "eigen3"
+  gz_pkg_check_modules_quiet(EIGEN3 "eigen3"
     INTERFACE
     TARGET_NAME Eigen3::Eigen)
 endif()

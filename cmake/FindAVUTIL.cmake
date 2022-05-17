@@ -16,7 +16,7 @@
 ########################################
 # Find avutil
 include(IgnPkgConfig)
-ign_pkg_check_modules_quiet(AVUTIL libavutil)
+gz_pkg_check_modules_quiet(AVUTIL libavutil)
 
 if(NOT AVUTIL_FOUND)
   include(IgnManualSearch)

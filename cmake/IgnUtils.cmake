@@ -557,7 +557,7 @@ endmacro()
 # library source files <lib_sources_var> and unittest source files <tests_var>.
 #
 # These output variables can be consumed directly by gz_create_core_library(~),
-# ign_add_component(~), gz_build_tests(~), and ign_build_executables(~).
+# gz_add_component(~), gz_build_tests(~), and gz_build_executables(~).
 function(ign_get_libsources_and_unittests lib_sources_var tests_var)
   # TODO(chapulina) Enable warnings after all libraries have migrated.
   # message(WARNING "ign_get_libsources_and_unittests is deprecated, use gz_get_libsources_and_unittests instead.")
@@ -618,7 +618,7 @@ endfunction()
 #
 # From the current directory, grab all the source files and place them into
 # <sources>. Remove their paths to make them suitable for passing into
-# ign_add_[library/tests].
+# gz_add_[library/tests].
 function(ign_get_sources sources_var)
   # TODO(chapulina) Enable warnings after all libraries have migrated.
   # message(WARNING "ign_get_sources is deprecated, use gz_get_sources instead.")
@@ -903,7 +903,7 @@ endfunction()
 #                          <pkgconfig_cflags_variable>)
 #
 # Handles the C++ standard argument for gz_create_core_library(~) and
-# ign_add_component(~).
+# gz_add_component(~).
 #
 # NOTE: This is only meant for internal ign-cmake use.
 #
@@ -1111,7 +1111,7 @@ function(gz_create_core_library)
 endfunction()
 
 #################################################
-# ign_add_component(<component>
+# gz_add_component(<component>
 #                   SOURCES <sources> | INTERFACE
 #                   [DEPENDS_ON_COMPONENTS <components...>]
 #                   [INCLUDE_SUBDIR <subdirectory_name>]
@@ -1171,16 +1171,36 @@ endfunction()
 # library, then you probably do not need to specify the standard, because it
 # will get inherited from the core library.
 function(ign_add_component component_name)
+  # TODO(chapulina) Enable warnings after all libraries have migrated.
+  # message(WARNING "ign_add_component is deprecated, use gz_add_component instead.")
 
-  #------------------------------------
-  # Define the expected arguments
   set(options INTERFACE INDEPENDENT_FROM_PROJECT_LIB PRIVATELY_DEPENDS_ON_PROJECT_LIB INTERFACE_DEPENDS_ON_PROJECT_LIB)
   set(oneValueArgs INCLUDE_SUBDIR GET_TARGET_NAME)
   set(multiValueArgs SOURCES DEPENDS_ON_COMPONENTS)
-
-  #------------------------------------
-  # Parse the arguments
   cmake_parse_arguments(gz_add_component "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+  set(gz_add_component_skip_parsing true)
+  gz_add_component(${component_name})
+
+  # Pass the component's target name back to the caller if requested
+  if(gz_add_component_GET_TARGET_NAME)
+    set(${gz_add_component_GET_TARGET_NAME} ${${gz_add_component_GET_TARGET_NAME}} PARENT_SCOPE)
+  endif()
+endfunction()
+function(gz_add_component component_name)
+
+  # Deprecated, remove skip parsing logic in version 4
+  if (NOT gz_add_component_skip_parsing)
+    #------------------------------------
+    # Define the expected arguments
+    set(options INTERFACE INDEPENDENT_FROM_PROJECT_LIB PRIVATELY_DEPENDS_ON_PROJECT_LIB INTERFACE_DEPENDS_ON_PROJECT_LIB)
+    set(oneValueArgs INCLUDE_SUBDIR GET_TARGET_NAME)
+    set(multiValueArgs SOURCES DEPENDS_ON_COMPONENTS)
+
+    #------------------------------------
+    # Parse the arguments
+    cmake_parse_arguments(gz_add_component "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  endif()
 
   if(POLICY CMP0079)
     cmake_policy(SET CMP0079 NEW)
@@ -1189,7 +1209,7 @@ function(ign_add_component component_name)
   if(gz_add_component_SOURCES)
     set(sources ${gz_add_component_SOURCES})
   elseif(NOT gz_add_component_INTERFACE)
-    message(FATAL_ERROR "You must specify SOURCES for ign_add_component(~)!")
+    message(FATAL_ERROR "You must specify SOURCES for gz_add_component(~)!")
   endif()
 
   if(gz_add_component_INCLUDE_SUBDIR)
@@ -1271,7 +1291,7 @@ function(ign_add_component component_name)
 
   #------------------------------------
   # Adjust variables if a specific C++ standard was requested
-  _gz_handle_cxx_standard(ign_add_component
+  _gz_handle_cxx_standard(gz_add_component
     ${component_target_name} ${component_name}_PKGCONFIG_CFLAGS)
 
 
@@ -1413,7 +1433,7 @@ endmacro()
 #################################################
 # This is only meant for internal use by ignition-cmake. If you are a consumer
 # of ignition-cmake, please use gz_create_core_library(~) or
-# ign_add_component(~) instead of this.
+# gz_add_component(~) instead of this.
 #
 # _gz_add_library_or_component(LIB_NAME <lib_name>
 #                               INCLUDE_DIR <dir_name>
@@ -1577,7 +1597,7 @@ macro(gz_add_executable _name)
 endmacro()
 
 #################################################
-# ign_target_interface_include_directories(<target> [include_targets])
+# gz_target_interface_include_directories(<target> [include_targets])
 #
 # Add the INTERFACE_INCLUDE_DIRECTORIES of [include_targets] to the public
 # INCLUDE_DIRECTORIES of <target>. This allows us to propagate the include
@@ -1586,6 +1606,12 @@ endmacro()
 # You MUST pass in targets to include, not directory names. We must not use
 # explicit directory names here if we want our package to be relocatable.
 function(ign_target_interface_include_directories name)
+  # TODO(chapulina) Enable warnings after all libraries have migrated.
+  # message(WARNING "ign_target_interface_include_directories is deprecated, use gz_target_interface_include_directories instead.")
+
+  gz_target_interface_include_directories(name)
+endfunction()
+function(gz_target_interface_include_directories name)
 
   foreach(include_target ${ARGN})
     target_include_directories(
@@ -1643,7 +1669,7 @@ macro(_gz_filter_valid_compiler_options var)
 endmacro()
 
 #################################################
-# ign_build_executables(SOURCES <sources>
+# gz_build_executables(SOURCES <sources>
 #                       [PREFIX <prefix>]
 #                       [LIB_DEPS <library_dependencies>]
 #                       [INCLUDE_DIRS <include_dependencies>]
@@ -1675,21 +1701,38 @@ endmacro()
 #                      into your executable's directory.
 #
 macro(ign_build_executables)
+  # TODO(chapulina) Enable warnings after all libraries have migrated.
+  # message(WARNING "ign_build_executables is deprecated, use gz_build_executables instead.")
 
-  #------------------------------------
-  # Define the expected arguments
   set(options EXCLUDE_PROJECT_LIB)
   set(oneValueArgs PREFIX EXEC_LIST)
   set(multiValueArgs SOURCES LIB_DEPS INCLUDE_DIRS)
-
   if(gz_build_executables_EXEC_LIST)
     set(${gz_build_executables_EXEC_LIST} "")
   endif()
-
-
-  #------------------------------------
-  # Parse the arguments
   _gz_cmake_parse_arguments(gz_build_executables "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+  set(gz_build_executables_skip_parsing true)
+  gz_build_executables(${PACKAGE_NAME})
+endmacro()
+macro(gz_build_executables)
+
+  # Deprecated, remove skip parsing logic in version 4
+  if (NOT gz_build_executables_skip_parsing)
+    #------------------------------------
+    # Define the expected arguments
+    set(options EXCLUDE_PROJECT_LIB)
+    set(oneValueArgs PREFIX EXEC_LIST)
+    set(multiValueArgs SOURCES LIB_DEPS INCLUDE_DIRS)
+
+    if(gz_build_executables_EXEC_LIST)
+      set(${gz_build_executables_EXEC_LIST} "")
+    endif()
+
+    #------------------------------------
+    # Parse the arguments
+    _gz_cmake_parse_arguments(gz_build_executables "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  endif()
 
   foreach(exec_file ${gz_build_executables_SOURCES})
 
@@ -1808,14 +1851,14 @@ macro(gz_build_tests)
     endif()
 
     if(NOT gz_build_tests_EXCLUDE_PROJECT_LIB)
-      ign_build_executables(
+      gz_build_executables(
         PREFIX "${TEST_TYPE}_"
         SOURCES ${gz_build_tests_SOURCES}
         LIB_DEPS gtest gtest_main ${gz_build_tests_LIB_DEPS}
         INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/test/gtest/include ${gz_build_tests_INCLUDE_DIRS}
         EXEC_LIST test_list)
     else()
-      ign_build_executables(
+      gz_build_executables(
         PREFIX "${TEST_TYPE}_"
         SOURCES ${gz_build_tests_SOURCES}
         LIB_DEPS gtest gtest_main ${gz_build_tests_LIB_DEPS}

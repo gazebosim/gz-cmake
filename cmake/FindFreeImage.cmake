@@ -25,7 +25,7 @@ set(full_version ${major_version}.${minor_version})
 
 if (NOT WIN32)
   include(IgnPkgConfig)
-  ign_pkg_config_library_entry(FreeImage freeimage)
+  gz_pkg_config_library_entry(FreeImage freeimage)
 
   # If we don't have PkgConfig, or if PkgConfig failed, then do a manual search
   if(NOT FreeImage_FOUND)
@@ -141,7 +141,7 @@ else()
 
   if (FreeImage_FOUND)
     include(IgnPkgConfig)
-    ign_pkg_config_library_entry(FreeImage "FreeImage")
+    gz_pkg_config_library_entry(FreeImage "FreeImage")
     include(IgnImportTarget)
     gz_import_target(FreeImage)
   endif()
