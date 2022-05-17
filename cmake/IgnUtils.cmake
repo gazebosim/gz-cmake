@@ -253,7 +253,7 @@ macro(gz_find_package PACKAGE_NAME)
           set(INTERNAL_SKIP_${component} true)
 
           # Track the missing dependencies
-          ign_string_append(${component}_MISSING_DEPS "${${PACKAGE_NAME}_pretty}" DELIM ", ")
+          gz_string_append(${component}_MISSING_DEPS "${${PACKAGE_NAME}_pretty}" DELIM ", ")
         endif()
 
       endforeach()
@@ -290,17 +290,17 @@ macro(gz_find_package PACKAGE_NAME)
 
     # If a version is provided here, we should pass that as well.
     if(gz_find_package_VERSION)
-      ign_string_append(${PACKAGE_NAME}_dependency_args ${gz_find_package_VERSION})
+      gz_string_append(${PACKAGE_NAME}_dependency_args ${gz_find_package_VERSION})
     endif()
 
     # If we have specified the exact version, we should provide that as well.
     if(gz_find_package_EXACT)
-      ign_string_append(${PACKAGE_NAME}_dependency_args EXACT)
+      gz_string_append(${PACKAGE_NAME}_dependency_args EXACT)
     endif()
 
     # If we have specified to use CONFIG mode, we should provide that as well.
     if(gz_find_package_CONFIG)
-      ign_string_append(${PACKAGE_NAME}_dependency_args CONFIG)
+      gz_string_append(${PACKAGE_NAME}_dependency_args CONFIG)
     endif()
 
     # NOTE (MXG): 7 seems to be the number of escapes required to get
@@ -309,17 +309,17 @@ macro(gz_find_package PACKAGE_NAME)
     # escapes get collapsed exactly three times, so it is possible that any
     # changes to this script could cause a different number of escapes to be
     # necessary. Please use caution when modifying this script.
-    ign_string_append(${PACKAGE_NAME}_dependency_args "\\\\\\\${ign_package_quiet} \\\\\\\${ign_package_required}")
+    gz_string_append(${PACKAGE_NAME}_dependency_args "\\\\\\\${ign_package_quiet} \\\\\\\${ign_package_required}")
 
     # If we have specified components of the dependency, mention those.
     if(gz_find_package_COMPONENTS)
-      ign_string_append(${PACKAGE_NAME}_dependency_args "COMPONENTS ${gz_find_package_COMPONENTS}")
+      gz_string_append(${PACKAGE_NAME}_dependency_args "COMPONENTS ${gz_find_package_COMPONENTS}")
     endif()
 
     # If there are any additional arguments for the find_package(~) command,
     # forward them along.
     if(gz_find_package_EXTRA_ARGS)
-      ign_string_append(${PACKAGE_NAME}_dependency_args "${gz_find_package_EXTRA_ARGS}")
+      gz_string_append(${PACKAGE_NAME}_dependency_args "${gz_find_package_EXTRA_ARGS}")
     endif()
 
     # TODO: When we migrate to cmake-3.9+ bring back find_dependency(~) because
@@ -331,7 +331,7 @@ macro(gz_find_package PACKAGE_NAME)
 
     if(gz_find_package_REQUIRED)
       # If this is REQUIRED, add it to PROJECT_CMAKE_DEPENDENCIES
-      ign_string_append(PROJECT_CMAKE_DEPENDENCIES "${${PACKAGE_NAME}_find_dependency}" DELIM "\n")
+      gz_string_append(PROJECT_CMAKE_DEPENDENCIES "${${PACKAGE_NAME}_find_dependency}" DELIM "\n")
     endif()
 
     if(gz_find_package_REQUIRED_BY)
@@ -346,7 +346,7 @@ macro(gz_find_package PACKAGE_NAME)
       # componenets
       foreach(component ${gz_find_package_REQUIRED_BY})
         if(NOT ${component}_${PACKAGE_NAME}_PRIVATE)
-          ign_string_append(${component}_CMAKE_DEPENDENCIES "${${PACKAGE_NAME}_find_dependency}" DELIM "\n")
+          gz_string_append(${component}_CMAKE_DEPENDENCIES "${${PACKAGE_NAME}_find_dependency}" DELIM "\n")
         endif()
       endforeach()
 
@@ -434,7 +434,7 @@ macro(gz_find_package PACKAGE_NAME)
 
           # Append the entry as a string onto the project-wide variable for
           # whichever requirement type we selected
-          ign_string_append(PROJECT_${PROJECT_${PACKAGE_NAME}_PKGCONFIG_TYPE} ${${PACKAGE_NAME}_PKGCONFIG_ENTRY})
+          gz_string_append(PROJECT_${PROJECT_${PACKAGE_NAME}_PKGCONFIG_TYPE} ${${PACKAGE_NAME}_PKGCONFIG_ENTRY})
 
         endif()
 
@@ -455,7 +455,7 @@ macro(gz_find_package PACKAGE_NAME)
 
             # Append the entry as a string onto the component-specific variable
             # for whichever required type we selected
-            ign_string_append(${${component}_${PACKAGE_NAME}_PKGCONFIG_TYPE} ${${PACKAGE_NAME}_PKGCONFIG_ENTRY})
+            gz_string_append(${${component}_${PACKAGE_NAME}_PKGCONFIG_TYPE} ${${PACKAGE_NAME}_PKGCONFIG_ENTRY})
 
           endforeach()
 
@@ -470,7 +470,7 @@ macro(gz_find_package PACKAGE_NAME)
 endmacro()
 
 #################################################
-# ign_string_append(<output_var> <value_to_append> [DELIM <delimiter>])
+# gz_string_append(<output_var> <value_to_append> [DELIM <delimiter>])
 #
 # <output_var>: The name of the string variable that should be appended to
 #
@@ -481,19 +481,38 @@ endmacro()
 #
 # Macro to append a value to a string
 macro(ign_string_append output_var val)
+  # TODO(chapulina) Enable warnings after all libraries have migrated.
+  # message(WARNING "ign_string_append is deprecated, use gz_string_append instead.")
 
-  #------------------------------------
-  # Define the expected arguments
-  # NOTE: options cannot be set to PARENT_SCOPE alone, so we put it explicitly
-  # into cmake_parse_arguments(~). We use a semicolon to concatenate it with
-  # this options variable, so all other options should be specified here.
   set(options)
   set(oneValueArgs DELIM)
-  set(multiValueArgs) # We are not using multiValueArgs yet
-
-  #------------------------------------
-  # Parse the arguments
+  set(multiValueArgs)
   _gz_cmake_parse_arguments(gz_string_append "PARENT_SCOPE;${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+  set(gz_string_append_skip_parsing true)
+  gz_string_append(${output_var} ${val})
+
+  if(gz_string_append_PARENT_SCOPE)
+    set(${output_var} ${${output_var}} PARENT_SCOPE)
+  endif()
+endmacro()
+macro(gz_string_append output_var val)
+
+  # Deprecated, remove skip parsing logic in version 4
+  if (NOT gz_string_append_skip_parsing)
+    #------------------------------------
+    # Define the expected arguments
+    # NOTE: options cannot be set to PARENT_SCOPE alone, so we put it explicitly
+    # into cmake_parse_arguments(~). We use a semicolon to concatenate it with
+    # this options variable, so all other options should be specified here.
+    set(options)
+    set(oneValueArgs DELIM)
+    set(multiValueArgs)
+
+    #------------------------------------
+    # Parse the arguments
+    _gz_cmake_parse_arguments(gz_string_append "PARENT_SCOPE;${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  endif()
 
   if(gz_string_append_DELIM)
     set(delim "${gz_string_append_DELIM}")
@@ -523,9 +542,9 @@ macro(_gz_list_to_string _output _input_list)
 
   set(${_output})
   foreach(_item ${${_input_list}})
-    # Append each item, and forward any extra options to ign_string_append, such
+    # Append each item, and forward any extra options to gz_string_append, such
     # as DELIM or PARENT_SCOPE
-    ign_string_append(${_output} "${_item}" ${ARGN})
+    gz_string_append(${_output} "${_item}" ${ARGN})
   endforeach(_item)
 
 endmacro()
@@ -902,7 +921,7 @@ macro(_gz_handle_cxx_standard prefix target pkgconfig_cflags)
 
   if(${prefix}_INTERFACE_CXX_STANDARD)
     target_compile_features(${target} INTERFACE ${IGN_CXX_${${prefix}_INTERFACE_CXX_STANDARD}_FEATURES})
-    ign_string_append(${pkgconfig_cflags} "-std=c++${${prefix}_INTERFACE_CXX_STANDARD}")
+    gz_string_append(${pkgconfig_cflags} "-std=c++${${prefix}_INTERFACE_CXX_STANDARD}")
   endif()
 
   if(${prefix}_PRIVATE_CXX_STANDARD)
@@ -1270,7 +1289,7 @@ function(ign_add_component component_name)
     # Add the core library as a cmake dependency for this component
     # NOTE: It seems we need to triple-escape "${ign_package_required}" and
     #       "${ign_package_quiet}" here.
-    ign_string_append(${component_name}_CMAKE_DEPENDENCIES
+    gz_string_append(${component_name}_CMAKE_DEPENDENCIES
       "if(NOT ${PKG_NAME}_CONFIG_INCLUDED)\n  find_package(${PKG_NAME} ${PROJECT_VERSION_FULL_NO_SUFFIX} EXACT \\\${ign_package_quiet} \\\${ign_package_required})\nendif()" DELIM "\n")
 
     # Choose what type of pkgconfig entry the core library belongs to
@@ -1280,12 +1299,12 @@ function(ign_add_component component_name)
       set(lib_pkgconfig_type ${lib_pkgconfig_type}_PRIVATE)
     endif()
 
-    ign_string_append(${lib_pkgconfig_type} "${PKG_NAME} = ${PROJECT_VERSION_FULL_NO_SUFFIX}")
+    gz_string_append(${lib_pkgconfig_type} "${PKG_NAME} = ${PROJECT_VERSION_FULL_NO_SUFFIX}")
 
   endif()
 
   if(gz_add_component_DEPENDS_ON_COMPONENTS)
-    ign_string_append(${component_name}_CMAKE_DEPENDENCIES
+    gz_string_append(${component_name}_CMAKE_DEPENDENCIES
       "find_package(${PKG_NAME} ${PROJECT_VERSION_FULL_NO_SUFFIX} EXACT \\\${ign_package_quiet} \\\${ign_package_required} COMPONENTS ${gz_add_component_DEPENDS_ON_COMPONENTS})" DELIM "\n")
   endif()
 
@@ -1357,7 +1376,7 @@ function(_gz_export_target_all)
 
   if(all_known_components)
     foreach(component ${all_known_components})
-      ign_string_append(find_all_pkg_components "find_dependency(${component} ${PROJECT_VERSION_FULL_NO_SUFFIX} EXACT)" DELIM "\n")
+      gz_string_append(find_all_pkg_components "find_dependency(${component} ${PROJECT_VERSION_FULL_NO_SUFFIX} EXACT)" DELIM "\n")
     endforeach()
   endif()
 
