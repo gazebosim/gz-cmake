@@ -1516,6 +1516,11 @@ endmacro()
 
 #################################################
 macro(ign_add_executable _name)
+  # TODO(chapulina) Enable warnings after all libraries have migrated.
+  # message(WARNING "ign_add_executable is deprecated, use gz_add_executable instead.")
+  gz_add_executable(${_name} ${ARGN})
+endmacro()
+macro(gz_add_executable _name)
   add_executable(${_name} ${ARGN})
   target_link_libraries(${_name} ${general_libraries})
 endmacro()
@@ -1541,12 +1546,22 @@ endfunction()
 
 #################################################
 macro(ign_install_includes _subdir)
+  # TODO(chapulina) Enable warnings after all libraries have migrated.
+  # message(WARNING "ign_install_includes is deprecated, use gz_install_includes instead.")
+  gz_install_includes(${_subdir} ${ARGN})
+endmacro()
+macro(gz_install_includes _subdir)
   install(FILES ${ARGN}
     DESTINATION ${IGN_INCLUDE_INSTALL_DIR}/${_subdir} COMPONENT headers)
 endmacro()
 
 #################################################
 macro(ign_install_executable _name )
+  # TODO(chapulina) Enable warnings after all libraries have migrated.
+  # message(WARNING "ign_install_executable is deprecated, use gz_install_executable instead.")
+  gz_install_executable(${_name} ${ARGN})
+endmacro()
+macro(gz_install_executable _name)
   set_target_properties(${_name} PROPERTIES VERSION ${PROJECT_VERSION_FULL})
   install (TARGETS ${_name} DESTINATION ${IGN_BIN_INSTALL_DIR})
   manpage(${_name} 1)
