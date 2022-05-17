@@ -55,7 +55,7 @@ if(ODE_FOUND)
   endif()
 
   include(IgnImportTarget)
-  ign_import_target(ODE)
+  gz_import_target(ODE)
 
   if(NOT ODE_FIND_QUIETLY)
     message(STATUS "Found ODE: ${ODE_LIBRARIES}")

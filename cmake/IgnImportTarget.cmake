@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 ########################################
-# ign_import_target(<package> [INTERFACE]
+# gz_import_target(<package> [INTERFACE]
 #     [TARGET_NAME <target_name>]
 #     [LIB_VAR <library_variable>]
 #     [INCLUDE_VAR <header_directory_variable>]
@@ -44,16 +44,30 @@
 #             this package. Default is <package>_CFLAGS.
 #
 macro(ign_import_target package)
+  # TODO(chapulina) Enable warnings after all libraries have migrated.
+  # message(WARNING "ign_import_target is deprecated, use gz_import_target instead.")
 
-  #------------------------------------
-  # Define the expected arguments
   set(options "INTERFACE")
   set(oneValueArgs "TARGET_NAME" "LIB_VAR" "INCLUDE_VAR" "CFLAGS_VAR")
   set(multiValueArgs) # We are not using multiValueArgs yet
-
-  #------------------------------------
-  # Parse the arguments
   _gz_cmake_parse_arguments(gz_import_target "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+  set(gz_import_target_skip_parsing true)
+  gz_import_target(${package})
+endmacro()
+macro(gz_import_target package)
+
+  if (NOT gz_import_target_skip_parsing)
+    #------------------------------------
+    # Define the expected arguments
+    set(options "INTERFACE")
+    set(oneValueArgs "TARGET_NAME" "LIB_VAR" "INCLUDE_VAR" "CFLAGS_VAR")
+    set(multiValueArgs) # We are not using multiValueArgs yet
+
+    #------------------------------------
+    # Parse the arguments
+    _gz_cmake_parse_arguments(gz_import_target "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  endif()
 
   #------------------------------------
   # Check if a target name has been provided, otherwise use

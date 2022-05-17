@@ -88,7 +88,7 @@ if (NOT WIN32)
   if(FreeImage_FOUND)
     # Create the imported target for FreeImage if we found it
     include(IgnImportTarget)
-    ign_import_target(FreeImage)
+    gz_import_target(FreeImage)
   endif()
 
   include(FindPackageHandleStandardArgs)
@@ -143,7 +143,7 @@ else()
     include(IgnPkgConfig)
     ign_pkg_config_library_entry(FreeImage "FreeImage")
     include(IgnImportTarget)
-    ign_import_target(FreeImage)
+    gz_import_target(FreeImage)
   endif()
 
 endif()

@@ -108,7 +108,7 @@ macro(gz_manual_search PACKAGE_NAME)
 
   if(${package}_FOUND)
     include(IgnImportTarget)
-    ign_import_target(${package} ${_gz_pkg_check_modules_interface_option}
+    gz_import_target(${package} ${_gz_pkg_check_modules_interface_option}
       TARGET_NAME ${ign_pkg_check_modules_TARGET_NAME})
   endif()
 

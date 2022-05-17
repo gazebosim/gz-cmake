@@ -214,7 +214,7 @@ using `::` in the names of any imported targets that we intend to use.
 `ignition-cmake` will automatically export all ignition library targets to have
 the name `ignition-<project><major_version>::ignition-<project><major_version>`
 (for example, `ignition-common0::ignition-common0`). When creating a cmake
-find-module, the macro `ign_import_target(~)` should be used generate an
+find-module, the macro `gz_import_target(~)` should be used generate an
 imported target which follows this convention. More about creating find-modules
 can be found in the section on anti-patterns.
 

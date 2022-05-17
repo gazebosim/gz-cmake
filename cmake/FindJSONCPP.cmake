@@ -68,7 +68,7 @@ else()
 
       if(JSONCPP_FOUND)
         include(IgnImportTarget)
-        ign_import_target(JSONCPP)
+        gz_import_target(JSONCPP)
       endif()
     endif()
     include(FindPackageHandleStandardArgs)

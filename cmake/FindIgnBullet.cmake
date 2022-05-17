@@ -38,7 +38,7 @@ set(IgnBullet_FOUND false)
 if(BULLET_FOUND)
   set(IgnBullet_FOUND true)
 
-  ign_import_target(IgnBullet
+  gz_import_target(IgnBullet
     TARGET_NAME IgnBullet::IgnBullet
     LIB_VAR BULLET_LIBRARIES
     INCLUDE_VAR BULLET_INCLUDE_DIRS

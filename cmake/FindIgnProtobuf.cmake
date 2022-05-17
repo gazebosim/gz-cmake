@@ -84,14 +84,14 @@ if(${Protobuf_FOUND})
   include(IgnImportTarget)
 
   if(NOT TARGET protobuf::libprotobuf)
-    ign_import_target(protobuf
+    gz_import_target(protobuf
       TARGET_NAME protobuf::libprotobuf
       LIB_VAR PROTOBUF_LIBRARY
       INCLUDE_VAR PROTOBUF_INCLUDE_DIR)
   endif()
 
   if(NOT TARGET protobuf::libprotoc)
-    ign_import_target(protobuf
+    gz_import_target(protobuf
       TARGET_NAME protobuf::libprotoc
       LIB_VAR PROTOBUF_PROTOC_LIBRARY
       INCLUDE_VAR PROTOBUF_INCLUDE_DIR)

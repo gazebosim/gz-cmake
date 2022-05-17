@@ -32,7 +32,7 @@ if(EIGEN3_FOUND)
   # Attempt to create an imported target in case we're using an old version
   # of Eigen. (This function skip creating the imported target if it already
   # exists).
-  ign_import_target(EIGEN3 INTERFACE
+  gz_import_target(EIGEN3 INTERFACE
     TARGET_NAME Eigen3::Eigen)
 
   if(EIGEN3_FIND_VERSION)
@@ -68,7 +68,7 @@ if(MSVC)
     endif()
   endif()
 
-  ign_import_target(EIGEN3 INTERFACE
+  gz_import_target(EIGEN3 INTERFACE
     TARGET_NAME Eigen3::Eigen)
 
 endif()

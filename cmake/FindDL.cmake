@@ -86,7 +86,7 @@ else()
 
   if(DL_FOUND)
     include(IgnImportTarget)
-    ign_import_target(DL)
+    gz_import_target(DL)
     set(DL_TARGET DL::DL)
   endif()
 
