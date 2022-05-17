@@ -237,7 +237,7 @@ macro(gz_find_package PACKAGE_NAME)
     if(gz_find_package_REQUIRED)
 
       # If it was required by the project, we will create an error.
-      ign_build_error(${${PACKAGE_NAME}_msg})
+      gz_build_error(${${PACKAGE_NAME}_msg})
 
     elseif(gz_find_package_REQUIRED_BY)
 
@@ -247,7 +247,7 @@ macro(gz_find_package PACKAGE_NAME)
           # Otherwise, if it was only required by some of the components, create
           # a warning about which components will not be available, unless the
           # user explicitly requested that it be skipped
-          ign_build_warning("Skipping component [${component}]: ${${PACKAGE_NAME}_msg}.\n    ^~~~~ Set SKIP_${component}=true in cmake to suppress this warning.\n ")
+          gz_build_warning("Skipping component [${component}]: ${${PACKAGE_NAME}_msg}.\n    ^~~~~ Set SKIP_${component}=true in cmake to suppress this warning.\n ")
 
           # Create a variable to indicate that we need to skip the component
           set(INTERNAL_SKIP_${component} true)
@@ -260,7 +260,7 @@ macro(gz_find_package PACKAGE_NAME)
 
     else()
       if(NOT gz_find_package_QUIET)
-        ign_build_warning(${${PACKAGE_NAME}_msg})
+        gz_build_warning(${${PACKAGE_NAME}_msg})
       endif()
     endif()
 
@@ -845,21 +845,38 @@ endfunction()
 
 
 #################################################
-# ign_build_error macro
+# gz_build_error macro
 macro(ign_build_error)
+  # TODO(chapulina) Enable warnings after all libraries have migrated.
+  # message(WARNING "ign_build_error is deprecated, use gz_build_error instead.")
+
   foreach(str ${ARGN})
     set(msg "\t${str}")
     list(APPEND build_errors ${msg})
   endforeach()
 endmacro(ign_build_error)
+macro(gz_build_error)
+  foreach(str ${ARGN})
+    set(msg "\t${str}")
+    list(APPEND build_errors ${msg})
+  endforeach()
+endmacro(gz_build_error)
 
 #################################################
-# ign_build_warning macro
+# gz_build_warning macro
 macro(ign_build_warning)
+  # TODO(chapulina) Enable warnings after all libraries have migrated.
+  # message(WARNING "ign_build_warning is deprecated, use gz_build_warning instead.")
+
   foreach(str ${ARGN})
     list(APPEND build_warnings "${str}")
   endforeach(str ${ARGN})
 endmacro(ign_build_warning)
+macro(gz_build_warning)
+  foreach(str ${ARGN})
+    list(APPEND build_warnings "${str}")
+  endforeach(str ${ARGN})
+endmacro(gz_build_warning)
 
 #################################################
 # _gz_check_known_cxx_standards(<11|14|17>)

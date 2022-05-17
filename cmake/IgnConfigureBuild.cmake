@@ -400,7 +400,7 @@ macro(_gz_parse_build_type)
   elseif("${CMAKE_BUILD_TYPE_UPPERCASE}" STREQUAL "PROFILE")
     set(BUILD_TYPE_PROFILE TRUE)
   else()
-    ign_build_error("CMAKE_BUILD_TYPE [${CMAKE_BUILD_TYPE}] unknown. Valid options are: Debug Release RelWithDebInfo MinSizeRel Profile Check")
+    gz_build_error("CMAKE_BUILD_TYPE [${CMAKE_BUILD_TYPE}] unknown. Valid options are: Debug Release RelWithDebInfo MinSizeRel Profile Check")
   endif()
 
 endmacro()
