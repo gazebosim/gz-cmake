@@ -13,3 +13,5 @@ release will remove the deprecated code.
    **Replacement**: include/ignition/utils/ExtraTestMacros.hh
 1. **Deprecated**: CMake functions and macros starting with `ign_`
    **Replacement**: CMake functions and macros starting with `gz_`
+1. **Deprecated**: `ignition` namespaces
+   **Replacement**: `gz` namespaces
