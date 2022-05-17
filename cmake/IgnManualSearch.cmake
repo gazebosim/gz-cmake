@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 ########################################
-# ign_manual_search(<package> [INTERFACE]
+# gz_manual_search(<package> [INTERFACE]
 #     [HEADER_NAMES <header_names>]
 #     [LIBRARY_NAMES <library_names>]
 #     [TARGET_NAME <target_name>]
@@ -42,16 +42,31 @@
 # PATH_SUFFIXES: Optional. Parameter forwarded to the find_path and find_library calls.
 #
 macro(ign_manual_search package)
+  # TODO(chapulina) Enable warnings after all libraries have migrated.
+  # message(WARNING "ign_manual_search is deprecated, use gz_manual_search instead.")
 
-  #------------------------------------
-  # Define the expected arguments
   set(options INTERFACE)
   set(oneValueArgs "TARGET_NAME")
   set(multiValueArgs "HEADER_NAMES" "LIBRARY_NAMES" "PATH_SUFFIXES")
-
-  #------------------------------------
-  # Parse the arguments
   _gz_cmake_parse_arguments(gz_manual_search "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+  set(gz_manual_search_skip_parsing true)
+  gz_manual_search(${PACKAGE_NAME})
+endmacro()
+macro(gz_manual_search PACKAGE_NAME)
+
+  # Deprecated, remove skip parsing logic in version 4
+  if (NOT gz_manual_search_skip_parsing)
+    #------------------------------------
+    # Define the expected arguments
+    set(options INTERFACE)
+    set(oneValueArgs "TARGET_NAME")
+    set(multiValueArgs "HEADER_NAMES" "LIBRARY_NAMES" "PATH_SUFFIXES")
+
+    #------------------------------------
+    # Parse the arguments
+    _gz_cmake_parse_arguments(gz_manual_search "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  endif()
 
   if(gz_manual_search_INTERFACE)
     set(_gz_manual_search_interface_option INTERFACE)

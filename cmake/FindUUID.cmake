@@ -22,10 +22,10 @@ if (UNIX)
 
     if(NOT UUID_FOUND)
       include(IgnManualSearch)
-      ign_manual_search(UUID
-                        HEADER_NAMES "uuid.h"
-                        LIBRARY_NAMES "uuid libuuid"
-                        PATH_SUFFIXES "uuid")
+      gz_manual_search(UUID
+                       HEADER_NAMES "uuid.h"
+                       LIBRARY_NAMES "uuid libuuid"
+                       PATH_SUFFIXES "uuid")
     endif()
 
     # The pkg-config or the manual search will place

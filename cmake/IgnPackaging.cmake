@@ -7,7 +7,7 @@
 # Sets up package information for an ignition library project.
 # This function is internal to gz-cmake.
 #
-# gz_create_package
+# gz_create_packages
 #
 # Creates a package for an ignition library project
 #

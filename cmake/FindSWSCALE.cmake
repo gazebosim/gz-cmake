@@ -20,9 +20,9 @@ ign_pkg_check_modules_quiet(SWSCALE libswscale)
 
 if(NOT SWSCALE_FOUND)
   include(IgnManualSearch)
-  ign_manual_search(SWSCALE
-                    HEADER_NAMES "libswscale/swscale.h"
-                    LIBRARY_NAMES "swscale")
+  gz_manual_search(SWSCALE
+                   HEADER_NAMES "libswscale/swscale.h"
+                   LIBRARY_NAMES "swscale")
 endif()
 
 include(FindPackageHandleStandardArgs)
