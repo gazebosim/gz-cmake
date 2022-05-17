@@ -5,7 +5,7 @@ find_package(ignition-cmake3 REQUIRED)
 
 message(STATUS "Finding OGRE 2.2")
 
-ign_find_package(IgnOGRE2 VERSION 2.2.0
+gz_find_package(IgnOGRE2 VERSION 2.2.0
     COMPONENTS HlmsPbs HlmsUnlit Overlay)
 
 message(STATUS "OGRE2_FOUND: " ${OGRE2_FOUND})

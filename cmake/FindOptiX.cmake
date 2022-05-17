@@ -18,7 +18,7 @@
 # Modified from NVIDIA's FindOptiX.cmake distributed in its OptiX SDK
 # Usage of this module as follows:
 #
-#     ign_find_package(OptiX)
+#     gz_find_package(OptiX)
 #
 # Variable used by this module, which needs to be set before calling
 # find_package:

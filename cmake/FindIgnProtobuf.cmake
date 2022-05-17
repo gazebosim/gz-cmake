@@ -76,7 +76,7 @@ endif()
 
 if(${Protobuf_FOUND})
   # If we have found Protobuf, then set the IgnProtobuf_FOUND flag to true so
-  # that ign_find_package(~) knows that we were successful.
+  # that gz_find_package(~) knows that we were successful.
   set(IgnProtobuf_FOUND true)
 
   # Older versions of protobuf don't create imported targets, so we will create

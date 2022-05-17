@@ -36,7 +36,7 @@ if(NOT IgnURDFDOM_FOUND)
   endif()
 
   # NOTE: urdfdom cmake does not support version checking
-  ign_find_package(urdfdom ${find_version} QUIET)
+  gz_find_package(urdfdom ${find_version} QUIET)
   if (urdfdom_FOUND)
     add_library(IgnURDFDOM::IgnURDFDOM INTERFACE IMPORTED)
     target_link_libraries(IgnURDFDOM::IgnURDFDOM

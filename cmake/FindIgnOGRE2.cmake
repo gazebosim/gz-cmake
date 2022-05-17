@@ -20,7 +20,7 @@
 #
 # Usage of this module as follows:
 #
-#     ign_find_package(IgnOGRE2)
+#     gz_find_package(IgnOGRE2)
 #
 # Variables used by this module, they can change the default behaviour and need
 # to be set before calling find_package:
@@ -51,7 +51,7 @@
 #
 # Example usage:
 #
-#     ign_find_package(IgnOGRE2
+#     gz_find_package(IgnOGRE2
 #                      VERSION 2.2.0
 #                      COMPONENTS HlmsPbs HlmsUnlit Overlay)
 
