@@ -1,13 +1,13 @@
-\page developingwithcmake Developing with Ignition CMake
+\page developingwithcmake Developing with Gazebo CMake
 
-# Developing with Ignition CMake
+# Developing with Gazebo CMake
 
-This tutorial documents various tips and strategies for developing with Ignition CMake.
+This tutorial documents various tips and strategies for developing with Gazebo CMake.
 
 ## Helpful CMake flags
 
 There are several flags that control the results of the CMake tool.
-Some of these flags are built into CMake, where some are Ignition CMake specific.
+Some of these flags are built into CMake, where some are Gazebo CMake specific.
 
 All of the following flags may be set as part of an individual CMake invocation.
 Alternatively, the flags may be passed to `colcon` using techniques described later in this document.
@@ -146,8 +146,8 @@ To disable building tests, set the CMake flag:
 
 ### Enabling/Disabling Buildsystem Tests
 
-There are additional tests of the Ignition CMake buildsystem.
-It is recommend to run these tests when making modifications to the Ignition CMake codebase.
+There are additional tests of the Gazebo CMake buildsystem.
+It is recommend to run these tests when making modifications to the Gazebo CMake codebase.
 
 By default, building buildsystem tests is *disabled*.
 
@@ -167,7 +167,7 @@ The basic outline of obtaining Ignition source packages via `vcs` and building w
 
 ### Passing CMake flags via command line
 
-When performing `colcon` builds, flags may be passed to Ignition CMake to configure the build.
+When performing `colcon` builds, flags may be passed to Gazebo CMake to configure the build.
 
 This can be done via the `--cmake-args` flag in `colcon`:
 

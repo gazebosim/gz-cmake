@@ -1,4 +1,4 @@
-# Ignition CMake : CMake Modules for Ignition Projects
+# Gazebo CMake : CMake Modules for Gazebo Projects
 
 **Maintainer:** grey AT openrobotics.org
 
@@ -134,7 +134,7 @@ Please see
 
 # Versioning
 
-This library uses [Semantic Versioning](https://semver.org/). Additionally, this library is part of the [Ignition Robotics project](https://ignitionrobotics.org) which periodically releases a versioned set of compatible and complementary libraries. See the [Ignition Robotics website](https://ignitionrobotics.org) for version and release information.
+This library uses [Semantic Versioning](https://semver.org/). Additionally, this library is part of the [Gazebo Robotics project](https://ignitionrobotics.org) which periodically releases a versioned set of compatible and complementary libraries. See the [Gazebo Robotics website](https://ignitionrobotics.org) for version and release information.
 
 # License
 

@@ -1,6 +1,6 @@
 \page install Installation
 
-These instructions are for installing only Ignition CMake. If you're interested
+These instructions are for installing only Gazebo CMake. If you're interested
 in using all the Ignition libraries, not only Igniton CMake, check out this
 [Ignition installation](https://ignitionrobotics.org/docs/latest/install).
 
@@ -15,7 +15,7 @@ contribution.
 
 ## Ubuntu
 
-On Ubuntu, it's possible to install Ignition CMake as follows:
+On Ubuntu, it's possible to install Gazebo CMake as follows:
 
 Add OSRF packages:
   ```
@@ -24,7 +24,7 @@ Add OSRF packages:
   sudo apt update
   ```
 
-Install Ignition CMake:
+Install Gazebo CMake:
   ```
   sudo apt install libignition-cmake<#>-dev
   ```
@@ -40,7 +40,7 @@ On macOS, add OSRF packages:
   brew tap osrf/simulation
   ```
 
-Install Ignition CMake:
+Install Gazebo CMake:
   ```
   brew install ignition-cmake<#>
   ```
@@ -71,7 +71,7 @@ To find `condabin`, search for "Anaconda Prompt" in the Windows search near the 
 
   To remove an environment, use `conda env remove --name <env_name>`.
 
-2. Install Ignition CMake:
+2. Install Gazebo CMake:
   ```
   conda install libignition-cmake<#> --channel conda-forge
   ```
