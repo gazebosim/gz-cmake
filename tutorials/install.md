@@ -114,7 +114,7 @@ Clone source code:
 
 ```
 # This checks out the `main` branch. You can append `-b ign-cmake#` (replace # with a number) to checkout a specific version
-git clone http://github.com/ignitionrobotics/ign-cmake
+git clone http://github.com/gazebosim/gz-cmake
 ```
 
 Install dependencies
@@ -171,7 +171,7 @@ To find `condabin`, search for "Anaconda Prompt" in the search field near the Wi
 3. Navigate to where you would like to build the library, and then clone the repository.
   ```
   # Optionally, append `-b ign-cmake#` (replace # with a number) to check out a specific version
-  git clone https://github.com/ignitionrobotics/ign-cmake.git
+  git clone https://github.com/gazebosim/gz-cmake.git
   ```
 
 4. Build.
@@ -201,7 +201,7 @@ You can also generate the documentation from a clone of this repository by follo
 2. Clone the repository
 
   ```
-  git clone https://github.com/ignitionrobotics/ign-cmake
+  git clone https://github.com/gazebosim/gz-cmake
   ```
 
 3. Configure and build the documentation.
@@ -218,7 +218,7 @@ You can also generate the documentation from a clone of this repository by follo
   firefox doxygen/html/index.html
   ```
 
-**Note** Alternatively, documentation for `ignition-cmake` can be found within the source code, and also in the [MIGRATION.md guide](https://github.com/ignitionrobotics/ign-cmake/blob/main/MIGRATION.md).
+**Note** Alternatively, documentation for `ignition-cmake` can be found within the source code, and also in the [MIGRATION.md guide](https://github.com/gazebosim/gz-cmake/blob/main/MIGRATION.md).
 
 # Testing
 
