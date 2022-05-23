@@ -163,7 +163,7 @@ To enable building buildsystem tests, set the CMake flags:
 [`colcon`](https://colcon.readthedocs.io/en/released/) is a tool that improves the workflow of building and testing multiple software packages.
 As an Ignition collection is composed of multiple packages that are frequently built and tested together, `colcon` eases this workflow.
 
-The basic outline of obtaining Ignition source packages via `vcs` and building with `colcon` is available in the [Ignition source installation documentation](https://ignitionrobotics.org/docs/latest/install_ubuntu_src).
+The basic outline of obtaining Ignition source packages via `vcs` and building with `colcon` is available in the [Ignition source installation documentation](https://gazebosim.org/docs/latest/install_ubuntu_src).
 
 ### Passing CMake flags via command line
 
@@ -209,7 +209,7 @@ One mechanism for accomplishing this is a `defaults.yaml` file.
 This is a file of configuration options that `colcon` will read to customize the default behavior.
 More information about the `defaults.yaml` file can be found in the corresponding [`colcon` documentation](https://colcon.readthedocs.io/en/released/user/configuration.html#defaults-yaml)
 
-For the following, if you do not have `colcon` or `vcs` installed, consult the [Ignition source installation documentation](https://ignitionrobotics.org/docs/latest/install_ubuntu_src).
+For the following, if you do not have `colcon` or `vcs` installed, consult the [Ignition source installation documentation](https://gazebosim.org/docs/latest/install_ubuntu_src).
 
 To try this out, first create an Ignition source workspace:
 ```

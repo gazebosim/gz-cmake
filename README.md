@@ -93,7 +93,7 @@ Replace `/path/to/install/dir` to whatever directory you want to install this pa
 
 # Usage
 
-Documentation can be accessed at https://ignitionrobotics.org/libs/cmake
+Documentation can be accessed at https://gazebosim.org/libs/cmake
 [Examples](examples/) are available in this repository.
 [Tutorials](tutorials/) are also available in this repository.
 
@@ -125,7 +125,7 @@ $ make test
 # Contributing
 
 Please see
-[CONTRIBUTING.md](https://ignitionrobotics.org/docs/all/contributing).
+[CONTRIBUTING.md](https://gazebosim.org/docs/all/contributing).
 
 # Code of Conduct
 
@@ -134,7 +134,7 @@ Please see
 
 # Versioning
 
-This library uses [Semantic Versioning](https://semver.org/). Additionally, this library is part of the [Gazebo project](https://ignitionrobotics.org) which periodically releases a versioned set of compatible and complementary libraries. See the [Gazebo website](https://ignitionrobotics.org) for version and release information.
+This library uses [Semantic Versioning](https://semver.org/). Additionally, this library is part of the [Gazebo project](https://gazebosim.org) which periodically releases a versioned set of compatible and complementary libraries. See the [Gazebo website](https://gazebosim.org) for version and release information.
 
 # License
 

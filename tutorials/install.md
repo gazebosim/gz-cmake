@@ -2,7 +2,7 @@
 
 These instructions are for installing only Gazebo CMake. If you're interested
 in using all the Ignition libraries, not only Igniton CMake, check out this
-[Ignition installation](https://ignitionrobotics.org/docs/latest/install).
+[Ignition installation](https://gazebosim.org/docs/latest/install).
 
 We recommend following the binary install instructions to get up and running as
 quickly and painlessly as possible.
@@ -189,7 +189,7 @@ To find `condabin`, search for "Anaconda Prompt" in the search field near the Wi
 # Documentation
 
 API documentation and tutorials can be accessed at
-[https://ignitionrobotics.org/libs/cmake](https://ignitionrobotics.org/libs/cmake)
+[https://gazebosim.org/libs/cmake](https://gazebosim.org/libs/cmake)
 
 You can also generate the documentation from a clone of this repository by following these steps.
 
@@ -245,5 +245,5 @@ $ make test
 ```
 
 
-See the [Writing Tests section of the ign-cmake contributor documentation](https://ignitionrobotics.org/docs/all/contributing#writing-tests) for help creating or modifying tests.
+See the [Writing Tests section of the ign-cmake contributor documentation](https://gazebosim.org/docs/all/contributing#writing-tests) for help creating or modifying tests.
 
