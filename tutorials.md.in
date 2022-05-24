@@ -8,7 +8,7 @@ Ignition @IGN_DESIGNATION_CAP@ library and how to use the library effectively.
 **The tutorials**
 
 1. \subpage install "Installation"
-1. \subpage developingwithcmake "Developing with Ignition CMake"
+1. \subpage developingwithcmake "Developing with Gazebo CMake"
 1. \subpage sanitizersbuilds "Sanitizers Builds"
 
 ## License

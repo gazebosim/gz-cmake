@@ -1,13 +1,13 @@
-\page developingwithcmake Developing with Ignition CMake
+\page developingwithcmake Developing with Gazebo CMake
 
-# Developing with Ignition CMake
+# Developing with Gazebo CMake
 
-This tutorial documents various tips and strategies for developing with Ignition CMake.
+This tutorial documents various tips and strategies for developing with Gazebo CMake.
 
 ## Helpful CMake flags
 
 There are several flags that control the results of the CMake tool.
-Some of these flags are built into CMake, where some are Ignition CMake specific.
+Some of these flags are built into CMake, where some are Gazebo CMake specific.
 
 All of the following flags may be set as part of an individual CMake invocation.
 Alternatively, the flags may be passed to `colcon` using techniques described later in this document.
@@ -26,7 +26,7 @@ The available options are:
 * `Coverage`: Build with additional information required for the [`gcov` analysis tool](https://en.wikipedia.org/wiki/Gcov)
 * `Profile`: Use flags that are helpful with the [`gprof` profiling tool](https://en.wikipedia.org/wiki/Gprof)
 
-More information about flags applied can be found in [IgnSetCompilerFlags.cmake](https://github.com/ignitionrobotics/ign-cmake/blob/main/cmake/IgnSetCompilerFlags.cmake)
+More information about flags applied can be found in [IgnSetCompilerFlags.cmake](https://github.com/gazebosim/gz-cmake/blob/main/cmake/IgnSetCompilerFlags.cmake)
 
 If left unspecified, `CMAKE_BUILD_TYPE` is set to `RelWithDebInfo`
 
@@ -146,8 +146,8 @@ To disable building tests, set the CMake flag:
 
 ### Enabling/Disabling Buildsystem Tests
 
-There are additional tests of the Ignition CMake buildsystem.
-It is recommend to run these tests when making modifications to the Ignition CMake codebase.
+There are additional tests of the Gazebo CMake buildsystem.
+It is recommend to run these tests when making modifications to the Gazebo CMake codebase.
 
 By default, building buildsystem tests is *disabled*.
 
@@ -163,11 +163,11 @@ To enable building buildsystem tests, set the CMake flags:
 [`colcon`](https://colcon.readthedocs.io/en/released/) is a tool that improves the workflow of building and testing multiple software packages.
 As an Ignition collection is composed of multiple packages that are frequently built and tested together, `colcon` eases this workflow.
 
-The basic outline of obtaining Ignition source packages via `vcs` and building with `colcon` is available in the [Ignition source installation documentation](https://ignitionrobotics.org/docs/latest/install_ubuntu_src).
+The basic outline of obtaining Ignition source packages via `vcs` and building with `colcon` is available in the [Ignition source installation documentation](https://gazebosim.org/docs/latest/install_ubuntu_src).
 
 ### Passing CMake flags via command line
 
-When performing `colcon` builds, flags may be passed to Ignition CMake to configure the build.
+When performing `colcon` builds, flags may be passed to Gazebo CMake to configure the build.
 
 This can be done via the `--cmake-args` flag in `colcon`:
 
@@ -209,7 +209,7 @@ One mechanism for accomplishing this is a `defaults.yaml` file.
 This is a file of configuration options that `colcon` will read to customize the default behavior.
 More information about the `defaults.yaml` file can be found in the corresponding [`colcon` documentation](https://colcon.readthedocs.io/en/released/user/configuration.html#defaults-yaml)
 
-For the following, if you do not have `colcon` or `vcs` installed, consult the [Ignition source installation documentation](https://ignitionrobotics.org/docs/latest/install_ubuntu_src).
+For the following, if you do not have `colcon` or `vcs` installed, consult the [Ignition source installation documentation](https://gazebosim.org/docs/latest/install_ubuntu_src).
 
 To try this out, first create an Ignition source workspace:
 ```

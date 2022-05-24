@@ -17,11 +17,11 @@
 
 #include <ignition/core_no_deps_static/Export.hh>
 
-namespace ignition
+namespace gz
 {
   namespace core_no_deps
   {
-    class IGNITION_CORE_NO_DEPS_STATIC_VISIBLE AlmostEmpty
+    class GZ_CORE_NO_DEPS_STATIC_VISIBLE AlmostEmpty
     {
       public: AlmostEmpty() = default;
     };
