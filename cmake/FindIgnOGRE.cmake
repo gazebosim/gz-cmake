@@ -260,7 +260,7 @@ if(OGRE_FOUND)
   endforeach()
 
   include(IgnImportTarget)
-  ign_import_target(IgnOGRE
+  gz_import_target(IgnOGRE
     TARGET_NAME IgnOGRE::IgnOGRE
     LIB_VAR OGRE_LIBRARIES
     INCLUDE_VAR OGRE_INCLUDE_DIRS)

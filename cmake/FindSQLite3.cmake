@@ -51,6 +51,6 @@ if(MSVC)
     endif()
   endif()
 
-  ign_import_target(SQLite3)
+  gz_import_target(SQLite3)
 
 endif()

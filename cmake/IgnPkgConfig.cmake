@@ -161,7 +161,7 @@ macro(ign_pkg_check_modules_quiet package signature)
         "${${package}_LIBRARY_DIRS}")
 
       include(IgnImportTarget)
-      ign_import_target(${package} ${_gz_pkg_check_modules_interface_option}
+      gz_import_target(${package} ${_gz_pkg_check_modules_interface_option}
         TARGET_NAME ${gz_pkg_check_modules_TARGET_NAME})
 
     endif()

@@ -56,7 +56,7 @@ if(NOT ZIP_FOUND)
 
   if(ZIP_FOUND)
     include(IgnImportTarget)
-    ign_import_target(ZIP)
+    gz_import_target(ZIP)
   endif()
 endif()
 

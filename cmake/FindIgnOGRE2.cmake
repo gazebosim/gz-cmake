@@ -296,7 +296,7 @@ if (NOT WIN32)
 
         set(component_LIBRARY_DIRS ${OGRE2_LIBRARY_DIRS})
         set(component_LIBRARIES ${OGRE2-${component}})
-        ign_import_target(${component} TARGET_NAME ${component_TARGET_NAME}
+        gz_import_target(${component} TARGET_NAME ${component_TARGET_NAME}
             LIB_VAR component_LIBRARIES
             INCLUDE_VAR component_INCLUDE_DIRS)
 
@@ -482,7 +482,7 @@ else() #WIN32
 
       set(component_LIBRARIES ${${PREFIX}_LIBRARIES})
 
-      ign_import_target(${component}
+      gz_import_target(${component}
         TARGET_NAME ${component_TARGET_NAME}
         LIB_VAR component_LIBRARIES
         INCLUDE_VAR component_INCLUDE_DIRS
@@ -505,7 +505,7 @@ set(IgnOGRE2_FOUND false)
 if (OGRE2_FOUND)
   set(IgnOGRE2_FOUND true)
 
-  ign_import_target(IgnOGRE2
+  gz_import_target(IgnOGRE2
     TARGET_NAME IgnOGRE2::IgnOGRE2
     LIB_VAR OGRE2_LIBRARIES
     INCLUDE_VAR OGRE2_INCLUDE_DIRS)

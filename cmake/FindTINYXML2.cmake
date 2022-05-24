@@ -54,7 +54,7 @@ if(NOT TINYXML2_FOUND)
 
   if(TINYXML2_FOUND)
     include(IgnImportTarget)
-    ign_import_target(TINYXML2)
+    gz_import_target(TINYXML2)
   endif()
 
   include(FindPackageHandleStandardArgs)

@@ -55,7 +55,7 @@ if(${IgnCURL_FOUND})
   include(IgnImportTarget)
 
   if(NOT TARGET curl::curl)
-    ign_import_target(curl
+    gz_import_target(curl
       LIB_VAR CURL_LIBRARIES
       INCLUDE_VAR CURL_INCLUDE_DIRS)
   endif()

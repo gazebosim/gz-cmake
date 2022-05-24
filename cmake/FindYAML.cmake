@@ -81,7 +81,7 @@ else()
 
     if(YAML_FOUND)
       include(IgnImportTarget)
-      ign_import_target(YAML)
+      gz_import_target(YAML)
       message(STATUS "Assuming libyaml is static, defining YAML_DECLARE_STATIC")
       set_target_properties(YAML::YAML PROPERTIES
         INTERFACE_COMPILE_DEFINITIONS "YAML_DECLARE_STATIC"
