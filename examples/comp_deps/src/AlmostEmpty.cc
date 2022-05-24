@@ -21,7 +21,7 @@ namespace gz
 {
   namespace component_deps
   {
-    class IGNITION_COMPONENT_DEPS_VISIBLE AlmostEmpty
+    class GZ_COMPONENT_DEPS_VISIBLE AlmostEmpty
     {
     };
   }
