@@ -270,12 +270,12 @@ function(_gz_create_cmake_package)
 
     set(component ${_gz_create_cmake_package_COMPONENT})
     set(target_name ${PROJECT_LIBRARY_TARGET_NAME}-${component})
-    set(ign_config_input "${IGNITION_CMAKE_DIR}/ignition-component-config.cmake.in")
+    set(gz_config_input "${IGNITION_CMAKE_DIR}/ignition-component-config.cmake.in")
     set(simple_import_name ${component})
 
   elseif(_gz_create_cmake_package_ALL)
 
-    set(ign_config_input "${IGNITION_CMAKE_DIR}/ignition-all-config.cmake.in")
+    set(gz_config_input "${IGNITION_CMAKE_DIR}/ignition-all-config.cmake.in")
     set(target_name ${PROJECT_LIBRARY_TARGET_NAME}-all)
     set(all_pkg_name ${PROJECT_LIBRARY_TARGET_NAME}-all)
     set(simple_import_name all)
@@ -283,7 +283,7 @@ function(_gz_create_cmake_package)
   else()
 
     set(target_name ${PROJECT_LIBRARY_TARGET_NAME})
-    set(ign_config_input "${IGNITION_CMAKE_DIR}/ignition-config.cmake.in")
+    set(gz_config_input "${IGNITION_CMAKE_DIR}/ignition-config.cmake.in")
     set(simple_import_name core)
 
   endif()
@@ -300,46 +300,46 @@ function(_gz_create_cmake_package)
 
   # This gets used by the ignition-*.config.cmake.in files
   set(target_output_filename ${target_name}-targets.cmake)
-  set(ign_config_output "${PROJECT_BINARY_DIR}/cmake/${target_name}-config.cmake")
-  set(ign_version_output "${PROJECT_BINARY_DIR}/cmake/${target_name}-config-version.cmake")
-  set(ign_target_ouput "${PROJECT_BINARY_DIR}/cmake/${target_output_filename}")
+  set(gz_config_output "${PROJECT_BINARY_DIR}/cmake/${target_name}-config.cmake")
+  set(gz_version_output "${PROJECT_BINARY_DIR}/cmake/${target_name}-config-version.cmake")
+  set(gz_target_ouput "${PROJECT_BINARY_DIR}/cmake/${target_output_filename}")
 
   # NOTE: Each component needs to go into its own cmake directory in order to be
   # found by cmake's native find_package(~) command.
-  set(ign_config_install_dir "${IGN_LIB_INSTALL_DIR}/cmake/${target_name}")
-  set(ign_namespace ${PROJECT_LIBRARY_TARGET_NAME}::)
+  set(gz_config_install_dir "${IGN_LIB_INSTALL_DIR}/cmake/${target_name}")
+  set(gz_namespace ${PROJECT_LIBRARY_TARGET_NAME}::)
 
-  set(import_target_name ${ign_namespace}${target_name})
-  set(simple_import_name ${ign_namespace}${simple_import_name})
+  set(import_target_name ${gz_namespace}${target_name})
+  set(simple_import_name ${gz_namespace}${simple_import_name})
 
   # Configure the package config file. It will be installed to
   # "[lib]/cmake/ignition-<project><major_version>/" where [lib] is the library
   # installation directory.
   configure_package_config_file(
-    ${ign_config_input}
-    ${ign_config_output}
-    INSTALL_DESTINATION ${ign_config_install_dir}
+    ${gz_config_input}
+    ${gz_config_output}
+    INSTALL_DESTINATION ${gz_config_install_dir}
     PATH_VARS IGN_LIB_INSTALL_DIR IGN_INCLUDE_INSTALL_DIR_FULL)
 
   # Use write_basic_package_version_file to generate a ConfigVersion file that
   # allow users of the library to specify the API or version to depend on
   write_basic_package_version_file(
-    ${ign_version_output}
+    ${gz_version_output}
     VERSION "${PROJECT_VERSION_FULL_NO_SUFFIX}"
     COMPATIBILITY SameMajorVersion)
 
   # Install the configuration files to the configuration installation directory
   install(
     FILES
-      ${ign_config_output}
-      ${ign_version_output}
-    DESTINATION ${ign_config_install_dir}
+      ${gz_config_output}
+      ${gz_version_output}
+    DESTINATION ${gz_config_install_dir}
     COMPONENT cmake)
 
   # Create *-targets.cmake file for build directory
   export(
     EXPORT ${target_name}
-    FILE ${ign_target_ouput}
+    FILE ${gz_target_ouput}
     # We add a namespace that ends with a :: to the name of the exported target.
     # This is so consumers of the project can call
     #     find_package(ignition-<project>)
@@ -354,15 +354,15 @@ function(_gz_create_cmake_package)
     # The advantage of linking against a target rather than a library is that
     # you will automatically link against all the dependencies of that target.
     # This also helps us create find-config files that are relocatable.
-    NAMESPACE ${ign_namespace})
+    NAMESPACE ${gz_namespace})
 
   # Install *-targets.cmake file
   install(
     EXPORT ${target_name}
-    DESTINATION ${ign_config_install_dir}
+    DESTINATION ${gz_config_install_dir}
     FILE ${target_output_filename}
     # See explanation above for NAMESPACE
-    NAMESPACE ${ign_namespace})
+    NAMESPACE ${gz_namespace})
 
 endfunction()
 

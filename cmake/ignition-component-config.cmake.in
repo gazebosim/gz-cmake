@@ -9,7 +9,7 @@
 #
 #   Component library target                - @import_target_name@
 #   Alternative target name                 - @simple_import_name@
-#   Core library + all requested components - @ign_namespace@requested
+#   Core library + all requested components - @gz_namespace@requested
 #
 # Use target_link_libraries() to link your library or executable to one of the
 # above targets.
@@ -93,18 +93,18 @@ if(NOT TARGET @import_target_name@)
 endif()
 
 # Create the "requested" target if it does not already exist
-if(NOT TARGET @ign_namespace@requested)
-  add_library(@ign_namespace@requested INTERFACE IMPORTED)
+if(NOT TARGET @gz_namespace@requested)
+  add_library(@gz_namespace@requested INTERFACE IMPORTED)
 endif()
 
 # Link the @component@ library to the "requested" target
-get_target_property(ign_requested_components @ign_namespace@requested INTERFACE_LINK_LIBRARIES)
-if(NOT ign_requested_components)
-  set_target_properties(@ign_namespace@requested PROPERTIES
+get_target_property(gz_requested_components @gz_namespace@requested INTERFACE_LINK_LIBRARIES)
+if(NOT gz_requested_components)
+  set_target_properties(@gz_namespace@requested PROPERTIES
     INTERFACE_LINK_LIBRARIES "@import_target_name@")
 else()
-  set_target_properties(@ign_namespace@requested PROPERTIES
-    INTERFACE_LINK_LIBRARIES "${ign_requested_components};@import_target_name@")
+  set_target_properties(@gz_namespace@requested PROPERTIES
+    INTERFACE_LINK_LIBRARIES "${gz_requested_components};@import_target_name@")
 endif()
 
 set(@component_pkg_name@_LIBRARY @import_target_name@)

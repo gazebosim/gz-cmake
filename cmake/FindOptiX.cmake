@@ -80,8 +80,8 @@ else()
   set(bit_dest "")
 endif()
 
-# ign-cmake modification: added "ign_" prefix to macro name
-macro(ign_OPTIX_find_api_library name version)
+# gz-cmake modification: added "gz_" prefix to macro name
+macro(gz_OPTIX_find_api_library name version)
   find_library(${name}_LIBRARY
     NAMES ${name}.${version} ${name}
     PATHS "${OptiX_INSTALL_DIR}/lib${bit_dest}"
@@ -102,9 +102,9 @@ macro(ign_OPTIX_find_api_library name version)
   endif()
 endmacro()
 
-ign_OPTIX_find_api_library(optix 1)
-ign_OPTIX_find_api_library(optixu 1)
-ign_OPTIX_find_api_library(optix_prime 1)
+gz_OPTIX_find_api_library(optix 1)
+gz_OPTIX_find_api_library(optixu 1)
+gz_OPTIX_find_api_library(optix_prime 1)
 
 # Include
 find_path(OptiX_INCLUDE
@@ -142,7 +142,7 @@ function(OptiX_add_imported_library name lib_location dll_lib dependent_libs)
   set(CMAKE_IMPORT_FILE_VERSION 1)
 
   # Create imported target
-  # ign-cmake modification: changed to use ${target_name} instead of ${name}
+  # gz-cmake modification: changed to use ${target_name} instead of ${name}
   set(target_name optix::${name})
   add_library(${target_name} SHARED IMPORTED)
 
@@ -180,8 +180,8 @@ OptiX_add_imported_library(optix "${optix_LIBRARY}" "${optix_DLL}" "${OPENGL_LIB
 OptiX_add_imported_library(optixu   "${optixu_LIBRARY}"   "${optixu_DLL}"   "")
 OptiX_add_imported_library(optix_prime "${optix_prime_LIBRARY}"  "${optix_prime_DLL}"  "")
 
-# ign-cmake modification: added "ign_" prefix to macro name
-macro(ign_OptiX_check_same_path libA libB)
+# gz-cmake modification: added "gz_" prefix to macro name
+macro(gz_OptiX_check_same_path libA libB)
   if(_optix_path_to_${libA})
     if(NOT _optix_path_to_${libA} STREQUAL _optix_path_to_${libB})
       # ${libA} and ${libB} are in different paths.  Make sure there isn't a ${libA} next
@@ -203,10 +203,10 @@ if(APPLE)
     set( _optix_rpath "-Wl,-rpath,${_optix_path_to_optix}" )
   endif()
   get_filename_component(_optix_path_to_optixu "${optixu_LIBRARY}" PATH)
-  ign_OptiX_check_same_path(optixu optix)
+  gz_OptiX_check_same_path(optixu optix)
   get_filename_component(_optix_path_to_optix_prime "${optix_prime_LIBRARY}" PATH)
-  ign_OptiX_check_same_path(optix_prime optix)
-  ign_OptiX_check_same_path(optix_prime optixu)
+  gz_OptiX_check_same_path(optix_prime optix)
+  gz_OptiX_check_same_path(optix_prime optixu)
 
   set( optix_rpath ${_optix_rpath} ${_optixu_rpath} ${_optix_prime_rpath} )
   list(LENGTH optix_rpath optix_rpath_LENGTH)
