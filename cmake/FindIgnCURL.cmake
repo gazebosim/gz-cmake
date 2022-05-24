@@ -29,12 +29,12 @@
 #  IgnCURL_LIBRARIES          The CURL libraries
 #  IgnCURL_VERSION            The version of CURL found
 
-set(ign_quiet_arg)
+set(gz_quiet_arg)
 if(IgnCURL_FIND_QUIETLY)
-  set(ign_quiet_arg QUIET)
+  set(gz_quiet_arg QUIET)
 endif()
 
-find_package(CURL ${IgnCURL_FIND_VERSION} ${ign_quiet_arg})
+find_package(CURL ${IgnCURL_FIND_VERSION} ${gz_quiet_arg})
 
 set(IgnCURL_FOUND ${CURL_FOUND})
 
@@ -51,7 +51,7 @@ if(${IgnCURL_FOUND})
     set_target_properties(curl::curl PROPERTIES
         INTERFACE_LINK_LIBRARIES CURL::libcurl)
   endif()
-  
+
   include(IgnImportTarget)
 
   if(NOT TARGET curl::curl)
