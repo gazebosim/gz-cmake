@@ -40,9 +40,9 @@ This is a wrapper for cmake's native `project(~)` command which additionally
 sets a bunch of variables that will be needed by the `ignition-cmake` macros and
 functions.
 
-### Then search for each dependency using `ign_find_package(~)`
+### Then search for each dependency using `gz_find_package(~)`
 
-We now have a cmake macro `ign_find_package(~)` which is a wrapper for the
+We now have a cmake macro `gz_find_package(~)` which is a wrapper for the
 native cmake `find_package(~)` function, which additionally:
 
 1. Collects build errors and build warnings so that they can all be printed out
@@ -53,10 +53,10 @@ error.
 and cmake config file.
 
 A variety of arguments are available to guide the behavior of
-`ign_find_package(~)`. Most of them will not be needed in most situations, but
+`gz_find_package(~)`. Most of them will not be needed in most situations, but
 you should consider reading them over once just in case they might be relevant
 for you. The macro's documentation is available in
-`ign-cmake/cmake/IgnUtils.cmake` just above definition of `ign_find_package(~)`.
+`ign-cmake/cmake/IgnUtils.cmake` just above definition of `gz_find_package(~)`.
 Feel free to ask questions about any of its arguments that are unclear.
 
 Any operations that might need to be performed while searching for a package
@@ -345,7 +345,7 @@ after being invoked by the command `find_package(SomePackage)`. Notice that the
 `.cmake` in the filename `FindSomePackage.cmake`. Case matters. This is not just
 a convention; it is a cmake requirement.
 
-Note that while using `ignition-cmake`, you should be using `ign_find_package(~)`
+Note that while using `ignition-cmake`, you should be using `gz_find_package(~)`
 instead of the native `find_package(~)` command. It does the same thing, except
 that it adds some additional functionality which is important for ensuring
 correctness in the package configuration files that we generate for our projects.

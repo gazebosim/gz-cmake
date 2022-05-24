@@ -170,7 +170,7 @@ macro(ign_pkg_check_modules_quiet package signature)
 
 endmacro()
 
-# This creates variables which inform ign_find_package(~) that your package
+# This creates variables which inform gz_find_package(~) that your package
 # should be found as a module by pkg-config. In most cases, this will be called
 # implicitly by ign_pkg_check_modules[_quiet], but if a package provides both a
 # cmake config-file (*-config.cmake) and a pkg-config file (*.pc), then you can
@@ -183,7 +183,7 @@ macro(ign_pkg_config_entry package string)
 
 endmacro()
 
-# This creates variables which inform ign_find_package(~) that your package must
+# This creates variables which inform gz_find_package(~) that your package must
 # be found as a plain library by pkg-config. This should be used in any
 # find-module that handles a library package which does not install a pkg-config
 # <package>.pc file.

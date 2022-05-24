@@ -140,19 +140,19 @@ function(gz_create_docs)
   set(IGNITION_DOXYGEN_TAGFILES " ")
 
   foreach(tagfile ${gz_create_docs_TAGFILES})
-    ign_string_append(IGNITION_DOXYGEN_TAGFILES "\"${tagfile}\"" DELIM " \\\\\\\\\n    ")
+    gz_string_append(IGNITION_DOXYGEN_TAGFILES "\"${tagfile}\"" DELIM " \\\\\\\\\n    ")
   endforeach()
 
   set(IGNITION_DOXYGEN_ADDITIONAL_INPUT_DIRS " ")
 
   foreach(dir ${gz_create_docs_ADDITIONAL_INPUT_DIRS})
-    ign_string_append(IGNITION_DOXYGEN_ADDITIONAL_INPUT_DIRS "${dir}")
+    gz_string_append(IGNITION_DOXYGEN_ADDITIONAL_INPUT_DIRS "${dir}")
   endforeach()
 
   set(IGNITION_DOXYGEN_IMAGE_PATH " ")
 
   foreach(dir ${gz_create_docs_IMAGE_PATH_DIRS})
-    ign_string_append(IGNITION_DOXYGEN_IMAGE_PATH "${dir}")
+    gz_string_append(IGNITION_DOXYGEN_IMAGE_PATH "${dir}")
   endforeach()
 
   find_package(Doxygen)

@@ -50,21 +50,21 @@ foreach(component ${IgnProtobuf_FIND_COMPONENTS})
   if((${component} STREQUAL "libprotobuf") OR (${component} STREQUAL "all"))
     if((NOT PROTOBUF_LIBRARY) AND (NOT TARGET protobuf::libprotobuf))
       set(Protobuf_FOUND false)
-      ign_string_append(IgnProtobuf_missing_components "libprotobuf" DELIM " ")
+      gz_string_append(IgnProtobuf_missing_components "libprotobuf" DELIM " ")
     endif()
   endif()
 
   if((${component} STREQUAL "libprotoc") OR (${component} STREQUAL "all"))
     if((NOT PROTOBUF_PROTOC_LIBRARY) AND (NOT TARGET protobuf::libprotoc))
       set(Protobuf_FOUND false)
-      ign_string_append(IgnProtobuf_missing_components "libprotoc" DELIM " ")
+      gz_string_append(IgnProtobuf_missing_components "libprotoc" DELIM " ")
     endif()
   endif()
 
   if((${component} STREQUAL "protoc") OR (${component} STREQUAL "all"))
     if((NOT PROTOBUF_PROTOC_EXECUTABLE) AND (NOT TARGET protobuf::protoc))
       set(Protobuf_FOUND false)
-      ign_string_append(IgnProtobuf_missing_components "protoc" DELIM " ")
+      gz_string_append(IgnProtobuf_missing_components "protoc" DELIM " ")
     endif()
   endif()
 
@@ -76,7 +76,7 @@ endif()
 
 if(${Protobuf_FOUND})
   # If we have found Protobuf, then set the IgnProtobuf_FOUND flag to true so
-  # that ign_find_package(~) knows that we were successful.
+  # that gz_find_package(~) knows that we were successful.
   set(IgnProtobuf_FOUND true)
 
   # Older versions of protobuf don't create imported targets, so we will create

@@ -64,7 +64,7 @@ macro(gz_configure_build)
   if(build_warnings)
     set(all_warnings " CONFIGURATION WARNINGS:")
     foreach (msg ${build_warnings})
-      ign_string_append(all_warnings " -- ${msg}" DELIM "\n")
+      gz_string_append(all_warnings " -- ${msg}" DELIM "\n")
     endforeach ()
     message(WARNING "${all_warnings}")
   endif (build_warnings)
@@ -220,9 +220,9 @@ macro(gz_configure_build)
         if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/${component}/include")
           # Note: It seems we need to give the delimiter exactly this many
           # backslashes in order to get a \ plus a newline. This might be
-          # dependent on the implementation of ign_string_append, so be careful
+          # dependent on the implementation of gz_string_append, so be careful
           # when changing the implementation of that function.
-          ign_string_append(ign_doxygen_component_input_dirs
+          gz_string_append(ign_doxygen_component_input_dirs
             "${CMAKE_CURRENT_LIST_DIR}/${component}/include"
             DELIM " \\\\\\\\\n  ")
         endif()
@@ -272,9 +272,9 @@ macro(gz_configure_build)
 
         set(skip_msg "Skipping the component [${component}]")
         if(SKIP_${component})
-          ign_string_append(skip_msg "by user request")
+          gz_string_append(skip_msg "by user request")
         elseif(${component}_MISSING_DEPS)
-          ign_string_append(skip_msg "because the following packages are missing: ${${component}_MISSING_DEPS}")
+          gz_string_append(skip_msg "because the following packages are missing: ${${component}_MISSING_DEPS}")
         endif()
 
         message(STATUS "${skip_msg}")
@@ -327,7 +327,7 @@ function(_gz_find_include_script)
   set(include_start "${CMAKE_CURRENT_LIST_DIR}")
 
   if(_gz_find_include_script_COMPONENT)
-    ign_string_append(include_start ${_gz_find_include_script_COMPONENT} DELIM "/")
+    gz_string_append(include_start ${_gz_find_include_script_COMPONENT} DELIM "/")
   endif()
 
   # Check each level of depth to find the first CMakeLists.txt. This allows us
@@ -400,7 +400,7 @@ macro(_gz_parse_build_type)
   elseif("${CMAKE_BUILD_TYPE_UPPERCASE}" STREQUAL "PROFILE")
     set(BUILD_TYPE_PROFILE TRUE)
   else()
-    ign_build_error("CMAKE_BUILD_TYPE [${CMAKE_BUILD_TYPE}] unknown. Valid options are: Debug Release RelWithDebInfo MinSizeRel Profile Check")
+    gz_build_error("CMAKE_BUILD_TYPE [${CMAKE_BUILD_TYPE}] unknown. Valid options are: Debug Release RelWithDebInfo MinSizeRel Profile Check")
   endif()
 
 endmacro()
