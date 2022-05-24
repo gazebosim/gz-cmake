@@ -1428,7 +1428,7 @@ macro(_gz_add_library_or_component)
   # - export_base
   # - lib_name
   #
-  # - _ign_export_base
+  # - _gz_export_base
 
   #------------------------------------
   # Define the expected arguments
@@ -1532,7 +1532,7 @@ macro(_gz_add_library_or_component)
     # TODO(CH3): Remove this on ticktock
     # This is to allow IGNITION_ prefixed export macros to generate in Export.hh
     # _using_gz_export_base is used in Export.hh.in's configuration!
-    string(REGEX REPLACE "^GZ_" "IGNITION_" _ign_export_base ${export_base})
+    string(REGEX REPLACE "^GZ_" "IGNITION_" _gz_export_base ${export_base})
 
     configure_file(
       "${IGNITION_CMAKE_DIR}/Export.hh.in"
