@@ -21,7 +21,7 @@
 
 namespace no_ignition_prefix
 {
-  class IGNITION_NO_IGNITION_PREFIX_VISIBLE AlmostEmpty
+  class GZ_NO_IGNITION_PREFIX_VISIBLE AlmostEmpty
   {
   };
 }
