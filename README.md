@@ -1,9 +1,9 @@
-# Ignition CMake : CMake Modules for Ignition Projects
+# Gazebo CMake : CMake Modules for Gazebo Projects
 
 **Maintainer:** grey AT openrobotics.org
 
-[![GitHub open issues](https://img.shields.io/github/issues-raw/ignitionrobotics/ign-cmake.svg)](https://github.com/ignitionrobotics/ign-cmake/issues)
-[![GitHub open pull requests](https://img.shields.io/github/issues-pr-raw/ignitionrobotics/ign-cmake.svg)](https://github.com/ignitionrobotics/ign-cmake/pulls)
+[![GitHub open issues](https://img.shields.io/github/issues-raw/gazebosim/gz-cmake.svg)](https://github.com/gazebosim/gz-cmake/issues)
+[![GitHub open pull requests](https://img.shields.io/github/issues-pr-raw/gazebosim/gz-cmake.svg)](https://github.com/gazebosim/gz-cmake/pulls)
 [![Discourse topics](https://img.shields.io/discourse/https/community.gazebosim.org/topics.svg)](https://community.gazebosim.org)
 [![Hex.pm](https://img.shields.io/hexpm/l/plug.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
@@ -80,7 +80,7 @@ $ sudo apt install cmake
 To build and install from source, you can clone the repo and use cmake to install the modules as though this is a regular cmake project:
 
 ```
-$ git clone https://github.com/ignitionrobotics/ign-cmake
+$ git clone https://github.com/gazebosim/gz-cmake
 $ cd ign-cmake
 $ mkdir build
 $ cd build
@@ -93,13 +93,13 @@ Replace `/path/to/install/dir` to whatever directory you want to install this pa
 
 # Usage
 
-Documentation can be accessed at https://ignitionrobotics.org/libs/cmake
+Documentation can be accessed at https://gazebosim.org/libs/cmake
 [Examples](examples/) are available in this repository.
 [Tutorials](tutorials/) are also available in this repository.
 
 # Documentation
 
-Documentation for `ignition-cmake` can be found within the source code, and also in the [MIGRATION.md guide](https://github.com/ignitionrobotics/ign-cmake/blob/master/MIGRATION.md).
+Documentation for `ignition-cmake` can be found within the source code, and also in the [MIGRATION.md guide](https://github.com/gazebosim/gz-cmake/blob/master/MIGRATION.md).
 
 # Testing
 
@@ -125,17 +125,17 @@ $ make test
 # Contributing
 
 Please see
-[CONTRIBUTING.md](https://ignitionrobotics.org/docs/all/contributing).
+[CONTRIBUTING.md](https://gazebosim.org/docs/all/contributing).
 
 # Code of Conduct
 
 Please see
-[CODE_OF_CONDUCT.md](https://github.com/ignitionrobotics/ign-gazebo/blob/main/CODE_OF_CONDUCT.md).
+[CODE_OF_CONDUCT.md](https://github.com/gazebosim/gz-sim/blob/main/CODE_OF_CONDUCT.md).
 
 # Versioning
 
-This library uses [Semantic Versioning](https://semver.org/). Additionally, this library is part of the [Ignition Robotics project](https://ignitionrobotics.org) which periodically releases a versioned set of compatible and complementary libraries. See the [Ignition Robotics website](https://ignitionrobotics.org) for version and release information.
+This library uses [Semantic Versioning](https://semver.org/). Additionally, this library is part of the [Gazebo project](https://gazebosim.org) which periodically releases a versioned set of compatible and complementary libraries. See the [Gazebo website](https://gazebosim.org) for version and release information.
 
 # License
 
-This library is licensed under [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0). See also the [LICENSE](https://github.com/ignitionrobotics/ign-cmake/blob/main/LICENSE) file.
+This library is licensed under [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0). See also the [LICENSE](https://github.com/gazebosim/gz-cmake/blob/main/LICENSE) file.
