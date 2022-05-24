@@ -359,8 +359,8 @@ macro(gz_find_package PACKAGE_NAME)
 
       # Here we will set up the pkgconfig entry for this package. Ordinarily,
       # these variables should be set by the ign-cmake custom find-module for
-      # the package which should use ign_pkg_check_modules[_quiet] or
-      # ign_pkg_config_library_entry. However, that will not be performed by
+      # the package which should use gz_pkg_check_modules[_quiet] or
+      # gz_pkg_config_library_entry. However, that will not be performed by
       # third-party dependencies that provide their own find-module or their own
       # cmake config-module. Therefore, we provide the option of specifying
       # pkgconfig information through the call to gz_find_package. This also

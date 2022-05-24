@@ -24,7 +24,7 @@ if (NOT CMAKE_GENERATOR MATCHES "Visual Studio")
   list(APPEND example_directories
     use_component_depsA
     use_component_depsB
-    #use_component_depsC
+    use_component_depsC
   )
 endif()
 
