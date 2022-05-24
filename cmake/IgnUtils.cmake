@@ -1815,7 +1815,7 @@ macro(ign_add_resources path_to_resources)
   ${path_to_resources}
   DESTINATION share/${PROJECT_NAME})
 
-  list(APPEND resources_path  ${path_to_resources} )
+  list(APPEND resources_path ${path_to_resources})
 
 endmacro() 
 #####################################################
@@ -1823,21 +1823,21 @@ endmacro()
 #Get's path from other macros and creates hooks to export them
 #Currently it creates colcon.pkg along with hooks.dsv for exporting them
 #Mechanisms for plain cmake packages is under development 
-macro(ign_environment_hook )
+macro(ign_environment_hook)
   list(REMOVE_DUPLICATES resources_path)
   list(REMOVE_DUPLICATES plugins_path)
 
 
   foreach(resource_path ${resources_path})
-    file( APPEND  ${CMAKE_CURRENT_SOURCE_DIR}/hooks/hook.dsv.in 
+    file(APPEND ${CMAKE_CURRENT_SOURCE_DIR}/hooks/hook.dsv.in
     "prepend-non-duplicate;IGN_GAZEBO_RESOURCE_PATH;@CMAKE_INSTALL_PREFIX@/share/@PROJECT_NAME@/${resource_path}\n")
   endforeach()
   foreach(plugin_path ${plugins_path})
-    file( APPEND  ${CMAKE_CURRENT_SOURCE_DIR}/hooks/hook.dsv.in 
+    file(APPEND ${CMAKE_CURRENT_SOURCE_DIR}/hooks/hook.dsv.in 
     "prepend-non-duplicate;IGN_GAZEBO_SYSTEM_PLUGIN_PATH;@CMAKE_INSTALL_PREFIX@/${plugin_path}\n")
   endforeach()
-  file( WRITE ${CMAKE_CURRENT_SOURCE_DIR}/colcon.pkg "{\n  \"hooks\": [\"share/my_package/hooks/hook.dsv\"]\n}" )
-  file( APPEND  ${CMAKE_CURRENT_SOURCE_DIR}/hooks/hook.dsv.in 
+  file(WRITE ${CMAKE_CURRENT_SOURCE_DIR}/colcon.pkg "{\n  \"hooks\": [\"share/my_package/hooks/hook.dsv\"]\n}")
+  file(APPEND ${CMAKE_CURRENT_SOURCE_DIR}/hooks/hook.dsv.in 
   "prepend-non-duplicate;LD_LIBRARY_PATH;@CMAKE_INSTALL_PREFIX@/lib\n")
   
 
@@ -1857,7 +1857,7 @@ endmacro()
 #For adding target_link_libraries or target_include_directories for a specific plugin 
 #set ${PLUGIN_NAME}_(PUBLIC/PRIVATE)_(LIBRARIES/DIRECTORIES) as required plugins or directories in your package
 
-macro(ign_add_plugins path_to_plugin )  
+macro(ign_add_plugins path_to_plugin )
 
   file(GLOB source_list CONFIGURE_DEPENDS
       "${path_to_plugin}/*.cc"
@@ -1879,20 +1879,20 @@ macro(ign_add_plugins path_to_plugin )
 
     set_property(TARGET ${PLUGIN_NAME} PROPERTY CXX_STANDARD 17)
 
-    target_link_libraries(${PLUGIN_NAME} 
+    target_link_libraries(${PLUGIN_NAME}
       PUBLIC
         ${ign_add_plugin_COMMON_PUBLIC_LIBRARIES}
         ${${PLUGIN_NAME}_PUBLIC_LIBRARIES}
       PRIVATE
-        ${ign_add_plugin_COMMON_PRIVATE_LINK_LIBRARIES}   
+        ${ign_add_plugin_COMMON_PRIVATE_LINK_LIBRARIES}
         ${${PLUGIN_NAME}_PRIVATE_LIBRARIES}
     )
-    target_include_directories(${PLUGIN_NAME} 
+    target_include_directories(${PLUGIN_NAME}
       PUBLIC
         ${ign_add_plugin_COMMON_PUBLIC_DIRECTORIES}
         ${${PLUGIN_NAME}_PUBLIC_DIRECTORIES}
       PRIVATE
-        ${ign_add_plugin_COMMON_PRIVATE_LINK_DIRECTORIES}   
+        ${ign_add_plugin_COMMON_PRIVATE_LINK_DIRECTORIES}
         ${${PLUGIN_NAME}_PRIVATE_DIRECTORIES}
     )    
 
@@ -1900,19 +1900,19 @@ macro(ign_add_plugins path_to_plugin )
       install(
       TARGETS ${PLUGIN_NAME}
       DESTINATION ${ign_add_plugin_INSTALL_DESTINATION})
-      list(APPEND plugins_path ${ign_add_plugin_INSTALL_DESTINATION} )
+      list(APPEND plugins_path ${ign_add_plugin_INSTALL_DESTINATION})
 
     else()
       install(
       TARGETS ${PLUGIN_NAME}
       DESTINATION lib)
-      list(APPEND plugins_path "lib" )
+      list(APPEND plugins_path "lib")
 
-    endif()  
+    endif()
 
 
   endforeach()
-  
+
 endmacro()
 
 #####################################################
@@ -1921,7 +1921,7 @@ endmacro()
 #For adding target_link_libraries or target_include_directories for a specific executable
 #set ${EXECUTABLE_NAME}_(PUBLIC/PRIVATE)_(LIBRARIES/DIRECTORIES) as required plugins or directories in your package
 
-macro(ign_add_executables path_to_executable )  
+macro(ign_add_executables path_to_executable)
 
   file(GLOB source_list CONFIGURE_DEPENDS
       "${path_to_executable}/*.cc"
@@ -1933,28 +1933,28 @@ macro(ign_add_executables path_to_executable )
   _ign_cmake_parse_arguments(ign_add_executable "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   foreach(executable_PATH ${source_list})
-    get_filename_component(executable_NAME "${executable_PATH}" NAME_WLE )
-    add_executable(${executable_NAME}  ${executable_PATH})
+    get_filename_component(executable_NAME "${executable_PATH}" NAME_WLE)
+    add_executable(${executable_NAME} ${executable_PATH})
 
 
     set_property(TARGET ${executable_NAME} PROPERTY CXX_STANDARD 17)
 
-    target_link_libraries(${executable_NAME} 
+    target_link_libraries(${executable_NAME}
       PUBLIC
         ${ign_add_executable_COMMON_PUBLIC_LIBRARIES}
         ${${executable_NAME}_PUBLIC_LIBRARIES}
       PRIVATE
-        ${ign_add_executable_COMMON_PRIVATE_LINK_LIBRARIES}   
+        ${ign_add_executable_COMMON_PRIVATE_LINK_LIBRARIES}
         ${${executable_NAME}_PRIVATE_LIBRARIES}
     )
-    target_include_directories(${executable_NAME} 
+    target_include_directories(${executable_NAME}
       PUBLIC
         ${ign_add_executable_COMMON_PUBLIC_DIRECTORIES}
         ${${executable_NAME}_PUBLIC_DIRECTORIES}
       PRIVATE
-        ${ign_add_executable_COMMON_PRIVATE_LINK_DIRECTORIES}   
+        ${ign_add_executable_COMMON_PRIVATE_LINK_DIRECTORIES}
         ${${executable_NAME}_PRIVATE_DIRECTORIES}
-    )    
+    ) 
 
     if(ign_add_executable_INSTALL_DESTINATION)
       install(
@@ -1967,7 +1967,7 @@ macro(ign_add_executables path_to_executable )
       DESTINATION bin)
 
 
-    endif()  
+    endif()
 
 
   endforeach()
