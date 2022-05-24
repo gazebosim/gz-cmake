@@ -65,17 +65,17 @@ find_dependency(ignition-cmake@IGNITION_CMAKE_VERSION_MAJOR@)
 # Set the REQUIRED flag for the find_package(~) calls on this project's
 # dependencies.
 if(@PKG_NAME@_FIND_REQUIRED)
-  set(ign_package_required REQUIRED)
+  set(gz_package_required REQUIRED)
 else()
-  set(ign_package_required "")
+  set(gz_package_required "")
 endif()
 
 # Set the QUIET flag for the find_package(~) calls on this project's
 # dependencies.
 if(@PKG_NAME@_FIND_QUIETLY)
-  set(ign_package_quiet QUIET)
+  set(gz_package_quiet QUIET)
 else()
-  set(ign_package_quiet "")
+  set(gz_package_quiet "")
 endif()
 
 # --------------------------------
@@ -166,7 +166,7 @@ foreach(component ${@PKG_NAME@_FIND_COMPONENTS})
     # If this is an optional component, use find_package(~) instead of
     # find_dependency(~) so we can ensure that the use of REQUIRED does not get
     # forwarded to it.
-    find_package(@PKG_NAME@-${component} @PROJECT_VERSION_FULL_NO_SUFFIX@ EXACT ${ign_package_quiet})
+    find_package(@PKG_NAME@-${component} @PROJECT_VERSION_FULL_NO_SUFFIX@ EXACT ${gz_package_quiet})
 
   endif()
 

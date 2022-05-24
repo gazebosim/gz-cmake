@@ -304,12 +304,12 @@ macro(gz_find_package PACKAGE_NAME)
     endif()
 
     # NOTE (MXG): 7 seems to be the number of escapes required to get
-    # "${ign_package_required}" and "${ign_package_quiet}" to show up correctly
+    # "${gz_package_required}" and "${gz_package_quiet}" to show up correctly
     # as strings in the final config-file outputs. It is unclear to me why the
     # escapes get collapsed exactly three times, so it is possible that any
     # changes to this script could cause a different number of escapes to be
     # necessary. Please use caution when modifying this script.
-    gz_string_append(${PACKAGE_NAME}_dependency_args "\\\\\\\${ign_package_quiet} \\\\\\\${ign_package_required}")
+    gz_string_append(${PACKAGE_NAME}_dependency_args "\\\\\\\${gz_package_quiet} \\\\\\\${gz_package_required}")
 
     # If we have specified components of the dependency, mention those.
     if(gz_find_package_COMPONENTS)
@@ -1304,10 +1304,10 @@ function(ign_add_component component_name)
   if(NOT gz_add_component_INDEPENDENT_FROM_PROJECT_LIB)
 
     # Add the core library as a cmake dependency for this component
-    # NOTE: It seems we need to triple-escape "${ign_package_required}" and
-    #       "${ign_package_quiet}" here.
+    # NOTE: It seems we need to triple-escape "${gz_package_required}" and
+    #       "${gz_package_quiet}" here.
     gz_string_append(${component_name}_CMAKE_DEPENDENCIES
-      "if(NOT ${PKG_NAME}_CONFIG_INCLUDED)\n  find_package(${PKG_NAME} ${PROJECT_VERSION_FULL_NO_SUFFIX} EXACT \\\${ign_package_quiet} \\\${ign_package_required})\nendif()" DELIM "\n")
+      "if(NOT ${PKG_NAME}_CONFIG_INCLUDED)\n  find_package(${PKG_NAME} ${PROJECT_VERSION_FULL_NO_SUFFIX} EXACT \\\${gz_package_quiet} \\\${gz_package_required})\nendif()" DELIM "\n")
 
     # Choose what type of pkgconfig entry the core library belongs to
     set(lib_pkgconfig_type ${component_name}_PKGCONFIG_REQUIRES)
@@ -1322,7 +1322,7 @@ function(ign_add_component component_name)
 
   if(gz_add_component_DEPENDS_ON_COMPONENTS)
     gz_string_append(${component_name}_CMAKE_DEPENDENCIES
-      "find_package(${PKG_NAME} ${PROJECT_VERSION_FULL_NO_SUFFIX} EXACT \\\${ign_package_quiet} \\\${ign_package_required} COMPONENTS ${gz_add_component_DEPENDS_ON_COMPONENTS})" DELIM "\n")
+      "find_package(${PKG_NAME} ${PROJECT_VERSION_FULL_NO_SUFFIX} EXACT \\\${gz_package_quiet} \\\${gz_package_required} COMPONENTS ${gz_add_component_DEPENDS_ON_COMPONENTS})" DELIM "\n")
   endif()
 
   #------------------------------------
