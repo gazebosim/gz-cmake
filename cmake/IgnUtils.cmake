@@ -109,7 +109,7 @@
 #  ==========================================================================
 #  The following arguments pertain to the automatic generation of your
 #  project's pkgconfig file. Ideally, this information should be provided
-#  automatically by ignition-cmake through the cmake find-module that is written
+#  automatically by gz-cmake through the cmake find-module that is written
 #  for your dependency. However, if your package gets distributed with its own
 #  cmake config-file or find-module, then it might not automatically set this
 #  information. Therefore, we provide the ability to set it through your call to
@@ -827,7 +827,7 @@ function(gz_install_all_headers)
       message(FATAL_ERROR
         "Developer error: You are missing the file [${config_header_in}]! "
         "Did you forget to move it from your project's cmake directory while "
-        "migrating to the use of ignition-cmake?")
+        "migrating to the use of gz-cmake?")
     endif()
 
     # Generate the "config" header that describes our project configuration
@@ -1425,14 +1425,14 @@ endfunction()
 # Used internally by _gz_add_library_or_component to report argument errors
 macro(_gz_add_library_or_component_arg_error missing_arg)
 
-  message(FATAL_ERROR "ignition-cmake developer error: Must specify "
+  message(FATAL_ERROR "gz-cmake developer error: Must specify "
                       "${missing_arg} to _gz_add_library_or_component!")
 
 endmacro()
 
 #################################################
-# This is only meant for internal use by ignition-cmake. If you are a consumer
-# of ignition-cmake, please use gz_create_core_library(~) or
+# This is only meant for internal use by gz-cmake. If you are a consumer
+# of gz-cmake, please use gz_create_core_library(~) or
 # gz_add_component(~) instead of this.
 #
 # _gz_add_library_or_component(LIB_NAME <lib_name>
@@ -1822,7 +1822,7 @@ macro(gz_build_tests)
 
   if(NOT gz_build_tests_TYPE)
     # If you have encountered this error, you are probably migrating to the
-    # new ignition-cmake system. Be sure to also provide a SOURCES argument
+    # new gz-cmake system. Be sure to also provide a SOURCES argument
     # when calling gz_build_tests.
     message(FATAL_ERROR "Developer error: You must specify a TYPE for your tests!")
   endif()
@@ -1933,7 +1933,7 @@ macro(_gz_cmake_parse_arguments prefix options oneValueArgs multiValueArgs)
       "\nThe build script has specified some unrecognized arguments for ${prefix}(~):\n"
       "${${prefix}_UNPARSED_ARGUMENTS}\n"
       "Either the script has a typo, or it is using an unexpected version of ign-cmake. "
-      "The version of ign-cmake currently being used is ${ignition-cmake${IGNITION_CMAKE_VERSION_MAJOR}_VERSION}\n")
+      "The version of gz-cmake currently being used is ${gz-cmake${IGNITION_CMAKE_VERSION_MAJOR}_VERSION}\n")
 
   endif()
 

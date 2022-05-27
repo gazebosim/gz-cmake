@@ -175,10 +175,10 @@ endmacro()
 # component's name.
 #
 # NOTE: This will be called automatically by gz_create_core_library(~) and
-#       gz_add_component(~), so users of ignition-cmake should not call this
+#       gz_add_component(~), so users of gz-cmake should not call this
 #       function.
 #
-# NOTE: For ignition-cmake developers, the variables needed by ignition.pc.in or
+# NOTE: For gz-cmake developers, the variables needed by ignition.pc.in or
 #       ignition-component.pc.in MUST be set before calling this function.
 #
 # Create a pkgconfig file for your target, and install it.
@@ -235,10 +235,10 @@ endfunction()
 # can be used to specify the prefix of these variables.
 #
 # NOTE: This will be called automatically by gz_create_core_library(~) and
-#       gz_add_component(~), so users of ignition-cmake should not call this
+#       gz_add_component(~), so users of gz-cmake should not call this
 #       function.
 #
-# NOTE: For ignition-cmake developers, some of the variables needed by
+# NOTE: For gz-cmake developers, some of the variables needed by
 #       ignition-config.cmake.in or ignition-component-config.cmake.in MUST be
 #       set before calling this function. The following variables are set
 #       automatically by this function:

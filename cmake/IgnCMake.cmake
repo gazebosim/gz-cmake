@@ -20,7 +20,7 @@
 # limitations under the License.
 
 #============================================================================
-# ignition-cmake modules
+# gz-cmake modules
 #============================================================================
 include(IgnUtils)
 include(IgnConfigureProject)
