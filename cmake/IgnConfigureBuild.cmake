@@ -198,9 +198,9 @@ macro(gz_configure_build)
     #--------------------------------------
     # Initialize the list of header directories that should be parsed by doxygen
     if(EXISTS "${CMAKE_SOURCE_DIR}/include")
-      set(ign_doxygen_component_input_dirs "${CMAKE_SOURCE_DIR}/include")
+      set(gz_doxygen_component_input_dirs "${CMAKE_SOURCE_DIR}/include")
     else()
-      set(ign_doxygen_component_input_dirs "")
+      set(gz_doxygen_component_input_dirs "")
     endif()
 
     #--------------------------------------
@@ -222,7 +222,7 @@ macro(gz_configure_build)
           # backslashes in order to get a \ plus a newline. This might be
           # dependent on the implementation of gz_string_append, so be careful
           # when changing the implementation of that function.
-          gz_string_append(ign_doxygen_component_input_dirs
+          gz_string_append(gz_doxygen_component_input_dirs
             "${CMAKE_CURRENT_LIST_DIR}/${component}/include"
             DELIM " \\\\\\\\\n  ")
         endif()

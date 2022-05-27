@@ -64,12 +64,12 @@
 // TICKTOCK IGNITION ========================================================
 // TODO(CH3): Remove on ticktock, supports defining IGNITION macros if a lib
 //            is using GZ_ prefixed export macros
-#ifndef @_ign_export_base@_VISIBLE
-#define @_ign_export_base@_VISIBLE @export_base@_VISIBLE
+#ifndef @_gz_export_base@_VISIBLE
+#define @_gz_export_base@_VISIBLE @export_base@_VISIBLE
 #endif
 
-#ifndef @_ign_export_base@_HIDDEN
-#define @_ign_export_base@_HIDDEN @export_base@_HIDDEN
+#ifndef @_gz_export_base@_HIDDEN
+#define @_gz_export_base@_HIDDEN @export_base@_HIDDEN
 #endif
 
 #ifndef IGN_DEPRECATED_ALL_VERSIONS

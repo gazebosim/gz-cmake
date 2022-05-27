@@ -54,10 +54,10 @@ install(DIRECTORY tools/
 
 #--------------------------------------
 # Create configuration and installation variables
-set(ign_config_input  "${CMAKE_CURRENT_SOURCE_DIR}/config/ignition-cmake-config.cmake.in")
-set(ign_config_output "${PROJECT_NAME_LOWER}-config.cmake")
-set(ign_version_output "${PROJECT_NAME_LOWER}-config-version.cmake")
-set(ign_config_install_dir "${CMAKE_INSTALL_DATAROOTDIR}/cmake/${PROJECT_NAME_LOWER}")
+set(gz_config_input  "${CMAKE_CURRENT_SOURCE_DIR}/config/ignition-cmake-config.cmake.in")
+set(gz_config_output "${PROJECT_NAME_LOWER}-config.cmake")
+set(gz_version_output "${PROJECT_NAME_LOWER}-config-version.cmake")
+set(gz_config_install_dir "${CMAKE_INSTALL_DATAROOTDIR}/cmake/${PROJECT_NAME_LOWER}")
 set(ign_pkgconfig_input "${CMAKE_CURRENT_SOURCE_DIR}/config/ignition-cmake.pc.in")
 set(ign_pkgconfig_output "${CMAKE_BINARY_DIR}/ignition-cmake${PROJECT_VERSION_MAJOR}.pc")
 set(ign_pkgconfig_install_dir "${IGN_LIB_INSTALL_DIR}/pkgconfig")
@@ -69,24 +69,24 @@ set(simple_utilities_import_name ${PROJECT_EXPORT_NAME}::utilities)
 #--------------------------------------
 # Configure and install the config file
 configure_package_config_file(
-  ${ign_config_input}
-  ${ign_config_output}
-  INSTALL_DESTINATION ${ign_config_install_dir}
+  ${gz_config_input}
+  ${gz_config_output}
+  INSTALL_DESTINATION ${gz_config_install_dir}
   PATH_VARS IGN_DATA_INSTALL_DIR
   NO_CHECK_REQUIRED_COMPONENTS_MACRO)
 
 #--------------------------------------
 # Configure and install the version file
 write_basic_package_version_file(
-  ${CMAKE_CURRENT_BINARY_DIR}/${ign_version_output}
+  ${CMAKE_CURRENT_BINARY_DIR}/${gz_version_output}
   VERSION "${PROJECT_VERSION_FULL_NO_SUFFIX}"
   COMPATIBILITY SameMajorVersion)
 
 install(
   FILES
-    ${CMAKE_CURRENT_BINARY_DIR}/${ign_config_output}
-    ${CMAKE_CURRENT_BINARY_DIR}/${ign_version_output}
-  DESTINATION ${ign_config_install_dir}
+    ${CMAKE_CURRENT_BINARY_DIR}/${gz_config_output}
+    ${CMAKE_CURRENT_BINARY_DIR}/${gz_version_output}
+  DESTINATION ${gz_config_install_dir}
   COMPONENT cmake)
 
 #--------------------------------------
@@ -127,7 +127,7 @@ export(
 
 install(
   EXPORT ${ign_utilities_target}
-  DESTINATION ${ign_config_install_dir}
+  DESTINATION ${gz_config_install_dir}
   FILE ${ign_utilities_target_output_filename}
   NAMESPACE ${PROJECT_EXPORT_NAME}::)
 
@@ -141,7 +141,7 @@ install(
 #============================================================================
 # Install the files for this package
 #============================================================================
-set(ign_modules_install_dir "${ign_config_install_dir}/cmake${PROJECT_VERSION_MAJOR}")
+set(ign_modules_install_dir "${gz_config_install_dir}/cmake${PROJECT_VERSION_MAJOR}")
 
 file(GLOB modules "cmake/*.cmake")
 file(GLOB templates "cmake/*.in")

@@ -23,15 +23,15 @@
 # This file is provided under the "BSD-style" License
 ########################################
 
-set(ign_quiet_arg)
+set(gz_quiet_arg)
 if(IgnBullet_FIND_QUIETLY)
-  set(ign_quiet_arg QUIET)
+  set(gz_quiet_arg QUIET)
 endif()
 
 # Bullet. Force MODULE mode to use the FindBullet.cmake file distributed with
 # CMake. Otherwise, we may end up using the BulletConfig.cmake file distributed
 # with Bullet, which uses relative paths and may break transitive dependencies.
-find_package(Bullet MODULE ${ign_quiet_arg})
+find_package(Bullet MODULE ${gz_quiet_arg})
 
 set(IgnBullet_FOUND false)
 # create Bullet target
