@@ -1827,7 +1827,6 @@ macro(ign_environment_hook)
   list(REMOVE_DUPLICATES resources_path)
   list(REMOVE_DUPLICATES plugins_path)
 
-
   foreach(resource_path ${resources_path})
     file(APPEND ${CMAKE_CURRENT_SOURCE_DIR}/hooks/hook.dsv.in
     "prepend-non-duplicate;IGN_GAZEBO_RESOURCE_PATH;@CMAKE_INSTALL_PREFIX@/share/@PROJECT_NAME@/${resource_path}\n")
@@ -1836,10 +1835,9 @@ macro(ign_environment_hook)
     file(APPEND ${CMAKE_CURRENT_SOURCE_DIR}/hooks/hook.dsv.in 
     "prepend-non-duplicate;IGN_GAZEBO_SYSTEM_PLUGIN_PATH;@CMAKE_INSTALL_PREFIX@/${plugin_path}\n")
   endforeach()
-  file(WRITE ${CMAKE_CURRENT_SOURCE_DIR}/colcon.pkg "{\n  \"hooks\": [\"share/my_package/hooks/hook.dsv\"]\n}")
+  file(WRITE ${CMAKE_CURRENT_SOURCE_DIR}/colcon.pkg "{\n  \"hooks\": [\"share/${CMAKE_PROJECT_NAME}/hooks/hook.dsv\"]\n}")
   file(APPEND ${CMAKE_CURRENT_SOURCE_DIR}/hooks/hook.dsv.in 
   "prepend-non-duplicate;LD_LIBRARY_PATH;@CMAKE_INSTALL_PREFIX@/lib\n")
-  
 
   configure_file(
     "hooks/hook.dsv.in"
@@ -1910,7 +1908,6 @@ macro(ign_add_plugins path_to_plugin )
 
     endif()
 
-
   endforeach()
 
 endmacro()
@@ -1935,7 +1932,6 @@ macro(ign_add_executables path_to_executable)
   foreach(executable_PATH ${source_list})
     get_filename_component(executable_NAME "${executable_PATH}" NAME_WLE)
     add_executable(${executable_NAME} ${executable_PATH})
-
 
     set_property(TARGET ${executable_NAME} PROPERTY CXX_STANDARD 17)
 
@@ -1966,9 +1962,7 @@ macro(ign_add_executables path_to_executable)
       TARGETS ${executable_NAME}
       DESTINATION bin)
 
-
     endif()
-
 
   endforeach()
   
