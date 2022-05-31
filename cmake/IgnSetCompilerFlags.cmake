@@ -127,11 +127,14 @@ macro(_gz_setup_gcc_or_clang)
     set(CMAKE_CXX_VISIBILITY_PRESET "default")
   endif()
 
-
+  # We add these flags depending on whether the compiler can support them
+  # -Wno-gnu-variadic-macro-arguments: Noisy warning with newer versions of
+  #   gtest and pybind11, ref https://github.com/google/googletest/issues/2271
   _gz_filter_valid_compiler_options(
     CUSTOM_ALL_FLAGS
         -Wall -Wextra -Wno-long-long -Wno-unused-value -Wfloat-equal
         -Wshadow -Winit-self -Wswitch-default -Wmissing-include-dirs -pedantic
+        -Wno-gnu-zero-variadic-macro-arguments
         )
 
   # -ggdb3: Produce comprehensive debug information that can be utilized by gdb
