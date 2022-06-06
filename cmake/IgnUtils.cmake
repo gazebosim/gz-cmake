@@ -1824,25 +1824,50 @@ endmacro()
 #Currently it creates colcon.pkg along with hooks.dsv for exporting them
 #Mechanisms for plain cmake packages is under development 
 macro(ign_environment_hook)
+ 
+  file(APPEND ${CMAKE_CURRENT_SOURCE_DIR}/hooks/hook.dsv.in "")
+
+  file(READ ${CMAKE_CURRENT_SOURCE_DIR}/hooks/hook.dsv.in current_text)
+  file(WRITE hi22.txt ${current_text})
+  if(NOT "${current_text}" STREQUAL "")
+    string(REPLACE "\n" ";" current_text ${current_text})
+  endif()
+  
   list(REMOVE_DUPLICATES resources_path)
   list(REMOVE_DUPLICATES plugins_path)
 
   foreach(resource_path ${resources_path})
-    file(APPEND ${CMAKE_CURRENT_SOURCE_DIR}/hooks/hook.dsv.in
-    "prepend-non-duplicate;IGN_GAZEBO_RESOURCE_PATH;@CMAKE_INSTALL_PREFIX@/share/@PROJECT_NAME@/${resource_path}\n")
+    if(NOT "prepend-non-duplicateIGN_GAZEBO_RESOURCE_PATH@CMAKE_INSTALL_PREFIX@/share/@PROJECT_NAME@/${resource_path}" IN_LIST current_text)
+     
+      file(APPEND ${CMAKE_CURRENT_SOURCE_DIR}/hooks/hook.dsv.in
+      "prepend-non-duplicate;IGN_GAZEBO_RESOURCE_PATH;@CMAKE_INSTALL_PREFIX@/share/@PROJECT_NAME@/${resource_path}\n")
+  
+    endif()  
   endforeach()
+
   foreach(plugin_path ${plugins_path})
-    file(APPEND ${CMAKE_CURRENT_SOURCE_DIR}/hooks/hook.dsv.in 
-    "prepend-non-duplicate;IGN_GAZEBO_SYSTEM_PLUGIN_PATH;@CMAKE_INSTALL_PREFIX@/${plugin_path}\n")
+    if(NOT "prepend-non-duplicateIGN_GAZEBO_SYSTEM_PLUGIN_PATH@CMAKE_INSTALL_PREFIX@/${plugin_path}" IN_LIST current_text)
+
+      file(APPEND ${CMAKE_CURRENT_SOURCE_DIR}/hooks/hook.dsv.in 
+      "prepend-non-duplicate;IGN_GAZEBO_SYSTEM_PLUGIN_PATH;@CMAKE_INSTALL_PREFIX@/${plugin_path}\n")
+    
+    endif()
   endforeach()
+
   file(WRITE ${CMAKE_CURRENT_SOURCE_DIR}/colcon.pkg "{\n  \"hooks\": [\"share/${CMAKE_PROJECT_NAME}/hooks/hook.dsv\"]\n}")
-  file(APPEND ${CMAKE_CURRENT_SOURCE_DIR}/hooks/hook.dsv.in 
-  "prepend-non-duplicate;LD_LIBRARY_PATH;@CMAKE_INSTALL_PREFIX@/lib\n")
+  
+  if(NOT "prepend-non-duplicateLD_LIBRARY_PATH@CMAKE_INSTALL_PREFIX@/lib" IN_LIST current_text)
+
+    file(APPEND ${CMAKE_CURRENT_SOURCE_DIR}/hooks/hook.dsv.in 
+    "prepend-non-duplicate;LD_LIBRARY_PATH;@CMAKE_INSTALL_PREFIX@/lib\n")
+
+  endif()
 
   configure_file(
     "hooks/hook.dsv.in"
     "${CMAKE_CURRENT_BINARY_DIR}/hooks/hook.dsv" @ONLY
   )
+
   install(DIRECTORY
   ${CMAKE_CURRENT_BINARY_DIR}/hooks
   DESTINATION share/${PROJECT_NAME})
@@ -1854,17 +1879,28 @@ endmacro()
 #Also provides the path to ign_environment_hook()
 #For adding target_link_libraries or target_include_directories for a specific plugin 
 #set ${PLUGIN_NAME}_(PUBLIC/PRIVATE)_(LIBRARIES/DIRECTORIES) as required plugins or directories in your package
+#The deafult file type is .cc for plugins,you can add other file types using PLUGIN_EXTENSION argument
 
 macro(ign_add_plugins path_to_plugin )
 
-  file(GLOB source_list CONFIGURE_DEPENDS
-      "${path_to_plugin}/*.cc"
-  )
-
   set(oneValueArgs INSTALL_DESTINATION TYPE)
-  set(multiValueArgs COMMON_PUBLIC_LIBRARIES COMMON_PRIVATE_LINK_LIBRARIES COMMON_PUBLIC_DIRECTORIES COMMON_PRIVATE_LINK_DIRECTORIES)
+  set(multiValueArgs COMMON_PUBLIC_LIBRARIES COMMON_PRIVATE_LINK_LIBRARIES COMMON_PUBLIC_DIRECTORIES COMMON_PRIVATE_LINK_DIRECTORIES PLUGIN_EXTENSION)
 
   _ign_cmake_parse_arguments(ign_add_plugin "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+  if(NOT ign_add_plugin_PLUGIN_EXTENSION)
+    list(APPEND ign_add_plugin_PLUGIN_EXTENSION ".cc")
+  endif()
+
+  foreach(EXTENSION ${ign_add_plugin_PLUGIN_EXTENSION})
+
+    file(GLOB source_list_${EXTENSION} CONFIGURE_DEPENDS
+    "${path_to_plugin}/*${EXTENSION}"
+    )
+
+    list(APPEND source_list ${source_list_${EXTENSION}})
+
+  endforeach() 
 
   foreach(PLUGIN_PATH ${source_list})
     get_filename_component(PLUGIN_NAME "${PLUGIN_PATH}" NAME_WLE )
@@ -1912,22 +1948,43 @@ macro(ign_add_plugins path_to_plugin )
 
 endmacro()
 
+################################################3
+#ign_export_plugin(path_to_install_destination)
+#Exports the provided installation path of plugin
+
+macro(ign_export_plugin path_to_install_destination)
+
+  list(APPEND plugins_path ${ign_export_plugin_INSTALL_DESTINATION})
+
+endmacro()  
+
 #####################################################
 #ign_add_executables(path_to_executable)
 #Installs all the executables inside the folder using various arguments from the user
 #For adding target_link_libraries or target_include_directories for a specific executable
 #set ${EXECUTABLE_NAME}_(PUBLIC/PRIVATE)_(LIBRARIES/DIRECTORIES) as required plugins or directories in your package
+#The deafult file type is .cc for executables,you can add other file types using EXECUTABLES_EXTENSION argument
 
 macro(ign_add_executables path_to_executable)
 
-  file(GLOB source_list CONFIGURE_DEPENDS
-      "${path_to_executable}/*.cc"
-  )
-
   set(oneValueArgs INSTALL_DESTINATION)
-  set(multiValueArgs COMMON_PUBLIC_LIBRARIES COMMON_PRIVATE_LINK_LIBRARIES COMMON_PUBLIC_DIRECTORIES COMMON_PRIVATE_LINK_DIRECTORIES)
+  set(multiValueArgs COMMON_PUBLIC_LIBRARIES COMMON_PRIVATE_LINK_LIBRARIES COMMON_PUBLIC_DIRECTORIES COMMON_PRIVATE_LINK_DIRECTORIES EXECUTABLE_EXTENSION)
 
   _ign_cmake_parse_arguments(ign_add_executable "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+  if(NOT ign_add_executable_EXECUTABLE_EXTENSION)
+    list(APPEND ign_add_executable_EXECUTABLE_EXTENSION ".cc")
+  endif()
+
+  foreach(EXTENSION ${ign_add_executable_EXECUTABLE_EXTENSION})
+
+    file(GLOB source_list_${EXTENSION} CONFIGURE_DEPENDS
+    "${path_to_executable}/*${EXTENSION}"
+    )
+
+    list(APPEND source_list ${source_list_${EXTENSION}})
+
+  endforeach() 
 
   foreach(executable_PATH ${source_list})
     get_filename_component(executable_NAME "${executable_PATH}" NAME_WLE)
