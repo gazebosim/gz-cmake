@@ -16,7 +16,15 @@ if(${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.19")
   set(IGN_PYTHON_VERSION "" CACHE STRING
     "Specify specific Python3 version to use ('major.minor' or 'versionMin...[<]versionMax')")
 
-  find_package(Python3 ${IGN_PYTHON_VERSION} QUIET)
+  if (NOT ${IGN_PYTHON3_FOUND})
+    find_package(Python3 ${IGN_PYTHON_VERSION} QUIET)
+
+    if (${Python3_FOUND})
+      set(IGN_PYTHON_FOUND "True" CACHE INTERNAL)
+    endif()
+  endif()
+
+
 elseif(${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.12")
   # no support for finding specific versions
   find_package(Python3 QUIET)
