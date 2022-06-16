@@ -16,7 +16,7 @@
 ########################################
 # Find libswscale format
 include(IgnPkgConfig)
-ign_pkg_check_modules_quiet(SWSCALE libswscale)
+gz_pkg_check_modules_quiet(SWSCALE libswscale)
 
 if(NOT SWSCALE_FOUND)
   include(IgnManualSearch)

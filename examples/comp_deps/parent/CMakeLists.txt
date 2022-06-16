@@ -1,5 +1,5 @@
 
-ign_add_component(parent INTERFACE
+gz_add_component(parent INTERFACE
   GET_TARGET_NAME parent)
 
 install(

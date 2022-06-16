@@ -24,7 +24,7 @@
 # support shared library versions of Protobuf.
 
 include(IgnPkgConfig)
-ign_pkg_config_entry(IgnProtobuf "protobuf >= ${IgnProtobuf_FIND_VERSION}")
+gz_pkg_config_entry(IgnProtobuf "protobuf >= ${IgnProtobuf_FIND_VERSION}")
 
 find_package(Protobuf ${IgnProtobuf_FIND_VERSION} QUIET CONFIG)
 

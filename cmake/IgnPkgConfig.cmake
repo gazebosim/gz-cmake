@@ -20,29 +20,35 @@
 # NOTE: This macro assumes that pkg-config is the only means by which you will
 #       be searching for the package. If you intend to continue searching in the
 #       event that pkg-config fails (or is unavailable), then you should instead
-#       call ign_pkg_check_modules_quiet(~).
+#       call gz_pkg_check_modules_quiet(~).
 #
 # NOTE: If you need to specify a version comparison for pkg-config, then your
 #       second argument must be wrapped in quotes. E.g. if you want to find
 #       version greater than or equal to 3.2.1 of a package called SomePackage
 #       which is known to pkg-config as libsomepackage, then you should call
-#       ign_pkg_check_modules as follows:
+#       gz_pkg_check_modules as follows:
 #
-#       ign_pkg_check_modules(SomePackage "libsomepackage >= 3.2.1")
+#       gz_pkg_check_modules(SomePackage "libsomepackage >= 3.2.1")
 #
 #       The quotes and spaces in the second argument are all very important in
 #       order to ensure that our auto-generated *.pc file gets filled in
 #       correctly. If you do not have any version requirements, then you can
 #       simply leave all of that out:
 #
-#       ign_pkg_check_modules(SomePackage libsomepackage)
+#       gz_pkg_check_modules(SomePackage libsomepackage)
 #
 #       Without the version comparison, the quotes and spacing are irrelevant.
-#       This usage note applies to ign_pkg_check_modules_quiet(~) as well.
+#       This usage note applies to gz_pkg_check_modules_quiet(~) as well.
 #
 macro(ign_pkg_check_modules package signature)
+  # TODO(chapulina) Enable warnings after all libraries have migrated.
+  # message(WARNING "ign_pkg_check_modules is deprecated, use gz_pkg_check_modules instead.")
 
-  ign_pkg_check_modules_quiet(${package} "${signature}" ${ARGN})
+  gz_pkg_check_modules(${package} ${signature})
+endmacro()
+macro(gz_pkg_check_modules package signature)
+
+  gz_pkg_check_modules_quiet(${package} "${signature}" ${ARGN})
 
   if(NOT PKG_CONFIG_FOUND)
     message(WARNING "The package [${package}] requires pkg-config in order to be found. "
@@ -56,23 +62,38 @@ macro(ign_pkg_check_modules package signature)
 
 endmacro()
 
-# This is an alternative to ign_pkg_check_modules(~) which you can use if you
+# This is an alternative to gz_pkg_check_modules(~) which you can use if you
 # have an alternative way to look for the package if pkg-config is not available
 # or cannot find the requested package. This will still setup the pkg-config
 # variables for you, whether or not pkg-config is available.
 #
-# For usage instructions, see ign_pkg_check_modules(~) above.
+# For usage instructions, see gz_pkg_check_modules(~) above.
 macro(ign_pkg_check_modules_quiet package signature)
+  # TODO(chapulina) Enable warnings after all libraries have migrated.
+  # message(WARNING "ign_pkg_check_modules_quiet is deprecated, use gz_pkg_check_modules_quiet instead.")
 
-  #------------------------------------
-  # Define the expected arguments
   set(options INTERFACE NO_CMAKE_ENVIRONMENT_PATH QUIET)
   set(oneValueArgs "TARGET_NAME")
   set(multiValueArgs)
-
-  #------------------------------------
-  # Parse the arguments
   _gz_cmake_parse_arguments(gz_pkg_check_modules "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+  set(gz_pkg_check_modules_quiet_skip_parsing true)
+  gz_pkg_check_modules_quiet(${package} ${signature})
+endmacro()
+macro(gz_pkg_check_modules_quiet package signature)
+
+  # Deprecated, remove skip parsing logic in version 4
+  if (NOT gz_pkg_check_modules_quiet_skip_parsing)
+    #------------------------------------
+    # Define the expected arguments
+    set(options INTERFACE NO_CMAKE_ENVIRONMENT_PATH QUIET)
+    set(oneValueArgs "TARGET_NAME")
+    set(multiValueArgs)
+
+    #------------------------------------
+    # Parse the arguments
+    _gz_cmake_parse_arguments(gz_pkg_check_modules "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  endif()
 
   if(gz_pkg_check_modules_INTERFACE)
     set(_gz_pkg_check_modules_interface_option INTERFACE)
@@ -86,7 +107,7 @@ macro(ign_pkg_check_modules_quiet package signature)
 
   find_package(PkgConfig QUIET)
 
-  ign_pkg_config_entry(${package} "${signature}")
+  gz_pkg_config_entry(${package} "${signature}")
 
   if(PKG_CONFIG_FOUND)
 
@@ -149,7 +170,7 @@ macro(ign_pkg_check_modules_quiet package signature)
       # For some reason, pkg_check_modules does not provide complete paths to the
       # libraries it returns, even though find_package is conventionally supposed
       # to provide complete library paths. Having only the library name is harmful
-      # to the ign_create_imported_target macro, so we will change the variable to
+      # to the gz_create_imported_target macro, so we will change the variable to
       # give it complete paths.
       #
       # TODO: How would we deal with multiple modules that are in different
@@ -172,11 +193,17 @@ endmacro()
 
 # This creates variables which inform gz_find_package(~) that your package
 # should be found as a module by pkg-config. In most cases, this will be called
-# implicitly by ign_pkg_check_modules[_quiet], but if a package provides both a
+# implicitly by gz_pkg_check_modules[_quiet], but if a package provides both a
 # cmake config-file (*-config.cmake) and a pkg-config file (*.pc), then you can
 # use the cmake config-file to retrieve the package information, and then use
 # this macro to generate the relevant pkg-config information.
 macro(ign_pkg_config_entry package string)
+  # TODO(chapulina) Enable warnings after all libraries have migrated.
+  # message(WARNING "ign_pkg_config_entry is deprecated, use gz_pkg_config_entry instead.")
+
+  gz_pkg_config_entry(${package} ${string})
+endmacro()
+macro(gz_pkg_config_entry package string)
 
   set(${package}_PKGCONFIG_ENTRY "${string}")
   set(${package}_PKGCONFIG_TYPE PKGCONFIG_REQUIRES)
@@ -188,6 +215,12 @@ endmacro()
 # find-module that handles a library package which does not install a pkg-config
 # <package>.pc file.
 macro(ign_pkg_config_library_entry package lib_name)
+  # TODO(chapulina) Enable warnings after all libraries have migrated.
+  # message(WARNING "ign_pkg_config_library_entry is deprecated, use gz_pkg_config_library_entry instead.")
+
+  gz_pkg_config_library_entry(${package} ${lib_name})
+endmacro()
+macro(gz_pkg_config_library_entry package lib_name)
 
   set(${package}_PKGCONFIG_ENTRY "-l${lib_name}")
   set(${package}_PKGCONFIG_TYPE PKGCONFIG_LIBS)

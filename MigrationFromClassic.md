@@ -63,14 +63,14 @@ Any operations that might need to be performed while searching for a package
 should be done in a find-module. See the section on anti-patterns for more
 information on writing find-modules.
 
-### Then call `ign_configure_build(~)`
+### Then call `gz_configure_build(~)`
 
 This macro accepts the argument `QUIT_IF_BUILD_ERRORS` which you should pass to
 it to get the standard behavior for the ignition projects. If for some reason
 you want to handle build errors in your own way, you can leave that argument
 out and then do as you please after the macro finishes.
 
-### Finally, call `ign_create_packages()`
+### Finally, call `gz_create_packages()`
 
 After this, your top-level `CMakeLists.txt` is finished. The remaining changes
 listed below must be applied throughout your directory tree.
@@ -108,10 +108,10 @@ should not be using the CMake cache except to allow human users to set build
 options. For more explanation about why and how we should avoid using the cache,
 see the below section on CMake anti-patterns.
 
-### Replace `ign_add_library(${PROJECT_LIBRARY_TARGET_NAME} ${sources})` with `ign_create_core_library(SOURCES ${sources})`
+### Replace `gz_add_library(${PROJECT_LIBRARY_TARGET_NAME} ${sources})` with `gz_create_core_library(SOURCES ${sources})`
 
-The `ign_add_library(~)` macro has been removed and replaced with the macro
-`ign_create_core_library(~)`. With this new macro, you no longer need to specify
+The `gz_add_library(~)` macro has been removed and replaced with the macro
+`gz_create_core_library(~)`. With this new macro, you no longer need to specify
 the library name, because it will be inferred from your project information.
 Instead, you should pass the `SOURCES` argument, followed by the source files
 which will be used to generate your library.
@@ -121,17 +121,17 @@ library requires (current options are 11 or 14). Note that if your library
 requires a certain standard, it MUST be specified directly to this function in
 order to ensure that the requirement gets correctly propagated into the
 project's package information so that dependent libraries will also be aware of
-the requirement. See the documentation of `ign_create_core_library(~)` in
+the requirement. See the documentation of `gz_create_core_library(~)` in
 `ign-cmake/cmake/IgnUtils.cmake` for more details on how to specify your
 library's C++ standard requirement.
 
-### Specify `TYPE` and `SOURCES` arguments in `ign_build_tests(~)`
+### Specify `TYPE` and `SOURCES` arguments in `gz_build_tests(~)`
 
 Previously, ignition libraries would set a `TEST_TYPE` variable before calling
-`ign_build_tests(~)`, and that variable would be used by the macro to determine
+`gz_build_tests(~)`, and that variable would be used by the macro to determine
 the type of tests it should create. This resulted in some anti-patterns where
 the `TEST_TYPE` variable would be set somewhere far away from the call to
-`ign_build_tests(~)`, making it unclear to a human reader what type of tests the
+`gz_build_tests(~)`, making it unclear to a human reader what type of tests the
 call would produce. Instead, we now explicitly specify the test type using the
 `TYPE` tag when calling the macro, and to avoid confusion with backwards
 compatibility, the `SOURCES` tag must be used before specifying sources. We are
@@ -148,7 +148,7 @@ will make `LIB_DEPS` unnecessary, but it is still provided for edge cases.
 Note that when individual tests depend on additional libraries, those individual
 tests should be linked to their dependencies using
 `target_link_libraries(<test_name> <dependency>)` after the call to
-`ign_build_tests(~)`. `LIB_DEPS` should only be used for dependencies that are
+`gz_build_tests(~)`. `LIB_DEPS` should only be used for dependencies that are
 needed by (nearly) all of the tests. For component libraries, you can use
 `LIB_DEPS` to have the tests link to your component library.
 
@@ -192,7 +192,7 @@ to.
 
 Note that you must also specify which targets' interface include directories
 will be needed by libraries which depend on your project's library. This should
-be done using `ign_target_interface_include_directories(<project_target> <dependency_targets>)`.
+be done using `gz_target_interface_include_directories(<project_target> <dependency_targets>)`.
 That function will add the interface include directories of the dependency
 targets that you pass in to the interface include directory list of
 `<project_target>` in a way which is relocatable by using generator expressions.
@@ -218,9 +218,9 @@ find-module, the macro `gz_import_target(~)` should be used generate an
 imported target which follows this convention. More about creating find-modules
 can be found in the section on anti-patterns.
 
-### Remove ign_install_library()
+### Remove gz_install_library()
 
-Calling `ign_create_core_library()` will also take care of installing the
+Calling `gz_create_core_library()` will also take care of installing the
 library. Simply remove this function from your cmake script.
 
 ### Replace calls to `#include "ignition/<project>/System.hh"` with `#include "ignition/<project>/Export.hh"`, and delete the file `System.hh`.
@@ -261,7 +261,7 @@ that are not already present in `ign-cmake`, then you should add those
 features to `ign-cmake` and submit a pull request. I will try to be very prompt
 about reviewing and approving those PRs.
 
-### To add a component library, use `ign_add_component(<component> SOURCES ${sources})`
+### To add a component library, use `gz_add_component(<component> SOURCES ${sources})`
 
 This new function allows you to create a "component" library which will be
 compiled separately from your core library. It will be packaged as a cmake
@@ -290,7 +290,7 @@ auto-generated name of the target. You can then use the target with
 The following changes are not necessary, but may improve the readability and
 maintainability of your CMake code. Use of these utilities is optional.
 
-### GLOB up library source files and unit test source files using `ign_get_libsources_and_unittests(sources tests)`
+### GLOB up library source files and unit test source files using `gz_get_libsources_and_unittests(sources tests)`
 
 Placing this in `src/CMakeLists.txt` will collect all the source files in the
 directory and sort them into a `source` variable (containing the library sources)
@@ -303,7 +303,7 @@ approach can be used to conditionally remove files from a list (see
 want a file to be excluded, you can change its extension (e.g. `*.cc.backup` or
 `.cc.old`) until a later time when you want it to be used again.
 
-### Use `ign_install_all_headers(~)` in `include/ignition/<project>/CMakeLists.txt`
+### Use `gz_install_all_headers(~)` in `include/ignition/<project>/CMakeLists.txt`
 
 Using this macro will install all files ending in `*.h` and `*.hh` in the
 current source directory recursively (so all the files in all subdirectories as
@@ -315,10 +315,10 @@ installed. The argument `EXCLUDE_DIRS` lets you specify subdirectories to not
 install. Note that the files or directories must be specified relative to the
 current directory.
 
-### Use `ign_get_sources(~)` in `test/<type>/CMakeLists.txt` to collect source files
+### Use `gz_get_sources(~)` in `test/<type>/CMakeLists.txt` to collect source files
 
-Similar to `ign_get_libsources_and_unittests(~)` except it only produces one
-list of source files, which is sufficient to be passed to `ign_build_tests(~)`.
+Similar to `gz_get_libsources_and_unittests(~)` except it only produces one
+list of source files, which is sufficient to be passed to `gz_build_tests(~)`.
 
 
 
@@ -378,7 +378,7 @@ writing a good quality find-module.
 In many cases, a package that we depend on will be distributed with a pkgconfig
 (`*.pc`) file. In such a case, `ignition-cmake` provides a macro that can easily
 find the package and create an imported target for it. Simply use `include(IgnPkgConfig)`
-and then `ign_pkg_check_modules(~)` in your find-module, and you are done. An
+and then `gz_pkg_check_modules(~)` in your find-module, and you are done. An
 example of a simple case of this can be found in `ign-cmake/cmake/FindGTS.cmake`.
 
 If certain version-based behavior is needed, that must be handled within the

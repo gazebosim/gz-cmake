@@ -155,7 +155,7 @@ if (NOT WIN32)
     # Note: OGRE2 installed from debs is named OGRE-2.2 while the version
     # installed from source does not have the 2.2 suffix
     # look for OGRE2 installed from debs
-    ign_pkg_check_modules_quiet(${IGN_OGRE2_PROJECT_NAME} ${OGRE2_INSTALL_PATH} NO_CMAKE_ENVIRONMENT_PATH QUIET)
+    gz_pkg_check_modules_quiet(${IGN_OGRE2_PROJECT_NAME} ${OGRE2_INSTALL_PATH} NO_CMAKE_ENVIRONMENT_PATH QUIET)
 
     if (${IGN_OGRE2_PROJECT_NAME}_FOUND)
       set(IGN_PKG_NAME ${OGRE2_INSTALL_PATH})
@@ -338,9 +338,9 @@ if (NOT WIN32)
   fix_pkgconfig_resource_path_jammy_bug("${OGRE2_RESOURCE_PATH}" OGRE2_RESOURCE_PATH)
 
   # We need to manually specify the pkgconfig entry (and type of entry),
-  # because ign_pkg_check_modules does not work for it.
+  # because gz_pkg_check_modules does not work for it.
   include(IgnPkgConfig)
-  ign_pkg_config_library_entry(IgnOGRE2 OgreMain)
+  gz_pkg_config_library_entry(IgnOGRE2 OgreMain)
 else() #WIN32
 
   set(OGRE2_FOUND TRUE)

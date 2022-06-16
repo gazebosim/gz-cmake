@@ -111,4 +111,4 @@ set(@component_pkg_name@_LIBRARY @import_target_name@)
 
 # This macro is used by ignition-cmake to automatically configure the pkgconfig
 # files for ignition projects.
-ign_pkg_config_entry(@component_pkg_name@ "@component_pkg_name@")
+gz_pkg_config_entry(@component_pkg_name@ "@component_pkg_name@")

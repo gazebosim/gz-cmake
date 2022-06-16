@@ -72,7 +72,7 @@ function(ign_add_benchmarks)
     return()
   endif()
 
-  ign_build_executables(
+  gz_build_executables(
     PREFIX "BENCHMARK_"
     SOURCES ${BENCHMARK_SOURCES}
     LIB_DEPS benchmark::benchmark

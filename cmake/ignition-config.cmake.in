@@ -145,7 +145,7 @@ set(@LEGACY_PROJECT_PREFIX@_INCLUDE_DIRS ${@PKG_NAME@_INCLUDE_DIRS})
 
 # This macro is used by ignition-cmake to automatically configure the pkgconfig
 # files for ignition projects.
-ign_pkg_config_entry(@PKG_NAME@ "@PKG_NAME@")
+gz_pkg_config_entry(@PKG_NAME@ "@PKG_NAME@")
 
 # Find each of the components requested by find_package(~)
 foreach(component ${@PKG_NAME@_FIND_COMPONENTS})

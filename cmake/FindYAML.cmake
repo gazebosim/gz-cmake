@@ -52,7 +52,7 @@ if(YAML_FIND_VERSION AND NOT YAML_FIND_VERSION VERSION_EQUAL "0.1")
                   "but you requested version ${YAML_FIND_VERSION}.")
 else()
   include(IgnPkgConfig)
-  ign_pkg_check_modules_quiet(YAML yaml-0.1)
+  gz_pkg_check_modules_quiet(YAML yaml-0.1)
 
   # If that failed, then fall back to manual detection.
   if(NOT YAML_FOUND)
