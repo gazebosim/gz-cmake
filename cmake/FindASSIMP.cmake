@@ -19,9 +19,9 @@
 include(IgnPkgConfig)
 
 if(ASSIMP_FIND_VERSION)
-  ign_pkg_check_modules_quiet(ASSIMP "assimp >= ${ASSIMP_FIND_VERSION}")
+  gz_pkg_check_modules_quiet(ASSIMP "assimp >= ${ASSIMP_FIND_VERSION}")
 else()
-  ign_pkg_check_modules_quiet(ASSIMP "assimp")
+  gz_pkg_check_modules_quiet(ASSIMP "assimp")
 endif()
 
 if(NOT ASSIMP_FOUND)
