@@ -23,7 +23,7 @@
 # This macro will find a library based on the name of one of its headers,
 # and the library name.
 # It is used inside Find***.cmake scripts, typicall as fallback for a
-# ign_pkg_check_modules_quiet call.
+# gz_pkg_check_modules_quiet call.
 # It will create an imported target for the  library
 #
 # INTERFACE: Optional. Use INTERFACE when the target does not actually provide
@@ -109,7 +109,7 @@ macro(gz_manual_search PACKAGE_NAME)
   if(${package}_FOUND)
     include(IgnImportTarget)
     gz_import_target(${package} ${_gz_pkg_check_modules_interface_option}
-      TARGET_NAME ${ign_pkg_check_modules_TARGET_NAME})
+      TARGET_NAME ${gz_pkg_check_modules_TARGET_NAME})
   endif()
 
 endmacro()

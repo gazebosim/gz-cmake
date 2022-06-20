@@ -61,6 +61,6 @@ if(${IgnCURL_FOUND})
   endif()
 
   include(IgnPkgConfig)
-  ign_pkg_config_entry(IgnCURL "libcurl >= ${IgnCURL_FIND_VERSION}")
+  gz_pkg_config_entry(IgnCURL "libcurl >= ${IgnCURL_FIND_VERSION}")
 
 endif()

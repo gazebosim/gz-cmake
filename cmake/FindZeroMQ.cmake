@@ -68,7 +68,7 @@ if (ZeroMQ_FOUND)
   set(ZeroMQ_TARGET libzmq)
 
   # Make sure to fill out the pkg-config information before quitting
-  ign_pkg_config_entry(ZeroMQ "libzmq >= ${ZeroMQ_FIND_VERSION}")
+  gz_pkg_config_entry(ZeroMQ "libzmq >= ${ZeroMQ_FIND_VERSION}")
 
   return()
 
@@ -80,6 +80,6 @@ if (UNIX)
     message(STATUS "Config-file not installed for ZeroMQ -- checking for pkg-config")
   endif()
 
-  ign_pkg_check_modules(ZeroMQ "libzmq >= ${ZeroMQ_FIND_VERSION}")
+  gz_pkg_check_modules(ZeroMQ "libzmq >= ${ZeroMQ_FIND_VERSION}")
 
 endif()

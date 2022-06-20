@@ -36,9 +36,9 @@ else()
   include(IgnPkgConfig)
 
   if(JSONCPP_FOUND)
-    ign_pkg_config_entry(JSONCPP jsoncpp)
+    gz_pkg_config_entry(JSONCPP jsoncpp)
   else()
-    ign_pkg_check_modules_quiet(JSONCPP jsoncpp)
+    gz_pkg_check_modules_quiet(JSONCPP jsoncpp)
     set(JSONCPP_TARGET JSONCPP::JSONCPP)
 
     # If that failed, then fall back to manual detection.

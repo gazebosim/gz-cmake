@@ -7,7 +7,7 @@
 # Adds a target to generate build and system configuration information. This
 # function is private to gz-cmake.
 #
-# ign_add_benchmarks()
+# gz_add_benchmarks()
 #
 # Adds a target to execute all available benchmarks and aggregate the results.
 #
@@ -16,7 +16,7 @@
 #    include(IgnBenchmark)
 #
 # 2. Add the benchmark
-#    ign_add_benchmarks(SOURCES ${benchmark_sources_list})
+#    gz_add_benchmarks(SOURCES ${benchmark_sources_list})
 #
 # 3. After building the project, use `make run_benchmarks` to execute and
 #    aggregate benchmark results to ${CMAKE_BINARY_DIR}/benchmark_results
@@ -60,7 +60,20 @@ function(_gz_add_version_info_target)
 endfunction()
 
 function(ign_add_benchmarks)
+  # TODO(chapulina) Enable warnings after all libraries have migrated.
+  # message(WARNING "ign_add_benchmarks is deprecated, use gz_add_benchmarks instead.")
+
   cmake_parse_arguments(BENCHMARK "" "" "SOURCES" ${ARGN})
+
+  set(gz_add_benchmarks_skip_parsing true)
+  gz_add_benchmarks()
+endfunction()
+function(gz_add_benchmarks)
+
+  # Deprecated, remove skip parsing logic in version 4
+  if (NOT gz_add_benchmarks_skip_parsing)
+    cmake_parse_arguments(BENCHMARK "" "" "SOURCES" ${ARGN})
+  endif()
 
   if(NOT BUILD_TESTING)
     return()
@@ -72,7 +85,7 @@ function(ign_add_benchmarks)
     return()
   endif()
 
-  ign_build_executables(
+  gz_build_executables(
     PREFIX "BENCHMARK_"
     SOURCES ${BENCHMARK_SOURCES}
     LIB_DEPS benchmark::benchmark

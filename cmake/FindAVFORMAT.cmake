@@ -16,7 +16,7 @@
 ########################################
 # Find AV format
 include(IgnPkgConfig)
-ign_pkg_check_modules_quiet(AVFORMAT libavformat)
+gz_pkg_check_modules_quiet(AVFORMAT libavformat)
 
 if(NOT AVFORMAT_FOUND)
   include(IgnManualSearch)

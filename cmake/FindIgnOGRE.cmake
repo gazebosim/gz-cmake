@@ -92,7 +92,7 @@ if (NOT WIN32)
     set(OGRE_LIBRARY_DIRS "")
     set(OGRE_LIBRARIES "")
     set(ENV{PKG_CONFIG_PATH} ${pkg_path})
-    ign_pkg_check_modules_quiet(OGRE "OGRE >= ${full_version}"
+    gz_pkg_check_modules_quiet(OGRE "OGRE >= ${full_version}"
                                 NO_CMAKE_ENVIRONMENT_PATH
                                 QUIET)
     if (OGRE_FOUND)
@@ -140,7 +140,7 @@ if (NOT WIN32)
 
     # find ogre components
     foreach(component ${IgnOGRE_FIND_COMPONENTS})
-      ign_pkg_check_modules_quiet(IgnOGRE-${component} "OGRE-${component} >= ${full_version}" NO_CMAKE_ENVIRONMENT_PATH)
+      gz_pkg_check_modules_quiet(IgnOGRE-${component} "OGRE-${component} >= ${full_version}" NO_CMAKE_ENVIRONMENT_PATH)
       if(IgnOGRE-${component}_FOUND)
         list(APPEND OGRE_LIBRARIES IgnOGRE-${component}::IgnOGRE-${component})
       elseif(IgnOGRE_FIND_REQUIRED_${component})
@@ -158,7 +158,7 @@ if (NOT WIN32)
       set(OGRE_PLUGINDIR ${_pkgconfig_invoke_result})
     endif()
 
-    ign_pkg_config_library_entry(IgnOGRE OgreMain)
+    gz_pkg_config_library_entry(IgnOGRE OgreMain)
 
     set(OGRE_RESOURCE_PATH ${OGRE_PLUGINDIR})
     # Seems that OGRE_PLUGINDIR can end in a newline, which will cause problems

@@ -27,7 +27,7 @@
 #  ZIP_LIBRARIES          The ZIP libraries
 
 include(IgnPkgConfig)
-ign_pkg_check_modules_quiet(ZIP libzip)
+gz_pkg_check_modules_quiet(ZIP libzip)
 
 # If that failed, then fall back to manual detection.
 if(NOT ZIP_FOUND)

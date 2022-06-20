@@ -20,7 +20,7 @@ set(av_minor ${AVDEVICE_FIND_VERSION_MINOR})
 set(av_patch ${AVDEVICE_FIND_VERSION_PATCH})
 
 include(IgnPkgConfig)
-ign_pkg_check_modules_quiet(AVDEVICE "libavdevice >= ${av_major}.${av_minor}.${av_patch}")
+gz_pkg_check_modules_quiet(AVDEVICE "libavdevice >= ${av_major}.${av_minor}.${av_patch}")
 
 if(NOT AVDEVICE_FOUND)
   include(IgnManualSearch)
