@@ -1932,7 +1932,7 @@ macro(_gz_cmake_parse_arguments prefix options oneValueArgs multiValueArgs)
     message(AUTHOR_WARNING
       "\nThe build script has specified some unrecognized arguments for ${prefix}(~):\n"
       "${${prefix}_UNPARSED_ARGUMENTS}\n"
-      "Either the script has a typo, or it is using an unexpected version of ign-cmake. "
+      "Either the script has a typo, or it is using an unexpected version of gz-cmake. "
       "The version of gz-cmake currently being used is ${gz-cmake${IGNITION_CMAKE_VERSION_MAJOR}_VERSION}\n")
 
   endif()
