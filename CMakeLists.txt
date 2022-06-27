@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.10.2 FATAL_ERROR)
 #============================================================================
 # Initialize the project
 #============================================================================
-project(ignition-cmake3 VERSION 3.0.0)
+project(gz-cmake3 VERSION 3.0.0)
 
 #--------------------------------------
 # Initialize the IGNITION_CMAKE_DIR variable with the location of the cmake
@@ -59,7 +59,7 @@ set(gz_config_output "${PROJECT_NAME_LOWER}-config.cmake")
 set(gz_version_output "${PROJECT_NAME_LOWER}-config-version.cmake")
 set(gz_config_install_dir "${CMAKE_INSTALL_DATAROOTDIR}/cmake/${PROJECT_NAME_LOWER}")
 set(ign_pkgconfig_input "${CMAKE_CURRENT_SOURCE_DIR}/config/ignition-cmake.pc.in")
-set(ign_pkgconfig_output "${CMAKE_BINARY_DIR}/ignition-cmake${PROJECT_VERSION_MAJOR}.pc")
+set(ign_pkgconfig_output "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.pc")
 set(ign_pkgconfig_install_dir "${IGN_LIB_INSTALL_DIR}/pkgconfig")
 set(ign_utilities_target ${PROJECT_EXPORT_NAME}-utilities)
 set(ign_utilities_import_target_name ${PROJECT_EXPORT_NAME}::${ign_utilities_target})

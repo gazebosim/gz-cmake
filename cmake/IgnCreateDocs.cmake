@@ -39,7 +39,7 @@
 # ADDITIONAL_INPUT_DIRS: Optional. Specify additional input directories to parse when generating documentation.
 # IMAGE_PATH_DIRS: Optional. Specify additional input directories where images are located
 # TAGFILES: Optional. Specify tagfiles for doxygen to use. It should be a list of strings like:
-#           "${IGNITION-<DESIGNATION>_DOXYGEN_TAGFILE} = ${IGNITION-<DESIGNATION>_API_URL}"
+#           "${GZ-<DESIGNATION>_DOXYGEN_TAGFILE} = ${GZ-<DESIGNATION>_API_URL}"
 function(ign_create_docs)
   # TODO(chapulina) Enable warnings after all libraries have migrated.
   # message(WARNING "ign_create_docs is deprecated, use gz_create_docs instead.")

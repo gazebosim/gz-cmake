@@ -1,17 +1,17 @@
 cmake_minimum_required(VERSION 3.10.2 FATAL_ERROR)
-project(ignition-find_config VERSION 0.1.0)
-find_package(ignition-cmake3 REQUIRED)
+project(gz-find_config VERSION 0.1.0)
+find_package(gz-cmake3 REQUIRED)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/")
-set(ignition-find_config_DIR "${CMAKE_SOURCE_DIR}/")
-#gz_find_package(ignition-find_config) will search for Findignition-find_config.cmake before ignition-find_configConfig.cmake
-gz_find_package(ignition-find_config)
+set(gz-find_config_DIR "${CMAKE_SOURCE_DIR}/")
+#gz_find_package(gz-find_config) will search for Findgz-find_config.cmake before gz-find_configConfig.cmake
+gz_find_package(gz-find_config)
 if(CONFIG_TEST MATCHES "The package was found using MODULE mode")
   message(STATUS "The package was found using MODULE mode")
 else()
   message(SEND_ERROR "Couldn't find correct package in MODULE mode.\ngz_find_package CONFIG test failed")
 endif()
-#After CONFIG arguemnt gz_find_package will skip MODULE mode and search for ignition-find_configConfig.cmake directly
-gz_find_package(ignition-find_config CONFIG)
+#After CONFIG arguemnt gz_find_package will skip MODULE mode and search for gz-find_configConfig.cmake directly
+gz_find_package(gz-find_config CONFIG)
 if(CONFIG_TEST MATCHES "The package was found using CONFIG mode")
   message(STATUS "The package was found using CONFIG mode")
 else()
