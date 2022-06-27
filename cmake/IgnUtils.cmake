@@ -1824,89 +1824,95 @@ endmacro()
 #Currently it creates colcon.pkg along with hooks.dsv for exporting them
 #Mechanisms for plain cmake packages is under development 
 macro(ign_environment_hook)
- 
-  file(APPEND ${CMAKE_CURRENT_SOURCE_DIR}/hooks/hook.dsv.in "")
-
-  file(READ ${CMAKE_CURRENT_SOURCE_DIR}/hooks/hook.dsv.in current_text)
-  file(WRITE hi22.txt ${current_text})
-  if(NOT "${current_text}" STREQUAL "")
-    string(REPLACE "\n" ";" current_text ${current_text})
-  endif()
-  
   list(REMOVE_DUPLICATES resources_path)
   list(REMOVE_DUPLICATES plugins_path)
-
+  file(WRITE ${CMAKE_CURRENT_SOURCE_DIR}/hooks/hook.dsv.in
+    "")
   foreach(resource_path ${resources_path})
-    if(NOT "prepend-non-duplicateIGN_GAZEBO_RESOURCE_PATH@CMAKE_INSTALL_PREFIX@/share/@PROJECT_NAME@/${resource_path}" IN_LIST current_text)
-     
-      file(APPEND ${CMAKE_CURRENT_SOURCE_DIR}/hooks/hook.dsv.in
-      "prepend-non-duplicate;IGN_GAZEBO_RESOURCE_PATH;@CMAKE_INSTALL_PREFIX@/share/@PROJECT_NAME@/${resource_path}\n")
-  
-    endif()  
+    file(APPEND ${CMAKE_CURRENT_SOURCE_DIR}/hooks/hook.dsv.in
+    "prepend-non-duplicate;IGN_GAZEBO_RESOURCE_PATH;@CMAKE_INSTALL_PREFIX@/share/@PROJECT_NAME@/${resource_path}\n")
   endforeach()
-
   foreach(plugin_path ${plugins_path})
-    if(NOT "prepend-non-duplicateIGN_GAZEBO_SYSTEM_PLUGIN_PATH@CMAKE_INSTALL_PREFIX@/${plugin_path}" IN_LIST current_text)
-
-      file(APPEND ${CMAKE_CURRENT_SOURCE_DIR}/hooks/hook.dsv.in 
-      "prepend-non-duplicate;IGN_GAZEBO_SYSTEM_PLUGIN_PATH;@CMAKE_INSTALL_PREFIX@/${plugin_path}\n")
-    
-    endif()
-  endforeach()
-
-  file(WRITE ${CMAKE_CURRENT_SOURCE_DIR}/colcon.pkg "{\n  \"hooks\": [\"share/${CMAKE_PROJECT_NAME}/hooks/hook.dsv\"]\n}")
-  
-  if(NOT "prepend-non-duplicateLD_LIBRARY_PATH@CMAKE_INSTALL_PREFIX@/lib" IN_LIST current_text)
-
     file(APPEND ${CMAKE_CURRENT_SOURCE_DIR}/hooks/hook.dsv.in 
-    "prepend-non-duplicate;LD_LIBRARY_PATH;@CMAKE_INSTALL_PREFIX@/lib\n")
+    "prepend-non-duplicate;IGN_GAZEBO_SYSTEM_PLUGIN_PATH;@CMAKE_INSTALL_PREFIX@/${plugin_path}\n")
+  endforeach()
+  foreach(gui_plugin_path ${gui_plugins_path})
+    file(APPEND ${CMAKE_CURRENT_SOURCE_DIR}/hooks/hook.dsv.in 
+    "prepend-non-duplicate;IGN_GUI_PLUGIN_PATH;@CMAKE_INSTALL_PREFIX@/${gui_plugin_path}\n")
+  endforeach()
+  foreach(variable_export_path ${variable_export_paths})
+    string(REPLACE "," ";" variable_export_path ${variable_export_path})
+    file(APPEND ${CMAKE_CURRENT_SOURCE_DIR}/hooks/hook.dsv.in
+    "prepend-non-duplicate;${variable_export_path}\n")
+  endforeach()
+  file(WRITE ${CMAKE_CURRENT_SOURCE_DIR}/colcon.pkg "{\n  \"hooks\": [\"share/${CMAKE_PROJECT_NAME}/hooks/hook.dsv\"]\n}")
 
-  endif()
 
   configure_file(
     "hooks/hook.dsv.in"
     "${CMAKE_CURRENT_BINARY_DIR}/hooks/hook.dsv" @ONLY
   )
-
   install(DIRECTORY
   ${CMAKE_CURRENT_BINARY_DIR}/hooks
   DESTINATION share/${PROJECT_NAME})
 
 endmacro()
 #####################################################
-#ign_add_plugins(path_to_plugin)
+#ign_export_variable(variable_name variable_path)
+#Exports path of mentioned varaible 
+
+macro(ign_export_variable variable_name variable_path)
+  list(APPEND variable_export_paths "${variable_name},${variable_path}")
+endmacro()
+
+#######################################################
+#ign_add_plugins(path_to_plugins)
 #Installs all the plugins inside the folder using various arguments from the user
 #Also provides the path to ign_environment_hook()
-#For adding target_link_libraries or target_include_directories for a specific plugin 
-#set ${PLUGIN_NAME}_(PUBLIC/PRIVATE)_(LIBRARIES/DIRECTORIES) as required plugins or directories in your package
+#Other than common link_libraries and directories,you can simply add specific plugin dependencies one by one after this macro
 #The deafult file type is .cc for plugins,you can add other file types using PLUGIN_EXTENSION argument
+#For adding GUI plugins,one can simply pass GUI true as argument
 
-macro(ign_add_plugins path_to_plugin )
+macro(ign_add_plugins path_to_plugins )
 
-  set(oneValueArgs INSTALL_DESTINATION TYPE)
+  set(oneValueArgs INSTALL_DESTINATION SCOPE GUI)
   set(multiValueArgs COMMON_PUBLIC_LIBRARIES COMMON_PRIVATE_LINK_LIBRARIES COMMON_PUBLIC_DIRECTORIES COMMON_PRIVATE_LINK_DIRECTORIES PLUGIN_EXTENSION)
 
   _ign_cmake_parse_arguments(ign_add_plugin "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-
+ 
   if(NOT ign_add_plugin_PLUGIN_EXTENSION)
     list(APPEND ign_add_plugin_PLUGIN_EXTENSION ".cc")
   endif()
-
+  set(source_list_plugins)
   foreach(EXTENSION ${ign_add_plugin_PLUGIN_EXTENSION})
-
-    file(GLOB source_list_${EXTENSION} CONFIGURE_DEPENDS
-    "${path_to_plugin}/*${EXTENSION}"
+    set(source_list_plugin_${EXTENSION})
+    file(GLOB source_list_plugin_${EXTENSION} CONFIGURE_DEPENDS
+    "${path_to_plugins}/*${EXTENSION}"
     )
 
-    list(APPEND source_list ${source_list_${EXTENSION}})
+    list(APPEND source_list_plugins ${source_list_plugin_${EXTENSION}})
 
   endforeach() 
 
-  foreach(PLUGIN_PATH ${source_list})
+  foreach(PLUGIN_PATH ${source_list_plugins})
     get_filename_component(PLUGIN_NAME "${PLUGIN_PATH}" NAME_WLE )
+    set(default_install lib)
+    if(ign_add_plugin_GUI)
 
-    if (ign_add_plugin_TYPE)
-      add_library(${PLUGIN_NAME} ${ign_add_plugin_TYPE} ${PLUGIN_PATH})
+      QT5_WRAP_CPP(${PLUGIN_NAME}_headers_MOC ${path_to_plugins}/${PLUGIN_NAME}.hh)
+      QT5_ADD_RESOURCES(${PLUGIN_NAME}_RCC ${path_to_plugins}/${PLUGIN_NAME}.qrc)
+
+      set(PLUGIN_PATH ${PLUGIN_PATH}
+        ${${PLUGIN_NAME}_headers_MOC}
+        ${${PLUGIN_NAME}_RCC}
+      )
+
+      set(default_install lib/gui)
+
+    endif()
+     
+    if (ign_add_plugin_SCOPE)
+      add_library(${PLUGIN_NAME} ${ign_add_plugin_SCOPE} ${PLUGIN_PATH})
     else()
       add_library(${PLUGIN_NAME} SHARED ${PLUGIN_PATH})
     endif()
@@ -1916,33 +1922,37 @@ macro(ign_add_plugins path_to_plugin )
     target_link_libraries(${PLUGIN_NAME}
       PUBLIC
         ${ign_add_plugin_COMMON_PUBLIC_LIBRARIES}
-        ${${PLUGIN_NAME}_PUBLIC_LIBRARIES}
       PRIVATE
         ${ign_add_plugin_COMMON_PRIVATE_LINK_LIBRARIES}
-        ${${PLUGIN_NAME}_PRIVATE_LIBRARIES}
     )
     target_include_directories(${PLUGIN_NAME}
       PUBLIC
         ${ign_add_plugin_COMMON_PUBLIC_DIRECTORIES}
-        ${${PLUGIN_NAME}_PUBLIC_DIRECTORIES}
       PRIVATE
         ${ign_add_plugin_COMMON_PRIVATE_LINK_DIRECTORIES}
-        ${${PLUGIN_NAME}_PRIVATE_DIRECTORIES}
     )    
-
+    if(ign_add_plugin_GUI)
+      target_link_libraries(${PLUGIN_NAME}
+        PRIVATE
+          ignition-gui${IGN_GUI_VER}::ignition-gui${IGN_GUI_VER}
+      )
+    endif()
     if(ign_add_plugin_INSTALL_DESTINATION)
+      set(default_install ${ign_add_plugin_INSTALL_DESTINATION})
+    endif()
+    if(ign_add_plugin_GUI)
       install(
-      TARGETS ${PLUGIN_NAME}
-      DESTINATION ${ign_add_plugin_INSTALL_DESTINATION})
-      list(APPEND plugins_path ${ign_add_plugin_INSTALL_DESTINATION})
-
+        TARGETS ${PLUGIN_NAME}
+        DESTINATION ${default_install})
+      list(APPEND gui_plugins_path ${default_install})
     else()
       install(
-      TARGETS ${PLUGIN_NAME}
-      DESTINATION lib)
-      list(APPEND plugins_path "lib")
+        TARGETS ${PLUGIN_NAME}
+        DESTINATION ${default_install})
+      list(APPEND plugins_path ${default_install})
+    endif()  
 
-    endif()
+
 
   endforeach()
 
@@ -1959,13 +1969,12 @@ macro(ign_export_plugin path_to_install_destination)
 endmacro()  
 
 #####################################################
-#ign_add_executables(path_to_executable)
+#ign_add_executables(path_to_executables)
 #Installs all the executables inside the folder using various arguments from the user
-#For adding target_link_libraries or target_include_directories for a specific executable
-#set ${EXECUTABLE_NAME}_(PUBLIC/PRIVATE)_(LIBRARIES/DIRECTORIES) as required plugins or directories in your package
+#Other than common link_libraries and directories,you can simply add specific executable dependencies one by one after this macro
 #The deafult file type is .cc for executables,you can add other file types using EXECUTABLES_EXTENSION argument
 
-macro(ign_add_executables path_to_executable)
+macro(ign_add_executables path_to_executables)
 
   set(oneValueArgs INSTALL_DESTINATION)
   set(multiValueArgs COMMON_PUBLIC_LIBRARIES COMMON_PRIVATE_LINK_LIBRARIES COMMON_PUBLIC_DIRECTORIES COMMON_PRIVATE_LINK_DIRECTORIES EXECUTABLE_EXTENSION)
@@ -1978,15 +1987,15 @@ macro(ign_add_executables path_to_executable)
 
   foreach(EXTENSION ${ign_add_executable_EXECUTABLE_EXTENSION})
 
-    file(GLOB source_list_${EXTENSION} CONFIGURE_DEPENDS
-    "${path_to_executable}/*${EXTENSION}"
+    file(GLOB source_list_executable_${EXTENSION} CONFIGURE_DEPENDS
+    "${path_to_executables}/*${EXTENSION}"
     )
 
-    list(APPEND source_list ${source_list_${EXTENSION}})
+    list(APPEND source_list_executables ${source_list_executable_${EXTENSION}})
 
   endforeach() 
 
-  foreach(executable_PATH ${source_list})
+  foreach(executable_PATH ${source_list_executables})
     get_filename_component(executable_NAME "${executable_PATH}" NAME_WLE)
     add_executable(${executable_NAME} ${executable_PATH})
 
@@ -1995,18 +2004,14 @@ macro(ign_add_executables path_to_executable)
     target_link_libraries(${executable_NAME}
       PUBLIC
         ${ign_add_executable_COMMON_PUBLIC_LIBRARIES}
-        ${${executable_NAME}_PUBLIC_LIBRARIES}
       PRIVATE
         ${ign_add_executable_COMMON_PRIVATE_LINK_LIBRARIES}
-        ${${executable_NAME}_PRIVATE_LIBRARIES}
     )
     target_include_directories(${executable_NAME}
       PUBLIC
         ${ign_add_executable_COMMON_PUBLIC_DIRECTORIES}
-        ${${executable_NAME}_PUBLIC_DIRECTORIES}
       PRIVATE
         ${ign_add_executable_COMMON_PRIVATE_LINK_DIRECTORIES}
-        ${${executable_NAME}_PRIVATE_DIRECTORIES}
     ) 
 
     if(ign_add_executable_INSTALL_DESTINATION)
@@ -2024,3 +2029,93 @@ macro(ign_add_executables path_to_executable)
   endforeach()
   
 endmacro()
+#################################################################################
+#ign_add_msgs(path_to_msgs)
+#Installs all the msgs inside the folder using various arguments from the user
+#Also provides the path to ign_environment_hook()
+#Other than pre coded dependencies,you can simply add specific message dependencies one by one after this macro
+#The deafult file type is .proto for msgs,you can add other file types using MSG_EXTENSION argument
+
+macro(ign_add_msgs path_to_msgs )
+
+  set(oneValueArgs INSTALL_DESTINATION SCOPE)
+  set(multiValueArgs MSG_EXTENSION COMMON_LANGUAGE COMMON_IMPORT_DIRS COMMON_PROTOC_OUT_DIR)
+
+  _ign_cmake_parse_arguments(ign_add_msg "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+  if(NOT ign_add_msg_MSG_EXTENSION)
+    list(APPEND ign_add_msg_MSG_EXTENSION ".proto")
+  endif()
+
+  foreach(EXTENSION ${ign_add_msg_MSG_EXTENSION})
+
+    file(GLOB source_list_msg_${EXTENSION} CONFIGURE_DEPENDS
+    "${path_to_msgs}/*${EXTENSION}"
+    )
+
+    list(APPEND source_list_msgs ${source_list_msg_${EXTENSION}})
+
+  endforeach() 
+
+  foreach(MSG_PATH ${source_list_msgs})
+    get_filename_component(MSG_NAME "${MSG_PATH}" NAME_WLE )
+
+    if (ign_add_msg_SCOPE)
+      add_library(${MSG_NAME} ${ign_add_msg_SCOPE} ${MSG_PATH}.proto)
+    else()
+      add_library(${MSG_NAME} SHARED ${MSG_PATH})
+    endif()
+
+
+    target_link_libraries(${MSG_NAME}
+    protobuf::libprotobuf
+    ignition-msgs${IGN_MSGS_VER}::ignition-msgs${IGN_MSGS_VER})
+
+
+    protobuf_generate(
+      TARGET ${MSG_NAME}
+      LANGUAGE ${ign_add_msg_COMMON_LANGUAGE}
+      IMPORT_DIRS ${ign_add_msg_COMMON_IMPORT_DIRS}
+      PROTOC_OUT_DIR ${ign_add_msg_COMMON_PROTOC_OUT_DIR}
+    )  
+
+    if(ign_add_msg_INSTALL_DESTINATION)
+      install(
+      TARGETS ${MSG_NAME}
+      DESTINATION ${ign_add_msg_INSTALL_DESTINATION})
+      list(APPEND plugins_path ${ign_add_msg_INSTALL_DESTINATION})
+      
+      install(
+        DIRECTORY ${CMAKE_BINARY_DIR}
+        DESTINATION include
+        FILES_MATCHING
+          PATTERN "${MSG_NAME}.pb.h")
+
+    else()
+      install(
+      TARGETS ${MSG_NAME}
+      DESTINATION lib)
+      list(APPEND plugins_path "lib")
+
+      install(
+        DIRECTORY ${CMAKE_BINARY_DIR}
+        DESTINATION include
+        FILES_MATCHING
+          PATTERN "${MSG_NAME}.pb.h")
+
+    endif()
+
+  endforeach()
+
+  
+endmacro()
+
+################################################3
+#ign_export_msg(path_to_install_destination)
+#Exports the provided installation path of msg
+
+macro(ign_export_msg path_to_install_destination)
+
+  list(APPEND plugins_path ${ign_export_msg_INSTALL_DESTINATION})
+
+endmacro()  
