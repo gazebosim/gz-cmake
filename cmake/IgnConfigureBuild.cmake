@@ -4,7 +4,7 @@
 #
 # gz_configure_build()
 #
-# Configures the build rules of an ignition library project.
+# Configures the build rules of a Gazebo library project.
 #
 #===============================================================================
 # Copyright (C) 2017 Open Source Robotics Foundation

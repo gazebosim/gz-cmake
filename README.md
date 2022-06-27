@@ -45,9 +45,9 @@ Windows       | [![Build Status](https://build.osrfoundation.org/buildStatus/ico
 
 # Features
 
-ignition-cmake provides a set of cmake modules that are used by the C++-based ignition projects. These modules help to control the quality and consistency of the ignition projects' build systems.
+gz-cmake provides a set of cmake modules that are used by the C++-based Gazebo projects. These modules help to control the quality and consistency of the Gazebo projects' build systems.
 
-These modules are tailored to the ignition projects, so their use for non-ignition projects might be limited, but they may serve as a useful reference for setting up a modern cmake build system using good practices.
+These modules are tailored to the Gazebo projects, so their use for non-Gazebo projects might be limited, but they may serve as a useful reference for setting up a modern cmake build system using good practices.
 
 # Install
 
@@ -57,7 +57,7 @@ The [Source Install](#source-install) instructions should be used if you need th
 
 ## Binary Install
 
-On Ubuntu systems, `apt-get` can be used to install `ignition-cmake`:
+On Ubuntu systems, `apt-get` can be used to install `gz-cmake`:
 
 ```
 $ sudo apt install libignition-cmake<#>-dev
@@ -69,7 +69,7 @@ Be sure to replace `<#>` with a number value, such as `1` or `2`, depending on w
 
 ### Prerequisites
 
-The only prerequisite of `ignition-cmake` is `cmake`. Ubuntu users can install cmake with the package manager:
+The only prerequisite of `gz-cmake` is `cmake`. Ubuntu users can install cmake with the package manager:
 
 ```
 $ sudo apt install cmake
@@ -81,7 +81,7 @@ To build and install from source, you can clone the repo and use cmake to instal
 
 ```
 $ git clone https://github.com/gazebosim/gz-cmake
-$ cd ign-cmake
+$ cd gz-cmake
 $ mkdir build
 $ cd build
 $ cmake .. -DCMAKE_INSTALL_PREFIX=/path/to/install/dir
@@ -99,7 +99,7 @@ Documentation can be accessed at https://gazebosim.org/libs/cmake
 
 # Documentation
 
-Documentation for `ignition-cmake` can be found within the source code, and also in the [MIGRATION.md guide](https://github.com/gazebosim/gz-cmake/blob/master/MIGRATION.md).
+Documentation for `gz-cmake` can be found within the source code, and also in the [MIGRATION.md guide](https://github.com/gazebosim/gz-cmake/blob/master/MIGRATION.md).
 
 # Testing
 
@@ -115,11 +115,11 @@ $ make test
 
 * `cmake`: cmake modules that get installed by this package
 * `codecheck`: code linting and static analyzing utilities that get installed by this package
-* `config`: template files for producing the config-files of `ignition-cmake`; these are only used internally
-* `doc`: template files to help ignition projects generate their own documentation
-* `examples`: fake projects that are used to test `ignition-cmake`
-* `include`: C++ utility header files that get installed with `ignition-cmake`
-* `test`: a directory of tests for the C++ utility component of `ignition-cmake`
+* `config`: template files for producing the config-files of `gz-cmake`; these are only used internally
+* `doc`: template files to help Gazebo projects generate their own documentation
+* `examples`: fake projects that are used to test `gz-cmake`
+* `include`: C++ utility header files that get installed with `gz-cmake`
+* `test`: a directory of tests for the C++ utility component of `gz-cmake`
 * `tools`: scripts for continuous integration testing
 
 # Contributing
