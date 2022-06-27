@@ -1823,38 +1823,86 @@ endmacro()
 #Get's path from other macros and creates hooks to export them
 #Currently it creates colcon.pkg along with hooks.dsv for exporting them
 #Mechanisms for plain cmake packages is under development 
-macro(ign_environment_hook)
+macro(ign_environment_hook export_type)
   list(REMOVE_DUPLICATES resources_path)
   list(REMOVE_DUPLICATES plugins_path)
   file(WRITE ${CMAKE_CURRENT_SOURCE_DIR}/hooks/hook.dsv.in
     "")
-  foreach(resource_path ${resources_path})
-    file(APPEND ${CMAKE_CURRENT_SOURCE_DIR}/hooks/hook.dsv.in
-    "prepend-non-duplicate;IGN_GAZEBO_RESOURCE_PATH;@CMAKE_INSTALL_PREFIX@/share/@PROJECT_NAME@/${resource_path}\n")
-  endforeach()
-  foreach(plugin_path ${plugins_path})
-    file(APPEND ${CMAKE_CURRENT_SOURCE_DIR}/hooks/hook.dsv.in 
-    "prepend-non-duplicate;IGN_GAZEBO_SYSTEM_PLUGIN_PATH;@CMAKE_INSTALL_PREFIX@/${plugin_path}\n")
-  endforeach()
-  foreach(gui_plugin_path ${gui_plugins_path})
-    file(APPEND ${CMAKE_CURRENT_SOURCE_DIR}/hooks/hook.dsv.in 
-    "prepend-non-duplicate;IGN_GUI_PLUGIN_PATH;@CMAKE_INSTALL_PREFIX@/${gui_plugin_path}\n")
-  endforeach()
-  foreach(variable_export_path ${variable_export_paths})
-    string(REPLACE "," ";" variable_export_path ${variable_export_path})
-    file(APPEND ${CMAKE_CURRENT_SOURCE_DIR}/hooks/hook.dsv.in
-    "prepend-non-duplicate;${variable_export_path}\n")
-  endforeach()
-  file(WRITE ${CMAKE_CURRENT_SOURCE_DIR}/colcon.pkg "{\n  \"hooks\": [\"share/${CMAKE_PROJECT_NAME}/hooks/hook.dsv\"]\n}")
+  if(${export_type} STREQUAL "colcon")
 
+    foreach(resource_path ${resources_path})
+      file(APPEND ${CMAKE_CURRENT_SOURCE_DIR}/hooks/hook.dsv.in
+      "prepend-non-duplicate;IGN_GAZEBO_RESOURCE_PATH;@CMAKE_INSTALL_PREFIX@/share/@PROJECT_NAME@/${resource_path}\n")
+    endforeach()
+    foreach(plugin_path ${plugins_path})
+      file(APPEND ${CMAKE_CURRENT_SOURCE_DIR}/hooks/hook.dsv.in 
+      "prepend-non-duplicate;IGN_GAZEBO_SYSTEM_PLUGIN_PATH;@CMAKE_INSTALL_PREFIX@/${plugin_path}\n")
+    endforeach()
+    foreach(gui_plugin_path ${gui_plugins_path})
+      file(APPEND ${CMAKE_CURRENT_SOURCE_DIR}/hooks/hook.dsv.in 
+      "prepend-non-duplicate;IGN_GUI_PLUGIN_PATH;@CMAKE_INSTALL_PREFIX@/${gui_plugin_path}\n")
+    endforeach()
+    foreach(variable_export_path ${variable_export_paths})
+      string(REPLACE "," ";" variable_export_path ${variable_export_path})
+      file(APPEND ${CMAKE_CURRENT_SOURCE_DIR}/hooks/hook.dsv.in
+      "prepend-non-duplicate;${variable_export_path}\n")
+    endforeach()
+    file(WRITE ${CMAKE_CURRENT_SOURCE_DIR}/colcon.pkg "{\n  \"hooks\": [\"share/${CMAKE_PROJECT_NAME}/hooks/hook.dsv\"]\n}")
 
-  configure_file(
-    "hooks/hook.dsv.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/hooks/hook.dsv" @ONLY
-  )
-  install(DIRECTORY
-  ${CMAKE_CURRENT_BINARY_DIR}/hooks
-  DESTINATION share/${PROJECT_NAME})
+    configure_file(
+      "hooks/hook.dsv.in"
+      "${CMAKE_CURRENT_BINARY_DIR}/hooks/hook.dsv" @ONLY
+    )
+    install(DIRECTORY
+    ${CMAKE_CURRENT_BINARY_DIR}/hooks
+    DESTINATION share/${PROJECT_NAME})
+
+  elseif(${export_type} STREQUAL "plain-cmake")
+
+    foreach(resource_path ${resources_path})
+      file(APPEND ${CMAKE_CURRENT_SOURCE_DIR}/setup.sh.in
+      "export IGN_GAZEBO_RESOURCE_PATH=@CMAKE_INSTALL_PREFIX@/share/@PROJECT_NAME@/${resource_path}\n")
+    endforeach()
+    foreach(plugin_path ${plugins_path})
+      file(APPEND ${CMAKE_CURRENT_SOURCE_DIR}/setup.sh.in 
+      "export IGN_GAZEBO_SYSTEM_PLUGIN_PATH=@CMAKE_INSTALL_PREFIX@/${plugin_path}\n")
+    endforeach()
+    foreach(gui_plugin_path ${gui_plugins_path})
+      file(APPEND ${CMAKE_CURRENT_SOURCE_DIR}/setup.sh.in 
+      "export IGN_GUI_PLUGIN_PATH=@CMAKE_INSTALL_PREFIX@/${gui_plugin_path}\n")
+    endforeach()
+    foreach(variable_export_path ${variable_export_paths})
+      string(REPLACE "," "=" variable_export_path ${variable_export_path})
+      file(APPEND ${CMAKE_CURRENT_SOURCE_DIR}/setup.sh.in
+      "export ${variable_export_path}\n")
+    endforeach()
+    file(WRITE ${CMAKE_CURRENT_SOURCE_DIR}/export_path.sh.in "#!/usr/bin/env bash\nsource @CMAKE_INSTALL_PREFIX@/share/@PROJECT_NAME@/setup.sh\n")
+    
+    configure_file(
+      "setup.sh.in"
+      "${CMAKE_CURRENT_BINARY_DIR}/share/setup.sh" @ONLY
+    )
+
+    install(FILES
+      ${CMAKE_CURRENT_BINARY_DIR}/share/setup.sh
+      DESTINATION share/${PROJECT_NAME}
+    )
+    
+    configure_file(
+      "export_path.sh.in"
+      "${CMAKE_CURRENT_BINARY_DIR}/share/export_path" @ONLY
+    )
+
+    install(PROGRAMS
+      ${CMAKE_CURRENT_BINARY_DIR}/share/export_path
+      DESTINATION bin
+    )
+
+  else()
+    message(FATAL_ERROR
+    "Unknown export type")
+  endif()
+  
 
 endmacro()
 #####################################################
