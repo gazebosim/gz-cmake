@@ -1855,14 +1855,14 @@ macro(gz_build_tests)
         PREFIX "${TEST_TYPE}_"
         SOURCES ${gz_build_tests_SOURCES}
         LIB_DEPS gtest gtest_main ${gz_build_tests_LIB_DEPS}
-        INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/test/gtest/include ${gz_build_tests_INCLUDE_DIRS}
+        INCLUDE_DIRS ${gz_build_tests_INCLUDE_DIRS}
         EXEC_LIST test_list)
     else()
       gz_build_executables(
         PREFIX "${TEST_TYPE}_"
         SOURCES ${gz_build_tests_SOURCES}
         LIB_DEPS gtest gtest_main ${gz_build_tests_LIB_DEPS}
-        INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/test/gtest/include ${gz_build_tests_INCLUDE_DIRS}
+        INCLUDE_DIRS ${gz_build_tests_INCLUDE_DIRS}
         EXEC_LIST test_list
         EXCLUDE_PROJECT_LIB)
     endif()
