@@ -20,7 +20,7 @@
 
 #include <ignition/utilities/detail/ExtraTestMacros.hh>
 
-#pragma message("ign-cmake (utilities) ExtraTestMacros is deprecated, use ign-utils")
+#pragma message("gz-cmake (utilities) ExtraTestMacros is deprecated, use gz-utils")
 
 /// \brief Restrict the execution of the test for the Windows platform.
 /// The test will be compiled on Windows too but will never be run as

@@ -2,7 +2,7 @@
 :: NOTE: This script is only meant to be used as part of the ignition developers' CI system
 :: Users and developers should build and install this library using cmake and Visual Studio
 
-:: ign-cmake has no dependencies
+:: gz-cmake has no dependencies
 
 :: Go to the directory that this file configure.bat file exists in
 cd /d %~dp0
