@@ -301,7 +301,7 @@
 1. Require cmake 3.10.2, support `CXX_STANDARD` 17
     * [BitBucket pull request 68](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-cmake/pull-requests/68)
 
-    * [Full list of changes](https://github.com/gazebosim/gz-cmake/compare/ignition-cmake2_2.0.0...ignition-cmake1)
+    * [Full list of changes](https://github.com/gazebosim/gz-cmake/compare/ignition-cmake2_2.0.0...ign-cmake1)
 
 ## Gazebo CMake 1.x
 
@@ -332,7 +332,7 @@
 
 ### Gazebo CMake 1.0.0
 
-    * [Full list of changes](https://github.com/gazebosim/gz-cmake/compare/ignition-cmake1_1.0.0...ignition-cmake0)
+    * [Full list of changes](https://github.com/gazebosim/gz-cmake/compare/ignition-cmake1_1.0.0...ign-cmake0)
 
 ## Gazebo CMake 0.x
 
