@@ -1,11 +1,11 @@
-# - Config file for ignition-cmake (not for any other ignition libraries).
+# - Config file for gz-cmake (not for any other Gazebo libraries).
 #
-# To find and load ignition-cmake modules into your project, simply invoke:
+# To find and load gz-cmake modules into your project, simply invoke:
 #
 # find_package(@PKG_NAME@)
 #
 # That will define the variable @PKG_NAME@_FOUND, and will open up access
-# to all the cmake-modules and find-modules that are provided by ignition-cmake.
+# to all the cmake-modules and find-modules that are provided by gz-cmake.
 
 # We explicitly set the desired cmake version to ensure that the policy settings
 # of users or of toolchains do not result in the wrong behavior for our modules.
@@ -33,19 +33,19 @@ if(NOT TARGET @ign_utilities_import_target_name@)
 endif()
 
 # We should only perform these operations if either
-#  1. ign-cmake has not been included yet, or
-#  2. we need a higher version of ign-cmake than the last one that was included
+#  1. gz-cmake has not been included yet, or
+#  2. we need a higher version of gz-cmake than the last one that was included
 #
-# The only time we should need to switch to a higher version of ign-cmake is
+# The only time we should need to switch to a higher version of gz-cmake is
 # when importing targets for dependencies, i.e. using the find-modules of
-# ign-cmake. All find-modules that are available in older versions of ign-cmake
-# should be available in newer versions of ign-cmake, so this should not create
+# gz-cmake. All find-modules that are available in older versions of gz-cmake
+# should be available in newer versions of gz-cmake, so this should not create
 # any conflicts.
 if( NOT IGNITION_CMAKE_VERSION_MAJOR
     OR (IGNITION_CMAKE_VERSION_MAJOR LESS @PROJECT_VERSION_MAJOR@) )
 
   #--------------------------------------
-  # Create a variable to indicate what version of ignition-cmake we are using.
+  # Create a variable to indicate what version of gz-cmake we are using.
   # This variable does not follow the usual cmake naming convention because it
   # is a non-standard package variable.
   set(IGNITION_CMAKE_VERSION_MAJOR @PROJECT_VERSION_MAJOR@)

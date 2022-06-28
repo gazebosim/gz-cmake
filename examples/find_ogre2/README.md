@@ -1,4 +1,4 @@
-A quick demonstration of searching for Ogre 2.1 vs 2.2 via ign-cmake.
+A quick demonstration of searching for Ogre 2.1 vs 2.2 via gz-cmake.
 
 To test with both versions installed:
 

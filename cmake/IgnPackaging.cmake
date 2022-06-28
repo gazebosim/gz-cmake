@@ -4,12 +4,12 @@
 #
 # _gz_setup_packages
 #
-# Sets up package information for an ignition library project.
+# Sets up package information for a Gazebo library project.
 # This function is internal to gz-cmake.
 #
 # gz_create_packages
 #
-# Creates a package for an ignition library project
+# Creates a package for a Gazebo library project
 #
 #===============================================================================
 # Copyright (C) 2017 Open Source Robotics Foundation
@@ -342,7 +342,7 @@ function(_gz_create_cmake_package)
     FILE ${gz_target_ouput}
     # We add a namespace that ends with a :: to the name of the exported target.
     # This is so consumers of the project can call
-    #     find_package(ignition-<project>)
+    #     find_package(gz-<project>)
     #     target_link_libraries(consumer_project ignition-<project>::ignition-<project>)
     # and cmake will understand that the consumer is asking to link the imported
     # target "ignition-<project>" to their "consumer_project" rather than asking

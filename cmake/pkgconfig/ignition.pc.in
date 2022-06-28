@@ -2,7 +2,7 @@ prefix=${pcfiledir}/@PC_CONFIG_RELATIVE_PATH_TO_PREFIX@
 libdir=${prefix}/@CMAKE_INSTALL_LIBDIR@
 includedir=${prefix}/@CMAKE_INSTALL_INCLUDEDIR@/@IGN_INCLUDE_INSTALL_DIR_POSTFIX@
 
-Name: Ignition @IGN_DESIGNATION@
+Name: Gazebo @IGN_DESIGNATION@
 Description: A set of @IGN_DESIGNATION@ classes for robot applications
 Version: @PROJECT_VERSION_FULL_NO_SUFFIX@
 Requires: gz-cmake@IGNITION_CMAKE_VERSION_MAJOR@ >= 1.1 @PROJECT_PKGCONFIG_REQUIRES@

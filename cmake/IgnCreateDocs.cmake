@@ -4,7 +4,7 @@
 #
 # gz_create_docs
 #
-# Creates documentation for an ignition library project.
+# Creates documentation for a Gazebo library project.
 #
 #===============================================================================
 # Copyright (C) 2017 Open Source Robotics Foundation

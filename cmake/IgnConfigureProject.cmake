@@ -4,7 +4,7 @@
 #
 # gz_configure_project([VERSION_SUFFIX <pre|alpha|beta|etc>])
 #
-# Sets up an ignition library project.
+# Sets up a Gazebo library project.
 #
 # NO_IGNITION_PREFIX: Optional. Don't use ignition as prefix in
 #     cmake project name.

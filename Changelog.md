@@ -101,7 +101,7 @@
 1. User-friendly skip component warning
     * [Pull request #165](https://github.com/gazebosim/gz-cmake/pull/165)
 
-1. Run ign-cmake's copy of check_test_ran
+1. Run gz-cmake's copy of check_test_ran
     * [Pull request #168](https://github.com/gazebosim/gz-cmake/pull/168)
 
 ### Gazebo CMake 2.7.0 (2021-03-30)
@@ -157,10 +157,10 @@
 1. Remove deprecated doxygen configurations
     * [Pull request 136](https://github.com/gazebosim/gz-cmake/pull/136)
 
-1. Generate doxygen tutorials for ign-cmake
+1. Generate doxygen tutorials for gz-cmake
     * [Pull request 137](https://github.com/gazebosim/gz-cmake/pull/137)
 
-1. Enable make codecheck for ign-cmake
+1. Enable make codecheck for gz-cmake
     * [Pull request 138](https://github.com/gazebosim/gz-cmake/pull/138)
 
 1. Generate valid visibility macros by replacing hyphens in component name
@@ -387,4 +387,3 @@
     * [Full list of changes](https://github.com/gazebosim/gz-cmake/compare/ignition-cmake_0.4.1...ignition-cmake_0.4.0)
 
 ### Gazebo CMake 0.4.0
-
