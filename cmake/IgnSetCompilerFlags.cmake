@@ -4,7 +4,7 @@
 #
 # _gz_set_compiler_flags()
 #
-# Sets up compiler flags for an ignition library project
+# Sets up compiler flags for a Gazebo library project
 #
 #===============================================================================
 # Copyright (C) 2017 Open Source Robotics Foundation

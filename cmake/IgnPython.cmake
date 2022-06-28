@@ -39,7 +39,7 @@ else()
 endif()
 
 # Tick-tock PYTHON_EXECUTABLE until Python3_EXECUTABLE is released
-# TODO(jrivero) ign-cmake3: start the deprecation cycle of PYTHON_EXECUTABLE
+# TODO(jrivero) gz-cmake3: start the deprecation cycle of PYTHON_EXECUTABLE
 if(Python3_EXECUTABLE AND NOT PYTHON_EXECUTABLE)
   set(PYTHON_EXECUTABLE ${Python3_EXECUTABLE})
 endif()
