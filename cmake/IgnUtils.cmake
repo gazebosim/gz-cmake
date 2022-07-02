@@ -1821,7 +1821,7 @@ macro(ign_generate_conf)
 
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${IGN_DESIGNATION}${PROJECT_VERSION_MAJOR}.yaml
       DESTINATION ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATAROOTDIR}/ignition/)
-    
+
 endmacro()
 
 #################################################
@@ -1840,17 +1840,15 @@ macro(ign_generate_cmd)
 
     file(GENERATE
       OUTPUT "${cmd_script_generated_test}"
-      INPUT  "${cmd_script_configured_test}")
+      INPUT "${cmd_script_configured_test}")
 
-
-    #===============================================================================
+#===============================================================================
     # Used for the installed version.
     # Generate the ruby script that gets installed.
     # Note that the major version of the library is included in the name.
     set(cmd_script_generated "${CMAKE_CURRENT_BINARY_DIR}/cmd${IGN_DESIGNATION}${PROJECT_VERSION_MAJOR}.rb")
     set(cmd_script_configured "${cmd_script_generated}.configured")
 
-  
     configure_file(
       "cmd${IGN_DESIGNATION}.rb.in"
       "${cmd_script_configured}"
@@ -1858,8 +1856,8 @@ macro(ign_generate_cmd)
 
     file(GENERATE
       OUTPUT "${cmd_script_generated}"
-      INPUT  "${cmd_script_configured}")
+      INPUT "${cmd_script_configured}")
 
     # Install the ruby command line library in an unversioned location.
     install(FILES ${cmd_script_generated} DESTINATION lib/ruby/ignition)
-endmacro()    
+endmacro()
