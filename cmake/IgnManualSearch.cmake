@@ -51,9 +51,9 @@ macro(ign_manual_search package)
   _gz_cmake_parse_arguments(gz_manual_search "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   set(gz_manual_search_skip_parsing true)
-  gz_manual_search(${PACKAGE_NAME})
+  gz_manual_search(${package})
 endmacro()
-macro(gz_manual_search PACKAGE_NAME)
+macro(gz_manual_search package)
 
   # Deprecated, remove skip parsing logic in version 4
   if (NOT gz_manual_search_skip_parsing)
