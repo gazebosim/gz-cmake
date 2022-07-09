@@ -15,11 +15,11 @@
 #
 ########################################
 # Find libswscale format
-include(IgnPkgConfig)
+include(GzPkgConfig)
 gz_pkg_check_modules_quiet(SWSCALE libswscale)
 
 if(NOT SWSCALE_FOUND)
-  include(IgnManualSearch)
+  include(GzManualSearch)
   gz_manual_search(SWSCALE
                    HEADER_NAMES "libswscale/swscale.h"
                    LIBRARY_NAMES "swscale")

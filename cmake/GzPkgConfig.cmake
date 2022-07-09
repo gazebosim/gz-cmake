@@ -181,7 +181,7 @@ macro(gz_pkg_check_modules_quiet package signature)
         "${${package}_LIBRARIES}"
         "${${package}_LIBRARY_DIRS}")
 
-      include(IgnImportTarget)
+      include(GzImportTarget)
       gz_import_target(${package} ${_gz_pkg_check_modules_interface_option}
         TARGET_NAME ${gz_pkg_check_modules_TARGET_NAME})
 

@@ -1,5 +1,5 @@
 #.rst
-# IgnPackaging
+# GzPackaging
 # ----------------
 #
 # _gz_setup_packages

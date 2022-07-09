@@ -15,13 +15,13 @@
  *
 */
 
-#include <no_ignition_prefix.hh>
-#include <no_ign/config.hh>
-#include <no_ign/Export.hh>
+#include <no_gz_prefix.hh>
+#include <no_gz/config.hh>
+#include <no_gz/Export.hh>
 
-namespace no_ignition_prefix
+namespace no_gz_prefix
 {
-  class GZ_NO_IGNITION_PREFIX_VISIBLE AlmostEmpty
+  class GZ_NO_GZ_PREFIX_VISIBLE AlmostEmpty
   {
   };
 }

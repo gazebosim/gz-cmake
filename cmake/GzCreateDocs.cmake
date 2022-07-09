@@ -1,5 +1,5 @@
 #.rst
-# IgnCreatePackage
+# GzCreatePackage
 # ----------------
 #
 # gz_create_docs
@@ -129,7 +129,7 @@ function(gz_create_docs)
 
   #--------------------------------------
   # Create man pages
-  include(IgnRonn2Man)
+  include(GzRonn2Man)
   ign_add_manpage_target()
 
   set(IGNITION_DOXYGEN_API_MAINPAGE_MD ${gz_create_docs_API_MAINPAGE_MD})

@@ -16,7 +16,7 @@
 ########################################
 # Find tinyxml2. Only debian distributions package tinyxml with a pkg-config.
 
-include(IgnPkgConfig)
+include(GzPkgConfig)
 
 # Use pkg_check_modules to start
 gz_pkg_check_modules_quiet(TINYXML2 tinyxml2)
@@ -53,7 +53,7 @@ if(NOT TINYXML2_FOUND)
   endif()
 
   if(TINYXML2_FOUND)
-    include(IgnImportTarget)
+    include(GzImportTarget)
     gz_import_target(TINYXML2)
   endif()
 

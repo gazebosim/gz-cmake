@@ -1,5 +1,5 @@
 #.rst
-# IgnBenchmark
+# GzBenchmark
 # ------------
 #
 # _gz_add_version_info_target()
@@ -13,7 +13,7 @@
 #
 # USAGE:
 # 1. Add the following line to your CMakeLists.txt
-#    include(IgnBenchmark)
+#    include(GzBenchmark)
 #
 # 2. Add the benchmark
 #    gz_add_benchmarks(SOURCES ${benchmark_sources_list})

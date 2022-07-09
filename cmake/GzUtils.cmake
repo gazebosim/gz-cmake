@@ -1904,7 +1904,7 @@ macro(gz_build_tests)
 
     # Find the Python interpreter for running the
     # check_test_ran.py script
-    include(IgnPython)
+    include(GzPython)
 
     # Build all the tests
     foreach(target_name ${test_list})

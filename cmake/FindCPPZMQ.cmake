@@ -50,7 +50,7 @@ endif()
 
 if(CPPZMQ_FOUND)
 
-  include(IgnImportTarget)
+  include(GzImportTarget)
 
   # Since this is a header-only library, we should import it as an INTERFACE
   # target.

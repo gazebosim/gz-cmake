@@ -85,7 +85,7 @@ else()
   mark_as_advanced(DL_LIBRARIES)
 
   if(DL_FOUND)
-    include(IgnImportTarget)
+    include(GzImportTarget)
     gz_import_target(DL)
     set(DL_TARGET DL::DL)
   endif()
@@ -94,7 +94,7 @@ endif()
 
 # We need to manually specify the pkgconfig entry (and type of entry) for dl,
 # because gz_pkg_check_modules does not work for it.
-include(IgnPkgConfig)
+include(GzPkgConfig)
 gz_pkg_config_library_entry(DL dl)
 
 include(FindPackageHandleStandardArgs)

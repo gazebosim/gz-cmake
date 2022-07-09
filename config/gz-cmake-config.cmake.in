@@ -61,7 +61,7 @@ if( NOT IGNITION_CMAKE_VERSION_MAJOR
 
   #--------------------------------------
   # include the master IgnCMake module
-  include(IgnCMake)
+  include(GzCMake)
 
   set(IGNITION_CMAKE_DOXYGEN_DIR "@PACKAGE_IGN_DATA_INSTALL_DIR@/doxygen")
   set(IGNITION_CMAKE_CODECHECK_DIR "@PACKAGE_IGN_DATA_INSTALL_DIR@/codecheck")

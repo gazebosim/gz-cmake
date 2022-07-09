@@ -15,11 +15,11 @@
 #
 ########################################
 # Find avutil
-include(IgnPkgConfig)
+include(GzPkgConfig)
 gz_pkg_check_modules_quiet(AVUTIL libavutil)
 
 if(NOT AVUTIL_FOUND)
-  include(IgnManualSearch)
+  include(GzManualSearch)
   gz_manual_search(AVUTIL
                    HEADER_NAMES "libavutil/avutil.h"
                    LIBRARY_NAMES "avutil")

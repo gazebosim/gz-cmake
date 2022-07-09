@@ -16,7 +16,7 @@
 
 # Prefer pkg-config over cmake if possible since version checking is not working
 # on urdfdom series from 1.x to 3.0.0 (at least)
-include(IgnPkgConfig)
+include(GzPkgConfig)
 if(PKG_CONFIG_FOUND)
   if (GzURDFDOM_FIND_VERSION)
     set(signature "urdfdom >= ${GzURDFDOM_FIND_VERSION}")

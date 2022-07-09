@@ -1,5 +1,5 @@
 #.rst
-# IgnCMake
+# GzCMake
 # --------
 #
 # Includes a set of modules that are needed for building the ignition libraries
@@ -22,15 +22,15 @@
 #============================================================================
 # gz-cmake modules
 #============================================================================
-include(IgnUtils)
-include(IgnConfigureProject)
-include(IgnPackaging)
-include(IgnCreateDocs)
-include(IgnSetCompilerFlags)
-include(IgnConfigureBuild)
-include(IgnImportTarget)
-include(IgnPkgConfig)
-include(IgnSanitizers)
+include(GzUtils)
+include(GzConfigureProject)
+include(GzPackaging)
+include(GzCreateDocs)
+include(GzSetCompilerFlags)
+include(GzConfigureBuild)
+include(GzImportTarget)
+include(GzPkgConfig)
+include(GzSanitizers)
 
 #============================================================================
 # Native cmake modules

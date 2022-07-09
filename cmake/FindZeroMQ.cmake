@@ -54,7 +54,7 @@
 #  ZeroMQ_LIBRARIES          The ZeroMQ libraries
 #  ZeroMQ_INCLUDE_DIRS       The location of ZeroMQ headers
 
-include(IgnPkgConfig)
+include(GzPkgConfig)
 
 # We initialize this variable to the default target name
 set(ZeroMQ_TARGET ZeroMQ::ZeroMQ)

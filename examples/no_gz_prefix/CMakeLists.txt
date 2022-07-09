@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.10.2 FATAL_ERROR)
-project(no_ignition_prefix VERSION 0.1.0)
+project(no_gz_prefix VERSION 0.1.0)
 find_package(gz-cmake3 REQUIRED)
 gz_configure_project(
   NO_IGNITION_PREFIX
-  REPLACE_IGNITION_INCLUDE_PATH no_ign)
+  REPLACE_IGNITION_INCLUDE_PATH no_gz)
 gz_configure_build(QUIT_IF_BUILD_ERRORS)
 gz_create_packages()
 gz_create_docs()

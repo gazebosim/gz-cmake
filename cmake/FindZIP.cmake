@@ -26,7 +26,7 @@
 #  ZIP_INCLUDE_DIRS       The location of ZIP headers
 #  ZIP_LIBRARIES          The ZIP libraries
 
-include(IgnPkgConfig)
+include(GzPkgConfig)
 gz_pkg_check_modules_quiet(ZIP libzip)
 
 # If that failed, then fall back to manual detection.
@@ -55,7 +55,7 @@ if(NOT ZIP_FOUND)
   endif()
 
   if(ZIP_FOUND)
-    include(IgnImportTarget)
+    include(GzImportTarget)
     gz_import_target(ZIP)
   endif()
 endif()

@@ -23,7 +23,7 @@
 # correctly imported. This is especially important on Windows in order to
 # support shared library versions of Protobuf.
 
-include(IgnPkgConfig)
+include(GzPkgConfig)
 gz_pkg_config_entry(GzProtobuf "protobuf >= ${GzProtobuf_FIND_VERSION}")
 
 find_package(Protobuf ${GzProtobuf_FIND_VERSION} QUIET CONFIG)
@@ -82,7 +82,7 @@ if(${Protobuf_FOUND})
 
   # Older versions of protobuf don't create imported targets, so we will create
   # them here if they have not been provided.
-  include(IgnImportTarget)
+  include(GzImportTarget)
 
   if(NOT TARGET protobuf::libprotobuf)
     gz_import_target(protobuf
