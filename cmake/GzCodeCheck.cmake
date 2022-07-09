@@ -26,7 +26,7 @@ function(_gz_setup_target_for_codecheck)
   set (CPPCHECK_EXTRA --enable=style,performance,portability,information)
 
   # Rules for cppcheck
-  set (CPPCHECK_RULES "-UM_PI --rule-file=${IGNITION_CMAKE_CODECHECK_DIR}/header_guard.rule --rule-file=${IGNITION_CMAKE_CODECHECK_DIR}/namespace_AZ.rule")
+  set (CPPCHECK_RULES "-UM_PI --rule-file=${GZ_CMAKE_CODECHECK_DIR}/header_guard.rule --rule-file=${GZ_CMAKE_CODECHECK_DIR}/namespace_AZ.rule")
 
   # The find command
   set (CPPCHECK_FIND ${FIND_PATH} ${CPPCHECK_DIRS} -name '*.cc' -o -name '*.hh' -o -name '*.c' -o -name '*.h')
@@ -53,7 +53,7 @@ function(_gz_setup_target_for_codecheck)
 
   if(Python3_Interpreter_FOUND)
     add_custom_target(cpplint
-      COMMAND ${Python3_EXECUTABLE} ${IGNITION_CMAKE_CODECHECK_DIR}/cpplint.py --extensions=cc,hh --quiet `${CPPCHECK_FIND}`
+      COMMAND ${Python3_EXECUTABLE} ${GZ_CMAKE_CODECHECK_DIR}/cpplint.py --extensions=cc,hh --quiet `${CPPCHECK_FIND}`
     )
 
     add_dependencies(codecheck cpplint)

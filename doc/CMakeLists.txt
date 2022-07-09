@@ -1,3 +1,3 @@
 install(DIRECTORY doxygen/
-        DESTINATION ${IGN_DATA_INSTALL_DIR}/doxygen)
+        DESTINATION ${GZ_DATA_INSTALL_DIR}/doxygen)
 

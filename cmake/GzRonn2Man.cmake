@@ -8,12 +8,12 @@
 # - Tweaked macro name to avoid name collisions
 #
 
-MACRO(IGN_ADD_MANPAGE_TARGET)
+MACRO(gz_add_manpage_target)
   # It is not possible add a dependency to target 'install'
   # Run hard-coded 'make man' when 'make install' is invoked
   INSTALL(CODE "EXECUTE_PROCESS(COMMAND $(MAKE) man)")
   ADD_CUSTOM_TARGET(man)
-ENDMACRO(IGN_ADD_MANPAGE_TARGET)
+ENDMACRO(gz_add_manpage_target)
 
 FIND_PROGRAM(RONN ronn)
 FIND_PROGRAM(GZIP gzip)

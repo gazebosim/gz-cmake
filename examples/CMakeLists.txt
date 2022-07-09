@@ -227,7 +227,7 @@ if(UNIX)
       "-DCMAKE_PREFIX_PATH=${FAKE_INSTALL_PREFIX};${example_INSTALL_DIR}"
       "-DCMAKE_BUILD_TYPE=RelWithDebInfo"
       "-DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/install/Sanitizers"
-      "-DIGN_SANITIZER=Address"
+      "-DGZ_SANITIZER=Address"
       "-DCMAKE_CXX_FLAGS=-Wno-unused-parameter"
       "-DCMAKE_VERBOSE_MAKEFILE:BOOL=ON"
     TEST_COMMAND

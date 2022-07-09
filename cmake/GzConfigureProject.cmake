@@ -6,11 +6,11 @@
 #
 # Sets up a Gazebo library project.
 #
-# NO_IGNITION_PREFIX: Optional. Don't use ignition as prefix in
+# NO_GZ_PREFIX: Optional. Don't use Gazebo as prefix in
 #     cmake project name.
-# REPLACE_IGNITION_INCLUDE_PATH: Optional. Specify include folder
+# REPLACE_GZ_INCLUDE_PATH: Optional. Specify include folder
 #     names to replace the default value of
-#     ignition/${IGN_DESIGNATION}
+#     ignition/${GZ_DESIGNATION}
 # VERSION_SUFFIX: Optional. Specify a prerelease version suffix.
 #
 #===============================================================================
@@ -29,13 +29,13 @@
 # limitations under the License.
 
 #################################################
-# Initialize the ignition project
+# Initialize the Gazebo project
 macro(ign_configure_project)
   # TODO(chapulina) Enable warnings after all libraries have migrated.
   # message(WARNING "ign_configure_project is deprecated, use gz_configure_project instead.")
 
-  set(options NO_IGNITION_PREFIX)
-  set(oneValueArgs REPLACE_IGNITION_INCLUDE_PATH VERSION_SUFFIX)
+  set(options NO_GZ_PREFIX NO_IGNITION_PREFIX)  # TODO(CH3): NO_IGNITION_PREFIX IS DEPRECATED.
+  set(oneValueArgs REPLACE_GZ_INCLUDE_PATH REPLACE_IGNITION_INCLUDE_PATH VERSION_SUFFIX)  # TODO(CH3): REPLACE_IGNITION_INCLUDE_PATH IS DEPRECATED.
   set(multiValueArgs) # We are not using multiValueArgs yet
   _gz_cmake_parse_arguments(gz_configure_project "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
@@ -48,8 +48,8 @@ macro(gz_configure_project)
   if (NOT gz_configure_project_skip_parsing)
     #------------------------------------
     # Define the expected arguments
-    set(options NO_IGNITION_PREFIX)
-    set(oneValueArgs REPLACE_IGNITION_INCLUDE_PATH VERSION_SUFFIX)
+    set(options NO_GZ_PREFIX NO_IGNITION_PREFIX)  # TODO(CH3): NO_IGNITION_PREFIX IS DEPRECATED.
+    set(oneValueArgs REPLACE_GZ_INCLUDE_PATH REPLACE_IGNITION_INCLUDE_PATH VERSION_SUFFIX)  # TODO(CH3): REPLACE_IGNITION_INCLUDE_PATH IS DEPRECATED.
     set(multiValueArgs) # We are not using multiValueArgs yet
 
     #------------------------------------
@@ -70,47 +70,59 @@ macro(gz_configure_project)
   #============================================================================
   # Extract the designation
   #============================================================================
-  set(IGN_DESIGNATION ${PROJECT_NAME})
+  set(GZ_DESIGNATION ${PROJECT_NAME})
   # Remove the leading project prefix ("gz-" by default)
   set(PROJECT_PREFIX "gz")
   # Also support "ignition-"
   # TODO: remove this `if` block once all package names start with gz
-  if(${IGN_DESIGNATION} MATCHES "^ignition-")
+  if(${GZ_DESIGNATION} MATCHES "^ignition-")
     set(PROJECT_PREFIX "ignition")
   endif()
-  string(REGEX REPLACE "${PROJECT_PREFIX}-" "" IGN_DESIGNATION ${IGN_DESIGNATION})
+  string(REGEX REPLACE "${PROJECT_PREFIX}-" "" GZ_DESIGNATION ${GZ_DESIGNATION})
 
   # Remove the trailing version number
-  string(REGEX REPLACE "[0-9]+" "" IGN_DESIGNATION ${IGN_DESIGNATION})
+  string(REGEX REPLACE "[0-9]+" "" GZ_DESIGNATION ${GZ_DESIGNATION})
 
   #============================================================================
   # Set project variables
   #============================================================================
 
-  if(gz_configure_project_NO_IGNITION_PREFIX)
-    set(PROJECT_NAME_NO_VERSION ${IGN_DESIGNATION})
+  if(gz_configure_project_NO_GZ_PREFIX)
+    set(PROJECT_NAME_NO_VERSION ${GZ_DESIGNATION})
+  elseif(gz_configure_project_NO_IGNITION_PREFIX)  # TODO(CH3): NO_IGNITION_PREFIX IS DEPRECATED.
+    message(DEPRECATION "[NO_IGNITION_PREFIX] is deprecated. Please use [NO_GZ_PREFIX] instead!")
+    set(PROJECT_NAME_NO_VERSION ${GZ_DESIGNATION})
   else()
-    set(PROJECT_NAME_NO_VERSION "${PROJECT_PREFIX}-${IGN_DESIGNATION}")
+    set(PROJECT_NAME_NO_VERSION "${PROJECT_PREFIX}-${GZ_DESIGNATION}")
   endif()
   string(TOLOWER ${PROJECT_NAME_NO_VERSION} PROJECT_NAME_NO_VERSION_LOWER)
   string(TOUPPER ${PROJECT_NAME_NO_VERSION} PROJECT_NAME_NO_VERSION_UPPER)
   string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWER)
   string(TOUPPER ${PROJECT_NAME} PROJECT_NAME_UPPER)
-  string(TOLOWER ${IGN_DESIGNATION} IGN_DESIGNATION_LOWER)
-  string(TOUPPER ${IGN_DESIGNATION} IGN_DESIGNATION_UPPER)
+  string(TOLOWER ${GZ_DESIGNATION} GZ_DESIGNATION_LOWER)
+  string(TOUPPER ${GZ_DESIGNATION} GZ_DESIGNATION_UPPER)
 
-  string(SUBSTRING ${IGN_DESIGNATION} 0 1 IGN_DESIGNATION_FIRST_LETTER)
-  string(TOUPPER ${IGN_DESIGNATION_FIRST_LETTER} IGN_DESIGNATION_FIRST_LETTER)
-  string(REGEX REPLACE "^.(.*)" "${IGN_DESIGNATION_FIRST_LETTER}\\1"
-         IGN_DESIGNATION_CAP "${IGN_DESIGNATION}")
+  string(SUBSTRING ${GZ_DESIGNATION} 0 1 GZ_DESIGNATION_FIRST_LETTER)
+  string(TOUPPER ${GZ_DESIGNATION_FIRST_LETTER} GZ_DESIGNATION_FIRST_LETTER)
+  string(REGEX REPLACE "^.(.*)" "${GZ_DESIGNATION_FIRST_LETTER}\\1"
+         GZ_DESIGNATION_CAP "${GZ_DESIGNATION}")
+
+  set(IGN_DESIGNATION ${GZ_DESIGNATION})  # TODO(CH3): Deprecated. Remove on tock.
+  set(IGN_DESIGNATION_LOWER ${GZ_DESIGNATION_LOWER})  # TODO(CH3): Deprecated. Remove on tock.
+  set(IGN_DESIGNATION_UPPER ${GZ_DESIGNATION_UPPER})  # TODO(CH3): Deprecated. Remove on tock.
+  set(IGN_DESIGNATION_FIRST_LETTER ${GZ_DESIGNATION_FIRST_LETTER})  # TODO(CH3): Deprecated. Remove on tock.
+  set(IGN_DESIGNATION_CAP ${GZ_DESIGNATION_CAP})  # TODO(CH3): Deprecated. Remove on tock.
 
   set(PROJECT_EXPORT_NAME ${PROJECT_NAME_LOWER})
   set(PROJECT_LIBRARY_TARGET_NAME ${PROJECT_NAME_LOWER})
 
-  if(gz_configure_project_REPLACE_IGNITION_INCLUDE_PATH)
+  if(gz_configure_project_REPLACE_GZ_INCLUDE_PATH)
+    set(PROJECT_INCLUDE_DIR ${gz_configure_project_REPLACE_GZ_INCLUDE_PATH})
+  elseif(gz_configure_project_REPLACE_IGNITION_INCLUDE_PATH)  # TODO(CH3): REPLACE_IGNITION_INCLUDE_PATH IS DEPRECATED.
+    message(DEPRECATION "[REPLACE_IGNITION_INCLUDE_PATH] is deprecated. Please use [REPLACE_GZ_INCLUDE_PATH] instead!")
     set(PROJECT_INCLUDE_DIR ${gz_configure_project_REPLACE_IGNITION_INCLUDE_PATH})
   else()
-    set(PROJECT_INCLUDE_DIR ignition/${IGN_DESIGNATION})
+    set(PROJECT_INCLUDE_DIR ignition/${GZ_DESIGNATION})
   endif()
 
   # version <major>.<minor>

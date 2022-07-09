@@ -43,7 +43,7 @@ function(_gz_add_version_info_target)
   # that forces the file to be regenerated at build time.
   add_custom_target(version_info_target
     COMMAND ${CMAKE_COMMAND}
-      -Dinput_file=${IGNITION_CMAKE_DIR}/version_info.json.in
+      -Dinput_file=${GZ_CMAKE_DIR}/version_info.json.in
       -Doutput_file=${CMAKE_CURRENT_BINARY_DIR}/version_info.json
       -Drepository_root=${CMAKE_CURRENT_SOURCE_DIR}
       # Yes, these variables need to be passed in, because they won't
@@ -55,7 +55,7 @@ function(_gz_add_version_info_target)
       -DPROJECT_VERSION_MINOR=${PROJECT_VERSION_MINOR}
       -DPROJECT_VERSION_PATCH=${PROJECT_VERSION_PATCH}
       -DPROJECT_NAME=${PROJECT_NAME}
-      -P ${IGNITION_CMAKE_DIR}/IgnGenerateVersionInfo.cmake
+      -P ${GZ_CMAKE_DIR}/GzGenerateVersionInfo.cmake
   )
 endfunction()
 
@@ -107,7 +107,7 @@ function(gz_add_benchmarks)
 
   add_custom_target(
     run_benchmarks
-    COMMAND python3 ${IGNITION_CMAKE_BENCHMARK_DIR}/run_benchmarks.py
+    COMMAND python3 ${GZ_CMAKE_BENCHMARK_DIR}/run_benchmarks.py
       --project-name ${PROJECT_NAME}
       --version-file ${CMAKE_CURRENT_BINARY_DIR}/version_info.json
       --benchmark-targets ${CMAKE_CURRENT_BINARY_DIR}/benchmark_targets

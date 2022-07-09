@@ -16,7 +16,7 @@
 ########################################
 # Find Protobuf
 
-# This is an ignition wrapper for finding Protobuf. The purpose of this find
+# This is a Gazebo wrapper for finding Protobuf. The purpose of this find
 # module is to search for a config-file for Protobuf before resorting to using
 # the native CMake find-module for Protobuf. This ensures that if a specially
 # configured version of Protobuf is installed, then its exported targets will be

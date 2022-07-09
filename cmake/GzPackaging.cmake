@@ -75,7 +75,7 @@ macro(_gz_setup_packages)
   if(CPACK_GENERATOR)
     message(STATUS "Found CPack generators: ${CPACK_GENERATOR}")
 
-    configure_file("${IGNITION_CMAKE_DIR}/cpack_options.cmake.in"
+    configure_file("${GZ_CMAKE_DIR}/cpack_options.cmake.in"
       ${PROJECT_CPACK_CFG_FILE} @ONLY)
 
     set(CPACK_PROJECT_CONFIG_FILE ${PROJECT_CPACK_CFG_FILE})
@@ -103,13 +103,21 @@ macro(_gz_setup_packages)
 
   #============================================================================
   # Set up installation directories
-  set(IGN_INCLUDE_INSTALL_DIR "${CMAKE_INSTALL_INCLUDEDIR}")
-  set(IGN_INCLUDE_INSTALL_DIR_POSTFIX "ignition/${IGN_DESIGNATION}${PROJECT_VERSION_MAJOR}")
-  set(IGN_INCLUDE_INSTALL_DIR_FULL    "${IGN_INCLUDE_INSTALL_DIR}/${IGN_INCLUDE_INSTALL_DIR_POSTFIX}")
-  set(IGN_DATA_INSTALL_DIR_POSTFIX "ignition/${PROJECT_NAME_LOWER}")
-  set(IGN_DATA_INSTALL_DIR         "${CMAKE_INSTALL_DATAROOTDIR}/${IGN_DATA_INSTALL_DIR_POSTFIX}")
-  set(IGN_LIB_INSTALL_DIR ${CMAKE_INSTALL_LIBDIR})
-  set(IGN_BIN_INSTALL_DIR ${CMAKE_INSTALL_BINDIR})
+  set(GZ_INCLUDE_INSTALL_DIR "${CMAKE_INSTALL_INCLUDEDIR}")
+  set(GZ_INCLUDE_INSTALL_DIR_POSTFIX "ignition/${GZ_DESIGNATION}${PROJECT_VERSION_MAJOR}")
+  set(GZ_INCLUDE_INSTALL_DIR_FULL    "${GZ_INCLUDE_INSTALL_DIR}/${GZ_INCLUDE_INSTALL_DIR_POSTFIX}")
+  set(GZ_DATA_INSTALL_DIR_POSTFIX "ignition/${PROJECT_NAME_LOWER}")
+  set(GZ_DATA_INSTALL_DIR         "${CMAKE_INSTALL_DATAROOTDIR}/${GZ_DATA_INSTALL_DIR_POSTFIX}")
+  set(GZ_LIB_INSTALL_DIR ${CMAKE_INSTALL_LIBDIR})
+  set(GZ_BIN_INSTALL_DIR ${CMAKE_INSTALL_BINDIR})
+
+  set(IGN_INCLUDE_INSTALL_DIR ${GZ_INCLUDE_INSTALL_DIR})  # TODO(CH3): Deprecated. Remove on tock.
+  set(IGN_INCLUDE_INSTALL_DIR_POSTFIX ${GZ_INCLUDE_INSTALL_DIR_POSTFIX})  # TODO(CH3): Deprecated. Remove on tock.
+  set(IGN_INCLUDE_INSTALL_DIR_FULL ${GZ_INCLUDE_INSTALL_DIR_FULL})  # TODO(CH3): Deprecated. Remove on tock.
+  set(IGN_DATA_INSTALL_DIR_POSTFIX ${GZ_DATA_INSTALL_DIR_POSTFIX})  # TODO(CH3): Deprecated. Remove on tock.
+  set(IGN_DATA_INSTALL_DIR ${GZ_DATA_INSTALL_DIR})  # TODO(CH3): Deprecated. Remove on tock.
+  set(IGN_LIB_INSTALL_DIR ${GZ_LIB_INSTALL_DIR})  # TODO(CH3): Deprecated. Remove on tock.
+  set(IGN_BIN_INSTALL_DIR ${GZ_BIN_INSTALL_DIR})  # TODO(CH3): Deprecated. Remove on tock.
 
   #============================================================================
   # Handle the user's RPATH setting
@@ -122,23 +130,23 @@ macro(_gz_setup_packages)
     # (but later on when installing)
     set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
 
-    set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${IGN_LIB_INSTALL_DIR}")
+    set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${GZ_LIB_INSTALL_DIR}")
 
     # add the automatically determined parts of the RPATH
     # which point to directories outside the build tree to the install RPATH
     set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
     # the RPATH to be used when installing, but only if its not a system directory
-    list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${CMAKE_INSTALL_PREFIX}/${IGN_LIB_INSTALL_DIR}" isSystemDir)
+    list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${CMAKE_INSTALL_PREFIX}/${GZ_LIB_INSTALL_DIR}" isSystemDir)
     if("${isSystemDir}" STREQUAL "-1")
-      set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${IGN_LIB_INSTALL_DIR}")
+      set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${GZ_LIB_INSTALL_DIR}")
     endif("${isSystemDir}" STREQUAL "-1")
   endif()
 
   #============================================================================
   # Add uninstall target
   configure_file(
-    "${IGNITION_CMAKE_DIR}/cmake_uninstall.cmake.in"
+    "${GZ_CMAKE_DIR}/cmake_uninstall.cmake.in"
     "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
     IMMEDIATE @ONLY)
   add_custom_target(uninstall
@@ -197,15 +205,15 @@ function(_gz_create_pkgconfig)
   #------------------------------------
   # Choose which input file to use
   if(_gz_create_pkgconfig_COMPONENT)
-    set(pkgconfig_input "${IGNITION_CMAKE_DIR}/pkgconfig/gz-component.pc.in")
+    set(pkgconfig_input "${GZ_CMAKE_DIR}/pkgconfig/gz-component.pc.in")
     set(target_name ${PROJECT_LIBRARY_TARGET_NAME}-${_gz_create_pkgconfig_COMPONENT})
   else()
-    set(pkgconfig_input "${IGNITION_CMAKE_DIR}/pkgconfig/gz.pc.in")
+    set(pkgconfig_input "${GZ_CMAKE_DIR}/pkgconfig/gz.pc.in")
     set(target_name ${PROJECT_LIBRARY_TARGET_NAME})
   endif()
 
   set(pkgconfig_output "${CMAKE_BINARY_DIR}/cmake/pkgconfig/${target_name}.pc")
-  set(pkgconfig_install_dir "${IGN_LIB_INSTALL_DIR}/pkgconfig")
+  set(pkgconfig_install_dir "${GZ_LIB_INSTALL_DIR}/pkgconfig")
   file(RELATIVE_PATH
     PC_CONFIG_RELATIVE_PATH_TO_PREFIX
     "${CMAKE_INSTALL_PREFIX}/${pkgconfig_install_dir}"
@@ -270,12 +278,12 @@ function(_gz_create_cmake_package)
 
     set(component ${_gz_create_cmake_package_COMPONENT})
     set(target_name ${PROJECT_LIBRARY_TARGET_NAME}-${component})
-    set(gz_config_input "${IGNITION_CMAKE_DIR}/gz-component-config.cmake.in")
+    set(gz_config_input "${GZ_CMAKE_DIR}/gz-component-config.cmake.in")
     set(simple_import_name ${component})
 
   elseif(_gz_create_cmake_package_ALL)
 
-    set(gz_config_input "${IGNITION_CMAKE_DIR}/gz-all-config.cmake.in")
+    set(gz_config_input "${GZ_CMAKE_DIR}/gz-all-config.cmake.in")
     set(target_name ${PROJECT_LIBRARY_TARGET_NAME}-all)
     set(all_pkg_name ${PROJECT_LIBRARY_TARGET_NAME}-all)
     set(simple_import_name all)
@@ -283,7 +291,7 @@ function(_gz_create_cmake_package)
   else()
 
     set(target_name ${PROJECT_LIBRARY_TARGET_NAME})
-    set(gz_config_input "${IGNITION_CMAKE_DIR}/gz-config.cmake.in")
+    set(gz_config_input "${GZ_CMAKE_DIR}/gz-config.cmake.in")
     set(simple_import_name core)
 
   endif()
@@ -306,20 +314,20 @@ function(_gz_create_cmake_package)
 
   # NOTE: Each component needs to go into its own cmake directory in order to be
   # found by cmake's native find_package(~) command.
-  set(gz_config_install_dir "${IGN_LIB_INSTALL_DIR}/cmake/${target_name}")
+  set(gz_config_install_dir "${GZ_LIB_INSTALL_DIR}/cmake/${target_name}")
   set(gz_namespace ${PROJECT_LIBRARY_TARGET_NAME}::)
 
   set(import_target_name ${gz_namespace}${target_name})
   set(simple_import_name ${gz_namespace}${simple_import_name})
 
   # Configure the package config file. It will be installed to
-  # "[lib]/cmake/ignition-<project><major_version>/" where [lib] is the library
+  # "[lib]/cmake/gz-<project><major_version>/" where [lib] is the library
   # installation directory.
   configure_package_config_file(
     ${gz_config_input}
     ${gz_config_output}
     INSTALL_DESTINATION ${gz_config_install_dir}
-    PATH_VARS IGN_LIB_INSTALL_DIR IGN_INCLUDE_INSTALL_DIR_FULL)
+    PATH_VARS GZ_LIB_INSTALL_DIR GZ_INCLUDE_INSTALL_DIR_FULL)
 
   # Use write_basic_package_version_file to generate a ConfigVersion file that
   # allow users of the library to specify the API or version to depend on
@@ -343,10 +351,10 @@ function(_gz_create_cmake_package)
     # We add a namespace that ends with a :: to the name of the exported target.
     # This is so consumers of the project can call
     #     find_package(gz-<project>)
-    #     target_link_libraries(consumer_project ignition-<project>::ignition-<project>)
+    #     target_link_libraries(consumer_project gz-<project>::gz-<project>)
     # and cmake will understand that the consumer is asking to link the imported
-    # target "ignition-<project>" to their "consumer_project" rather than asking
-    # to link a library named "ignition-<project>". In other words, when
+    # target "gz-<project>" to their "consumer_project" rather than asking
+    # to link a library named "gz-<project>". In other words, when
     # target_link_libraries is given a name that contains double-colons (::) it
     # will never mistake it for a library name, and it will throw an error if
     # it cannot find a target with the given name.

@@ -26,7 +26,7 @@ The available options are:
 * `Coverage`: Build with additional information required for the [`gcov` analysis tool](https://en.wikipedia.org/wiki/Gcov)
 * `Profile`: Use flags that are helpful with the [`gprof` profiling tool](https://en.wikipedia.org/wiki/Gprof)
 
-More information about flags applied can be found in [IgnSetCompilerFlags.cmake](https://github.com/gazebosim/gz-cmake/blob/main/cmake/IgnSetCompilerFlags.cmake)
+More information about flags applied can be found in [GzSetCompilerFlags.cmake](https://github.com/gazebosim/gz-cmake/blob/main/cmake/GzSetCompilerFlags.cmake)
 
 If left unspecified, `CMAKE_BUILD_TYPE` is set to `RelWithDebInfo`
 
@@ -98,8 +98,8 @@ To change the build system type, set the CMake flag:
 
 ### Build sanitizers
 
-`IGN_SANITIZER` CMake parameter can be used with different compilers to support the detection of different problems in the code.
-[Check the documentation for `IGN_SANITIZER` flag](ign_cmake_sanitizers.md)
+`GZ_SANITIZER` CMake parameter can be used with different compilers to support the detection of different problems in the code.
+[Check the documentation for `GZ_SANITIZER` flag](gz_cmake_sanitizers.md)
 
 ### Using CCache
 
@@ -213,13 +213,13 @@ For the following, if you do not have `colcon` or `vcs` installed, consult the [
 
 To try this out, first create a Gazebo source workspace:
 ```
-mkdir -p ~/ign_edifice/src
-cd ~/ign_edifice/
-wget https://raw.githubusercontent.com/ignition-tooling/gazebodistro/main/collection-edifice.yaml
+mkdir -p ~/gz_edifice/src
+cd ~/gz_edifice/
+wget https://raw.githubusercontent.com/gazebo-tooling/gazebodistro/main/collection-edifice.yaml
 vcs import src < collection-edifice.yaml
 ```
 
-Then add a `~/ign_edifice/defaults.yaml` file with compilation flags:
+Then add a `~/gz_edifice/defaults.yaml` file with compilation flags:
 
 ```
 {
@@ -238,7 +238,7 @@ Then add a `~/ign_edifice/defaults.yaml` file with compilation flags:
 To build with this defaults file, first export the correct environment variable and execute colcon:
 
 ```
-cd ~/ign_edifice
+cd ~/gz_edifice
 export COLCON_DEFAULTS_FILE=`pwd`/defaults.yaml
 colcon build
 ```
@@ -268,18 +268,18 @@ In order to manage per-workspace settings, a tool like [`direnv`](https://direnv
 Once `direnv` is installed and configured with your shell of choice, do the following:
 
 ```
-$ cd ~/ign_edifice/
+$ cd ~/gz_edifice/
 # The environment variable will be unset
 $ echo $COLCON_DEFAULTS_FILE
 
 $ echo export COLCON_DEFAULTS_FILE=`pwd`/defaults.yaml > .envrc
 direnv: error .envrc is blocked, Run `direnv allow` to approve its content
 $ direnv allow
-direnv: loading ~/ign_edifice/.envrc
+direnv: loading ~/gz_edifice/.envrc
 direnv: export +COLCON_DEFAULTS_FILE
 
 $ echo $COLCON_DEFAULTS_FILE
-~/ign_edifice/defaults.yaml
+~/gz_edifice/defaults.yaml
 ```
 
-Once this is configured, the environment will be applied each time you navigate to the `~/ign_edifice` directory or its children.
+Once this is configured, the environment will be applied each time you navigate to the `~/gz_edifice` directory or its children.

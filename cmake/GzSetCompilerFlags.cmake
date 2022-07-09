@@ -26,7 +26,7 @@
 # Internal to gz-cmake.
 macro(_gz_set_compiler_flags)
 
-  option(USE_IGN_RECOMMENDED_FLAGS "Build project using the compiler flags recommended by the ignition developers" ON)
+  option(USE_GZ_RECOMMENDED_FLAGS "Build project using the compiler flags recommended by the Gazebo developers" ON)
 
   if(MSVC)
     _gz_setup_msvc()
@@ -56,7 +56,7 @@ macro(_gz_set_compiler_flags)
 
   if(GCC_OR_CLANG)
 
-    if(USE_IGN_RECOMMENDED_FLAGS)
+    if(USE_GZ_RECOMMENDED_FLAGS)
       _gz_setup_gcc_or_clang()
     endif()
 
@@ -80,7 +80,8 @@ macro(_gz_setup_unix)
     set(CMAKE_SYSTEM_PROCESSOR ${CMAKE_SYSTEM_PROCESSOR} CACHE INTERNAL
         "processor type (i386 and x86_64)")
     if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
-      set(IGN_ADD_fPIC_TO_LIBRARIES true)
+      set(GZ_ADD_fPIC_TO_LIBRARIES true)
+      set(IGN_ADD_fPIC_TO_LIBRARIES ${GZ_ADD_fPIC_TO_LIBRARIES})  # TODO(CH3): Deprecated. Remove on tock.
     endif(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
   endif(CMAKE_UNAME)
 
@@ -294,7 +295,7 @@ macro(_gz_setup_msvc)
   # Don't pull in the Windows min/max macros
   add_definitions(-DNOMINMAX)
 
-  if(USE_IGN_RECOMMENDED_FLAGS)
+  if(USE_GZ_RECOMMENDED_FLAGS)
 
     # Gy: Prevent errors caused by multiply-defined symbols
     # W2: Warning level 2: significant warnings.
@@ -347,14 +348,19 @@ macro(_gz_setup_msvc)
   # framework.
   #
   # In some cases, a user might want to compile with the static runtime. This
-  # should ONLY be done if they do not intend to use the ignition library as
+  # should ONLY be done if they do not intend to use the Gazebo library as
   # part of a plugin-based framework.
-  option(IGN_USE_STATIC_RUNTIME "Use the static runtime (strongly discouraged)" OFF)
+  option(GZ_USE_STATIC_RUNTIME "Use the static runtime (strongly discouraged)" OFF)
+  option(IGN_USE_STATIC_RUNTIME  # TODO(CH3): Deprecated. Remove on tock.
+    "Deprecated. Use [GZ_USE_STATIC_RUNTIME] instead! Use the static runtime (strongly discouraged)"
+    ${GZ_USE_STATIC_RUNTIME})
   if(BUILD_SHARED_LIBS)
     # Users should not choose the static runtime unless they are compiling a
     # static library, so we completely disable this option if BUILD_SHARED_LIBS
     # is turned on.
-    set(IGN_USE_STATIC_RUNTIME OFF CACHE BOOL "Use the static runtime (strongly discouraged)" FORCE)
+    set(GZ_USE_STATIC_RUNTIME OFF CACHE BOOL "Use the static runtime (strongly discouraged)" FORCE)
+    set(IGN_USE_STATIC_RUNTIME ${GZ_USE_STATIC_RUNTIME}  # TODO(CH3): Deprecated. Remove on tock.
+      CACHE BOOL "Deprecated. Use [GZ_USE_STATIC_RUNTIME] instead! Use the static runtime (strongly discouraged)" FORCE)
   endif()
 
   if(IGN_USE_STATIC_RUNTIME)
