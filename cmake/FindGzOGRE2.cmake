@@ -261,7 +261,7 @@ if (NOT WIN32)
     set(OGRE2_VERSION "${OGRE2_VERSION_MAJOR}.${OGRE2_VERSION_MINOR}.${OGRE2_VERSION_PATCH}")
 
     # find ogre components
-    include(IgnImportTarget)
+    include(GzImportTarget)
     foreach(component ${GzOGRE2_FIND_COMPONENTS})
       find_library(OGRE2-${component}
         NAMES
@@ -339,7 +339,7 @@ if (NOT WIN32)
 
   # We need to manually specify the pkgconfig entry (and type of entry),
   # because gz_pkg_check_modules does not work for it.
-  include(IgnPkgConfig)
+  include(GzPkgConfig)
   gz_pkg_config_library_entry(GzOGRE2 OgreMain)
 else() #WIN32
 

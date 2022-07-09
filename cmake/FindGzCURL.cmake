@@ -58,7 +58,7 @@ if(${GzCURL_FOUND})
         INTERFACE_LINK_LIBRARIES CURL::libcurl)
   endif()
 
-  include(IgnImportTarget)
+  include(GzImportTarget)
 
   if(NOT TARGET curl::curl)
     gz_import_target(curl
@@ -66,7 +66,7 @@ if(${GzCURL_FOUND})
       INCLUDE_VAR CURL_INCLUDE_DIRS)
   endif()
 
-  include(IgnPkgConfig)
+  include(GzPkgConfig)
   gz_pkg_config_entry(GzCURL "libcurl >= ${GzCURL_FIND_VERSION}")
 
 endif()

@@ -9,8 +9,8 @@ if (NOT WIN32 AND EXAMPLE_LCOV_PATH)
 endif()
 
 set(example_directories
-  ign_conf
-  no_ignition_prefix
+  gz_conf
+  no_gz_prefix
   prerelease
   core_nodep
   core_nodep_static
@@ -30,10 +30,10 @@ endif()
 
 foreach(example ${example_directories})
   set(run_codecheck false)
-  if (${example} STREQUAL "ign_conf")
+  if (${example} STREQUAL "gz_conf")
     set(example_tarball_name gz-minimal-0.1.0.tar.bz2)
-  elseif (${example} STREQUAL "no_ignition_prefix")
-    set(example_tarball_name no_ignition_prefix-0.1.0.tar.bz2)
+  elseif (${example} STREQUAL "no_gz_prefix")
+    set(example_tarball_name no_gz_prefix-0.1.0.tar.bz2)
   elseif (${example} STREQUAL "prerelease")
     set(example_tarball_name gz-minimal-1.0.0~pre1.tar.bz2)
   elseif (${example} STREQUAL "core_nodep")

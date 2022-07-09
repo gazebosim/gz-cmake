@@ -15,7 +15,7 @@
  *
 */
 
-#include <ignition/core_no_deps/Export.hh>
+#include <gz/core_no_deps/Export.hh>
 
 namespace gz
 {

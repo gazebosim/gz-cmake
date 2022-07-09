@@ -1,1 +1,1 @@
-add_subdirectory(no_ign)
+add_subdirectory(no_gz)

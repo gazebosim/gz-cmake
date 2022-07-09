@@ -51,7 +51,7 @@ if(YAML_FIND_VERSION AND NOT YAML_FIND_VERSION VERSION_EQUAL "0.1")
   message(WARNING "FindYAML only knows how to find version 0.1 "
                   "but you requested version ${YAML_FIND_VERSION}.")
 else()
-  include(IgnPkgConfig)
+  include(GzPkgConfig)
   gz_pkg_check_modules_quiet(YAML yaml-0.1)
 
   # If that failed, then fall back to manual detection.
@@ -80,7 +80,7 @@ else()
     endif()
 
     if(YAML_FOUND)
-      include(IgnImportTarget)
+      include(GzImportTarget)
       gz_import_target(YAML)
       message(STATUS "Assuming libyaml is static, defining YAML_DECLARE_STATIC")
       set_target_properties(YAML::YAML PROPERTIES

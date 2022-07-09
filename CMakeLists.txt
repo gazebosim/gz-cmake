@@ -16,7 +16,7 @@ list(APPEND CMAKE_MODULE_PATH "${IGNITION_CMAKE_DIR}")
 
 #--------------------------------------
 # include the master IgnCMake module
-include(IgnCMake)
+include(GzCMake)
 
 #--------------------------------------
 # Set up the project
@@ -203,7 +203,7 @@ set(CPPCHECK_INCLUDE_DIRS
   ${CMAKE_SOURCE_DIR}/examples
 )
 set(IGNITION_CMAKE_CODECHECK_DIR "${CMAKE_CURRENT_SOURCE_DIR}/codecheck")
-include(IgnCodeCheck)
+include(GzCodeCheck)
 _gz_setup_target_for_codecheck()
 
 # Docs

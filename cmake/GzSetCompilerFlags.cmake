@@ -1,5 +1,5 @@
 #.rst
-# IgnSetCompilerFlags
+# GzSetCompilerFlags
 # -------------------
 #
 # _gz_set_compiler_flags()
@@ -250,7 +250,7 @@ endmacro()
 macro(_gz_set_sse_flags)
 
   message(STATUS "\n-- Searching for host SSE information")
-  include(IgnCheckSSE)
+  include(GzCheckSSE)
 
   if(SSE2_FOUND)
     add_compile_options(-msse -msse2)

@@ -12,7 +12,7 @@
 #
 # USAGE:
 # 1. Add the following line to your CMakeLists.txt:
-#      INCLUDE(IgnCodeCoverage)
+#      include(GzCodeCoverage)
 #
 # 2. Set compiler flags to turn off optimization and enable coverage:
 #    SET(CMAKE_CXX_FLAGS "-g -O0 -fprofile-arcs -ftest-coverage")

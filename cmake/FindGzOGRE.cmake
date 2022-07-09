@@ -259,7 +259,7 @@ if(OGRE_FOUND)
     list(APPEND OGRE_INCLUDE_DIRS ${dir_include})
   endforeach()
 
-  include(IgnImportTarget)
+  include(GzImportTarget)
   gz_import_target(GzOGRE
     TARGET_NAME GzOGRE::GzOGRE
     LIB_VAR OGRE_LIBRARIES

@@ -1,5 +1,5 @@
 #.rst
-# IgnGenerateVersionInfo
+# GzGenerateVersionInfo
 # ----------------------
 #
 # Intended to be invoked as part of the _gz_add_version_info_target function

@@ -1,5 +1,5 @@
 #.rst
-# IgnConfigureProject
+# GzConfigureProject
 # -------------------
 #
 # gz_configure_project([VERSION_SUFFIX <pre|alpha|beta|etc>])

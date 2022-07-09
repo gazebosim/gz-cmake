@@ -377,7 +377,7 @@ writing a good quality find-module.
 
 In many cases, a package that we depend on will be distributed with a pkgconfig
 (`*.pc`) file. In such a case, `gz-cmake` provides a macro that can easily
-find the package and create an imported target for it. Simply use `include(IgnPkgConfig)`
+find the package and create an imported target for it. Simply use `include(GzPkgConfig)`
 and then `gz_pkg_check_modules(~)` in your find-module, and you are done. An
 example of a simple case of this can be found in `gz-cmake/cmake/FindGTS.cmake`.
 

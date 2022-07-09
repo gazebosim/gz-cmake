@@ -43,10 +43,10 @@
 1. doxygen allow all .cc, .hh, and CMakeLists.txt, not just in examples/ dir
     * [Pull request #198](https://github.com/gazebosim/gz-cmake/pull/198)
 
-1. Add `LEGACY_PROJECT_PREFIX` parameter to `ign_create_core_library`
+1. Add `LEGACY_PROJECT_PREFIX` parameter to `gz_create_core_library`
     * [Pull request #199](https://github.com/gazebosim/gz-cmake/pull/199)
 
-1. Add `HIDE_SYMBOLS_BY_DEFAULT` parameter to `ign_configure_build`
+1. Add `HIDE_SYMBOLS_BY_DEFAULT` parameter to `gz_configure_build`
     * [Pull request #196](https://github.com/gazebosim/gz-cmake/pull/196)
 
 1. Add Ubuntu Jammy CI

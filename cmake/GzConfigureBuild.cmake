@@ -1,5 +1,5 @@
 #.rst
-# IgnBuildProject
+# GzBuildProject
 # -------------------
 #
 # gz_configure_build()
@@ -289,7 +289,7 @@ macro(gz_configure_build)
 
     #--------------------------------------
     # Create codecheck target
-    include(IgnCodeCheck)
+    include(GzCodeCheck)
     _gz_setup_target_for_codecheck()
 
     #--------------------------------------
@@ -386,7 +386,7 @@ macro(_gz_parse_build_type)
   elseif("${CMAKE_BUILD_TYPE_UPPERCASE}" STREQUAL "NONE")
     set(BUILD_TYPE_NONE TRUE)
   elseif("${CMAKE_BUILD_TYPE_UPPERCASE}" STREQUAL "COVERAGE")
-    include(IgnCodeCoverage)
+    include(GzCodeCoverage)
     set(BUILD_TYPE_DEBUG TRUE)
     ign_setup_target_for_coverage(
       OUTPUT_NAME coverage
