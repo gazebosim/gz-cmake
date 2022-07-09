@@ -24,7 +24,7 @@
 ########################################
 
 set(gz_quiet_arg)
-if(IgnBullet_FIND_QUIETLY)
+if(GzBullet_FIND_QUIETLY)
   set(gz_quiet_arg QUIET)
 endif()
 
@@ -33,14 +33,16 @@ endif()
 # with Bullet, which uses relative paths and may break transitive dependencies.
 find_package(Bullet MODULE ${gz_quiet_arg})
 
-set(IgnBullet_FOUND false)
+set(GzBullet_FOUND false)
 # create Bullet target
 if(BULLET_FOUND)
-  set(IgnBullet_FOUND true)
+  set(GzBullet_FOUND true)
 
-  gz_import_target(IgnBullet
-    TARGET_NAME IgnBullet::IgnBullet
+  gz_import_target(GzBullet
+    TARGET_NAME GzBullet::GzBullet
     LIB_VAR BULLET_LIBRARIES
     INCLUDE_VAR BULLET_INCLUDE_DIRS
   )
 endif()
+
+set(IgnBullet_FOUND ${GzBullet_FOUND})  # TODO(CH3): Deprecated. Remove on tock.
