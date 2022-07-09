@@ -150,7 +150,8 @@ macro(ign_find_package PACKAGE_NAME)
   set(gz_find_package_skip_parsing true)
   gz_find_package(${PACKAGE_NAME})
 endmacro()
-macro(gz_find_package PACKAGE_NAME)
+macro(gz_find_package PACKAGE_NAME_)
+  set(PACKAGE_NAME ${PACKAGE_NAME_})  # Allow for variable rebinds
 
   # Deprecated, remove skip parsing logic in version 4
   if (NOT gz_find_package_skip_parsing)
@@ -199,6 +200,40 @@ macro(gz_find_package PACKAGE_NAME)
 
 
   #------------------------------------
+  # Call find_package with the provided arguments
+
+  # TODO(CH3): Deprecated. Remove on tock.
+  if(${PACKAGE_NAME} MATCHES "^Ign")
+
+    # Deliberately use QUIET since we expect Ign to fail
+    find_package(${${PACKAGE_NAME}_find_package_args} QUIET)
+
+    if(NOT ${PACKAGE_NAME}_FOUND)
+      # Try Gz prepended version instead!
+      string(REGEX REPLACE "^Ign(ition)?" "Gz" PACKAGE_NAME_GZ ${PACKAGE_NAME})
+
+      set(${PACKAGE_NAME_GZ}_find_package_args ${${PACKAGE_NAME}_find_package_args})
+      list(POP_FRONT ${PACKAGE_NAME_GZ}_find_package_args)
+      list(PREPEND ${PACKAGE_NAME_GZ}_find_package_args ${PACKAGE_NAME_GZ})
+
+      find_package(${${PACKAGE_NAME_GZ}_find_package_args})
+      if(${PACKAGE_NAME_GZ}_FOUND)
+
+        message(DEPRECATION "Ign prefixed package name [${PACKAGE_NAME}] is deprecated! Automatically using the Gz prefix instead: [${PACKAGE_NAME_GZ}]")
+        set(PACKAGE_NAME ${PACKAGE_NAME_GZ})
+
+      endif()
+
+    endif()
+  else()
+
+    # TODO(CH3): On removal of tock, unindent this and just have this line!!
+    find_package(${${PACKAGE_NAME}_find_package_args})
+
+  endif()
+
+
+  #------------------------------------
   # Figure out which name to print
   if(gz_find_package_PRETTY)
     set(${PACKAGE_NAME}_pretty ${gz_find_package_PRETTY})
@@ -206,10 +241,6 @@ macro(gz_find_package PACKAGE_NAME)
     set(${PACKAGE_NAME}_pretty ${PACKAGE_NAME})
   endif()
 
-
-  #------------------------------------
-  # Call find_package with the provided arguments
-  find_package(${${PACKAGE_NAME}_find_package_args})
 
   if(${PACKAGE_NAME}_FOUND)
 
