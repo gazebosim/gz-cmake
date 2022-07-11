@@ -10,7 +10,7 @@
 #     cmake project name.
 # REPLACE_GZ_INCLUDE_PATH: Optional. Specify include folder
 #     names to replace the default value of
-#     ignition/${GZ_DESIGNATION}
+#     gz/${GZ_DESIGNATION}
 # VERSION_SUFFIX: Optional. Specify a prerelease version suffix.
 #
 #===============================================================================
@@ -122,7 +122,7 @@ macro(gz_configure_project)
     message(DEPRECATION "[REPLACE_IGNITION_INCLUDE_PATH] is deprecated. Please use [REPLACE_GZ_INCLUDE_PATH] instead!")
     set(PROJECT_INCLUDE_DIR ${gz_configure_project_REPLACE_IGNITION_INCLUDE_PATH})
   else()
-    set(PROJECT_INCLUDE_DIR ignition/${GZ_DESIGNATION})
+    set(PROJECT_INCLUDE_DIR gz/${GZ_DESIGNATION})
   endif()
 
   # version <major>.<minor>
