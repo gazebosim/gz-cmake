@@ -350,10 +350,15 @@ macro(_gz_setup_msvc)
   # In some cases, a user might want to compile with the static runtime. This
   # should ONLY be done if they do not intend to use the Gazebo library as
   # part of a plugin-based framework.
-  option(GZ_USE_STATIC_RUNTIME "Use the static runtime (strongly discouraged)" OFF)
-  option(IGN_USE_STATIC_RUNTIME  # TODO(CH3): Deprecated. Remove on tock.
-    "Deprecated. Use [GZ_USE_STATIC_RUNTIME] instead! Use the static runtime (strongly discouraged)"
-    ${GZ_USE_STATIC_RUNTIME})
+
+  if(IGN_USE_STATIC_RUNTIME)  # TODO(CH3): Deprecated. Remove on tock.
+    message(WARNING "Deprecated. Use [GZ_USE_STATIC_RUNTIME] instead! Use the static runtime (strongly discouraged)")
+    set(GZ_USE_STATIC_RUNTIME ${IGN_USE_STATIC_RUNTIME})
+  else()
+    option(GZ_USE_STATIC_RUNTIME "Use the static runtime (strongly discouraged)" OFF)
+    set(IGN_USE_STATIC_RUNTIME ${GZ_USE_STATIC_RUNTIME})
+  endif()
+
   if(BUILD_SHARED_LIBS)
     # Users should not choose the static runtime unless they are compiling a
     # static library, so we completely disable this option if BUILD_SHARED_LIBS
