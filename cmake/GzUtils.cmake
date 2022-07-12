@@ -15,7 +15,7 @@
 #                 [PKGCONFIG_VER_COMPARISON  <  >  =  <=  >= ])
 #
 # This is a wrapper for the standard cmake find_package which behaves according
-# to the conventions of the ignition library. In particular, we do not quit
+# to the conventions of the Gazebo library. In particular, we do not quit
 # immediately when a required package is missing. Instead, we check all
 # dependencies and provide an overview of what is missing at the end of the
 # configuration process. Descriptions of the function arguments are as follows:
@@ -31,9 +31,9 @@
 #                 alternative names for this package that can be used depending
 #                 on the context.
 #
-# [REQUIRED]: Optional. If provided, macro will trigger an ignition build_error
+# [REQUIRED]: Optional. If provided, macro will trigger a Gazebo build_error
 #             when the package cannot be found. If not provided, this macro will
-#             trigger an ignition build_warning when the package is not found.
+#             trigger a Gazebo build_warning when the package is not found.
 #             To specify that something is required by some set of components
 #             (rather than the core library), use REQUIRED_BY.
 #
@@ -205,7 +205,7 @@ macro(gz_find_package PACKAGE_NAME_)
   # TODO(CH3): Deprecated. Remove on tock.
   if(${PACKAGE_NAME} MATCHES "^Ign")
 
-    # Deliberately use QUIET since we expect Ign to fail
+    # NOTE(CH3): Deliberately use QUIET since we expect Ign to fail
     find_package(${${PACKAGE_NAME}_find_package_args} QUIET)
 
     if(NOT ${PACKAGE_NAME}_FOUND)
@@ -227,7 +227,7 @@ macro(gz_find_package PACKAGE_NAME_)
     endif()
   else()
 
-    # TODO(CH3): On removal of tock, unindent this and just have this line!!
+    # TODO(CH3): On removal on tock, unindent this and just have this line!!
     find_package(${${PACKAGE_NAME}_find_package_args})
 
   endif()
@@ -308,7 +308,7 @@ macro(gz_find_package PACKAGE_NAME_)
       AND NOT gz_find_package_BUILD_ONLY)
 
     # Set up the arguments we want to pass to the find_dependency invokation for
-    # our ignition project. We always need to pass the name of the dependency.
+    # our Gazebo project. We always need to pass the name of the dependency.
     #
     # NOTE: We escape the dollar signs because we want those variable
     #       evaluations to be a part of the string that we produce. It is going
@@ -439,10 +439,10 @@ macro(gz_find_package PACKAGE_NAME_)
         # provided pkg-config information. The caller has also not specified
         # PKGCONFIG_IGNORE. This means that the requirements of this package
         # will be unintentionally omitted from the auto-generated
-        # ignition-<project>.pc file. This is probably an oversight in our build
+        # gz-<project>.pc file. This is probably an oversight in our build
         # system scripts, so we will emit a warning about this.
         message(AUTHOR_WARNING
-          " -- THIS MESSAGE IS INTENDED FOR GZ-${IGN_DESIGNATION_UPPER} AUTHORS --\n"
+          " -- THIS MESSAGE IS INTENDED FOR GZ-${GZ_DESIGNATION_UPPER} AUTHORS --\n"
           "    (IF YOU SEE THIS, PLEASE REPORT IT)\n"
           "Could not find pkg-config information for ${PACKAGE_NAME}. "
           "It was not provided by the find-module for the package, nor was it "
@@ -696,7 +696,7 @@ endfunction()
 # additional suffix (like .old or .backup) to prevent a file from being included.
 #
 # GENERATED_HEADERS should be generated headers which should be included by
-# ${IGN_DESIGNATION}.hh. This will only add them to the header, it will not
+# ${GZ_DESIGNATION}.hh. This will only add them to the header, it will not
 # generate or install them.
 #
 # This will also run configure_file on gz_auto_headers.hh.in and config.hh.in
@@ -792,13 +792,13 @@ function(gz_install_all_headers)
 
     # Add each header, prefixed by its directory, to the auto headers variable
     foreach(header ${headers})
-      set(ign_headers "${ign_headers}#include <${PROJECT_INCLUDE_DIR}/${header}>\n")
+      set(gz_headers "${gz_headers}#include <${PROJECT_INCLUDE_DIR}/${header}>\n")
     endforeach()
 
     if("." STREQUAL ${dir})
-      set(destination "${IGN_INCLUDE_INSTALL_DIR_FULL}/${PROJECT_INCLUDE_DIR}")
+      set(destination "${GZ_INCLUDE_INSTALL_DIR_FULL}/${PROJECT_INCLUDE_DIR}")
     else()
-      set(destination "${IGN_INCLUDE_INSTALL_DIR_FULL}/${PROJECT_INCLUDE_DIR}/${dir}")
+      set(destination "${GZ_INCLUDE_INSTALL_DIR_FULL}/${PROJECT_INCLUDE_DIR}/${dir}")
     endif()
 
     install(
@@ -810,28 +810,30 @@ function(gz_install_all_headers)
 
   # Add generated headers to the list of includes
   foreach(header ${gz_install_all_headers_GENERATED_HEADERS})
-      set(ign_headers "${ign_headers}#include <${PROJECT_INCLUDE_DIR}/${header}>\n")
+      set(gz_headers "${gz_headers}#include <${PROJECT_INCLUDE_DIR}/${header}>\n")
   endforeach()
+
+  set(ign_headers ${gz_headers})  # TODO(CH3): Deprecated. Remove on tock.
 
   if(gz_install_all_headers_COMPONENT)
 
     set(component_name ${gz_install_all_headers_COMPONENT})
 
     # Define the install directory for the component meta header
-    set(meta_header_install_dir ${IGN_INCLUDE_INSTALL_DIR_FULL}/${PROJECT_INCLUDE_DIR}/${component_name})
+    set(meta_header_install_dir ${GZ_INCLUDE_INSTALL_DIR_FULL}/${PROJECT_INCLUDE_DIR}/${component_name})
 
     # Define the input/output of the configuration for the component "master" header
-    set(master_header_in ${IGNITION_CMAKE_DIR}/gz_auto_headers.hh.in)
+    set(master_header_in ${GZ_CMAKE_DIR}/gz_auto_headers.hh.in)
     set(master_header_out ${CMAKE_CURRENT_BINARY_DIR}/${component_name}.hh)
 
   else()
 
     # Define the install directory for the core master meta header
-    set(meta_header_install_dir ${IGN_INCLUDE_INSTALL_DIR_FULL}/${PROJECT_INCLUDE_DIR})
+    set(meta_header_install_dir ${GZ_INCLUDE_INSTALL_DIR_FULL}/${PROJECT_INCLUDE_DIR})
 
     # Define the input/output of the configuration for the core "master" header
-    set(master_header_in ${IGNITION_CMAKE_DIR}/gz_auto_headers.hh.in)
-    set(master_header_out ${CMAKE_CURRENT_BINARY_DIR}/../${IGN_DESIGNATION}.hh)
+    set(master_header_in ${GZ_CMAKE_DIR}/gz_auto_headers.hh.in)
+    set(master_header_out ${CMAKE_CURRENT_BINARY_DIR}/../${GZ_DESIGNATION}.hh)
 
   endif()
 
@@ -919,11 +921,11 @@ endmacro(gz_build_warning)
 #
 function(_gz_check_known_cxx_standards standard)
 
-  list(FIND IGN_KNOWN_CXX_STANDARDS ${standard} known)
+  list(FIND GZ_KNOWN_CXX_STANDARDS ${standard} known)
   if(${known} EQUAL -1)
     message(FATAL_ERROR
       "You have specified an unsupported standard: ${standard}. "
-      "Accepted values are: ${IGN_KNOWN_CXX_STANDARDS}.")
+      "Accepted values are: ${GZ_KNOWN_CXX_STANDARDS}.")
   endif()
 
 endfunction()
@@ -968,12 +970,12 @@ macro(_gz_handle_cxx_standard prefix target pkgconfig_cflags)
   endif()
 
   if(${prefix}_INTERFACE_CXX_STANDARD)
-    target_compile_features(${target} INTERFACE ${IGN_CXX_${${prefix}_INTERFACE_CXX_STANDARD}_FEATURES})
+    target_compile_features(${target} INTERFACE ${GZ_CXX_${${prefix}_INTERFACE_CXX_STANDARD}_FEATURES})
     gz_string_append(${pkgconfig_cflags} "-std=c++${${prefix}_INTERFACE_CXX_STANDARD}")
   endif()
 
   if(${prefix}_PRIVATE_CXX_STANDARD)
-    target_compile_features(${target} PRIVATE ${IGN_CXX_${${prefix}_PRIVATE_CXX_STANDARD}_FEATURES})
+    target_compile_features(${target} PRIVATE ${GZ_CXX_${${prefix}_PRIVATE_CXX_STANDARD}_FEATURES})
   endif()
 
 endmacro()
@@ -1072,7 +1074,7 @@ function(gz_create_core_library)
   _gz_add_library_or_component(
     LIB_NAME ${PROJECT_LIBRARY_TARGET_NAME}
     INCLUDE_DIR "${PROJECT_INCLUDE_DIR}"
-    EXPORT_BASE GZ_${IGN_DESIGNATION_UPPER}
+    EXPORT_BASE GZ_${GZ_DESIGNATION_UPPER}
     SOURCES ${sources}
     ${interface_option})
 
@@ -1082,7 +1084,7 @@ function(gz_create_core_library)
   target_include_directories(${PROJECT_LIBRARY_TARGET_NAME}
     ${property_type}
       # This is the publicly installed headers directory.
-      "$<INSTALL_INTERFACE:${IGN_INCLUDE_INSTALL_DIR_FULL}>"
+      "$<INSTALL_INTERFACE:${GZ_INCLUDE_INSTALL_DIR_FULL}>"
       # This is the in-build version of the core library headers directory.
       # Generated headers for the core library get placed here.
       "$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>"
@@ -1158,7 +1160,7 @@ endfunction()
 # recommended way to produce plugins or library modules.
 #
 # <component>: Required. Name of the component. The final name of this library
-#              and its target will be ignition-<project><major_ver>-<component>
+#              and its target will be gz-<project><major_ver>-<component>
 #
 # SOURCES: Required (unless INTERFACE is specified). Specify the source files
 #          that will be used to generate the library.
@@ -1169,7 +1171,7 @@ endfunction()
 # [DEPENDS_ON_COMPONENTS]: Specify a list of other components of this package
 #                          that this component depends on. This argument should
 #                          be considered mandatory whenever there are
-#                          inter-component dependencies in an ignition package.
+#                          inter-component dependencies in an Gazebo package.
 #
 # [INCLUDE_SUBDIR]: Optional. If specified, the public include headers for this
 #                   component will go into "ignition/<project>/<subdirectory_name>/".
@@ -1276,7 +1278,7 @@ function(gz_add_component component_name)
   _gz_add_library_or_component(
     LIB_NAME ${component_target_name}
     INCLUDE_DIR "${PROJECT_INCLUDE_DIR}/${include_subdir}"
-    EXPORT_BASE GZ_${IGN_DESIGNATION_UPPER}_${component_name_upper}
+    EXPORT_BASE GZ_${GZ_DESIGNATION_UPPER}_${component_name_upper}
     SOURCES ${sources}
     ${interface_option})
 
@@ -1289,8 +1291,8 @@ function(gz_add_component component_name)
     # include directories automatically.
     target_include_directories(${component_target_name}
       ${property_type}
-        # This is the publicly installed ignition/math headers directory.
-        "$<INSTALL_INTERFACE:${IGN_INCLUDE_INSTALL_DIR_FULL}>"
+        # This is the publicly installed gz/math headers directory.
+        "$<INSTALL_INTERFACE:${GZ_INCLUDE_INSTALL_DIR_FULL}>"
         # This is the in-build version of the core library's headers directory.
         # Generated headers for this component might get placed here, even if
         # the component is independent of the core library.
@@ -1426,9 +1428,9 @@ function(_gz_create_all_target)
   install(
     TARGETS ${PROJECT_LIBRARY_TARGET_NAME}-all
     EXPORT ${PROJECT_LIBRARY_TARGET_NAME}-all
-    LIBRARY DESTINATION ${IGN_LIB_INSTALL_DIR}
-    ARCHIVE DESTINATION ${IGN_LIB_INSTALL_DIR}
-    RUNTIME DESTINATION ${IGN_BIN_INSTALL_DIR}
+    LIBRARY DESTINATION ${GZ_LIB_INSTALL_DIR}
+    ARCHIVE DESTINATION ${GZ_LIB_INSTALL_DIR}
+    RUNTIME DESTINATION ${GZ_BIN_INSTALL_DIR}
     COMPONENT libraries)
 
 endfunction()
@@ -1540,7 +1542,7 @@ macro(_gz_add_library_or_component)
 
   #------------------------------------
   # Add fPIC if we are supposed to
-  if(IGN_ADD_fPIC_TO_LIBRARIES AND NOT _gz_add_library_INTERFACE)
+  if(GZ_ADD_fPIC_TO_LIBRARIES AND NOT _gz_add_library_INTERFACE)
     target_compile_options(${lib_name} PRIVATE -fPIC)
   endif()
 
@@ -1568,7 +1570,7 @@ macro(_gz_add_library_or_component)
       DEPRECATED_MACRO_NAME GZ_DEPRECATED_ALL_VERSIONS)
 
     set(install_include_dir
-      "${IGN_INCLUDE_INSTALL_DIR_FULL}/${include_dir}")
+      "${GZ_INCLUDE_INSTALL_DIR_FULL}/${include_dir}")
 
     # Configure the installation of the automatically generated file.
     install(
@@ -1586,7 +1588,7 @@ macro(_gz_add_library_or_component)
     string(REGEX REPLACE "^GZ_" "IGNITION_" _gz_export_base ${export_base})
 
     configure_file(
-      "${IGNITION_CMAKE_DIR}/Export.hh.in"
+      "${GZ_CMAKE_DIR}/Export.hh.in"
       "${binary_include_dir}/Export.hh")
 
     # Configure the installation of the public-facing header.
@@ -1609,9 +1611,9 @@ macro(_gz_add_library_or_component)
   install(
     TARGETS ${lib_name}
     EXPORT ${lib_name}
-    LIBRARY DESTINATION ${IGN_LIB_INSTALL_DIR}
-    ARCHIVE DESTINATION ${IGN_LIB_INSTALL_DIR}
-    RUNTIME DESTINATION ${IGN_BIN_INSTALL_DIR}
+    LIBRARY DESTINATION ${GZ_LIB_INSTALL_DIR}
+    ARCHIVE DESTINATION ${GZ_LIB_INSTALL_DIR}
+    RUNTIME DESTINATION ${GZ_BIN_INSTALL_DIR}
     COMPONENT libraries)
 
 endmacro()
@@ -1660,7 +1662,7 @@ macro(ign_install_includes _subdir)
 endmacro()
 macro(gz_install_includes _subdir)
   install(FILES ${ARGN}
-    DESTINATION ${IGN_INCLUDE_INSTALL_DIR}/${_subdir} COMPONENT headers)
+    DESTINATION ${GZ_INCLUDE_INSTALL_DIR}/${_subdir} COMPONENT headers)
 endmacro()
 
 #################################################
@@ -1671,7 +1673,7 @@ macro(ign_install_executable _name )
 endmacro()
 macro(gz_install_executable _name)
   set_target_properties(${_name} PROPERTIES VERSION ${PROJECT_VERSION_FULL})
-  install (TARGETS ${_name} DESTINATION ${IGN_BIN_INSTALL_DIR})
+  install (TARGETS ${_name} DESTINATION ${GZ_BIN_INSTALL_DIR})
   manpage(${_name} 1)
 endmacro()
 
@@ -1707,7 +1709,7 @@ endmacro()
 #                       [EXEC_LIST <output_var>]
 #                       [EXCLUDE_PROJECT_LIB])
 #
-# Build executables for an ignition project. Arguments are as follows:
+# Build executables for an Gazebo project. Arguments are as follows:
 #
 # SOURCES: Required. The names (without a path) of the source files for your
 #          executables.
@@ -1801,7 +1803,7 @@ endmacro()
 #                 [INCLUDE_DIRS <include_dependencies>]
 #                 [TEST_LIST <output_var>])
 #
-# Build tests for an ignition project. Arguments are as follows:
+# Build tests for a Gazebo project. Arguments are as follows:
 #
 # TYPE: Required. Preferably UNIT, INTEGRATION, PERFORMANCE, or REGRESSION.
 #
@@ -1929,7 +1931,7 @@ macro(gz_build_tests)
       if(Python3_Interpreter_FOUND)
         # Check that the test produced a result and create a failure if it didn't.
         # Guards against crashed and timed out tests.
-        add_test(check_${target_name} ${Python3_EXECUTABLE} ${IGNITION_CMAKE_TOOLS_DIR}/check_test_ran.py
+        add_test(check_${target_name} ${Python3_EXECUTABLE} ${GZ_CMAKE_TOOLS_DIR}/check_test_ran.py
           ${CMAKE_BINARY_DIR}/test_results/${target_name}.xml)
       endif()
     endforeach()
@@ -1949,7 +1951,7 @@ endmacro()
 # This should also match the name of the function or macro that called it.
 #
 # NOTE: This should only be used by functions inside of gz-cmake specifically.
-# Other ignition projects should not use this macro.
+# Other Gazebo projects should not use this macro.
 #
 macro(_gz_cmake_parse_arguments prefix options oneValueArgs multiValueArgs)
 
@@ -1964,7 +1966,7 @@ macro(_gz_cmake_parse_arguments prefix options oneValueArgs multiValueArgs)
       "\nThe build script has specified some unrecognized arguments for ${prefix}(~):\n"
       "${${prefix}_UNPARSED_ARGUMENTS}\n"
       "Either the script has a typo, or it is using an unexpected version of gz-cmake. "
-      "The version of gz-cmake currently being used is ${gz-cmake${IGNITION_CMAKE_VERSION_MAJOR}_VERSION}\n")
+      "The version of gz-cmake currently being used is ${gz-cmake${GZ_CMAKE_VERSION_MAJOR}_VERSION}\n")
 
   endif()
 

@@ -6669,7 +6669,7 @@ def ProcessFile(filename, vlevel, extra_check_functions=None):
   # should rely on the extension.
   if filename != '-' and file_extension not in GetAllExtensions():
     pass
-    # Ignition: never print this
+    # Gazebo: never print this
     # _cpplint_state.PrintError('Ignoring %s; not a valid file name '
     #                 '(%s)\n' % (filename, ', '.join(GetAllExtensions())))
   else:
@@ -6698,7 +6698,7 @@ def ProcessFile(filename, vlevel, extra_check_functions=None):
   # count has increased after processing this file.
   if not _cpplint_state.quiet or old_errors != _cpplint_state.error_count:
     pass
-    # Ignition: never print "Done Processing"
+    # Gazebo: never print "Done Processing"
     # _cpplint_state.PrintInfo('Done processing %s\n' % filename)
   _RestoreFilters()
 

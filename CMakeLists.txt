@@ -6,16 +6,16 @@ cmake_minimum_required(VERSION 3.10.2 FATAL_ERROR)
 project(gz-cmake3 VERSION 3.0.0)
 
 #--------------------------------------
-# Initialize the IGNITION_CMAKE_DIR variable with the location of the cmake
+# Initialize the GZ_CMAKE_DIR variable with the location of the cmake
 # directory that sits next to this find-module.
-set(IGNITION_CMAKE_DIR "${CMAKE_CURRENT_LIST_DIR}/cmake")
+set(GZ_CMAKE_DIR "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
 #--------------------------------------
 # Add the location of this package's cmake directory to the CMAKE_MODULE_PATH
-list(APPEND CMAKE_MODULE_PATH "${IGNITION_CMAKE_DIR}")
+list(APPEND CMAKE_MODULE_PATH "${GZ_CMAKE_DIR}")
 
 #--------------------------------------
-# include the master IgnCMake module
+# include the master GzCMake module
 include(GzCMake)
 
 #--------------------------------------
@@ -27,26 +27,26 @@ gz_configure_project(VERSION_SUFFIX pre1)
 option(BUILDSYSTEM_TESTING "Enable extended buildsystem testing" FALSE)
 
 #--------------------------------------
-# Install the ignition documentation files
+# Install the Gazebo documentation files
 # Note: This is not actually creating a doc target for gz-cmake; this is just
 # installing files that are useful for generating the documentation of other
-# ignition projects.
+# Gazebo projects.
 add_subdirectory(doc)
 
 #--------------------------------------
 # Install the benchmark files
 install(DIRECTORY benchmark/
-        DESTINATION ${IGN_DATA_INSTALL_DIR}/benchmark)
+        DESTINATION ${GZ_DATA_INSTALL_DIR}/benchmark)
 
 #--------------------------------------
 # Install the codecheck files
 install(DIRECTORY codecheck/
-        DESTINATION ${IGN_DATA_INSTALL_DIR}/codecheck)
+        DESTINATION ${GZ_DATA_INSTALL_DIR}/codecheck)
 
 #--------------------------------------
 # Install the tools files
 install(DIRECTORY tools/
-        DESTINATION ${IGN_DATA_INSTALL_DIR}/tools)
+        DESTINATION ${GZ_DATA_INSTALL_DIR}/tools)
 
 #============================================================================
 # Configure the package to be installed
@@ -58,12 +58,12 @@ set(gz_config_input  "${CMAKE_CURRENT_SOURCE_DIR}/config/gz-cmake-config.cmake.i
 set(gz_config_output "${PROJECT_NAME_LOWER}-config.cmake")
 set(gz_version_output "${PROJECT_NAME_LOWER}-config-version.cmake")
 set(gz_config_install_dir "${CMAKE_INSTALL_DATAROOTDIR}/cmake/${PROJECT_NAME_LOWER}")
-set(ign_pkgconfig_input "${CMAKE_CURRENT_SOURCE_DIR}/config/gz-cmake.pc.in")
-set(ign_pkgconfig_output "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.pc")
-set(ign_pkgconfig_install_dir "${IGN_LIB_INSTALL_DIR}/pkgconfig")
-set(ign_utilities_target ${PROJECT_EXPORT_NAME}-utilities)
-set(ign_utilities_import_target_name ${PROJECT_EXPORT_NAME}::${ign_utilities_target})
-set(ign_utilities_target_output_filename "${ign_utilities_target}-targets.cmake")
+set(gz_pkgconfig_input "${CMAKE_CURRENT_SOURCE_DIR}/config/gz-cmake.pc.in")
+set(gz_pkgconfig_output "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.pc")
+set(gz_pkgconfig_install_dir "${GZ_LIB_INSTALL_DIR}/pkgconfig")
+set(gz_utilities_target ${PROJECT_EXPORT_NAME}-utilities)
+set(gz_utilities_import_target_name ${PROJECT_EXPORT_NAME}::${gz_utilities_target})
+set(gz_utilities_target_output_filename "${gz_utilities_target}-targets.cmake")
 set(simple_utilities_import_name ${PROJECT_EXPORT_NAME}::utilities)
 
 #--------------------------------------
@@ -72,7 +72,7 @@ configure_package_config_file(
   ${gz_config_input}
   ${gz_config_output}
   INSTALL_DESTINATION ${gz_config_install_dir}
-  PATH_VARS IGN_DATA_INSTALL_DIR
+  PATH_VARS GZ_DATA_INSTALL_DIR
   NO_CHECK_REQUIRED_COMPONENTS_MACRO)
 
 #--------------------------------------
@@ -92,50 +92,50 @@ install(
 #--------------------------------------
 # Configure and install the pkgconfig file (needed for utilities headers)
 file(RELATIVE_PATH
-  IGN_PC_CONFIG_RELATIVE_PATH_TO_PREFIX
-  "${CMAKE_INSTALL_PREFIX}/${ign_pkgconfig_install_dir}"
+  GZ_PC_CONFIG_RELATIVE_PATH_TO_PREFIX
+  "${CMAKE_INSTALL_PREFIX}/${gz_pkgconfig_install_dir}"
   "${CMAKE_INSTALL_PREFIX}"
 )
-configure_file(${ign_pkgconfig_input} ${ign_pkgconfig_output} @ONLY)
+configure_file(${gz_pkgconfig_input} ${gz_pkgconfig_output} @ONLY)
 
 install(
-  FILES ${ign_pkgconfig_output}
-  DESTINATION ${ign_pkgconfig_install_dir}
+  FILES ${gz_pkgconfig_output}
+  DESTINATION ${gz_pkgconfig_install_dir}
   COMPONENT pkgconfig)
 
 #============================================================================
 # Create and install the utilities component
 #============================================================================
 # Deprecated: Remove the utilities component in gz-cmake4
-add_library(${ign_utilities_target} INTERFACE)
-target_include_directories(${ign_utilities_target}
+add_library(${gz_utilities_target} INTERFACE)
+target_include_directories(${gz_utilities_target}
   INTERFACE
-    $<INSTALL_INTERFACE:${IGN_INCLUDE_INSTALL_DIR_FULL}>
+    $<INSTALL_INTERFACE:${GZ_INCLUDE_INSTALL_DIR_FULL}>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>)
 
 # Export and install the interface target
 install(
-  TARGETS ${ign_utilities_target}
-  EXPORT ${ign_utilities_target}
+  TARGETS ${gz_utilities_target}
+  EXPORT ${gz_utilities_target}
   COMPONENT interface)
 
 export(
-  EXPORT ${ign_utilities_target}
-  FILE ${ign_utilities_target_output_filename}
+  EXPORT ${gz_utilities_target}
+  FILE ${gz_utilities_target_output_filename}
   NAMESPACE ${PROJECT_EXPORT_NAME}::)
 
 install(
-  EXPORT ${ign_utilities_target}
+  EXPORT ${gz_utilities_target}
   DESTINATION ${gz_config_install_dir}
-  FILE ${ign_utilities_target_output_filename}
+  FILE ${gz_utilities_target_output_filename}
   NAMESPACE ${PROJECT_EXPORT_NAME}::)
 
 # Install the header directory
 # Note: The trailing slash after "include" is necessary
 install(
   DIRECTORY include/
-  DESTINATION ${IGN_INCLUDE_INSTALL_DIR_FULL}
+  DESTINATION ${GZ_INCLUDE_INSTALL_DIR_FULL}
   COMPONENT headers)
 
 #============================================================================
@@ -230,12 +230,14 @@ set(CPPCHECK_INCLUDE_DIRS
   ${CMAKE_SOURCE_DIR}/include
   ${CMAKE_SOURCE_DIR}/examples
 )
-set(IGNITION_CMAKE_CODECHECK_DIR "${CMAKE_CURRENT_SOURCE_DIR}/codecheck")
+set(GZ_CMAKE_CODECHECK_DIR "${CMAKE_CURRENT_SOURCE_DIR}/codecheck")
 include(GzCodeCheck)
 _gz_setup_target_for_codecheck()
 
 # Docs
-set(IGNITION_CMAKE_DOXYGEN_DIR "${CMAKE_CURRENT_SOURCE_DIR}/doc/doxygen")
+set(GZ_CMAKE_DOXYGEN_DIR "${CMAKE_CURRENT_SOURCE_DIR}/doc/doxygen")
+set(IGNITION_CMAKE_DOXYGEN_DIR ${GZ_CMAKE_DOXYGEN_DIR})  # TODO(CH3): Deprecated. Remove on tock.
+
 configure_file(${CMAKE_SOURCE_DIR}/api.md.in ${CMAKE_BINARY_DIR}/api.md)
 configure_file(${CMAKE_SOURCE_DIR}/tutorials.md.in ${CMAKE_BINARY_DIR}/tutorials.md)
 gz_create_docs(

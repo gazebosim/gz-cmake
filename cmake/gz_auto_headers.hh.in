@@ -20,4 +20,4 @@
 // made to cmake/gz_auto_headers.hh.in in gz-cmake
 
 #include <@PROJECT_INCLUDE_DIR@/config.hh>
-${ign_headers}
+${gz_headers}

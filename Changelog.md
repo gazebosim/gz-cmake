@@ -2,7 +2,7 @@
 
 ### Gazebo CMake 2.12.1 (2022-04-12)
 
-1. Allow to recreate targets created by IgnPkgConfig
+1. Allow to recreate targets created by GzPkgConfig
     * [Pull request #231](https://github.com/gazebosim/gz-cmake/pull/231)
 
 1. Adding tests for CONFIG argument
@@ -13,7 +13,7 @@
 1. Adding CONFIG option
     * [Pull request #211](https://github.com/gazebosim/gz-cmake/pull/211)
 
-1. IgnFindOGRE2: support for the ogre-next package on Ubuntu Jammy
+1. GzFindOGRE2: support for the ogre-next package on Ubuntu Jammy
     * [Pull request #224](https://github.com/gazebosim/gz-cmake/pull/224)
 
 1. Fix check for missing components in OGRE2. Be more verbose with components
@@ -23,7 +23,7 @@
     * [Pull request #219](https://github.com/gazebosim/gz-cmake/pull/219)
     * [Pull request #221](https://github.com/gazebosim/gz-cmake/pull/221)
 
-1. Specify sanitizers using IGN_SANITIZERS cmake variable
+1. Specify sanitizers using GZ_SANITIZERS cmake variable
     * [Pull request #210](https://github.com/gazebosim/gz-cmake/pull/210)
 
 1. Replace deprecated PythonInterp with Python3 (#213)
@@ -58,10 +58,10 @@
 1. Do not modify `CMAKE_FIND_LIBRARY_PREFIXES` and `CMAKE_FIND_LIBRARY_SUFFIXES` on Windows
     * [Pull request #189](https://github.com/gazebosim/gz-cmake/pull/189)
 
-1. Project option: `REPLACE_IGNITION_INCLUDE_PATH`
+1. Project option: `REPLACE_INCLUDE_PATH`
     * [Pull request #190](https://github.com/gazebosim/gz-cmake/pull/190)
 
-1. Project option: `NO_IGNITION_PREFIX`
+1. Project option: `NO_PROJECT_PREFIX`
     * [Pull request #191](https://github.com/gazebosim/gz-cmake/pull/191)
 
 ### Gazebo CMake 2.9.0 (2021-09-02)
@@ -69,13 +69,13 @@
 1. Fix include directory flags for codecheck
     * [Pull request #186](https://github.com/gazebosim/gz-cmake/pull/186)
 
-1. Fix problems on IgnOGRE when version is not found
+1. Fix problems on GzOGRE when version is not found
     * [Pull request #175](https://github.com/gazebosim/gz-cmake/pull/175)
 
 1. Remove bitbucket-pipelines.yml
     * [Pull request #181](https://github.com/gazebosim/gz-cmake/pull/181)
 
-1. Include IMAGE_PATH directories in ign_create_docs
+1. Include IMAGE_PATH directories in gz_create_docs
     * [Pull request #183](https://github.com/gazebosim/gz-cmake/pull/183)
 
 1. Special case for ogre2.2 on Windows
@@ -195,7 +195,7 @@
 
 ### Gazebo CMake 2.4.0 (2020-08-20)
 
-1. Added an option to include generated code in the ign_create_docs function
+1. Added an option to include generated code in the gz_create_docs function
     * [Pull request 108](https://github.com/gazebosim/gz-cmake/pull/108)
 
 ### Gazebo CMake 2.3.0 (2020-08-07)
@@ -258,7 +258,7 @@
     * [BitBucket pull request 161](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-cmake/pull-requests/161)
     * [BitBucket pull request 155](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-cmake/pull-requests/155)
 
-1. IgnConfigureBuild: only `add_subdirectory(test)` if `BUILD_TESTING` is ON
+1. GzConfigureBuild: only `add_subdirectory(test)` if `BUILD_TESTING` is ON
     * [BitBucket pull request 169](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-cmake/pull-requests/169)
 
 1. Add FindGzBullet cmake module.
@@ -315,7 +315,7 @@
     * [BitBucket pull request 171](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-cmake/pull-requests/171)
     * [BitBucket pull request 168](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-cmake/pull-requests/168)
 
-1. IgnConfigureBuild: only `add_subdirectory(test)` if `BUILD_TESTING` is ON
+1. GzConfigureBuild: only `add_subdirectory(test)` if `BUILD_TESTING` is ON
     * [BitBucket pull request 165](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-cmake/pull-requests/165)
 
 1. Fix race condition in test for issue 48
@@ -345,10 +345,10 @@
 1. Avoid hardcoding /machine:x64 flag on 64-bit on MSVC.
     * [BitBucket pull request 168](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-cmake/pull-requests/168)
 
-1. IgnConfigureBuild: only `add_subdirectory(test)` if `BUILD_TESTING` is ON
+1. GzConfigureBuild: only `add_subdirectory(test)` if `BUILD_TESTING` is ON
     * [BitBucket pull request 163](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-cmake/pull-requests/163)
 
-1. IgnConfigureProject.cmake: fix small typo PKCONFIG -> PKGCONFIG
+1. GzConfigureProject.cmake: fix small typo PKCONFIG -> PKGCONFIG
     * [BitBucket pull request 118](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-cmake/pull-requests/118)
 
 ### Gazebo CMake 0.6.1

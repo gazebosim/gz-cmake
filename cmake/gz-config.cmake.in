@@ -60,7 +60,7 @@ set(@PKG_NAME@_CONFIG_INCLUDED TRUE)
 include(CMakeFindDependencyMacro)
 # Find gz-cmake, because we need its modules in order to find the rest of
 # our dependencies.
-find_dependency(gz-cmake@IGNITION_CMAKE_VERSION_MAJOR@)
+find_dependency(gz-cmake@GZ_CMAKE_VERSION_MAJOR@)
 
 # Set the REQUIRED flag for the find_package(~) calls on this project's
 # dependencies.
@@ -137,14 +137,14 @@ endif()
 # contain imported targets, so @PKG_NAME@_INCLUDE_DIRS is never needed.
 set(@PKG_NAME@_CORE_LIBRARY @simple_import_name@)
 set(@PKG_NAME@_LIBRARIES @gz_namespace@requested)
-set_and_check(@PKG_NAME@_INCLUDE_DIRS "@PACKAGE_IGN_INCLUDE_INSTALL_DIR_FULL@")
+set_and_check(@PKG_NAME@_INCLUDE_DIRS "@PACKAGE_GZ_INCLUDE_INSTALL_DIR_FULL@")
 
 # Backwards compatibility variables
 set(@LEGACY_PROJECT_PREFIX@_LIBRARIES ${@PKG_NAME@_LIBRARIES})
 set(@LEGACY_PROJECT_PREFIX@_INCLUDE_DIRS ${@PKG_NAME@_INCLUDE_DIRS})
 
 # This macro is used by gz-cmake to automatically configure the pkgconfig
-# files for ignition projects.
+# files for Gazebo projects.
 gz_pkg_config_entry(@PKG_NAME@ "@PKG_NAME@")
 
 # Find each of the components requested by find_package(~)
@@ -173,7 +173,7 @@ foreach(component ${@PKG_NAME@_FIND_COMPONENTS})
 endforeach()
 
 # Specify the doxygen tag file
-set(@PROJECT_NAME_NO_VERSION_UPPER@_DOXYGEN_TAGFILE "${PACKAGE_PREFIX_DIR}/@IGN_DATA_INSTALL_DIR@/@PROJECT_NAME_LOWER@.tag.xml")
+set(@PROJECT_NAME_NO_VERSION_UPPER@_DOXYGEN_TAGFILE "${PACKAGE_PREFIX_DIR}/@GZ_DATA_INSTALL_DIR@/@PROJECT_NAME_LOWER@.tag.xml")
 
 # Specify the API url. This is where the doxygen tag file will resolve URLS to.
-set(@PROJECT_NAME_NO_VERSION_UPPER@_API_URL "https://gazebosim.org/api/@IGN_DESIGNATION@/@PROJECT_VERSION_MAJOR@.@PROJECT_VERSION_MINOR@")
+set(@PROJECT_NAME_NO_VERSION_UPPER@_API_URL "https://gazebosim.org/api/@GZ_DESIGNATION@/@PROJECT_VERSION_MAJOR@.@PROJECT_VERSION_MINOR@")

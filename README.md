@@ -60,7 +60,7 @@ The [Source Install](#source-install) instructions should be used if you need th
 On Ubuntu systems, `apt-get` can be used to install `gz-cmake`:
 
 ```
-$ sudo apt install libignition-cmake<#>-dev
+$ sudo apt install libgz-cmake<#>-dev
 ```
 
 Be sure to replace `<#>` with a number value, such as `1` or `2`, depending on which version you need.

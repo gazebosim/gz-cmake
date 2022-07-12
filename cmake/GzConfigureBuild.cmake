@@ -22,7 +22,7 @@
 # limitations under the License.
 
 #################################################
-# Configure the build of the ignition project
+# Configure the build of the Gazebo project
 # Pass the argument HIDE_SYMBOLS_BY_DEFAULT to configure symbol visibility so
 # that symbols are hidden unless explicitly marked as visible.
 # Pass the argument QUIT_IF_BUILD_ERRORS to have this macro quit cmake when the
@@ -164,7 +164,7 @@ macro(gz_configure_build)
 
     #--------------------------------------
     # Add the source, include, and test directories to the cppcheck dirs.
-    # CPPCHECK_DIRS is used in IgnCodeCheck. The variable specifies the
+    # CPPCHECK_DIRS is used in GzCodeCheck. The variable specifies the
     # directories static code analyzers should check. Additional directories
     # are added for each component.
     set (CPPCHECK_DIRS)
@@ -302,11 +302,15 @@ endmacro()
 
 macro(_gz_set_cxx_feature_flags)
 
-  set(IGN_KNOWN_CXX_STANDARDS 11 14 17)
+  set(GZ_KNOWN_CXX_STANDARDS 11 14 17)
+  set(GZ_CXX_11_FEATURES cxx_std_11)
+  set(GZ_CXX_14_FEATURES cxx_std_14)
+  set(GZ_CXX_17_FEATURES cxx_std_17)
 
-  set(IGN_CXX_11_FEATURES cxx_std_11)
-  set(IGN_CXX_14_FEATURES cxx_std_14)
-  set(IGN_CXX_17_FEATURES cxx_std_17)
+  set(IGN_KNOWN_CXX_STANDARDS ${GZ_KNOWN_CXX_STANDARDS})  # TODO(CH3): IGN_KNOWN_CXX_STANDARDS IS DEPRECATED.
+  set(IGN_CXX_11_FEATURES ${GZ_CXX_11_FEATURES})  # TODO(CH3): IGN_CXX_11_FEATURES IS DEPRECATED.
+  set(IGN_CXX_14_FEATURES ${GZ_CXX_14_FEATURES})  # TODO(CH3): IGN_CXX_14_FEATURES IS DEPRECATED.
+  set(IGN_CXX_17_FEATURES ${GZ_CXX_17_FEATURES})  # TODO(CH3): IGN_CXX_17_FEATURES IS DEPRECATED.
 
 endmacro()
 
@@ -337,7 +341,9 @@ function(_gz_find_include_script)
   if(EXISTS "${include_start}/include")
     if(EXISTS "${include_start}/include/CMakeLists.txt")
       add_subdirectory("${include_start}/include")
-    elseif(EXISTS "${include_start}/include/ignition/CMakeLists.txt")
+    elseif(EXISTS "${include_start}/include/gz/CMakeLists.txt")
+      add_subdirectory("${include_start}/include/gz")
+    elseif(EXISTS "${include_start}/include/ignition/CMakeLists.txt")  # TODO(CH3): Deprecated. Remove on tock.
       add_subdirectory("${include_start}/include/ignition")
     elseif(EXISTS "${include_start}/include/${PROJECT_INCLUDE_DIR}/CMakeLists.txt")
       add_subdirectory("${include_start}/include/${PROJECT_INCLUDE_DIR}")
@@ -388,11 +394,11 @@ macro(_gz_parse_build_type)
   elseif("${CMAKE_BUILD_TYPE_UPPERCASE}" STREQUAL "COVERAGE")
     include(GzCodeCoverage)
     set(BUILD_TYPE_DEBUG TRUE)
-    ign_setup_target_for_coverage(
+    gz_setup_target_for_coverage(
       OUTPUT_NAME coverage
       TARGET_NAME coverage
       TEST_RUNNER ctest)
-    ign_setup_target_for_coverage(
+    gz_setup_target_for_coverage(
       BRANCH_COVERAGE
       OUTPUT_NAME coverage-branch
       TARGET_NAME coverage-branch

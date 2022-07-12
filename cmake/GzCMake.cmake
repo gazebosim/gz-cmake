@@ -2,7 +2,7 @@
 # GzCMake
 # --------
 #
-# Includes a set of modules that are needed for building the ignition libraries
+# Includes a set of modules that are needed for building the Gazebo libraries
 #
 #===============================================================================
 # Copyright (C) 2017 Open Source Robotics Foundation

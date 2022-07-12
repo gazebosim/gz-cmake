@@ -47,7 +47,7 @@ include(CMakeFindDependencyMacro)
 
 # Find gz-cmake, because we need its modules in order to find the rest of
 # our dependencies.
-find_dependency(gz-cmake@IGNITION_CMAKE_VERSION_MAJOR@)
+find_dependency(gz-cmake@GZ_CMAKE_VERSION_MAJOR@)
 
 # Set the REQUIRED flag for the find_package(~) calls on this component's
 # dependencies.
@@ -110,5 +110,5 @@ endif()
 set(@component_pkg_name@_LIBRARY @import_target_name@)
 
 # This macro is used by gz-cmake to automatically configure the pkgconfig
-# files for ignition projects.
+# files for Gazebo projects.
 gz_pkg_config_entry(@component_pkg_name@ "@component_pkg_name@")

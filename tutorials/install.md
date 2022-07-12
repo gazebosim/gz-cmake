@@ -26,7 +26,7 @@ Add OSRF packages:
 
 Install Gazebo CMake:
   ```
-  sudo apt install libignition-cmake<#>-dev
+  sudo apt install libgz-cmake<#>-dev
   ```
 
 Be sure to replace `<#>` with a number value, such as 1 or 2, depending on
@@ -42,7 +42,7 @@ On macOS, add OSRF packages:
 
 Install Gazebo CMake:
   ```
-  brew install ignition-cmake<#>
+  brew install gz-cmake<#>
   ```
 
 Be sure to replace `<#>` with a number value, such as 1 or 2, depending on
@@ -73,24 +73,24 @@ To find `condabin`, search for "Anaconda Prompt" in the Windows search near the 
 
 2. Install Gazebo CMake:
   ```
-  conda install libignition-cmake<#> --channel conda-forge
+  conda install libgz-cmake<#> --channel conda-forge
   ```
 
   Be sure to replace `<#>` with a number value, such as 1 or 2, depending on which version you need.
 
   You can view all the versions with
   ```
-  conda search libignition-cmake* --channel conda-forge
+  conda search libgz-cmake* --channel conda-forge
   ```
 
   and view their dependencies with
   ```
-  conda search libignition-cmake* --channel conda-forge --info
+  conda search libgz-cmake* --channel conda-forge --info
   ```
 
   and install a specific minor version with
   ```
-  conda install libignition-cmake=2.6.1 --channel conda-forge
+  conda install libgz-cmake=2.6.1 --channel conda-forge
   ```
 
 # Source Install

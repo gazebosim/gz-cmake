@@ -4,4 +4,4 @@ gz_add_component(parent INTERFACE
 
 install(
   DIRECTORY include/
-  DESTINATION "${IGN_INCLUDE_INSTALL_DIR_FULL}")
+  DESTINATION "${GZ_INCLUDE_INSTALL_DIR_FULL}")

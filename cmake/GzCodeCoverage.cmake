@@ -7,7 +7,7 @@
 # - Some additional usage instructions.
 #
 # 2017-09-13
-# - Tweaked instructions for ignition libraries
+# - Tweaked instructions for Gazebo libraries
 # - Tweaked function name to avoid name collisions
 #
 # USAGE:
@@ -18,10 +18,10 @@
 #    SET(CMAKE_CXX_FLAGS "-g -O0 -fprofile-arcs -ftest-coverage")
 #    SET(CMAKE_C_FLAGS "-g -O0 -fprofile-arcs -ftest-coverage")
 #
-# 3. Use the function IGN_SETUP_TARGET_FOR_COVERAGE to create a custom make target
+# 3. Use the function GZ_SETUP_TARGET_FOR_COVERAGE to create a custom make target
 #    which runs your test executable and produces a lcov code coverage report:
 #    Example:
-#    IGN_SETUP_TARGET_FOR_COVERAGE(
+#    GZ_SETUP_TARGET_FOR_COVERAGE(
 #        my_coverage_target  # Name for custom target.
 #        test_driver         # Name of the test driver executable that runs the tests.
 #                            # NOTE! This should always have a ZERO as exit code
@@ -62,7 +62,7 @@ ENDIF() # NOT CMAKE_BUILD_TYPE STREQUAL "Debug"
 
 
 #################################################
-# ign_setup_target_for_coverage(
+# gz_setup_target_for_coverage(
 #     [BRANCH_COVERAGE]
 #     [OUTPUT_NAME <output_name>]
 #     [TARGET_NAME <target_name>]
@@ -88,7 +88,7 @@ ENDIF() # NOT CMAKE_BUILD_TYPE STREQUAL "Debug"
 #               MUST return ZERO always, even on errors.
 #               If not, no coverage report will be created!
 #
-FUNCTION(ign_setup_target_for_coverage)
+FUNCTION(gz_setup_target_for_coverage)
 
   #------------------------------------
   # Define the expected arguments
@@ -153,4 +153,4 @@ FUNCTION(ign_setup_target_for_coverage)
     COMMENT "Open ./${_outputname}/index.html in your browser to view the coverage report."
   )
 
-ENDFUNCTION() # IGN_SETUP_TARGET_FOR_COVERAGE
+ENDFUNCTION() # GZ_SETUP_TARGET_FOR_COVERAGE
