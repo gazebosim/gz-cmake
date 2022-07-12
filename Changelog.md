@@ -58,10 +58,10 @@
 1. Do not modify `CMAKE_FIND_LIBRARY_PREFIXES` and `CMAKE_FIND_LIBRARY_SUFFIXES` on Windows
     * [Pull request #189](https://github.com/gazebosim/gz-cmake/pull/189)
 
-1. Project option: `REPLACE_GZ_INCLUDE_PATH`
+1. Project option: `REPLACE_INCLUDE_PATH`
     * [Pull request #190](https://github.com/gazebosim/gz-cmake/pull/190)
 
-1. Project option: `NO_GZ_PREFIX`
+1. Project option: `NO_PROJECT_PREFIX`
     * [Pull request #191](https://github.com/gazebosim/gz-cmake/pull/191)
 
 ### Gazebo CMake 2.9.0 (2021-09-02)

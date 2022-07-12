@@ -6,9 +6,9 @@
 #
 # Sets up a Gazebo library project.
 #
-# NO_GZ_PREFIX: Optional. Don't use Gazebo as prefix in
+# NO_PROJECT_PREFIX: Optional. Don't use gz- as prefix in
 #     cmake project name.
-# REPLACE_GZ_INCLUDE_PATH: Optional. Specify include folder
+# REPLACE_INCLUDE_PATH: Optional. Specify include folder
 #     names to replace the default value of
 #     gz/${GZ_DESIGNATION}
 # VERSION_SUFFIX: Optional. Specify a prerelease version suffix.
@@ -34,8 +34,8 @@ macro(ign_configure_project)
   # TODO(chapulina) Enable warnings after all libraries have migrated.
   # message(WARNING "ign_configure_project is deprecated, use gz_configure_project instead.")
 
-  set(options NO_GZ_PREFIX NO_IGNITION_PREFIX)  # TODO(CH3): NO_IGNITION_PREFIX IS DEPRECATED.
-  set(oneValueArgs REPLACE_GZ_INCLUDE_PATH REPLACE_IGNITION_INCLUDE_PATH VERSION_SUFFIX)  # TODO(CH3): REPLACE_IGNITION_INCLUDE_PATH IS DEPRECATED.
+  set(options NO_PROJECT_PREFIX NO_IGNITION_PREFIX)  # TODO(CH3): NO_IGNITION_PREFIX IS DEPRECATED.
+  set(oneValueArgs REPLACE_INCLUDE_PATH REPLACE_IGNITION_INCLUDE_PATH VERSION_SUFFIX)  # TODO(CH3): REPLACE_IGNITION_INCLUDE_PATH IS DEPRECATED.
   set(multiValueArgs) # We are not using multiValueArgs yet
   _gz_cmake_parse_arguments(gz_configure_project "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
@@ -48,8 +48,8 @@ macro(gz_configure_project)
   if (NOT gz_configure_project_skip_parsing)
     #------------------------------------
     # Define the expected arguments
-    set(options NO_GZ_PREFIX NO_IGNITION_PREFIX)  # TODO(CH3): NO_IGNITION_PREFIX IS DEPRECATED.
-    set(oneValueArgs REPLACE_GZ_INCLUDE_PATH REPLACE_IGNITION_INCLUDE_PATH VERSION_SUFFIX)  # TODO(CH3): REPLACE_IGNITION_INCLUDE_PATH IS DEPRECATED.
+    set(options NO_PROJECT_PREFIX NO_IGNITION_PREFIX)  # TODO(CH3): NO_IGNITION_PREFIX IS DEPRECATED.
+    set(oneValueArgs REPLACE_INCLUDE_PATH REPLACE_IGNITION_INCLUDE_PATH VERSION_SUFFIX)  # TODO(CH3): REPLACE_IGNITION_INCLUDE_PATH IS DEPRECATED.
     set(multiValueArgs) # We are not using multiValueArgs yet
 
     #------------------------------------
@@ -87,10 +87,10 @@ macro(gz_configure_project)
   # Set project variables
   #============================================================================
 
-  if(gz_configure_project_NO_GZ_PREFIX)
+  if(gz_configure_project_NO_PROJECT_PREFIX)
     set(PROJECT_NAME_NO_VERSION ${GZ_DESIGNATION})
   elseif(gz_configure_project_NO_IGNITION_PREFIX)  # TODO(CH3): NO_IGNITION_PREFIX IS DEPRECATED.
-    message(DEPRECATION "[NO_IGNITION_PREFIX] is deprecated. Please use [NO_GZ_PREFIX] instead!")
+    message(DEPRECATION "[NO_IGNITION_PREFIX] is deprecated. Please use [NO_PROJECT_PREFIX] instead!")
     set(PROJECT_NAME_NO_VERSION ${GZ_DESIGNATION})
   else()
     set(PROJECT_NAME_NO_VERSION "${PROJECT_PREFIX}-${GZ_DESIGNATION}")
@@ -116,10 +116,10 @@ macro(gz_configure_project)
   set(PROJECT_EXPORT_NAME ${PROJECT_NAME_LOWER})
   set(PROJECT_LIBRARY_TARGET_NAME ${PROJECT_NAME_LOWER})
 
-  if(gz_configure_project_REPLACE_GZ_INCLUDE_PATH)
-    set(PROJECT_INCLUDE_DIR ${gz_configure_project_REPLACE_GZ_INCLUDE_PATH})
+  if(gz_configure_project_REPLACE_INCLUDE_PATH)
+    set(PROJECT_INCLUDE_DIR ${gz_configure_project_REPLACE_INCLUDE_PATH})
   elseif(gz_configure_project_REPLACE_IGNITION_INCLUDE_PATH)  # TODO(CH3): REPLACE_IGNITION_INCLUDE_PATH IS DEPRECATED.
-    message(DEPRECATION "[REPLACE_IGNITION_INCLUDE_PATH] is deprecated. Please use [REPLACE_GZ_INCLUDE_PATH] instead!")
+    message(DEPRECATION "[REPLACE_IGNITION_INCLUDE_PATH] is deprecated. Please use [REPLACE_INCLUDE_PATH] instead!")
     set(PROJECT_INCLUDE_DIR ${gz_configure_project_REPLACE_IGNITION_INCLUDE_PATH})
   else()
     set(PROJECT_INCLUDE_DIR gz/${GZ_DESIGNATION})

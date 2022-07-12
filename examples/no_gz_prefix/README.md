@@ -2,7 +2,7 @@
 
 ## Configuring project name
 
-This package uses the `NO_GZ_PREFIX` option in `gz_configure_project`
+This package uses the `NO_PROJECT_PREFIX` option in `gz_configure_project`
 to allow a cmake package name without the `gz-` prefix.
 To confirm, configure this package and
 `package_source` and then observe that the tarball,
@@ -21,7 +21,7 @@ make package_source
 
 ## Configuring include directory names
 
-This package uses the `REPLACE_GZ_INCLUDE_PATH` option in `gz_configure_project`
+This package uses the `REPLACE_INCLUDE_PATH` option in `gz_configure_project`
 to allow a custom include path of `no_gz`, which doesn't start with `ignition/`.
 To confirm, build the package and observe that `AlmostEmpty.cc`
 compiles successfully while including `no_gz/Export.hh`:
