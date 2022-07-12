@@ -699,7 +699,7 @@ endfunction()
 # ${IGN_DESIGNATION}.hh. This will only add them to the header, it will not
 # generate or install them.
 #
-# This will also run configure_file on ign_auto_headers.hh.in and config.hh.in
+# This will also run configure_file on gz_auto_headers.hh.in and config.hh.in
 # and install them. This will NOT install any other files or directories that
 # appear in the ${CMAKE_CURRENT_BINARY_DIR}.
 #
@@ -821,7 +821,7 @@ function(gz_install_all_headers)
     set(meta_header_install_dir ${IGN_INCLUDE_INSTALL_DIR_FULL}/${PROJECT_INCLUDE_DIR}/${component_name})
 
     # Define the input/output of the configuration for the component "master" header
-    set(master_header_in ${IGNITION_CMAKE_DIR}/ign_auto_headers.hh.in)
+    set(master_header_in ${IGNITION_CMAKE_DIR}/gz_auto_headers.hh.in)
     set(master_header_out ${CMAKE_CURRENT_BINARY_DIR}/${component_name}.hh)
 
   else()
@@ -830,7 +830,7 @@ function(gz_install_all_headers)
     set(meta_header_install_dir ${IGN_INCLUDE_INSTALL_DIR_FULL}/${PROJECT_INCLUDE_DIR})
 
     # Define the input/output of the configuration for the core "master" header
-    set(master_header_in ${IGNITION_CMAKE_DIR}/ign_auto_headers.hh.in)
+    set(master_header_in ${IGNITION_CMAKE_DIR}/gz_auto_headers.hh.in)
     set(master_header_out ${CMAKE_CURRENT_BINARY_DIR}/../${IGN_DESIGNATION}.hh)
 
   endif()
@@ -1377,7 +1377,7 @@ function(gz_add_component component_name)
   endif()
 
   #------------------------------------
-  # Set variables that are needed by cmake/ignition-component-config.cmake.in
+  # Set variables that are needed by cmake/gz-component-config.cmake.in
   set(component_pkg_name ${component_target_name})
   if(gz_add_component_INTERFACE)
     set(component_pkgconfig_lib)
@@ -1389,7 +1389,7 @@ function(gz_add_component component_name)
   # variable is used in config files
   set(component_name ${component_name})
 
-  # ... and by cmake/pkgconfig/ignition-component.pc.in
+  # ... and by cmake/pkgconfig/gz-component.pc.in
   set(component_pkgconfig_requires ${${component_name}_PKGCONFIG_REQUIRES})
   set(component_pkgconfig_requires_private ${${component_name}_PKGCONFIG_REQUIRES_PRIVATE})
   set(component_pkgconfig_lib_deps ${${component_name}_PKGCONFIG_LIBS})
@@ -1437,7 +1437,7 @@ endfunction()
 # Exports the `all` target. This function is private to gz-cmake.
 function(_gz_export_target_all)
 
-  # find_all_pkg_components is used as a variable in ignition-all-config.cmake.in
+  # find_all_pkg_components is used as a variable in gz-all-config.cmake.in
   set(find_all_pkg_components "")
   get_property(all_known_components TARGET ${PROJECT_LIBRARY_TARGET_NAME}-all
     PROPERTY INTERFACE_IGN_ALL_KNOWN_COMPONENTS)

@@ -178,8 +178,8 @@ endmacro()
 #       gz_add_component(~), so users of gz-cmake should not call this
 #       function.
 #
-# NOTE: For gz-cmake developers, the variables needed by ignition.pc.in or
-#       ignition-component.pc.in MUST be set before calling this function.
+# NOTE: For gz-cmake developers, the variables needed by gz.pc.in or
+#       gz-component.pc.in MUST be set before calling this function.
 #
 # Create a pkgconfig file for your target, and install it.
 function(_gz_create_pkgconfig)
@@ -197,10 +197,10 @@ function(_gz_create_pkgconfig)
   #------------------------------------
   # Choose which input file to use
   if(_gz_create_pkgconfig_COMPONENT)
-    set(pkgconfig_input "${IGNITION_CMAKE_DIR}/pkgconfig/ignition-component.pc.in")
+    set(pkgconfig_input "${IGNITION_CMAKE_DIR}/pkgconfig/gz-component.pc.in")
     set(target_name ${PROJECT_LIBRARY_TARGET_NAME}-${_gz_create_pkgconfig_COMPONENT})
   else()
-    set(pkgconfig_input "${IGNITION_CMAKE_DIR}/pkgconfig/ignition.pc.in")
+    set(pkgconfig_input "${IGNITION_CMAKE_DIR}/pkgconfig/gz.pc.in")
     set(target_name ${PROJECT_LIBRARY_TARGET_NAME})
   endif()
 
@@ -239,7 +239,7 @@ endfunction()
 #       function.
 #
 # NOTE: For gz-cmake developers, some of the variables needed by
-#       ignition-config.cmake.in or ignition-component-config.cmake.in MUST be
+#       gz-config.cmake.in or gz-component-config.cmake.in MUST be
 #       set before calling this function. The following variables are set
 #       automatically by this function:
 #       - import_target_name
@@ -270,12 +270,12 @@ function(_gz_create_cmake_package)
 
     set(component ${_gz_create_cmake_package_COMPONENT})
     set(target_name ${PROJECT_LIBRARY_TARGET_NAME}-${component})
-    set(gz_config_input "${IGNITION_CMAKE_DIR}/ignition-component-config.cmake.in")
+    set(gz_config_input "${IGNITION_CMAKE_DIR}/gz-component-config.cmake.in")
     set(simple_import_name ${component})
 
   elseif(_gz_create_cmake_package_ALL)
 
-    set(gz_config_input "${IGNITION_CMAKE_DIR}/ignition-all-config.cmake.in")
+    set(gz_config_input "${IGNITION_CMAKE_DIR}/gz-all-config.cmake.in")
     set(target_name ${PROJECT_LIBRARY_TARGET_NAME}-all)
     set(all_pkg_name ${PROJECT_LIBRARY_TARGET_NAME}-all)
     set(simple_import_name all)
@@ -283,7 +283,7 @@ function(_gz_create_cmake_package)
   else()
 
     set(target_name ${PROJECT_LIBRARY_TARGET_NAME})
-    set(gz_config_input "${IGNITION_CMAKE_DIR}/ignition-config.cmake.in")
+    set(gz_config_input "${IGNITION_CMAKE_DIR}/gz-config.cmake.in")
     set(simple_import_name core)
 
   endif()
@@ -298,7 +298,7 @@ function(_gz_create_cmake_package)
 
   endif()
 
-  # This gets used by the ignition-*.config.cmake.in files
+  # This gets used by the gz-*.config.cmake.in files
   set(target_output_filename ${target_name}-targets.cmake)
   set(gz_config_output "${PROJECT_BINARY_DIR}/cmake/${target_name}-config.cmake")
   set(gz_version_output "${PROJECT_BINARY_DIR}/cmake/${target_name}-config-version.cmake")

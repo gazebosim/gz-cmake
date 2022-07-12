@@ -54,11 +54,11 @@ install(DIRECTORY tools/
 
 #--------------------------------------
 # Create configuration and installation variables
-set(gz_config_input  "${CMAKE_CURRENT_SOURCE_DIR}/config/ignition-cmake-config.cmake.in")
+set(gz_config_input  "${CMAKE_CURRENT_SOURCE_DIR}/config/gz-cmake-config.cmake.in")
 set(gz_config_output "${PROJECT_NAME_LOWER}-config.cmake")
 set(gz_version_output "${PROJECT_NAME_LOWER}-config-version.cmake")
 set(gz_config_install_dir "${CMAKE_INSTALL_DATAROOTDIR}/cmake/${PROJECT_NAME_LOWER}")
-set(ign_pkgconfig_input "${CMAKE_CURRENT_SOURCE_DIR}/config/ignition-cmake.pc.in")
+set(ign_pkgconfig_input "${CMAKE_CURRENT_SOURCE_DIR}/config/gz-cmake.pc.in")
 set(ign_pkgconfig_output "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.pc")
 set(ign_pkgconfig_install_dir "${IGN_LIB_INSTALL_DIR}/pkgconfig")
 set(ign_utilities_target ${PROJECT_EXPORT_NAME}-utilities)
@@ -141,24 +141,52 @@ install(
 #============================================================================
 # Install the files for this package
 #============================================================================
-set(ign_modules_install_dir "${gz_config_install_dir}/cmake${PROJECT_VERSION_MAJOR}")
+set(gz_modules_install_dir "${gz_config_install_dir}/cmake${PROJECT_VERSION_MAJOR}")
 
 file(GLOB modules "cmake/*.cmake")
 file(GLOB templates "cmake/*.in")
 
 install(
   FILES ${modules} ${templates}
-  DESTINATION ${ign_modules_install_dir}
+  DESTINATION ${gz_modules_install_dir}
   COMPONENT modules)
 
 file(GLOB pkgconfig_templates "cmake/pkgconfig/*.in")
 
 install(
   FILES ${pkgconfig_templates}
-  DESTINATION ${ign_modules_install_dir}/pkgconfig
+  DESTINATION ${gz_modules_install_dir}/pkgconfig
   COMPONENT modules)
 
 message(STATUS "Install prefix: ${CMAKE_INSTALL_PREFIX}")
+
+# TODO(CH3): Deprecated. Remove on tock.
+# Install symlinks for IgnPython and IgnBenchmark
+set(tick_tocked_cmake_files
+  "GzPython.cmake"
+  "GzBenchmark.cmake")
+
+# TODO(CH3): Deprecated. Remove on tock.
+# Install symlinks for IgnPython and IgnBenchmark
+foreach(cmake_file ${tick_tocked_cmake_files})
+  string(REGEX REPLACE "^Gz" "Ign" ign_cmake_file ${cmake_file})
+  file(MAKE_DIRECTORY "${PROJECT_BINARY_DIR}/cmake")
+
+  if (WIN32)  # Windows requires copy instead of symlink
+    install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E copy \
+        ${CMAKE_INSTALL_PREFIX}\/${gz_modules_install_dir}\/${cmake_file} \
+        ${PROJECT_BINARY_DIR}\/cmake/${ign_cmake_file})")
+  else()
+    install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink \
+        ${CMAKE_INSTALL_PREFIX}\/${gz_modules_install_dir}\/${cmake_file} \
+        ${PROJECT_BINARY_DIR}\/cmake/${ign_cmake_file})")
+  endif()
+
+  install(
+    FILES ${PROJECT_BINARY_DIR}/cmake/${ign_cmake_file}
+    DESTINATION ${gz_modules_install_dir}
+    COMPONENT modules)
+endforeach()
 
 include(CTest)
 if (BUILD_TESTING)
