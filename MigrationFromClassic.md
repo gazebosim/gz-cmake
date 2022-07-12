@@ -1,24 +1,24 @@
 # Migration Instructions (from Gazebo classic)
 
-This file provides instructions for `ignition` library developers to adopt the
-`ignition-cmake` package into their own library's build system. This document
-is primarily targeted at ignition libraries that existed before `ignition-cmake`
-was available, but it might also be useful for getting a new `ignition` project
+This file provides instructions for `Gazebo` library developers to adopt the
+`gz-cmake` package into their own library's build system. This document
+is primarily targeted at Gazebo libraries that existed before `gz-cmake`
+was available, but it might also be useful for getting a new `Gazebo` project
 started.
 
 The first section goes over changes that your library **must** make in order to
-be compatible with `ignition-cmake`. The second section mentions some utilities
-provided by `ignition-cmake` which might make your project's CMake scripts more
+be compatible with `gz-cmake`. The second section mentions some utilities
+provided by `gz-cmake` which might make your project's CMake scripts more
 clean and maintainable, but use of those utilities is not required. The third
 section details some of the new CMake features that we'll be using through
-`ignition-cmake` and explains why we want to use those features. The last
+`gz-cmake` and explains why we want to use those features. The last
 section describes some CMake anti-patterns which we should aggressively avoid
 as we move forward.
 
 # 1. Required Changes
 
-You can find examples of projects that have been set up to use `ign-cmake` in
-the repos of `ign-common` (branch: `CMakeRefactor`) and `ign-math`
+You can find examples of projects that have been set up to use `gz-cmake` in
+the repos of `gz-common` (branch: `CMakeRefactor`) and `gz-math`
 (branch: `CMakeRefactor-3`). The following is a checklist to help you make sure
 your project is migrated properly.
 
@@ -30,14 +30,14 @@ That's right, just throw it all out.
 We're migrating to 3.10 because it provides many valuable features that we are
 now taking advantage of.
 
-### Then call `find_package(ignition-cmake3 REQUIRED)`
+### Then call `find_package(gz-cmake3 REQUIRED)`
 
-This will find `ignition-cmake` and load up all its useful features for you.
+This will find `gz-cmake` and load up all its useful features for you.
 
 ### Then call `gz_configure_project(<project> <version>)`
 
 This is a wrapper for cmake's native `project(~)` command which additionally
-sets a bunch of variables that will be needed by the `ignition-cmake` macros and
+sets a bunch of variables that will be needed by the `gz-cmake` macros and
 functions.
 
 ### Then search for each dependency using `gz_find_package(~)`
@@ -56,7 +56,7 @@ A variety of arguments are available to guide the behavior of
 `gz_find_package(~)`. Most of them will not be needed in most situations, but
 you should consider reading them over once just in case they might be relevant
 for you. The macro's documentation is available in
-`ign-cmake/cmake/IgnUtils.cmake` just above definition of `gz_find_package(~)`.
+`gz-cmake/cmake/IgnUtils.cmake` just above definition of `gz_find_package(~)`.
 Feel free to ask questions about any of its arguments that are unclear.
 
 Any operations that might need to be performed while searching for a package
@@ -66,7 +66,7 @@ information on writing find-modules.
 ### Then call `gz_configure_build(~)`
 
 This macro accepts the argument `QUIT_IF_BUILD_ERRORS` which you should pass to
-it to get the standard behavior for the ignition projects. If for some reason
+it to get the standard behavior for the Gazebo projects. If for some reason
 you want to handle build errors in your own way, you can leave that argument
 out and then do as you please after the macro finishes.
 
@@ -77,7 +77,7 @@ listed below must be applied throughout your directory tree.
 
 ### Change instances of `PROJECT_<type>_VERSION` variables to `PROJECT_VERSION_<type>`.
 
-In the original ignition CMake scripts, we define variables for the components
+In the original Gazebo CMake scripts, we define variables for the components
 of the library version: `PROJECT_MAJOR_VERSION`, `PROJECT_MINOR_VERSION`, and
 `PROJECT_PATCH_VERSION`. While there is nothing inherently wrong with these
 variable names, in CMake 3+ the `project(~)` command automatically defines the
@@ -91,7 +91,7 @@ to embrace the "single source of truth" pattern.
 ### Change instances of `IGN_PROJECT_NAME` to `IGN_DESIGNATION`
 
 We've had a variable called `IGN_PROJECT_NAME` which refers to the `<suffix>`
-in the `ignition-<suffix>` name of each project. I felt that the name of the
+in the `gz-<suffix>` name of each project. I felt that the name of the
 variable was too similar to the `PROJECT_NAME` variable that is automatically
 defined by CMake, as well as the `PROJECT_NAME[_NO_VERSION][_UPPER/_LOWER]` that
 we define for convenience. Instead of referring to both as `[IGN_]PROJECT_NAME`,
@@ -122,12 +122,12 @@ requires a certain standard, it MUST be specified directly to this function in
 order to ensure that the requirement gets correctly propagated into the
 project's package information so that dependent libraries will also be aware of
 the requirement. See the documentation of `gz_create_core_library(~)` in
-`ign-cmake/cmake/IgnUtils.cmake` for more details on how to specify your
+`gz-cmake/cmake/IgnUtils.cmake` for more details on how to specify your
 library's C++ standard requirement.
 
 ### Specify `TYPE` and `SOURCES` arguments in `gz_build_tests(~)`
 
-Previously, ignition libraries would set a `TEST_TYPE` variable before calling
+Previously, Gazebo libraries would set a `TEST_TYPE` variable before calling
 `gz_build_tests(~)`, and that variable would be used by the macro to determine
 the type of tests it should create. This resulted in some anti-patterns where
 the `TEST_TYPE` variable would be set somewhere far away from the call to
@@ -160,7 +160,7 @@ Also note that all of the "interface include directories" of any targets that
 you pass to `LIB_DEPS` will automatically be visible to all the tests, so this
 tag should be even less commonly needed than `LIB_DEPS`.
 
-### Move your project's `cmake/config.hh.in` file to `include/ignition/<project>/config.hh.in`
+### Move your project's `cmake/config.hh.in` file to `include/gz/<project>/config.hh.in`
 
 The `config.hh.in` file has traditionally lived in the `cmake` subdirectory of
 each project, but that subdirectory should be deleted at the end of the
@@ -211,9 +211,9 @@ names of libraries. When an item containing `::` is passed to
 and it will throw an error and quit if that target is not found, instead of
 failing quietly or subtly. Therefore, we should always exercise the practice of
 using `::` in the names of any imported targets that we intend to use.
-`ignition-cmake` will automatically export all ignition library targets to have
-the name `ignition-<project><major_version>::ignition-<project><major_version>`
-(for example, `ignition-common0::ignition-common0`). When creating a cmake
+`gz-cmake` will automatically export all Gazebo library targets to have
+the name `gz-<project><major_version>::gz-<project><major_version>`
+(for example, `gz-common0::gz-common0`). When creating a cmake
 find-module, the macro `gz_import_target(~)` should be used generate an
 imported target which follows this convention. More about creating find-modules
 can be found in the section on anti-patterns.
@@ -223,13 +223,13 @@ can be found in the section on anti-patterns.
 Calling `gz_create_core_library()` will also take care of installing the
 library. Simply remove this function from your cmake script.
 
-### Replace calls to `#include "ignition/<project>/System.hh"` with `#include "ignition/<project>/Export.hh"`, and delete the file `System.hh`.
+### Replace calls to `#include "gz/<project>/System.hh"` with `#include "gz/<project>/Export.hh"`, and delete the file `System.hh`.
 
-Up until now, we've been maintaining a "System" header in each ignition library.
+Up until now, we've been maintaining a "System" header in each Gazebo library.
 This is being replaced by a set of auto-generated headers, because some of the
 individual projects' implementations had errors or issues in them. The new
 auto-generated headers will enforce consistency and compatibility across all of
-the ignition projects. The header is also being renamed because the role of the
+the Gazebo projects. The header is also being renamed because the role of the
 header is to provide macros that facilitate exporting the library, therefore it
 seems more appropriate to name it "Export" instead of "System". Nothing in the
 header is interacting with the operating system, so the current name feels like
@@ -237,28 +237,28 @@ somewhat of a misnomer (presumably the name "System" came from the fact that the
 macros are system-dependent, but I think naming the header after the role that
 it's performing would be more appropriate).
 
-### Replace `IGNITION_<VISIBLE/HIDDEN>` with `IGNITION_<PROJECT>_<VISIBLE/HIDDEN>` in all headers
+### Replace `GZ_<VISIBLE/HIDDEN>` with `GZ_<PROJECT>_<VISIBLE/HIDDEN>` in all headers
 
-The export (a.k.a. visibility) macros used by each ignition library must be
-unique. Different ignition libraries might depend on each other, and the
+The export (a.k.a. visibility) macros used by each Gazebo library must be
+unique. Different Gazebo libraries might depend on each other, and the
 compiler/linker would be misinformed about which symbols to export if two
 different libraries share the same export macro.
 
 Note that component libraries will generate their own visibility macros so that
 they can correctly be compiled alongside their core library. Those macros will
-look like `IGNITION_<PROJECT>_<COMPONENT>_<VISIBLE/HIDDEN>`.
+look like `GZ_<PROJECT>_<COMPONENT>_<VISIBLE/HIDDEN>`.
 
-### Move all find-modules in your project's `cmake/` directory to your `ign-cmake` repo, and submit a pull request for them
+### Move all find-modules in your project's `cmake/` directory to your `gz-cmake` repo, and submit a pull request for them
 
-We are centralizing all find-modules into `ign-cmake` so that everyone benefits
+We are centralizing all find-modules into `gz-cmake` so that everyone benefits
 from them, and we get a single place to maintain them.
 
 ### Remove the entire `cmake/` subdirectory from your project
 
 Once the above steps are complete, your project's `cmake/` subdirectory should
 no longer be needed. If your `cmake/` subdirectory contained some features
-that are not already present in `ign-cmake`, then you should add those
-features to `ign-cmake` and submit a pull request. I will try to be very prompt
+that are not already present in `gz-cmake`, then you should add those
+features to `gz-cmake` and submit a pull request. I will try to be very prompt
 about reviewing and approving those PRs.
 
 ### To add a component library, use `gz_add_component(<component> SOURCES ${sources})`
@@ -276,9 +276,9 @@ change this behavior, you may pass one of the following arguments:
 `INTERFACE_DEPENDS_ON_PROJECT_LIB`.
 
 By default, the auto-generate public headers for this component will go into the
-directory `ignition/<project>/<component>/`. You can change the subdirectory
+directory `gz/<project>/<component>/`. You can change the subdirectory
 using the optional argument `INCLUDE_SUBDIR <subdir>` which will instead put
-the auto-generate public headers into `ignition/<project>/<subdir>/`.
+the auto-generate public headers into `gz/<project>/<subdir>/`.
 
 You may also pass the argument `GET_TARGET_NAME <output_var>` to retrieve the
 auto-generated name of the target. You can then use the target with
@@ -299,11 +299,11 @@ and a `tests` variable (containing the unit test sources).
 If there are files that you want to exclude from either of these lists, you can
 use `list(REMOVE_ITEM <list> <filenames>)` after calling the function. That
 approach can be used to conditionally remove files from a list (see
-`ign-common/src/CMakeLists.txt` for an example). Alternatively, if you always
+`gz-common/src/CMakeLists.txt` for an example). Alternatively, if you always
 want a file to be excluded, you can change its extension (e.g. `*.cc.backup` or
 `.cc.old`) until a later time when you want it to be used again.
 
-### Use `gz_install_all_headers(~)` in `include/ignition/<project>/CMakeLists.txt`
+### Use `gz_install_all_headers(~)` in `include/gz/<project>/CMakeLists.txt`
 
 Using this macro will install all files ending in `*.h` and `*.hh` in the
 current source directory recursively (so all the files in all subdirectories as
@@ -330,9 +330,9 @@ list of source files, which is sufficient to be passed to `gz_build_tests(~)`.
 Files that end in `*.cmake` are known as "modules" and are not meant to be
 invoked using the fully qualified filename. Instead, the path that leads up to
 the module should be added to `${CMAKE_MODULE_PATH}` if it is not in there
-already (the module path of `ignition-cmake` will automatically be added when
-you call `find_package(ignition-cmake# REQUIRED)`, so you do not have to worry
-about this for `ign-cmake` modules). After that, the module should be invoked
+already (the module path of `gz-cmake` will automatically be added when
+you call `find_package(gz-cmake# REQUIRED)`, so you do not have to worry
+about this for `gz-cmake` modules). After that, the module should be invoked
 using `include(ModuleName)` with no path or extension. CMake will automatically
 find the appropriate file.
 
@@ -345,7 +345,7 @@ after being invoked by the command `find_package(SomePackage)`. Notice that the
 `.cmake` in the filename `FindSomePackage.cmake`. Case matters. This is not just
 a convention; it is a cmake requirement.
 
-Note that while using `ignition-cmake`, you should be using `gz_find_package(~)`
+Note that while using `gz-cmake`, you should be using `gz_find_package(~)`
 instead of the native `find_package(~)` command. It does the same thing, except
 that it adds some additional functionality which is important for ensuring
 correctness in the package configuration files that we generate for our projects.
@@ -370,28 +370,28 @@ divergent methods of varying quality for solving the same problem). Instead, any
 procedures or operations that are needed to find a package dependency should be
 put into a file called `Find<PACKAGE>.cmake` where `<PACKAGE>` should be
 replaced with the name of the package (often this is done in all uppercase
-letters). This `Find<PACKAGE>.cmake` should be added to `ign-cmake/cmake`.
+letters). This `Find<PACKAGE>.cmake` should be added to `gz-cmake/cmake`.
 Pull requests for adding find-modules will be reviewed and approved as quickly
 as possible. This way, all projects can benefit from any one person's effort in
 writing a good quality find-module.
 
 In many cases, a package that we depend on will be distributed with a pkgconfig
-(`*.pc`) file. In such a case, `ignition-cmake` provides a macro that can easily
+(`*.pc`) file. In such a case, `gz-cmake` provides a macro that can easily
 find the package and create an imported target for it. Simply use `include(IgnPkgConfig)`
 and then `gz_pkg_check_modules(~)` in your find-module, and you are done. An
-example of a simple case of this can be found in `ign-cmake/cmake/FindGTS.cmake`.
+example of a simple case of this can be found in `gz-cmake/cmake/FindGTS.cmake`.
 
 If certain version-based behavior is needed, that must be handled within the
 find-module. A simple example using pkgconfig can be found in
-`ign-cmake/cmake/FindAVDEVICE.cmake`.
+`gz-cmake/cmake/FindAVDEVICE.cmake`.
 
 Sometimes a package may be needed but there is no guarantee that a pkgconfig
 file will be available for it. For an example of how to handle that, see
-`ign-cmake/cmake/FindFreeImage.cmake`.
+`gz-cmake/cmake/FindFreeImage.cmake`.
 
 Some libraries are never distributed with a pkgconfig file. For an example of
 how to create a find-module when a pkgconfig file is guaranteed to not exist,
-see `ign-cmake/cmake/FindDL.cmake`. Note that you must manually specify the
+see `gz-cmake/cmake/FindDL.cmake`. Note that you must manually specify the
 variables `<PACKAGE>_PKGCONFIG_ENTRY` and `<PACKAGE>_PKGCONFIG_TYPE` in such
 cases. The entry will have to be the name of library (or libraries), preceded by
 `-l`, while the type must be `PROJECT_PKGCONFIG_LIBS`.

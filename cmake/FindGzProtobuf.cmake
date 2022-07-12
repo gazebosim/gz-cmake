@@ -24,18 +24,18 @@
 # support shared library versions of Protobuf.
 
 include(IgnPkgConfig)
-gz_pkg_config_entry(IgnProtobuf "protobuf >= ${IgnProtobuf_FIND_VERSION}")
+gz_pkg_config_entry(GzProtobuf "protobuf >= ${GzProtobuf_FIND_VERSION}")
 
-find_package(Protobuf ${IgnProtobuf_FIND_VERSION} QUIET CONFIG)
+find_package(Protobuf ${GzProtobuf_FIND_VERSION} QUIET CONFIG)
 
 if(NOT ${Protobuf_FOUND})
   # If a config-file was not found, then fall back on the system-installed
   # find-module that comes with CMake.
-  find_package(Protobuf ${IgnProtobuf_FIND_VERSION})
+  find_package(Protobuf ${GzProtobuf_FIND_VERSION})
 endif()
 
-set(IgnProtobuf_missing_components "")
-foreach(component ${IgnProtobuf_FIND_COMPONENTS})
+set(GzProtobuf_missing_components "")
+foreach(component ${GzProtobuf_FIND_COMPONENTS})
 
   # If specific components are requested, check that each one is accounted for.
   # If any component is missing, then we should not consider this package to be
@@ -43,41 +43,42 @@ foreach(component ${IgnProtobuf_FIND_COMPONENTS})
 
   # If a requested component is not required, then we can just skip this
   # iteration. We don't do anything special for optional components.
-  if(NOT IgnProtobuf_FIND_REQUIRED_${component})
+  if(NOT GzProtobuf_FIND_REQUIRED_${component})
     continue()
   endif()
 
   if((${component} STREQUAL "libprotobuf") OR (${component} STREQUAL "all"))
     if((NOT PROTOBUF_LIBRARY) AND (NOT TARGET protobuf::libprotobuf))
       set(Protobuf_FOUND false)
-      gz_string_append(IgnProtobuf_missing_components "libprotobuf" DELIM " ")
+      gz_string_append(GzProtobuf_missing_components "libprotobuf" DELIM " ")
     endif()
   endif()
 
   if((${component} STREQUAL "libprotoc") OR (${component} STREQUAL "all"))
     if((NOT PROTOBUF_PROTOC_LIBRARY) AND (NOT TARGET protobuf::libprotoc))
       set(Protobuf_FOUND false)
-      gz_string_append(IgnProtobuf_missing_components "libprotoc" DELIM " ")
+      gz_string_append(GzProtobuf_missing_components "libprotoc" DELIM " ")
     endif()
   endif()
 
   if((${component} STREQUAL "protoc") OR (${component} STREQUAL "all"))
     if((NOT PROTOBUF_PROTOC_EXECUTABLE) AND (NOT TARGET protobuf::protoc))
       set(Protobuf_FOUND false)
-      gz_string_append(IgnProtobuf_missing_components "protoc" DELIM " ")
+      gz_string_append(GzProtobuf_missing_components "protoc" DELIM " ")
     endif()
   endif()
 
 endforeach()
 
-if(IgnProtobuf_missing_components AND NOT IgnProtobuf_FIND_QUIETLY)
-  message(STATUS "Missing required protobuf components: ${IgnProtobuf_missing_components}")
+if(GzProtobuf_missing_components AND NOT GzProtobuf_FIND_QUIETLY)
+  message(STATUS "Missing required protobuf components: ${GzProtobuf_missing_components}")
 endif()
 
 if(${Protobuf_FOUND})
-  # If we have found Protobuf, then set the IgnProtobuf_FOUND flag to true so
+  # If we have found Protobuf, then set the GzProtobuf_FOUND flag to true so
   # that gz_find_package(~) knows that we were successful.
-  set(IgnProtobuf_FOUND true)
+  set(GzProtobuf_FOUND true)
+  set(IgnProtobuf_FOUND true)  # TODO(CH3): Deprecated. Remove on tock.
 
   # Older versions of protobuf don't create imported targets, so we will create
   # them here if they have not been provided.

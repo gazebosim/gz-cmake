@@ -20,12 +20,12 @@
 #
 # Usage of this module as follows:
 #
-#     gz_find_package(IgnOGRE2)
+#     gz_find_package(GzOGRE2)
 #
 # Variables used by this module, they can change the default behaviour and need
 # to be set before calling find_package:
 #
-#  IGN_OGRE2_PROJECT_NAME    Possible values: OGRE2 (default) or OGRE-Next
+#  GZ_OGRE2_PROJECT_NAME    Possible values: OGRE2 (default) or OGRE-Next
 #                            (Only on UNIX, not in use for Windows)
 #                            Specify the project name used in the packaging.
 #                            It will impact directly in the name of the
@@ -41,7 +41,7 @@
 #  OGRE2_VERSION_MINOR      OGRE minor version
 #  OGRE2_VERSION_PATCH      OGRE patch version
 #  OGRE2_RESOURCE_PATH      Path to ogre plugins directory
-#  IgnOGRE2::IgnOGRE2       Imported target for OGRE2
+#  GzOGRE2::GzOGRE2       Imported target for OGRE2
 #
 # On Windows, we assume that all the OGRE* defines are passed in manually
 # to CMake.
@@ -51,18 +51,18 @@
 #
 # Example usage:
 #
-#     gz_find_package(IgnOGRE2
-#                      VERSION 2.2.0
-#                      COMPONENTS HlmsPbs HlmsUnlit Overlay)
+#     gz_find_package(GzOGRE2
+#                     VERSION 2.2.0
+#                     COMPONENTS HlmsPbs HlmsUnlit Overlay)
 
 
 # Sanity check: exclude OGRE1 project releasing versions in two ways:
 #  - Legacy in from using 1.x.y until 1.12.y series
 #  - Modern versions using X.Y.Z starting with 13.y.z
 # Reduce valid versions to 2.x series
-if (${IgnOGRE2_FIND_VERSION_MAJOR})
-  if (${IgnOGRE2_FIND_VERSION_MAJOR} VERSION_LESS "2" OR
-      ${IgnOGRE2_FIND_VERSION_MAJOR} VERSION_GREATER_EQUAL "3")
+if (${GzOGRE2_FIND_VERSION_MAJOR})
+  if (${GzOGRE2_FIND_VERSION_MAJOR} VERSION_LESS "2" OR
+  ${GzOGRE2_FIND_VERSION_MAJOR} VERSION_GREATER_EQUAL "3")
     set (OGRE2_FOUND false)
     return()
   endif()
@@ -141,10 +141,10 @@ macro(get_preprocessor_entry CONTENTS KEYWORD VARIABLE)
 endmacro()
 
 if (NOT WIN32)
-  foreach (IGN_OGRE2_PROJECT_NAME "OGRE2" "OGRE-Next")
-    message(STATUS "Looking for OGRE using the name: ${IGN_OGRE2_PROJECT_NAME}")
-    if (IGN_OGRE2_PROJECT_NAME STREQUAL "OGRE2")
-      set(OGRE2_INSTALL_PATH "OGRE-2.${IgnOGRE2_FIND_VERSION_MINOR}")
+  foreach (GZ_OGRE2_PROJECT_NAME "OGRE2" "OGRE-Next")
+    message(STATUS "Looking for OGRE using the name: ${GZ_OGRE2_PROJECT_NAME}")
+    if (GZ_OGRE2_PROJECT_NAME STREQUAL "OGRE2")
+      set(OGRE2_INSTALL_PATH "OGRE-2.${GzOGRE2_FIND_VERSION_MINOR}")
       set(OGRE2LIBNAME "Ogre")
     else()
       set(OGRE2_INSTALL_PATH "OGRE-Next")
@@ -155,13 +155,13 @@ if (NOT WIN32)
     # Note: OGRE2 installed from debs is named OGRE-2.2 while the version
     # installed from source does not have the 2.2 suffix
     # look for OGRE2 installed from debs
-    gz_pkg_check_modules_quiet(${IGN_OGRE2_PROJECT_NAME} ${OGRE2_INSTALL_PATH} NO_CMAKE_ENVIRONMENT_PATH QUIET)
+    gz_pkg_check_modules_quiet(${GZ_OGRE2_PROJECT_NAME} ${OGRE2_INSTALL_PATH} NO_CMAKE_ENVIRONMENT_PATH QUIET)
 
-    if (${IGN_OGRE2_PROJECT_NAME}_FOUND)
-      set(IGN_PKG_NAME ${OGRE2_INSTALL_PATH})
-      set(OGRE2_FOUND ${${IGN_OGRE2_PROJECT_NAME}_FOUND})  # sync possible OGRE-Next to OGRE2
-      fix_pkgconfig_prefix_jammy_bug("${${IGN_OGRE2_PROJECT_NAME}_LIBRARY_DIRS}" OGRE2_LIBRARY_DIRS)
-      set(OGRE2_LIBRARIES ${${IGN_OGRE2_PROJECT_NAME}_LIBRARIES})  # sync possible Ogre-Next ot OGRE2
+    if (${GZ_OGRE2_PROJECT_NAME}_FOUND)
+      set(GZ_PKG_NAME ${OGRE2_INSTALL_PATH})
+      set(OGRE2_FOUND ${${GZ_OGRE2_PROJECT_NAME}_FOUND})  # sync possible OGRE-Next to OGRE2
+      fix_pkgconfig_prefix_jammy_bug("${${GZ_OGRE2_PROJECT_NAME}_LIBRARY_DIRS}" OGRE2_LIBRARY_DIRS)
+      set(OGRE2_LIBRARIES ${${GZ_OGRE2_PROJECT_NAME}_LIBRARIES})  # sync possible Ogre-Next ot OGRE2
     else()
       # look for OGRE2 installed from source
       set(PKG_CONFIG_PATH_TMP ${PKG_CONFIG_PATH_ORIGINAL})
@@ -169,7 +169,7 @@ if (NOT WIN32)
                       OUTPUT_VARIABLE _pkgconfig_invoke_result
                       RESULT_VARIABLE _pkgconfig_failed)
       if(_pkgconfig_failed)
-        IGN_BUILD_WARNING ("Failed to get pkg-config search paths")
+        GZ_BUILD_WARNING ("Failed to get pkg-config search paths")
       elseif (NOT _pkgconfig_invoke_result STREQUAL "")
         set (PKG_CONFIG_PATH_TMP "${PKG_CONFIG_PATH_TMP}:${_pkgconfig_invoke_result}")
       endif()
@@ -201,7 +201,7 @@ if (NOT WIN32)
             else()
               set(OGRE2_LIBRARIES ${OGRE2_LIBRARY})
             endif()
-            set(IGN_PKG_NAME "OGRE")
+            set(GZ_PKG_NAME "OGRE")
             break()
           endif()
         endif()
@@ -209,17 +209,17 @@ if (NOT WIN32)
     endif()
 
     if (NOT OGRE2_FOUND)
-      message(STATUS "  ! ${IGN_OGRE2_PROJECT_NAME} not found")
+      message(STATUS "  ! ${GZ_OGRE2_PROJECT_NAME} not found")
       continue()
     endif()
 
     # use pkg-config to find ogre plugin path
     # do it here before resetting the pkg-config paths
-    execute_process(COMMAND pkg-config --variable=plugindir ${IGN_PKG_NAME}
+    execute_process(COMMAND pkg-config --variable=plugindir ${GZ_PKG_NAME}
                     OUTPUT_VARIABLE _pkgconfig_invoke_result
                     RESULT_VARIABLE _pkgconfig_failed)
     if(_pkgconfig_failed)
-      IGN_BUILD_WARNING ("Failed to find OGRE's plugin directory. The build will succeed, but there will likely be run-time errors.")
+      GZ_BUILD_WARNING ("Failed to find OGRE's plugin directory. The build will succeed, but there will likely be run-time errors.")
     else()
       fix_pkgconfig_prefix_jammy_bug("${_pkgconfig_invoke_result}" OGRE2_PLUGINDIR)
     endif()
@@ -227,7 +227,7 @@ if (NOT WIN32)
     # reset pkg config path
     set(ENV{PKG_CONFIG_PATH} ${PKG_CONFIG_PATH_ORIGINAL})
 
-    set(OGRE2_INCLUDE_DIRS ${${IGN_OGRE2_PROJECT_NAME}_INCLUDE_DIRS})  # sync possible OGRE-Next to OGRE2
+    set(OGRE2_INCLUDE_DIRS ${${GZ_OGRE2_PROJECT_NAME}_INCLUDE_DIRS})  # sync possible OGRE-Next to OGRE2
 
     # verify ogre header can be found in the include path
     find_path(OGRE2_INCLUDE
@@ -245,7 +245,7 @@ if (NOT WIN32)
     # OGRE2_INCLUDE_DIRS so OGRE GL headers can be found
     foreach (dir ${OGRE2_INCLUDE_DIRS})
       get_filename_component(dir_name "${dir}" NAME)
-      if ("${dir_name}" STREQUAL ${IGN_PKG_NAME})
+      if ("${dir_name}" STREQUAL ${GZ_PKG_NAME})
         set(dir_include "${dir}/RenderSystems/GL3Plus")
       else()
         set(dir_include "${dir}")
@@ -262,7 +262,7 @@ if (NOT WIN32)
 
     # find ogre components
     include(IgnImportTarget)
-    foreach(component ${IgnOGRE2_FIND_COMPONENTS})
+    foreach(component ${GzOGRE2_FIND_COMPONENTS})
       find_library(OGRE2-${component}
         NAMES
           "${OGRE2LIBNAME}${component}_d.${OGRE2_VERSION}"
@@ -273,12 +273,12 @@ if (NOT WIN32)
       if (NOT "${OGRE2-${component}}" STREQUAL "OGRE2-${component}-NOTFOUND")
         message(STATUS "  + component ${component}: found")
         # create a new target for each component
-        set(component_TARGET_NAME "IgnOGRE2-${component}::IgnOGRE2-${component}")
+        set(component_TARGET_NAME "GzOGRE2-${component}::GzOGRE2-${component}")
         set(component_INCLUDE_DIRS ${OGRE2_INCLUDE_DIRS})
 
           foreach (dir ${OGRE2_INCLUDE_DIRS})
             get_filename_component(dir_name "${dir}" NAME)
-            if ("${dir_name}" STREQUAL ${IGN_PKG_NAME})
+            if ("${dir_name}" STREQUAL ${GZ_PKG_NAME})
               # 1. append the Hlms/Common include dir if it exists.
               string(FIND ${component} "Hlms" HLMS_POS)
               if(${HLMS_POS} GREATER -1)
@@ -303,7 +303,7 @@ if (NOT WIN32)
         # add it to the list of ogre libraries
         list(APPEND OGRE2_LIBRARIES ${component_TARGET_NAME})
 
-      elseif(IgnOGRE2_FIND_REQUIRED_${component})
+      elseif(GzOGRE2_FIND_REQUIRED_${component})
         message(STATUS "  ! component ${component}: not found!")
         set(OGRE2_FOUND false)
       endif()
@@ -314,7 +314,7 @@ if (NOT WIN32)
     if (OGRE2_FOUND)
       break()
     else()
-      message(STATUS "  ! ${IGN_OGRE2_PROJECT_NAME} not found")
+      message(STATUS "  ! ${GZ_OGRE2_PROJECT_NAME} not found")
     endif()
   endforeach()
 
@@ -340,7 +340,7 @@ if (NOT WIN32)
   # We need to manually specify the pkgconfig entry (and type of entry),
   # because gz_pkg_check_modules does not work for it.
   include(IgnPkgConfig)
-  gz_pkg_config_library_entry(IgnOGRE2 OgreMain)
+  gz_pkg_config_library_entry(GzOGRE2 OgreMain)
 else() #WIN32
 
   set(OGRE2_FOUND TRUE)
@@ -350,7 +350,7 @@ else() #WIN32
   set(OGRE2_VERSION_MINOR "")
   set(OGRE2_RESOURCE_PATH "")
 
-  set(OGRE2_SEARCH_VER "OGRE-${IgnOGRE2_FIND_VERSION_MAJOR}.${IgnOGRE2_FIND_VERSION_MINOR}")
+  set(OGRE2_SEARCH_VER "OGRE-${GzOGRE2_FIND_VERSION_MAJOR}.${GzOGRE2_FIND_VERSION_MINOR}")
   set(OGRE2_PATHS "")
   set(OGRE2_INC_PATHS "")
   foreach(_rootPath ${VCPKG_CMAKE_FIND_ROOT_PATH})
@@ -461,10 +461,10 @@ else() #WIN32
   ogre_find_plugin(RenderSystem_GL3Plus OgreGL3PlusRenderSystem.h RenderSystems/GL3Plus/include)
   ogre_find_plugin(RenderSystem_Direct3D11 OgreD3D11RenderSystem.h RenderSystems/Direct3D11/include)
 
-  foreach(component ${IgnOGRE2_FIND_COMPONENTS})
+  foreach(component ${GzOGRE2_FIND_COMPONENTS})
     set(PREFIX OGRE2_${component})
     if(${PREFIX}_FOUND)
-      set(component_TARGET_NAME "IgnOGRE2-${component}::IgnOGRE2-${component}")
+      set(component_TARGET_NAME "GzOGRE2-${component}::GzOGRE2-${component}")
       set(component_INCLUDE_DIRS ${${PREFIX}_INCLUDE_DIRS})
       # append the Hlms/Common include dir if it exists.
       string(FIND ${component} "Hlms" HLMS_POS)
@@ -500,13 +500,16 @@ else() #WIN32
   endif()
 endif()
 
-set(IgnOGRE2_FOUND false)
+set(GzOGRE2_FOUND false)
 # create OGRE2 target
 if (OGRE2_FOUND)
-  set(IgnOGRE2_FOUND true)
+  set(GzOGRE2_FOUND true)
 
-  gz_import_target(IgnOGRE2
-    TARGET_NAME IgnOGRE2::IgnOGRE2
+  gz_import_target(GzOGRE2
+    TARGET_NAME GzOGRE2::GzOGRE2
     LIB_VAR OGRE2_LIBRARIES
     INCLUDE_VAR OGRE2_INCLUDE_DIRS)
 endif()
+
+set(IgnOGRE2_FOUND ${GzOGRE2_FOUND})  # TODO(CH3): Deprecated. Remove on tock.
+set(IGN_PKG_NAME ${GZ_PKG_NAME})  # TODO(CH3): Deprecated. Remove on tock.

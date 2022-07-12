@@ -38,7 +38,7 @@ To change the build type, set the CMake flag:
 
 ### Disabling or suppressing warnings about optional components
 
-Many ignition packages come with optional component libraries.
+Many Gazebo packages come with optional component libraries.
 These optional components will typically have additional dependencies that the
 package's core library does not require. If you are missing the dependencies of
 any optional components, you will receive a cmake warning like
@@ -161,9 +161,9 @@ To enable building buildsystem tests, set the CMake flags:
 ## Developing with Colcon and vcstool
 
 [`colcon`](https://colcon.readthedocs.io/en/released/) is a tool that improves the workflow of building and testing multiple software packages.
-As an Ignition collection is composed of multiple packages that are frequently built and tested together, `colcon` eases this workflow.
+As a Gazebo collection is composed of multiple packages that are frequently built and tested together, `colcon` eases this workflow.
 
-The basic outline of obtaining Ignition source packages via `vcs` and building with `colcon` is available in the [Ignition source installation documentation](https://gazebosim.org/docs/latest/install_ubuntu_src).
+The basic outline of obtaining Gazebo source packages via `vcs` and building with `colcon` is available in the [Gazebo source installation documentation](https://gazebosim.org/docs/latest/install_ubuntu_src).
 
 ### Passing CMake flags via command line
 
@@ -204,14 +204,14 @@ For more information about creating mixins, consult the [`colcon mixin` document
 
 ### Using a defaults file
 
-It is useful to be able to apply a consistent set of flags across an entire Ignition collection when building.
+It is useful to be able to apply a consistent set of flags across an entire Gazebo collection when building.
 One mechanism for accomplishing this is a `defaults.yaml` file.
 This is a file of configuration options that `colcon` will read to customize the default behavior.
 More information about the `defaults.yaml` file can be found in the corresponding [`colcon` documentation](https://colcon.readthedocs.io/en/released/user/configuration.html#defaults-yaml)
 
-For the following, if you do not have `colcon` or `vcs` installed, consult the [Ignition source installation documentation](https://gazebosim.org/docs/latest/install_ubuntu_src).
+For the following, if you do not have `colcon` or `vcs` installed, consult the [Gazebo source installation documentation](https://gazebosim.org/docs/latest/install_ubuntu_src).
 
-To try this out, first create an Ignition source workspace:
+To try this out, first create a Gazebo source workspace:
 ```
 mkdir -p ~/ign_edifice/src
 cd ~/ign_edifice/

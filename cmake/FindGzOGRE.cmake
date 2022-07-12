@@ -20,7 +20,7 @@
 #
 # Usage of this module as follows:
 #
-#     gz_find_package(IgnOGRE)
+#     gz_find_package(GzOGRE)
 #
 # Variables defined by this module:
 #
@@ -32,7 +32,7 @@
 #  OGRE_VERSION_MINOR      OGRE minor version
 #  OGRE_VERSION_PATCH      OGRE patch version
 #  OGRE_RESOURCE_PATH      Path to ogre plugins directory
-#  IgnOGRE::IgnOGRE        Imported target for OGRE
+#  GzOGRE::GzOGRE        Imported target for OGRE
 #
 # On Windows, we assume that all the OGRE* defines are passed in manually
 # to CMake.
@@ -41,13 +41,13 @@
 #
 # Example usage:
 #
-#     gz_find_package(IgnOGRE
+#     gz_find_package(GzOGRE
 #                      VERSION 1.8.0
 #                      COMPONENTS RTShaderSystem Terrain Overlay)
 
 # Grab the version numbers requested by the call to find_package(~)
-set(major_version ${IgnOGRE_FIND_VERSION_MAJOR})
-set(minor_version ${IgnOGRE_FIND_VERSION_MINOR})
+set(major_version ${GzOGRE_FIND_VERSION_MAJOR})
+set(minor_version ${GzOGRE_FIND_VERSION_MINOR})
 
 # Set the full version number
 set(full_version ${major_version}.${minor_version})
@@ -69,7 +69,7 @@ if (NOT WIN32)
                   OUTPUT_VARIABLE _pkgconfig_invoke_result
                   RESULT_VARIABLE _pkgconfig_failed)
   if(_pkgconfig_failed)
-    IGN_BUILD_WARNING ("Failed to get pkg-config search paths")
+    GZ_BUILD_WARNING ("Failed to get pkg-config search paths")
   elseif (NOT _pkgconfig_invoke_result STREQUAL "")
     set (PKG_CONFIG_PATH_TMP "${PKG_CONFIG_PATH_TMP}:${_pkgconfig_invoke_result}")
   endif()
@@ -105,7 +105,7 @@ if (NOT WIN32)
                           OUTPUT_VARIABLE _pkgconfig_invoke_result
                           RESULT_VARIABLE _pkgconfig_failed)
           if(_pkgconfig_failed)
-            IGN_BUILD_WARNING ("Failed to find OGRE's library directory.  The build will succeed, but there will likely be run-time errors.")
+            GZ_BUILD_WARNING ("Failed to find OGRE's library directory.  The build will succeed, but there will likely be run-time errors.")
           else()
             # set ogre library dir and strip line break
             set(OGRE_LIBRARY_DIRS ${_pkgconfig_invoke_result})
@@ -139,11 +139,11 @@ if (NOT WIN32)
       OGRE_VERSION_PATCH ${OGRE_VERSION})
 
     # find ogre components
-    foreach(component ${IgnOGRE_FIND_COMPONENTS})
-      gz_pkg_check_modules_quiet(IgnOGRE-${component} "OGRE-${component} >= ${full_version}" NO_CMAKE_ENVIRONMENT_PATH)
-      if(IgnOGRE-${component}_FOUND)
-        list(APPEND OGRE_LIBRARIES IgnOGRE-${component}::IgnOGRE-${component})
-      elseif(IgnOGRE_FIND_REQUIRED_${component})
+    foreach(component ${GzOGRE_FIND_COMPONENTS})
+      gz_pkg_check_modules_quiet(GzOGRE-${component} "OGRE-${component} >= ${full_version}" NO_CMAKE_ENVIRONMENT_PATH)
+      if(GzOGRE-${component}_FOUND)
+        list(APPEND OGRE_LIBRARIES GzOGRE-${component}::GzOGRE-${component})
+      elseif(GzOGRE_FIND_REQUIRED_${component})
         set(OGRE_FOUND false)
       endif()
     endforeach()
@@ -152,13 +152,13 @@ if (NOT WIN32)
                     OUTPUT_VARIABLE _pkgconfig_invoke_result
                     RESULT_VARIABLE _pkgconfig_failed)
     if(_pkgconfig_failed)
-      IGN_BUILD_WARNING ("Failed to find OGRE's plugin directory.  The build will succeed, but there will likely be run-time errors.")
+      GZ_BUILD_WARNING ("Failed to find OGRE's plugin directory.  The build will succeed, but there will likely be run-time errors.")
     else()
       # This variable will be substituted into cmake/setup.sh.in
       set(OGRE_PLUGINDIR ${_pkgconfig_invoke_result})
     endif()
 
-    gz_pkg_config_library_entry(IgnOGRE OgreMain)
+    gz_pkg_config_library_entry(GzOGRE OgreMain)
 
     set(OGRE_RESOURCE_PATH ${OGRE_PLUGINDIR})
     # Seems that OGRE_PLUGINDIR can end in a newline, which will cause problems
@@ -171,12 +171,12 @@ if (NOT WIN32)
 
 else()
   find_package(OGRE ${full_version}
-               COMPONENTS ${IgnOGRE_FIND_COMPONENTS})
+  COMPONENTS ${GzOGRE_FIND_COMPONENTS})
   if(OGRE_FOUND)
     # OGREConfig.cmake from vcpkg disable the link against plugin libs
     # when compiling the shared version of it. Here we copied the code
     # to use it.
-    foreach(ogre_component ${IgnOGRE_FIND_COMPONENTS})
+    foreach(ogre_component ${GzOGRE_FIND_COMPONENTS})
       if(ogre_component MATCHES "Plugin_" OR ogre_component MATCHES "RenderSystem_")
         string(LENGTH "${ogre_component}" len)
         string(FIND "${ogre_component}" "_" split_pos)
@@ -239,9 +239,9 @@ else()
   endif()
 endif()
 
-set(IgnOGRE_FOUND false)
+set(GzOGRE_FOUND false)
 if(OGRE_FOUND)
-  set(IgnOGRE_FOUND true)
+  set(GzOGRE_FOUND true)
 
   # manually search and append the the RenderSystem/GL path to
   # OGRE_INCLUDE_DIRS so OGRE GL headers can be found
@@ -260,8 +260,10 @@ if(OGRE_FOUND)
   endforeach()
 
   include(IgnImportTarget)
-  gz_import_target(IgnOGRE
-    TARGET_NAME IgnOGRE::IgnOGRE
+  gz_import_target(GzOGRE
+    TARGET_NAME GzOGRE::GzOGRE
     LIB_VAR OGRE_LIBRARIES
     INCLUDE_VAR OGRE_INCLUDE_DIRS)
 endif()
+
+set(IgnOGRE_FOUND ${GzOGRE_FOUND})  # TODO(CH3): Deprecated. Remove on tock.

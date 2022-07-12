@@ -18,31 +18,37 @@
 #
 # Usage of this module as follows:
 #
-#     find_package(IgnCURL)
+#     find_package(GzCURL)
 #
 # Variables defined by this module:
 #
 #  curl::curl                 Imported target for libcurl
 #
-#  IgnCURL_FOUND              System has CURL libs/headers
-#  IgnCURL_INCLUDE_DIRS       The location of CURL headers
-#  IgnCURL_LIBRARIES          The CURL libraries
-#  IgnCURL_VERSION            The version of CURL found
+#  GzCURL_FOUND              System has CURL libs/headers
+#  GzCURL_INCLUDE_DIRS       The location of CURL headers
+#  GzCURL_LIBRARIES          The CURL libraries
+#  GzCURL_VERSION            The version of CURL found
 
 set(gz_quiet_arg)
-if(IgnCURL_FIND_QUIETLY)
+if(GzCURL_FIND_QUIETLY)
   set(gz_quiet_arg QUIET)
 endif()
 
-find_package(CURL ${IgnCURL_FIND_VERSION} ${gz_quiet_arg})
+find_package(CURL ${GzCURL_FIND_VERSION} ${gz_quiet_arg})
 
-set(IgnCURL_FOUND ${CURL_FOUND})
+set(GzCURL_FOUND ${CURL_FOUND})
+set(IgnCURL_FOUND ${GzCURL_FOUND})   # TODO(CH3): Deprecated. Remove on tock.
 
-if(${IgnCURL_FOUND})
+if(${GzCURL_FOUND})
 
-  set(IgnCURL_INCLUDE_DIRS ${CURL_INCLUDE_DIRS})
-  set(IgnCURL_LIBRARIES ${CURL_LIBRARIES})
-  set(IgnCURL_VERSION ${CURL_VERSION_STRING})
+  set(GzCURL_INCLUDE_DIRS ${CURL_INCLUDE_DIRS})
+  set(GzCURL_LIBRARIES ${CURL_LIBRARIES})
+  set(GzCURL_VERSION ${CURL_VERSION_STRING})
+
+  # TODO(CH3): Deprecated. Remove on tock.
+  set(IgnCURL_INCLUDE_DIRS ${GzCURL_INCLUDE_DIRS})
+  set(IgnCURL_LIBRARIES ${GzCURL_LIBRARIES})
+  set(IgnCURL_VERSION ${GzCURL_VERSION})
 
   # Older versions of curl don't create imported targets, so we will create
   # them here if they have not been provided.
@@ -61,6 +67,6 @@ if(${IgnCURL_FOUND})
   endif()
 
   include(IgnPkgConfig)
-  gz_pkg_config_entry(IgnCURL "libcurl >= ${IgnCURL_FIND_VERSION}")
+  gz_pkg_config_entry(GzCURL "libcurl >= ${GzCURL_FIND_VERSION}")
 
 endif()

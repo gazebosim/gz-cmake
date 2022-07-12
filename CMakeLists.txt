@@ -28,7 +28,7 @@ option(BUILDSYSTEM_TESTING "Enable extended buildsystem testing" FALSE)
 
 #--------------------------------------
 # Install the ignition documentation files
-# Note: This is not actually creating a doc target for ign-cmake; this is just
+# Note: This is not actually creating a doc target for gz-cmake; this is just
 # installing files that are useful for generating the documentation of other
 # ignition projects.
 add_subdirectory(doc)
@@ -106,7 +106,7 @@ install(
 #============================================================================
 # Create and install the utilities component
 #============================================================================
-# Deprecated: Remove the utilities component in ign-cmake4
+# Deprecated: Remove the utilities component in gz-cmake4
 add_library(${ign_utilities_target} INTERFACE)
 target_include_directories(${ign_utilities_target}
   INTERFACE
@@ -169,7 +169,7 @@ if (BUILD_TESTING AND BUILDSYSTEM_TESTING)
   #============================================================================
   # Build examples
   #============================================================================
-  # Do a fake install of ign-cmake in order to test the examples.
+  # Do a fake install of gz-cmake in order to test the examples.
   # Copy or symlink the config.cmake files and cmake folder
   set(FAKE_BUILD_DIRECTORY "${CMAKE_BINARY_DIR}/fake/build")
   set(FAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/fake/install")

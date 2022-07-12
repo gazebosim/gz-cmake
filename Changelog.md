@@ -19,7 +19,7 @@
 1. Fix check for missing components in OGRE2. Be more verbose with components
     * [Pull request #220](https://github.com/gazebosim/gz-cmake/pull/220)
 
-1. FindIgnOGRE2: exclude ogre versions different than 2.x
+1. FindGzOGRE2: exclude ogre versions different than 2.x
     * [Pull request #219](https://github.com/gazebosim/gz-cmake/pull/219)
     * [Pull request #221](https://github.com/gazebosim/gz-cmake/pull/221)
 
@@ -52,7 +52,7 @@
 1. Add Ubuntu Jammy CI
     * [Pull request #194](https://github.com/gazebosim/gz-cmake/pull/194)
 
-1. FindIgnURDFDOM cmake module
+1. FindGzURDFDOM cmake module
     * [Pull request #193](https://github.com/gazebosim/gz-cmake/pull/193)
 
 1. Do not modify `CMAKE_FIND_LIBRARY_PREFIXES` and `CMAKE_FIND_LIBRARY_SUFFIXES` on Windows
@@ -101,7 +101,7 @@
 1. User-friendly skip component warning
     * [Pull request #165](https://github.com/gazebosim/gz-cmake/pull/165)
 
-1. Run ign-cmake's copy of check_test_ran
+1. Run gz-cmake's copy of check_test_ran
     * [Pull request #168](https://github.com/gazebosim/gz-cmake/pull/168)
 
 ### Gazebo CMake 2.7.0 (2021-03-30)
@@ -115,7 +115,7 @@
 1. Fix cmake message types
     * [Pull request #159](https://github.com/gazebosim/gz-cmake/pull/159)
 
-1. Support imported targets in FindIgnOGRE.cmake
+1. Support imported targets in FindGzOGRE.cmake
     * [Pull request #150](https://github.com/gazebosim/gz-cmake/pull/150)
 
 1. Infrastructure
@@ -157,10 +157,10 @@
 1. Remove deprecated doxygen configurations
     * [Pull request 136](https://github.com/gazebosim/gz-cmake/pull/136)
 
-1. Generate doxygen tutorials for ign-cmake
+1. Generate doxygen tutorials for gz-cmake
     * [Pull request 137](https://github.com/gazebosim/gz-cmake/pull/137)
 
-1. Enable make codecheck for ign-cmake
+1. Enable make codecheck for gz-cmake
     * [Pull request 138](https://github.com/gazebosim/gz-cmake/pull/138)
 
 1. Generate valid visibility macros by replacing hyphens in component name
@@ -176,10 +176,10 @@
 1. Added build-essential and cmake to packages.apt
     * [Pull request 130](https://github.com/gazebosim/gz-cmake/pull/130)
 
-1. Fix FindIgnOgre on Windows when not using vcpkg
+1. Fix FindGzOgre on Windows when not using vcpkg
     * [Pull request 124](https://github.com/gazebosim/gz-cmake/pull/124)
 
-1. FindIgnOGRE2: prefer versioned component libraries
+1. FindGzOGRE2: prefer versioned component libraries
     * [Pull request 125](https://github.com/gazebosim/gz-cmake/pull/125)
 
 1. Correct CMake logic and update cpplint to Python3
@@ -209,7 +209,7 @@
 1. Fix use of FindYAML.cmake and FindJSONCPP without pkg-config
     * [Pull request 79](https://github.com/gazebosim/gz-cmake/pull/79)
 
-1. Fix use of FindIgnOGRE2 on Windows if OGRE2 is not found
+1. Fix use of FindGzOGRE2 on Windows if OGRE2 is not found
     * [Pull request 94](https://github.com/gazebosim/gz-cmake/pull/94)
     * Thanks to Silvio Traversaro
 
@@ -243,14 +243,14 @@
 1. Set viewport for doxygen pages.
     * [BitBucket pull request 167](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-cmake/pull-requests/167)
 
-1. Use upstream `CURL::libcurl` imported target in FindIgnCURL.cmake if available.
+1. Use upstream `CURL::libcurl` imported target in FindGzCURL.cmake if available.
     * [BitBucket pull request 175](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-cmake/pull-requests/175)
 
 1. Avoid hardcoding /machine:x64 flag on 64-bit on MSVC.
     * [BitBucket pull request 171](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-cmake/pull-requests/171)
     * [BitBucket pull request 168](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-cmake/pull-requests/168)
 
-1. FindIgnOGRE2: fix include paths for new directory structure.
+1. FindGzOGRE2: fix include paths for new directory structure.
     * [BitBucket pull request 170](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-cmake/pull-requests/170)
     * [BitBucket pull request 157](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-cmake/pull-requests/157)
 
@@ -261,7 +261,7 @@
 1. IgnConfigureBuild: only `add_subdirectory(test)` if `BUILD_TESTING` is ON
     * [BitBucket pull request 169](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-cmake/pull-requests/169)
 
-1. Add FindIgnBullet cmake module.
+1. Add FindGzBullet cmake module.
     * [BitBucket pull request 162](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-cmake/pull-requests/162)
 
 ### Gazebo CMake 2.1.1 (2019-08-07)
@@ -308,7 +308,7 @@
 1. Set viewport for doxygen pages.
     * [BitBucket pull request 167](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-cmake/pull-requests/167)
 
-1. Use upstream `CURL::libcurl` imported target in FindIgnCURL.cmake if available.
+1. Use upstream `CURL::libcurl` imported target in FindGzCURL.cmake if available.
     * [BitBucket pull request 175](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-cmake/pull-requests/175)
 
 1. Avoid hardcoding /machine:x64 flag on 64-bit on MSVC.
@@ -339,7 +339,7 @@
 1. Set viewport for doxygen pages.
     * [BitBucket pull request 167](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-cmake/pull-requests/167)
 
-1. Use upstream `CURL::libcurl` imported target in FindIgnCURL.cmake if available.
+1. Use upstream `CURL::libcurl` imported target in FindGzCURL.cmake if available.
     * [BitBucket pull request 175](https://osrf-migration.github.io/ignition-gh-pages/#!/ignitionrobotics/ign-cmake/pull-requests/175)
 
 1. Avoid hardcoding /machine:x64 flag on 64-bit on MSVC.
@@ -387,4 +387,3 @@
     * [Full list of changes](https://github.com/gazebosim/gz-cmake/compare/ignition-cmake_0.4.1...ignition-cmake_0.4.0)
 
 ### Gazebo CMake 0.4.0
-
