@@ -22,6 +22,11 @@ set(GZ_SANITIZER ""
     "Compile with a sanitizer. Options are: Address, Memory, MemoryWithOrigins, Undefined, Thread, Leak, 'Address;Undefined', CFI"
 )
 
+set(IGN_SANITIZER ""  # TODO(CH3): Deprecated. Remove on tock.
+  CACHE STRING
+  "Deprecated. Please use [GZ_SANITIZER]. Compile with a sanitizer. Options are: Address, Memory, MemoryWithOrigins, Undefined, Thread, Leak, 'Address;Undefined', CFI"
+)
+
 function(append value)
   foreach(variable ${ARGN})
     set(${variable}
@@ -48,6 +53,11 @@ function(test_san_flags return_var flags)
   set(CMAKE_REQUIRED_FLAGS "${FLAGS_BACKUP}")
   set(CMAKE_REQUIRED_QUIET "${QUIET_BACKUP}")
 endfunction()
+
+if(NOT GZ_SANITIZER AND IGN_SANITIZER)  # TODO(CH3): Deprecated. Remove on tock.
+  message(DEPRECATION "Ign prefixed variable [IGN_SANITIZER] is deprecated! Use [GZ_SANITIZER] instead!")
+  set(GZ_SANITIZER ${IGN_SANITIZER})
+endif()
 
 if(GZ_SANITIZER)
   append("-fno-omit-frame-pointer" CMAKE_C_FLAGS CMAKE_CXX_FLAGS)
