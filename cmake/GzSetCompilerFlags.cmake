@@ -356,7 +356,6 @@ macro(_gz_setup_msvc)
     set(GZ_USE_STATIC_RUNTIME ${IGN_USE_STATIC_RUNTIME})
   else()
     option(GZ_USE_STATIC_RUNTIME "Use the static runtime (strongly discouraged)" OFF)
-    set(IGN_USE_STATIC_RUNTIME ${GZ_USE_STATIC_RUNTIME})
   endif()
 
   if(BUILD_SHARED_LIBS)
@@ -364,11 +363,9 @@ macro(_gz_setup_msvc)
     # static library, so we completely disable this option if BUILD_SHARED_LIBS
     # is turned on.
     set(GZ_USE_STATIC_RUNTIME OFF CACHE BOOL "Use the static runtime (strongly discouraged)" FORCE)
-    set(IGN_USE_STATIC_RUNTIME ${GZ_USE_STATIC_RUNTIME}  # TODO(CH3): Deprecated. Remove on tock.
-      CACHE BOOL "Deprecated. Use [GZ_USE_STATIC_RUNTIME] instead! Use the static runtime (strongly discouraged)" FORCE)
   endif()
 
-  if(IGN_USE_STATIC_RUNTIME)
+  if(GZ_USE_STATIC_RUNTIME)
     foreach(build_type DEBUG RELEASE RELWITHDEBINFO MINSIZEREL NONE)
       foreach(lang C CXX)
         set(flags_var CMAKE_${lang}_FLAGS_${build_type})

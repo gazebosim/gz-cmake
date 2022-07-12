@@ -15,6 +15,8 @@
 if(${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.19")
   set(GZ_PYTHON_VERSION "" CACHE STRING
     "Specify specific Python3 version to use ('major.minor' or 'versionMin...[<]versionMax')")
+  set(IGN_PYTHON_VERSION ${GZ_PYTHON_VERSION} CACHE STRING  # TODO(CH3): Deprecated. Remove on tock.
+    "Deprecated. Use [GZ_PYTHON_VERSION] instead! Specify specific Python version to use ('major.minor' or 'major')")
 
   find_package(Python3 ${GZ_PYTHON_VERSION} QUIET)
 elseif(${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.12")
@@ -30,7 +32,7 @@ else()
     set(GZ_PYTHON_VERSION "3")
   endif()
 
-  find_package(PythonInterp ${IGN_PYTHON_VERSION} QUIET)
+  find_package(PythonInterp ${GZ_PYTHON_VERSION} QUIET)
 
   if(PYTHONINTERP_FOUND)
     set(Python3_Interpreter_FOUND ${PYTHONINTERP_FOUND})
@@ -43,6 +45,3 @@ endif()
 if(Python3_EXECUTABLE AND NOT PYTHON_EXECUTABLE)
   set(PYTHON_EXECUTABLE ${Python3_EXECUTABLE})
 endif()
-
-set(IGN_PYTHON_VERSION ${GZ_PYTHON_VERSION} CACHE STRING  # TODO(CH3): Deprecated. Remove on tock.
-  "Deprecated. Use [GZ_PYTHON_VERSION] instead! Specify specific Python version to use ('major.minor' or 'major')")
