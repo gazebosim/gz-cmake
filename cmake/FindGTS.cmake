@@ -18,7 +18,7 @@
 
 if (NOT WIN32)
   # Configuration using pkg-config modules
-  include(IgnPkgConfig)
+  include(GzPkgConfig)
   gz_pkg_check_modules(GTS gts)
 else()
   # true by default, change to false when a failure appears
@@ -92,9 +92,9 @@ else()
   if (GTS_FOUND)
     # We need to manually specify the pkgconfig entry (and type of entry),
     # because gz_pkg_check_modules does not work for it.
-    include(IgnPkgConfig)
+    include(GzPkgConfig)
     gz_pkg_config_library_entry(GTS gts)
-    include(IgnImportTarget)
+    include(GzImportTarget)
     gz_import_target(GTS)
   endif()
 endif()

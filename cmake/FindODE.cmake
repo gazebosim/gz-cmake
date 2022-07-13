@@ -54,7 +54,7 @@ if(ODE_FOUND)
     message(STATUS "Looking for Open Dynamics Engine - found")
   endif()
 
-  include(IgnImportTarget)
+  include(GzImportTarget)
   gz_import_target(ODE)
 
   if(NOT ODE_FIND_QUIETLY)

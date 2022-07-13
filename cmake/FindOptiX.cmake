@@ -233,6 +233,6 @@ find_package_handle_standard_args(
   OptiX
   REQUIRED_VARS OptiX_FOUND)
 
-include(IgnPkgConfig)
+include(GzPkgConfig)
 gz_pkg_config_library_entry(OptiX OptiX)
 

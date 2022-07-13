@@ -15,7 +15,10 @@ release will remove the deprecated code.
     **Replacement**: CMake functions and macros starting with `gz_`
 1. **Deprecated**: `ignition` namespaces
     **Replacement**: `gz` namespaces
-
+1. **Deprecated**: `Ign` prefixed CMake files
+    **Replacement**: `Gz` prefixed CMake files
+1. **Deprecated**: `IGN/IGNITION` prefixed CMake variables and options
+    **Replacement**: `GZ` prefixed CMake variables and options
 1. **Breaking**: The project name has been changed to use the `gz-` prefix, you **must** use the `gz` prefix!
   * This also means that any generated code that use the project name (e.g. CMake variables, in-source macros) would have to be migrated.
   * Some non-exhaustive examples of this include:

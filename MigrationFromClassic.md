@@ -56,7 +56,7 @@ A variety of arguments are available to guide the behavior of
 `gz_find_package(~)`. Most of them will not be needed in most situations, but
 you should consider reading them over once just in case they might be relevant
 for you. The macro's documentation is available in
-`gz-cmake/cmake/IgnUtils.cmake` just above definition of `gz_find_package(~)`.
+`gz-cmake/cmake/GzUtils.cmake` just above definition of `gz_find_package(~)`.
 Feel free to ask questions about any of its arguments that are unclear.
 
 Any operations that might need to be performed while searching for a package
@@ -88,7 +88,7 @@ and adopting their convention will reduce the friction that we experience when
 interfacing with a wide variety of native CMake utilities. It's also beneficial
 to embrace the "single source of truth" pattern.
 
-### Change instances of `IGN_PROJECT_NAME` to `IGN_DESIGNATION`
+### Change instances of `IGN_PROJECT_NAME` to `GZ_DESIGNATION`
 
 We've had a variable called `IGN_PROJECT_NAME` which refers to the `<suffix>`
 in the `gz-<suffix>` name of each project. I felt that the name of the
@@ -97,7 +97,7 @@ defined by CMake, as well as the `PROJECT_NAME[_NO_VERSION][_UPPER/_LOWER]` that
 we define for convenience. Instead of referring to both as `[IGN_]PROJECT_NAME`,
 I thought it would be better to use clear and distinct words to distinguish
 them. Therefore the `<suffix>` part of the project name is now referred to as
-`IGN_DESIGNATION`, and we provide `IGN_DESIGNATION[_LOWER/_UPPER]` for
+`GZ_DESIGNATION`, and we provide `GZ_DESIGNATION[_LOWER/_UPPER]` for
 convenience.
 
 ### Do not use `append_to_cached_string` or `append_to_cached_list` anymore.
@@ -122,7 +122,7 @@ requires a certain standard, it MUST be specified directly to this function in
 order to ensure that the requirement gets correctly propagated into the
 project's package information so that dependent libraries will also be aware of
 the requirement. See the documentation of `gz_create_core_library(~)` in
-`gz-cmake/cmake/IgnUtils.cmake` for more details on how to specify your
+`gz-cmake/cmake/GzUtils.cmake` for more details on how to specify your
 library's C++ standard requirement.
 
 ### Specify `TYPE` and `SOURCES` arguments in `gz_build_tests(~)`
@@ -377,7 +377,7 @@ writing a good quality find-module.
 
 In many cases, a package that we depend on will be distributed with a pkgconfig
 (`*.pc`) file. In such a case, `gz-cmake` provides a macro that can easily
-find the package and create an imported target for it. Simply use `include(IgnPkgConfig)`
+find the package and create an imported target for it. Simply use `include(GzPkgConfig)`
 and then `gz_pkg_check_modules(~)` in your find-module, and you are done. An
 example of a simple case of this can be found in `gz-cmake/cmake/FindGTS.cmake`.
 

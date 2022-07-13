@@ -90,7 +90,7 @@ def collect_results(project_name, results_dir):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser('Run and aggregate available benchmarks')
-    parser.add_argument('--project-name', help='Name of the Ignition project')
+    parser.add_argument('--project-name', help='Name of the Gazebo project')
     parser.add_argument('--version-file',
                         help='Generated file containing version information')
     parser.add_argument('--benchmark-targets', help='Targets to be executed')

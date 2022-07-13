@@ -37,6 +37,15 @@
     "revision_number": "${HG_REVISION_NUM}",
     "branch": "${HG_BRANCH}"
   },
+  "gz":
+  {
+    "project_name": "${PROJECT_NAME}",
+    "version": "${PROJECT_VERSION}",
+    "version_full": "${PROJECT_VERSION_FULL}",
+    "major": "${PROJECT_VERSION_MAJOR}",
+    "minor": "${PROJECT_VERSION_MINOR}",
+    "patch": "${PROJECT_VERSION_PATCH}"
+  },
   "ignition":
   {
     "project_name": "${PROJECT_NAME}",
@@ -47,4 +56,3 @@
     "patch": "${PROJECT_VERSION_PATCH}"
   }
 }
-

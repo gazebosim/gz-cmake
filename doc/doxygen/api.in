@@ -32,7 +32,7 @@ DOXYFILE_ENCODING      = UTF-8
 # title of most generated pages and in a few other places.
 # The default value is: My Project.
 
-PROJECT_NAME           = "Gazebo @IGN_DESIGNATION_CAP@"
+PROJECT_NAME           = "Gazebo @GZ_DESIGNATION_CAP@"
 
 # The PROJECT_NUMBER tag can be used to enter a project or revision number. This
 # could be handy for archiving the generated documentation or if some version
@@ -693,7 +693,7 @@ FILE_VERSION_FILTER    =
 # DoxygenLayout.xml, doxygen will parse it automatically even if the LAYOUT_FILE
 # tag is left empty.
 
-LAYOUT_FILE            = "@IGNITION_CMAKE_DOXYGEN_DIR@/layout.xml"
+LAYOUT_FILE            = "@GZ_CMAKE_DOXYGEN_DIR@/layout.xml"
 
 # The CITE_BIB_FILES tag can be used to specify one or more bib files containing
 # the reference definitions. This must be a list of .bib files. The .bib
@@ -768,7 +768,7 @@ WARN_FORMAT            = "$file:$line: $text"
 # messages should be written. If left blank the output is written to standard
 # error (stderr).
 
-WARN_LOGFILE           = gazebo-doxygen.warn
+WARN_LOGFILE           = gz-doxygen.warn
 
 #---------------------------------------------------------------------------
 # Configuration options related to the input files
@@ -780,7 +780,7 @@ WARN_LOGFILE           = gazebo-doxygen.warn
 # spaces. See also FILE_PATTERNS and EXTENSION_MAPPING
 # Note: If this tag is empty the current directory is searched.
 
-INPUT                  = @IGNITION_DOXYGEN_INPUT@
+INPUT                  = @GZ_DOXYGEN_INPUT@
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses
@@ -881,7 +881,7 @@ EXAMPLE_RECURSIVE      = YES
 # that contain images that are to be included in the documentation (see the
 # \image command).
 
-IMAGE_PATH             = @IGNITION_DOXYGEN_IMAGE_PATH@
+IMAGE_PATH             = @GZ_DOXYGEN_IMAGE_PATH@
 
 # The INPUT_FILTER tag can be used to specify a program that doxygen should
 # invoke to filter for each input file. Doxygen will invoke the filter program
@@ -915,7 +915,7 @@ INPUT_FILTER           =
 # need to set EXTENSION_MAPPING for the extension otherwise the files are not
 # properly processed by doxygen.
 
-FILTER_PATTERNS        = *.hh="sed -e 's/inline\snamespace\s.*\s{$\|gz::@IGN_DESIGNATION@::\|GZ_DEPRECATED([0-9\.]\+)\|GZ_@IGN_DESIGNATION_UPPER@_VISIBLE//g'"
+FILTER_PATTERNS        = *.hh="sed -e 's/inline\snamespace\s.*\s{$\|gz::@GZ_DESIGNATION@::\|GZ_DEPRECATED([0-9\.]\+)\|GZ_@GZ_DESIGNATION_UPPER@_VISIBLE//g'"
 
 # If the FILTER_SOURCE_FILES tag is set to YES, the input filter (if set using
 # INPUT_FILTER) will also be used to filter the input files that are used for
@@ -937,7 +937,7 @@ FILTER_SOURCE_PATTERNS =
 # (index.html). This can be useful if you have a project on for instance GitHub
 # and want to reuse the introduction page also for the doxygen output.
 
-USE_MDFILE_AS_MAINPAGE = @IGNITION_DOXYGEN_API_MAINPAGE_MD@
+USE_MDFILE_AS_MAINPAGE = @GZ_DOXYGEN_API_MAINPAGE_MD@
 
 #---------------------------------------------------------------------------
 # Configuration options related to source browsing
@@ -1058,7 +1058,7 @@ IGNORE_PREFIX          =
 # If the GENERATE_HTML tag is set to YES, doxygen will generate HTML output
 # The default value is: YES.
 
-GENERATE_HTML          = @IGNITION_DOXYGEN_GENHTML@
+GENERATE_HTML          = @GZ_DOXYGEN_GENHTML@
 
 # The HTML_OUTPUT tag is used to specify where the HTML docs will be put. If a
 # relative path is entered the value of OUTPUT_DIRECTORY will be put in front of
@@ -1093,7 +1093,7 @@ HTML_FILE_EXTENSION    = .html
 # of the possible markers and block names see the documentation.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_HEADER            = @IGNITION_CMAKE_DOXYGEN_DIR@/header.html
+HTML_HEADER            = @GZ_CMAKE_DOXYGEN_DIR@/header.html
 
 # The HTML_FOOTER tag can be used to specify a user-defined HTML footer for each
 # generated HTML page. If the tag is left blank doxygen will generate a standard
@@ -1103,7 +1103,7 @@ HTML_HEADER            = @IGNITION_CMAKE_DOXYGEN_DIR@/header.html
 # that doxygen normally uses.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_FOOTER            = @IGNITION_CMAKE_DOXYGEN_DIR@/footer.html
+HTML_FOOTER            = @GZ_CMAKE_DOXYGEN_DIR@/footer.html
 
 # The HTML_STYLESHEET tag can be used to specify a user-defined cascading style
 # sheet that is used by each HTML page. It can be used to fine-tune the look of
@@ -1231,7 +1231,7 @@ GENERATE_DOCSET        = NO
 # The default value is: Doxygen generated docs.
 # This tag requires that the tag GENERATE_DOCSET is set to YES.
 
-DOCSET_FEEDNAME        = "Gazebo @IGN_DESIGNATION_CAP@ API Documentation"
+DOCSET_FEEDNAME        = "Gazebo @GZ_DESIGNATION_CAP@ API Documentation"
 
 # This tag specifies a string that should uniquely identify the documentation
 # set bundle. This should be a reverse domain-name style string, e.g.
@@ -2081,13 +2081,13 @@ SKIP_FUNCTION_MACROS   = NO
 # the path). If a tag file is not located in the directory in which doxygen is
 # run, you must also specify the path to the tagfile here.
 
-TAGFILES               = "@IGNITION_CMAKE_DOXYGEN_DIR@/cppreference.tag.xml = http://en.cppreference.com/w" @IGNITION_DOXYGEN_TAGFILES@
+TAGFILES               = "@GZ_CMAKE_DOXYGEN_DIR@/cppreference.tag.xml = http://en.cppreference.com/w" @GZ_DOXYGEN_TAGFILES@
 
 # When a file name is specified after GENERATE_TAGFILE, doxygen will create a
 # tag file that is based on the input files it reads. See section "Linking to
 # external documentation" for more information about the usage of tag files.
 
-GENERATE_TAGFILE       = @IGNITION_DOXYGEN_GENTAGFILE@
+GENERATE_TAGFILE       = @GZ_DOXYGEN_GENTAGFILE@
 
 # If the ALLEXTERNALS tag is set to YES, all external class will be listed in
 # the class index. If set to NO, only the inherited external classes will be

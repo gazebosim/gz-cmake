@@ -15,11 +15,11 @@
 #
 ########################################
 # Find AV format
-include(IgnPkgConfig)
+include(GzPkgConfig)
 gz_pkg_check_modules_quiet(AVFORMAT libavformat)
 
 if(NOT AVFORMAT_FOUND)
-  include(IgnManualSearch)
+  include(GzManualSearch)
   gz_manual_search(AVFORMAT
                    HEADER_NAMES "libavformat/avformat.h"
                    LIBRARY_NAMES "avformat")
