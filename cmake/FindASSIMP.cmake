@@ -16,7 +16,7 @@
 ########################################
 # Find Assimp
 
-include(IgnPkgConfig)
+include(GzPkgConfig)
 
 if(ASSIMP_FIND_VERSION)
   gz_pkg_check_modules_quiet(ASSIMP "assimp >= ${ASSIMP_FIND_VERSION}")
@@ -25,7 +25,7 @@ else()
 endif()
 
 if(NOT ASSIMP_FOUND)
-  include(IgnManualSearch)
+  include(GzManualSearch)
   gz_manual_search(ASSIMP
                    HEADER_NAMES "assimp/scene.h"
                    LIBRARY_NAMES "assimp")
