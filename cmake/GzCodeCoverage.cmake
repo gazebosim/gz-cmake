@@ -132,7 +132,7 @@ FUNCTION(gz_setup_target_for_coverage)
     # Remove negative counts
     COMMAND sed -i '/,-/d' ${_outputname}.info
     COMMAND ${LCOV_PATH} ${_branch_flags} -q
-      --remove ${_outputname}.info '*/test/*' '/usr/*' '*_TEST*' '*.cxx' 'moc_*.cpp' 'qrc_*.cpp' --output-file ${_outputname}.info.cleaned
+      --remove ${_outputname}.info '*/test/*' '/usr/*' '*_TEST*' '*.cxx' 'moc_*.cpp' 'qrc_*.cpp' '*.pb.*' --output-file ${_outputname}.info.cleaned
     COMMAND ${GENHTML_PATH} ${_branch_flags} -q
     --legend -o ${_outputname} ${_outputname}.info.cleaned
     COMMAND ${LCOV_PATH} --summary ${_outputname}.info.cleaned 2>&1 | grep "lines" | cut -d ' ' -f 4 | cut -d '%' -f 1 > ${_outputname}/lines.txt
