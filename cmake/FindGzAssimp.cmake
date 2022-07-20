@@ -33,6 +33,6 @@ if(NOT ASSIMP_FOUND)
                    LIBRARY_NAMES "assimp")
   include(FindPackageHandleStandardArgs)
   find_package_handle_standard_args(
-    ASSIMP
-    REQUIRED_VARS ASSIMP_FOUND)
+    GzAssimp
+    REQUIRED_VARS GzAssimp_FOUND)
 endif()
