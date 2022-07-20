@@ -88,7 +88,7 @@ and adopting their convention will reduce the friction that we experience when
 interfacing with a wide variety of native CMake utilities. It's also beneficial
 to embrace the "single source of truth" pattern.
 
-### Change instances of `IGN_PROJECT_NAME` to `IGN_DESIGNATION`
+### Change instances of `IGN_PROJECT_NAME` to `GZ_DESIGNATION`
 
 We've had a variable called `IGN_PROJECT_NAME` which refers to the `<suffix>`
 in the `ignition-<suffix>` name of each project. I felt that the name of the
@@ -97,7 +97,7 @@ defined by CMake, as well as the `PROJECT_NAME[_NO_VERSION][_UPPER/_LOWER]` that
 we define for convenience. Instead of referring to both as `[IGN_]PROJECT_NAME`,
 I thought it would be better to use clear and distinct words to distinguish
 them. Therefore the `<suffix>` part of the project name is now referred to as
-`IGN_DESIGNATION`, and we provide `IGN_DESIGNATION[_LOWER/_UPPER]` for
+`GZ_DESIGNATION`, and we provide `GZ_DESIGNATION[_LOWER/_UPPER]` for
 convenience.
 
 ### Do not use `append_to_cached_string` or `append_to_cached_list` anymore.

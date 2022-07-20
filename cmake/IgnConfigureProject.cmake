@@ -10,7 +10,7 @@
 #     cmake project name.
 # REPLACE_IGNITION_INCLUDE_PATH: Optional. Specify include folder
 #     names to replace the default value of
-#     ignition/${IGN_DESIGNATION}
+#     ignition/${GZ_DESIGNATION}
 # VERSION_SUFFIX: Optional. Specify a prerelease version suffix.
 #
 #===============================================================================
@@ -55,32 +55,32 @@ macro(ign_configure_project)
   #============================================================================
   # Extract the designation
   #============================================================================
-  set(IGN_DESIGNATION ${PROJECT_NAME})
+  set(GZ_DESIGNATION ${PROJECT_NAME})
   # Remove the leading "ignition-"
-  string(REGEX REPLACE "ignition-" "" IGN_DESIGNATION ${IGN_DESIGNATION})
+  string(REGEX REPLACE "ignition-" "" GZ_DESIGNATION ${GZ_DESIGNATION})
   # Remove the trailing version number
-  string(REGEX REPLACE "[0-9]+" "" IGN_DESIGNATION ${IGN_DESIGNATION})
+  string(REGEX REPLACE "[0-9]+" "" GZ_DESIGNATION ${GZ_DESIGNATION})
 
   #============================================================================
   # Set project variables
   #============================================================================
 
   if(ign_configure_project_NO_IGNITION_PREFIX)
-    set(PROJECT_NAME_NO_VERSION ${IGN_DESIGNATION})
+    set(PROJECT_NAME_NO_VERSION ${GZ_DESIGNATION})
   else()
-    set(PROJECT_NAME_NO_VERSION "ignition-${IGN_DESIGNATION}")
+    set(PROJECT_NAME_NO_VERSION "ignition-${GZ_DESIGNATION}")
   endif()
   string(TOLOWER ${PROJECT_NAME_NO_VERSION} PROJECT_NAME_NO_VERSION_LOWER)
   string(TOUPPER ${PROJECT_NAME_NO_VERSION} PROJECT_NAME_NO_VERSION_UPPER)
   string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWER)
   string(TOUPPER ${PROJECT_NAME} PROJECT_NAME_UPPER)
-  string(TOLOWER ${IGN_DESIGNATION} IGN_DESIGNATION_LOWER)
-  string(TOUPPER ${IGN_DESIGNATION} IGN_DESIGNATION_UPPER)
+  string(TOLOWER ${GZ_DESIGNATION} GZ_DESIGNATION_LOWER)
+  string(TOUPPER ${GZ_DESIGNATION} GZ_DESIGNATION_UPPER)
 
-  string(SUBSTRING ${IGN_DESIGNATION} 0 1 IGN_DESIGNATION_FIRST_LETTER)
-  string(TOUPPER ${IGN_DESIGNATION_FIRST_LETTER} IGN_DESIGNATION_FIRST_LETTER)
-  string(REGEX REPLACE "^.(.*)" "${IGN_DESIGNATION_FIRST_LETTER}\\1"
-         IGN_DESIGNATION_CAP "${IGN_DESIGNATION}")
+  string(SUBSTRING ${GZ_DESIGNATION} 0 1 GZ_DESIGNATION_FIRST_LETTER)
+  string(TOUPPER ${GZ_DESIGNATION_FIRST_LETTER} GZ_DESIGNATION_FIRST_LETTER)
+  string(REGEX REPLACE "^.(.*)" "${GZ_DESIGNATION_FIRST_LETTER}\\1"
+         GZ_DESIGNATION_CAP "${GZ_DESIGNATION}")
 
   set(PROJECT_EXPORT_NAME ${PROJECT_NAME_LOWER})
   set(PROJECT_LIBRARY_TARGET_NAME ${PROJECT_NAME_LOWER})
@@ -88,7 +88,7 @@ macro(ign_configure_project)
   if(ign_configure_project_REPLACE_IGNITION_INCLUDE_PATH)
     set(PROJECT_INCLUDE_DIR ${ign_configure_project_REPLACE_IGNITION_INCLUDE_PATH})
   else()
-    set(PROJECT_INCLUDE_DIR ignition/${IGN_DESIGNATION})
+    set(PROJECT_INCLUDE_DIR ignition/${GZ_DESIGNATION})
   endif()
 
   # version <major>.<minor>

@@ -32,7 +32,7 @@ DOXYFILE_ENCODING      = UTF-8
 # title of most generated pages and in a few other places.
 # The default value is: My Project.
 
-PROJECT_NAME           = "Gazebo @IGN_DESIGNATION_CAP@"
+PROJECT_NAME           = "Gazebo @GZ_DESIGNATION_CAP@"
 
 # The PROJECT_NUMBER tag can be used to enter a project or revision number. This
 # could be handy for archiving the generated documentation or if some version
@@ -915,7 +915,7 @@ INPUT_FILTER           =
 # need to set EXTENSION_MAPPING for the extension otherwise the files are not
 # properly processed by doxygen.
 
-FILTER_PATTERNS        = *.hh="sed -e 's/inline\snamespace\s.*\s{$\|ignition::@IGN_DESIGNATION@::\|IGN_DEPRECATED([0-9\.]\+)\|IGNITION_@IGN_DESIGNATION_UPPER@_VISIBLE//g'"
+FILTER_PATTERNS        = *.hh="sed -e 's/inline\snamespace\s.*\s{$\|ignition::@GZ_DESIGNATION@::\|IGN_DEPRECATED([0-9\.]\+)\|IGNITION_@GZ_DESIGNATION_UPPER@_VISIBLE//g'"
 
 # If the FILTER_SOURCE_FILES tag is set to YES, the input filter (if set using
 # INPUT_FILTER) will also be used to filter the input files that are used for
@@ -1231,7 +1231,7 @@ GENERATE_DOCSET        = NO
 # The default value is: Doxygen generated docs.
 # This tag requires that the tag GENERATE_DOCSET is set to YES.
 
-DOCSET_FEEDNAME        = "Gazebo @IGN_DESIGNATION_CAP@ API Documentation"
+DOCSET_FEEDNAME        = "Gazebo @GZ_DESIGNATION_CAP@ API Documentation"
 
 # This tag specifies a string that should uniquely identify the documentation
 # set bundle. This should be a reverse domain-name style string, e.g.
