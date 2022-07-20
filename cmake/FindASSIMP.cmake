@@ -16,21 +16,15 @@
 ########################################
 # Find Assimp
 
-include(GzPkgConfig)
+find_package(ASSIMP ${ASSIMP_FIND_VERSION} CONFIG)
 
-if(ASSIMP_FIND_VERSION)
-  gz_pkg_check_modules_quiet(ASSIMP "assimp >= ${ASSIMP_FIND_VERSION}")
-else()
-  gz_pkg_check_modules_quiet(ASSIMP "assimp")
+if(ASSIMP_FOUND)
+  gz_import_target(Assimp
+    TARGET_NAME Assimp::Assimp
+    LIB_VAR ASSIMP_LIBRARIES
+    INCLUDE_VAR ASSIMP_INCLUDE_DIRS
+  )
 endif()
-
-if(NOT ASSIMP_FOUND)
-  include(GzManualSearch)
-  gz_manual_search(ASSIMP
-                   HEADER_NAMES "assimp/scene.h"
-                   LIBRARY_NAMES "assimp")
-endif()
-
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(
