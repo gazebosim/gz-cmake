@@ -4,13 +4,13 @@
 #
 # ign_configure_project([VERSION_SUFFIX <pre|alpha|beta|etc>])
 #
-# Sets up an ignition library project.
+# Sets up an gazebo library project.
 #
 # NO_IGNITION_PREFIX: Optional. Don't use ignition as prefix in
 #     cmake project name.
 # REPLACE_IGNITION_INCLUDE_PATH: Optional. Specify include folder
 #     names to replace the default value of
-#     ignition/${GZ_DESIGNATION}
+#     gazebo/${GZ_DESIGNATION}
 # VERSION_SUFFIX: Optional. Specify a prerelease version suffix.
 #
 #===============================================================================
@@ -56,8 +56,9 @@ macro(ign_configure_project)
   # Extract the designation
   #============================================================================
   set(GZ_DESIGNATION ${PROJECT_NAME})
-  # Remove the leading "ignition-"
+  # Remove the leading "ignition-" and "gz-". Older library versions will have a leading "ignition-" and newer will have "gz-". 
   string(REGEX REPLACE "ignition-" "" GZ_DESIGNATION ${GZ_DESIGNATION})
+  string(REGEX REPLACE "gz-" "" GZ_DESIGNATION ${GZ_DESIGNATION})
   # Remove the trailing version number
   string(REGEX REPLACE "[0-9]+" "" GZ_DESIGNATION ${GZ_DESIGNATION})
 

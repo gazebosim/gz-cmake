@@ -396,7 +396,7 @@ macro(ign_find_package PACKAGE_NAME)
         # ignition-<project>.pc file. This is probably an oversight in our build
         # system scripts, so we will emit a warning about this.
         message(AUTHOR_WARNING
-          " -- THIS MESSAGE IS INTENDED FOR IGNITION-${GZ_DESIGNATION_UPPER} AUTHORS --\n"
+          " -- THIS MESSAGE IS INTENDED FOR GZ-${GZ_DESIGNATION_UPPER} AUTHORS --\n"
           "    (IF YOU SEE THIS, PLEASE REPORT IT)\n"
           "Could not find pkg-config information for ${PACKAGE_NAME}. "
           "It was not provided by the find-module for the package, nor was it "
