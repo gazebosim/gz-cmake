@@ -86,7 +86,7 @@ function(ign_create_docs)
   # generated in a project that has no class hierarchy.
   file(READ "${IGNITION_CMAKE_DOXYGEN_DIR}/header.html" doxygen_header)
   file(READ "${IGNITION_CMAKE_DOXYGEN_DIR}/footer.html" doxygen_footer)
-  string(REGEX REPLACE "\\$projectname" "Ignition ${IGN_DESIGNATION_CAP}"
+  string(REGEX REPLACE "\\$projectname" "Ignition ${GZ_DESIGNATION_CAP}"
     doxygen_header ${doxygen_header})
   string(REGEX REPLACE "\\$projectnumber" "${PROJECT_VERSION_FULL}"
     doxygen_header ${doxygen_header})
