@@ -20,7 +20,7 @@ if [ ! -f "@CMAKE_BINARY_DIR@/doxygen/html/index.html" ]; then
 fi
 
 # Dry run
-aws s3 sync --dryrun @CMAKE_BINARY_DIR@/doxygen/html/ s3://gazebosim.org/api/@IGN_DESIGNATION@/@PROJECT_VERSION_MAJOR@.@PROJECT_VERSION_MINOR@/
+aws s3 sync --dryrun @CMAKE_BINARY_DIR@/doxygen/html/ s3://gazebosim.org/api/@IGN_DESIGNATION@/@PROJECT_VERSION_MAJOR@/
 
 if [ -z "$1" ]; then
   echo -n "Upload (Y/n)? "
@@ -32,7 +32,7 @@ fi
 if [ "$ans" = "n" ] || [ "$ans" = "N" ]; then
   exit 1
 else
-  aws s3 sync @CMAKE_BINARY_DIR@/doxygen/html/ s3://gazebosim.org/api/@IGN_DESIGNATION@/@PROJECT_VERSION_MAJOR@.@PROJECT_VERSION_MINOR@/
+  aws s3 sync @CMAKE_BINARY_DIR@/doxygen/html/ s3://gazebosim.org/api/@IGN_DESIGNATION@/@PROJECT_VERSION_MAJOR@/
 
   echo "WARNING"
   echo "  A CloudFront invalidation is required. Run the following command with the appropriate \$CLOUDFRONT_DISTRIBUTION_ID:\n"
