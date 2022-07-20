@@ -145,7 +145,12 @@ if (NOT WIN32)
     message(STATUS "Looking for OGRE using the name: ${GZ_OGRE2_PROJECT_NAME}")
     if (GZ_OGRE2_PROJECT_NAME STREQUAL "OGRE2")
       set(OGRE2_INSTALL_PATH "OGRE-2.${GzOGRE2_FIND_VERSION_MINOR}")
-      set(OGRE2LIBNAME "Ogre")
+      # For 2.3 forward, we are using OgreNext
+      if (${GzOGRE2_FIND_VERSION_MINOR} GREATER_EQUAL "3")
+        set(OGRE2LIBNAME "OgreNext")
+      else()
+        set(OGRE2LIBNAME "Ogre")
+      endif()
     else()
       set(OGRE2_INSTALL_PATH "OGRE-Next")
       set(OGRE2LIBNAME "OgreNext")
@@ -299,6 +304,13 @@ if (NOT WIN32)
         gz_import_target(${component} TARGET_NAME ${component_TARGET_NAME}
             LIB_VAR component_LIBRARIES
             INCLUDE_VAR component_INCLUDE_DIRS)
+
+          # Forward the link directories to be used by RPath
+        set_property(
+          TARGET ${component_TARGET_NAME} 
+          PROPERTY INTERFACE_LINK_DIRECTORIES
+          ${OGRE2_LIBRARY_DIRS}
+        )
 
         # add it to the list of ogre libraries
         list(APPEND OGRE2_LIBRARIES ${component_TARGET_NAME})
@@ -509,6 +521,13 @@ if (OGRE2_FOUND)
     TARGET_NAME GzOGRE2::GzOGRE2
     LIB_VAR OGRE2_LIBRARIES
     INCLUDE_VAR OGRE2_INCLUDE_DIRS)
+
+  # Forward the link directories to be used by RPath
+  set_property(
+    TARGET GzOGRE2::GzOGRE2
+    PROPERTY INTERFACE_LINK_DIRECTORIES
+    ${OGRE2_LIBRARY_DIRS}
+  )
 endif()
 
 set(IgnOGRE2_FOUND ${GzOGRE2_FOUND})  # TODO(CH3): Deprecated. Remove on tock.
