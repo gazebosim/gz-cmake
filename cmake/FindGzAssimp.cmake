@@ -18,8 +18,6 @@
 
 include(GzPkgConfig)
 
-#gz_pkg_config_entry(GzAssimp "assimp >= ${GzProtobuf_FIND_VERSION}")
-
 if(ASSIMP_FIND_VERSION)
   gz_pkg_check_modules_quiet(GzAssimp "assimp >= ${ASSIMP_FIND_VERSION}")
 else()
