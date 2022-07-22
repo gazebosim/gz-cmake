@@ -124,9 +124,11 @@ FUNCTION(ign_setup_target_for_coverage)
   if (EXISTS "${PROJECT_BINARY_DIR}/coverage.ignore")
     file (STRINGS "${PROJECT_BINARY_DIR}/coverage.ignore" IGNORE_LIST_RAW)
     string(REGEX REPLACE "([^;]+)" "'${PROJECT_SOURCE_DIR}/\\1'" IGNORE_LIST "${IGNORE_LIST_RAW}")
+    message(STATUS "Ignore coverage additions: " ${IGNORE_LIST})
   else()
     set(IGNORE_LIST "")
   endif()
+
   # Setup target
   ADD_CUSTOM_TARGET(${_targetname}
 
@@ -140,7 +142,7 @@ FUNCTION(ign_setup_target_for_coverage)
     COMMAND sed -i '/,-/d' ${_outputname}.info
     COMMAND ${LCOV_PATH} ${_branch_flags} -q
       --remove ${_outputname}.info '*/test/*' '/usr/*' '*_TEST*' '*.cxx' 'moc_*.cpp' 'qrc_*.cpp' '*.pb.*' '*/build/*' '*/install/*' ${IGNORE_LIST} --output-file ${_outputname}.info.cleaned
-    COMMAND ${GENHTML_PATH} ${_branch_flags} -q
+    COMMAND ${GENHTML_PATH} ${_branch_flags} -q --prefix ${PROJECT_SOURCE_DIR}
     --legend -o ${_outputname} ${_outputname}.info.cleaned
     COMMAND ${LCOV_PATH} --summary ${_outputname}.info.cleaned 2>&1 | grep "lines" | cut -d ' ' -f 4 | cut -d '%' -f 1 > ${_outputname}/lines.txt
     COMMAND ${LCOV_PATH} --summary ${_outputname}.info.cleaned 2>&1 | grep "functions" | cut -d ' ' -f 4 | cut -d '%' -f 1 > ${_outputname}/functions.txt
