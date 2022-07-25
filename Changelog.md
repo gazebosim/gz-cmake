@@ -1,5 +1,10 @@
 ## Ignition CMake 2.x
 
+### Ignition CMake 2.14.0 (2022-07-25)
+
+1. Add code coverage ignore file
+    * [Pull request #279](https://github.com/gazebosim/gz-cmake/pull/279)
+
 ### Ignition CMake 2.13.0 (2022-07-22)
 
 1. Backport `GZ_DESIGNATION` tick-tock
@@ -409,4 +414,3 @@
     * [Full list of changes](https://github.com/ignitionrobotics/ign-cmake/compare/ignition-cmake_0.4.1...ignition-cmake_0.4.0)
 
 ### Ignition CMake 0.4.0
-
