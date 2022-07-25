@@ -121,7 +121,9 @@ FUNCTION(ign_setup_target_for_coverage)
   ENDIF() # NOT GENHTML_PATH
 
   # Read ignore file list
-  if (EXISTS "${PROJECT_BINARY_DIR}/coverage.ignore")
+  if (EXISTS "${PROJECT_SOURCE_DIR}/coverage.ignore.in")
+    configure_file("${PROJECT_SOURCE_DIR}/coverage.ignore.in"
+                    ${PROJECT_BINARY_DIR}/coverage.ignore)
     file (STRINGS "${PROJECT_BINARY_DIR}/coverage.ignore" IGNORE_LIST_RAW)
     string(REGEX REPLACE "([^;]+)" "'${PROJECT_SOURCE_DIR}/\\1'" IGNORE_LIST "${IGNORE_LIST_RAW}")
     message(STATUS "Ignore coverage additions: " ${IGNORE_LIST})
