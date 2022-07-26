@@ -148,13 +148,16 @@ if (NOT WIN32)
     message(STATUS "-- Looking for OGRE using the name: ${GZ_OGRE2_PROJECT_NAME}")
     if (GZ_OGRE2_PROJECT_NAME STREQUAL "OGRE2")
       set(OGRE2_INSTALL_PATH "OGRE-2.${GzOGRE2_FIND_VERSION_MINOR}")
-      # For 2.3 forward, we are using OgreNext
-      if (${GzOGRE2_FIND_VERSION_MINOR} GREATER_EQUAL "3")
+      # For 2.3 forward on Ubuntu, we are using OgreNext
+      # macOS homebrew builds retain the OGRE name
+      # 2.2 and below retain the OGRE name
+      if (${GzOGRE2_FIND_VERSION_MINOR} GREATER_EQUAL "3" AND NOT APPLE)
         set(OGRE2LIBNAME "OgreNext")
       else()
         set(OGRE2LIBNAME "Ogre")
       endif()
     else()
+      # This matches OGRE2.2 built in upstream Ubuntu
       set(OGRE2_INSTALL_PATH "OGRE-Next")
       set(OGRE2LIBNAME "OgreNext")
     endif()
