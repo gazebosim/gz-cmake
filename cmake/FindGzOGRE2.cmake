@@ -140,24 +140,21 @@ macro(get_preprocessor_entry CONTENTS KEYWORD VARIABLE)
   endif ()
 endmacro()
 
-message(STATUS "- Components : ${GzOGRE2_FIND_COMPONENTS}")
-message(STATUS "- Searching for GzOGRE2: ${GzOGRE2_FIND_VERSION_MAJOR}.${GzOGRE2_FIND_VERSION_MINOR}.${GzOGRE2_FIND_VERSION_PATCH}")
-
 if (NOT WIN32)
   foreach (GZ_OGRE2_PROJECT_NAME "OGRE2" "OGRE-Next")
-    message(STATUS "-- Looking for OGRE using the name: ${GZ_OGRE2_PROJECT_NAME}")
+    message(STATUS "Looking for OGRE using the name: ${GZ_OGRE2_PROJECT_NAME}")
     if (GZ_OGRE2_PROJECT_NAME STREQUAL "OGRE2")
       set(OGRE2_INSTALL_PATH "OGRE-2.${GzOGRE2_FIND_VERSION_MINOR}")
-      # For 2.3 forward on Ubuntu, we are using OgreNext
-      # macOS homebrew builds retain the OGRE name
-      # 2.2 and below retain the OGRE name
+      # For OGRE 2.3 debs built via OpenRobotics buildfarms, we use OgreNext
+      # For OGRE 2.3 macOS homebrew builds retain the OGRE name
+      # For OGRE 2.2 and below retain the OGRE name
       if (${GzOGRE2_FIND_VERSION_MINOR} GREATER_EQUAL "3" AND NOT APPLE)
         set(OGRE2LIBNAME "OgreNext")
       else()
         set(OGRE2LIBNAME "Ogre")
       endif()
     else()
-      # This matches OGRE2.2 built in upstream Ubuntu
+      # This matches OGRE2.2 debs built in upstream Ubuntu
       set(OGRE2_INSTALL_PATH "OGRE-Next")
       set(OGRE2LIBNAME "OgreNext")
     endif()
@@ -169,13 +166,11 @@ if (NOT WIN32)
     gz_pkg_check_modules_quiet(${GZ_OGRE2_PROJECT_NAME} ${OGRE2_INSTALL_PATH} NO_CMAKE_ENVIRONMENT_PATH QUIET)
 
     if (${GZ_OGRE2_PROJECT_NAME}_FOUND)
-      message(STATUS "-- Found via pkg_check_modules name: ${GZ_OGRE2_PROJECT_NAME}")
       set(GZ_PKG_NAME ${OGRE2_INSTALL_PATH})
       set(OGRE2_FOUND ${${GZ_OGRE2_PROJECT_NAME}_FOUND})  # sync possible OGRE-Next to OGRE2
       fix_pkgconfig_prefix_jammy_bug("${${GZ_OGRE2_PROJECT_NAME}_LIBRARY_DIRS}" OGRE2_LIBRARY_DIRS)
       set(OGRE2_LIBRARIES ${${GZ_OGRE2_PROJECT_NAME}_LIBRARIES})  # sync possible Ogre-Next ot OGRE2
     else()
-      message(STATUS "-- Not found via pkg_check_modules name: ${GZ_OGRE2_PROJECT_NAME}, searching for source")
       # look for OGRE2 installed from source
       set(PKG_CONFIG_PATH_TMP ${PKG_CONFIG_PATH_ORIGINAL})
       execute_process(COMMAND pkg-config --variable pc_path pkg-config
@@ -319,7 +314,6 @@ if (NOT WIN32)
           PROPERTY INTERFACE_LINK_DIRECTORIES
           ${OGRE2_LIBRARY_DIRS}
         )
-
         # add it to the list of ogre libraries
         list(APPEND OGRE2_LIBRARIES ${component_TARGET_NAME})
 
