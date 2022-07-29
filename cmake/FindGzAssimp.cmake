@@ -21,7 +21,11 @@
 find_package(assimp CONFIG QUIET)
 
 set(GzAssimp_FOUND ${assimp_FOUND})
-set(GzAssimp_LIBRARIES ${ASSIMP_LIBRARIES})
+if (MSVC)
+  set(GzAssimp_LIBRARIES assimp::assimp)
+else()
+  set(GzAssimp_LIBRARIES ${ASSIMP_LIBRARIES})
+endif()
 set(GzAssimp_INCLUDE_DIRS ${ASSIMP_INCLUDE_DIRS})
 set(GzAssimp_VERSION ${assimp_VERSION})
 
@@ -37,5 +41,5 @@ unset(ASSIMP_VERSION CACHE)
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(
   GzAssimp
-  REQUIRED_VARS GzAssimp_FOUND GzAssimp_INCLUDE_DIRS GzAssimp_LIBRARIES
+  REQUIRED_VARS GzAssimp_FOUND
   VERSION_VAR GzAssimp_VERSION)
