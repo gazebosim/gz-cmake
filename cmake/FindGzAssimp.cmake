@@ -15,22 +15,31 @@
 #
 ########################################
 # Find Assimp
+# Provides a GzAssimp alias to avoid conflicts with other packages
+# that might provide a FindAssimp function, such as dartsim
+
+find_package(assimp CONFIG QUIET)
+
+set(GzAssimp_FOUND ${assimp_FOUND})
+if (MSVC)
+  set(GzAssimp_LIBRARIES assimp::assimp)
+else()
+  set(GzAssimp_LIBRARIES ${ASSIMP_LIBRARIES})
+endif()
+set(GzAssimp_INCLUDE_DIRS ${ASSIMP_INCLUDE_DIRS})
+set(GzAssimp_VERSION ${assimp_VERSION})
 
 include(GzPkgConfig)
+gz_pkg_config_entry(GzAssimp "assimp")
 
-if(ASSIMP_FIND_VERSION)
-  gz_pkg_check_modules_quiet(GzAssimp "assimp >= ${ASSIMP_FIND_VERSION}")
-else()
-  gz_pkg_check_modules_quiet(GzAssimp "assimp")
-endif()
+# Clear cached variables so downstream packages will trigger a find
+unset(assimp_FOUND CACHE)
+unset(ASSIMP_INCLUDE_DIRS CACHE)
+unset(ASSIMP_LIBRARIES CACHE)
+unset(ASSIMP_VERSION CACHE)
 
-if(NOT ASSIMP_FOUND)
-  include(GzManualSearch)
-  gz_manual_search(ASSIMP
-                   HEADER_NAMES "assimp/scene.h"
-                   LIBRARY_NAMES "assimp")
-  include(FindPackageHandleStandardArgs)
-  find_package_handle_standard_args(
-    GzAssimp
-    REQUIRED_VARS GzAssimp_FOUND)
-endif()
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(
+  GzAssimp
+  REQUIRED_VARS GzAssimp_FOUND
+  VERSION_VAR GzAssimp_VERSION)
