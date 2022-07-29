@@ -23,13 +23,19 @@ find_package(assimp CONFIG QUIET)
 set(GzAssimp_FOUND ${assimp_FOUND})
 set(GzAssimp_LIBRARIES ${ASSIMP_LIBRARIES})
 set(GzAssimp_INCLUDE_DIRS ${ASSIMP_INCLUDE_DIRS})
-set(GzAssimp_INCLUDE_DIRS ${ASSIMP_INCLUDE_DIRS})
 set(GzAssimp_VERSION ${assimp_VERSION})
 
 include(GzPkgConfig)
 gz_pkg_config_entry(GzAssimp "assimp")
 
+# Clear cached variables so downstream packages will trigger a find
+unset(assimp_FOUND CACHE)
+unset(ASSIMP_INCLUDE_DIRS CACHE)
+unset(ASSIMP_LIBRARIES CACHE)
+unset(ASSIMP_VERSION CACHE)
+
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(
   GzAssimp
-  REQUIRED_VARS GzAssimp_FOUND)
+  REQUIRED_VARS GzAssimp_FOUND GzAssimp_INCLUDE_DIRS GzAssimp_LIBRARIES
+  VERSION_VAR GzAssimp_VERSION)
