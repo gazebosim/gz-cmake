@@ -18,6 +18,8 @@
 # Provides a GzAssimp alias to avoid conflicts with other packages
 # that might provide a FindAssimp function, such as dartsim
 
+# Set CMP0012 policy to NEW to avoid OLD policy warning in assimp 5.0.1
+set(CMAKE_POLICY_DEFAULT_CMP0012 NEW)
 find_package(assimp CONFIG QUIET)
 
 set(GzAssimp_FOUND ${assimp_FOUND})
