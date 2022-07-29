@@ -1,5 +1,34 @@
 ## Gazebo CMake 2.x
 
+### Gazebo CMake 2.14.0 (2022-07-25)
+
+1. Add code coverage ignore file
+    * [Pull request #279](https://github.com/gazebosim/gz-cmake/pull/279)
+
+### Gazebo CMake 2.13.0 (2022-07-22)
+
+1. Backport `GZ_DESIGNATION` tick-tock
+    * [Pull request #284](https://github.com/gazebosim/gz-cmake/pull/284)
+
+1. Upload docs to an s3 bucket based only on the major version
+    * [Pull request #281](https://github.com/gazebosim/gz-cmake/pull/281)
+
+1. Exclude proto generated cpp in coverage test
+    * [Pull request #272](https://github.com/gazebosim/gz-cmake/pull/272)
+
+1. Add LTCG flag on Windows builds
+    * [Pull request #251](https://github.com/gazebosim/gz-cmake/pull/251)
+
+1. Update codeowners
+    * [Pull request #261](https://github.com/gazebosim/gz-cmake/pull/261)
+    * [Pull request #237](https://github.com/gazebosim/gz-cmake/pull/237)
+
+1. Update documentation to gazebosim.org
+    * [Pull request #248](https://github.com/gazebosim/gz-cmake/pull/248)
+
+1. Improving CONFIG test
+    * [Pull request #235](https://github.com/gazebosim/gz-cmake/pull/235)
+
 ### Gazebo CMake 2.12.1 (2022-04-12)
 
 1. Allow to recreate targets created by GzPkgConfig
