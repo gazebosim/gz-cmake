@@ -1971,3 +1971,318 @@ macro(_gz_cmake_parse_arguments prefix options oneValueArgs multiValueArgs)
   endif()
 
 endmacro()
+
+#####GSOC##########################################
+
+#gz_add_resources(path_to_resources)
+#Installs the folder and provides it's path to gz_environment_hook()
+macro(gz_add_resources path_to_resources)
+
+  install(DIRECTORY
+  ${path_to_resources}
+  DESTINATION share/${PROJECT_NAME})
+
+  list(APPEND resources_path ${path_to_resources})
+
+endmacro() 
+#####################################################
+#gz_environment_hook()
+#Get's path from other macros and creates hooks to export them
+#Currently it creates colcon.pkg along with hooks.dsv for exporting them
+#Mechanisms for plain cmake packages is under development 
+macro(gz_environment_hook)
+  list(REMOVE_DUPLICATES resources_path)
+  list(REMOVE_DUPLICATES plugins_path)
+  file(WRITE ${CMAKE_CURRENT_SOURCE_DIR}/hooks/hook.dsv.in
+    "")
+  foreach(resource_path ${resources_path})
+    file(APPEND ${CMAKE_CURRENT_SOURCE_DIR}/hooks/hook.dsv.in
+    "prepend-non-duplicate;GZ_SIM_RESOURCE_PATH;@CMAKE_INSTALL_PREFIX@/share/@PROJECT_NAME@/${resource_path}\n")
+  endforeach()
+  foreach(plugin_path ${plugins_path})
+    file(APPEND ${CMAKE_CURRENT_SOURCE_DIR}/hooks/hook.dsv.in 
+    "prepend-non-duplicate;GZ_SIM_SYSTEM_PLUGIN_PATH;@CMAKE_INSTALL_PREFIX@/${plugin_path}\n")
+  endforeach()
+  foreach(gui_plugin_path ${gui_plugins_path})
+    file(APPEND ${CMAKE_CURRENT_SOURCE_DIR}/hooks/hook.dsv.in 
+    "prepend-non-duplicate;GZ_GUI_PLUGIN_PATH;@CMAKE_INSTALL_PREFIX@/${gui_plugin_path}\n")
+  endforeach()
+  foreach(variable_export_path ${variable_export_paths})
+    string(REPLACE "," ";" variable_export_path ${variable_export_path})
+    file(APPEND ${CMAKE_CURRENT_SOURCE_DIR}/hooks/hook.dsv.in
+    "prepend-non-duplicate;${variable_export_path}\n")
+  endforeach()
+  file(WRITE ${CMAKE_CURRENT_SOURCE_DIR}/colcon.pkg "{\n  \"hooks\": [\"share/${CMAKE_PROJECT_NAME}/hooks/hook.dsv\"]\n}")
+
+
+  configure_file(
+    "hooks/hook.dsv.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/hooks/hook.dsv" @ONLY
+  )
+  install(DIRECTORY
+  ${CMAKE_CURRENT_BINARY_DIR}/hooks
+  DESTINATION share/${PROJECT_NAME})
+
+endmacro()
+#####################################################
+#gz_export_variable(variable_name variable_path)
+#Exports path of mentioned varaible 
+
+macro(gz_export_variable variable_name variable_path)
+  list(APPEND variable_export_paths "${variable_name},${variable_path}")
+endmacro()
+
+#######################################################
+#gz_add_plugins(path_to_plugins)
+#Installs all the plugins inside the folder using various arguments from the user
+#Also provides the path to gz_environment_hook()
+#Other than common link_libraries and directories,you can simply add specific plugin dependencies one by one after this macro
+#The deafult file type is .cc for plugins,you can add other file types using PLUGIN_EXTENSION argument
+#For adding GUI plugins,one can simply pass GUI true as argument
+
+macro(gz_add_plugins path_to_plugins )
+
+  set(oneValueArgs INSTALL_DESTINATION SCOPE GUI)
+  set(multiValueArgs COMMON_PUBLIC_LIBRARIES COMMON_PRIVATE_LINK_LIBRARIES COMMON_PUBLIC_DIRECTORIES COMMON_PRIVATE_LINK_DIRECTORIES PLUGIN_EXTENSION)
+
+  _gz_cmake_parse_arguments(gz_add_plugin "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+ 
+  if(NOT gz_add_plugin_PLUGIN_EXTENSION)
+    list(APPEND gz_add_plugin_PLUGIN_EXTENSION ".cc")
+  endif()
+  set(source_list_plugins)
+  foreach(EXTENSION ${gz_add_plugin_PLUGIN_EXTENSION})
+    set(source_list_plugin_${EXTENSION})
+    file(GLOB source_list_plugin_${EXTENSION} CONFIGURE_DEPENDS
+    "${path_to_plugins}/*${EXTENSION}"
+    )
+
+    list(APPEND source_list_plugins ${source_list_plugin_${EXTENSION}})
+
+  endforeach() 
+
+  foreach(PLUGIN_PATH ${source_list_plugins})
+    get_filename_component(PLUGIN_NAME "${PLUGIN_PATH}" NAME_WLE )
+    set(default_install lib)
+    if(gz_add_plugin_GUI)
+
+      QT5_WRAP_CPP(${PLUGIN_NAME}_headers_MOC ${path_to_plugins}/${PLUGIN_NAME}.hh)
+      QT5_ADD_RESOURCES(${PLUGIN_NAME}_RCC ${path_to_plugins}/${PLUGIN_NAME}.qrc)
+
+      set(PLUGIN_PATH ${PLUGIN_PATH}
+        ${${PLUGIN_NAME}_headers_MOC}
+        ${${PLUGIN_NAME}_RCC}
+      )
+
+      set(default_install lib/gui)
+
+    endif()
+     
+    if (gz_add_plugin_SCOPE)
+      add_library(${PLUGIN_NAME} ${gz_add_plugin_SCOPE} ${PLUGIN_PATH})
+    else()
+      add_library(${PLUGIN_NAME} SHARED ${PLUGIN_PATH})
+    endif()
+
+    set_property(TARGET ${PLUGIN_NAME} PROPERTY CXX_STANDARD 17)
+
+    target_link_libraries(${PLUGIN_NAME}
+      PUBLIC
+        ${gz_add_plugin_COMMON_PUBLIC_LIBRARIES}
+      PRIVATE
+        ${gz_add_plugin_COMMON_PRIVATE_LINK_LIBRARIES}
+    )
+    target_include_directories(${PLUGIN_NAME}
+      PUBLIC
+        ${gz_add_plugin_COMMON_PUBLIC_DIRECTORIES}
+      PRIVATE
+        ${gz_add_plugin_COMMON_PRIVATE_LINK_DIRECTORIES}
+    )    
+    if(gz_add_plugin_GUI)
+      target_link_libraries(${PLUGIN_NAME}
+        PRIVATE
+          gz-gui${GZ_GUI_VER}::gz-gui${GZ_GUI_VER}
+      )
+    endif()
+    if(gz_add_plugin_INSTALL_DESTINATION)
+      set(default_install ${gz_add_plugin_INSTALL_DESTINATION})
+    endif()
+    if(gz_add_plugin_GUI)
+      install(
+        TARGETS ${PLUGIN_NAME}
+        DESTINATION ${default_install})
+      list(APPEND gui_plugins_path ${default_install})
+    else()
+      install(
+        TARGETS ${PLUGIN_NAME}
+        DESTINATION ${default_install})
+      list(APPEND plugins_path ${default_install})
+    endif()  
+
+
+
+  endforeach()
+
+endmacro()
+
+################################################3
+#gz_export_plugin(path_to_install_destination)
+#Exports the provided installation path of plugin
+
+macro(gz_export_plugin path_to_install_destination)
+
+  list(APPEND plugins_path ${gz_export_plugin_INSTALL_DESTINATION})
+
+endmacro()  
+
+#####################################################
+#gz_add_executables(path_to_executables)
+#Installs all the executables inside the folder using various arguments from the user
+#Other than common link_libraries and directories,you can simply add specific executable dependencies one by one after this macro
+#The deafult file type is .cc for executables,you can add other file types using EXECUTABLES_EXTENSION argument
+
+macro(gz_add_executables path_to_executables)
+
+  set(oneValueArgs INSTALL_DESTINATION)
+  set(multiValueArgs COMMON_PUBLIC_LIBRARIES COMMON_PRIVATE_LINK_LIBRARIES COMMON_PUBLIC_DIRECTORIES COMMON_PRIVATE_LINK_DIRECTORIES EXECUTABLE_EXTENSION)
+
+  _gz_cmake_parse_arguments(gz_add_executable "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+  if(NOT gz_add_executable_EXECUTABLE_EXTENSION)
+    list(APPEND gz_add_executable_EXECUTABLE_EXTENSION ".cc")
+  endif()
+
+  foreach(EXTENSION ${gz_add_executable_EXECUTABLE_EXTENSION})
+
+    file(GLOB source_list_executable_${EXTENSION} CONFIGURE_DEPENDS
+    "${path_to_executables}/*${EXTENSION}"
+    )
+
+    list(APPEND source_list_executables ${source_list_executable_${EXTENSION}})
+
+  endforeach() 
+
+  foreach(executable_PATH ${source_list_executables})
+    get_filename_component(executable_NAME "${executable_PATH}" NAME_WLE)
+    add_executable(${executable_NAME} ${executable_PATH})
+
+    set_property(TARGET ${executable_NAME} PROPERTY CXX_STANDARD 17)
+
+    target_link_libraries(${executable_NAME}
+      PUBLIC
+        ${gz_add_executable_COMMON_PUBLIC_LIBRARIES}
+      PRIVATE
+        ${gz_add_executable_COMMON_PRIVATE_LINK_LIBRARIES}
+    )
+    target_include_directories(${executable_NAME}
+      PUBLIC
+        ${gz_add_executable_COMMON_PUBLIC_DIRECTORIES}
+      PRIVATE
+        ${gz_add_executable_COMMON_PRIVATE_LINK_DIRECTORIES}
+    ) 
+
+    if(gz_add_executable_INSTALL_DESTINATION)
+      install(
+      TARGETS ${executable_NAME}
+      DESTINATION ${gz_add_executable_INSTALL_DESTINATION})
+
+    else()
+      install(
+      TARGETS ${executable_NAME}
+      DESTINATION bin)
+
+    endif()
+
+  endforeach()
+  
+endmacro()
+#################################################################################
+#gz_add_msgs(path_to_msgs)
+#Installs all the msgs inside the folder using various arguments from the user
+#Also provides the path to gz_environment_hook()
+#Other than pre coded dependencies,you can simply add specific message dependencies one by one after this macro
+#The deafult file type is .proto for msgs,you can add other file types using MSG_EXTENSION argument
+
+macro(gz_add_msgs path_to_msgs )
+
+  set(oneValueArgs INSTALL_DESTINATION SCOPE)
+  set(multiValueArgs MSG_EXTENSION COMMON_LANGUAGE COMMON_IMPORT_DIRS COMMON_PROTOC_OUT_DIR)
+
+  _gz_cmake_parse_arguments(gz_add_msg "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+  if(NOT gz_add_msg_MSG_EXTENSION)
+    list(APPEND gz_add_msg_MSG_EXTENSION ".proto")
+  endif()
+
+  foreach(EXTENSION ${gz_add_msg_MSG_EXTENSION})
+
+    file(GLOB source_list_msg_${EXTENSION} CONFIGURE_DEPENDS
+    "${path_to_msgs}/*${EXTENSION}"
+    )
+
+    list(APPEND source_list_msgs ${source_list_msg_${EXTENSION}})
+
+  endforeach() 
+
+  foreach(MSG_PATH ${source_list_msgs})
+    get_filename_component(MSG_NAME "${MSG_PATH}" NAME_WLE )
+
+    if (gz_add_msg_SCOPE)
+      add_library(${MSG_NAME} ${gz_add_msg_SCOPE} ${MSG_PATH}.proto)
+    else()
+      add_library(${MSG_NAME} SHARED ${MSG_PATH})
+    endif()
+
+
+    target_link_libraries(${MSG_NAME}
+    protobuf::libprotobuf
+    gz-msgs${GZ_MSGS_VER}::gz-msgs${GZ_MSGS_VER})
+
+
+    protobuf_generate(
+      TARGET ${MSG_NAME}
+      LANGUAGE ${gz_add_msg_COMMON_LANGUAGE}
+      IMPORT_DIRS ${gz_add_msg_COMMON_IMPORT_DIRS}
+      PROTOC_OUT_DIR ${gz_add_msg_COMMON_PROTOC_OUT_DIR}
+    )  
+
+    if(gz_add_msg_INSTALL_DESTINATION)
+      install(
+      TARGETS ${MSG_NAME}
+      DESTINATION ${gz_add_msg_INSTALL_DESTINATION})
+      list(APPEND plugins_path ${gz_add_msg_INSTALL_DESTINATION})
+      
+      install(
+        DIRECTORY ${CMAKE_BINARY_DIR}
+        DESTINATION include
+        FILES_MATCHING
+          PATTERN "${MSG_NAME}.pb.h")
+
+    else()
+      install(
+      TARGETS ${MSG_NAME}
+      DESTINATION lib)
+      list(APPEND plugins_path "lib")
+
+      install(
+        DIRECTORY ${CMAKE_BINARY_DIR}
+        DESTINATION include
+        FILES_MATCHING
+          PATTERN "${MSG_NAME}.pb.h")
+
+    endif()
+
+  endforeach()
+
+  
+endmacro()
+
+################################################3
+#gz_export_msg(path_to_install_destination)
+#Exports the provided installation path of msg
+
+macro(gz_export_msg path_to_install_destination)
+
+  list(APPEND plugins_path ${gz_export_msg_INSTALL_DESTINATION})
+
+endmacro()  
