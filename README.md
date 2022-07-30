@@ -1,9 +1,9 @@
-# Ignition CMake : CMake Modules for Ignition Projects
+# Gazebo CMake : CMake Modules for Gazebo Projects
 
 **Maintainer:** grey AT openrobotics.org
 
-[![GitHub open issues](https://img.shields.io/github/issues-raw/ignitionrobotics/ign-cmake.svg)](https://github.com/ignitionrobotics/ign-cmake/issues)
-[![GitHub open pull requests](https://img.shields.io/github/issues-pr-raw/ignitionrobotics/ign-cmake.svg)](https://github.com/ignitionrobotics/ign-cmake/pulls)
+[![GitHub open issues](https://img.shields.io/github/issues-raw/gazebosim/gz-cmake.svg)](https://github.com/gazebosim/gz-cmake/issues)
+[![GitHub open pull requests](https://img.shields.io/github/issues-pr-raw/gazebosim/gz-cmake.svg)](https://github.com/gazebosim/gz-cmake/pulls)
 [![Discourse topics](https://img.shields.io/discourse/https/community.gazebosim.org/topics.svg)](https://community.gazebosim.org)
 [![Hex.pm](https://img.shields.io/hexpm/l/plug.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
@@ -45,9 +45,9 @@ Windows       | [![Build Status](https://build.osrfoundation.org/buildStatus/ico
 
 # Features
 
-ignition-cmake provides a set of cmake modules that are used by the C++-based ignition projects. These modules help to control the quality and consistency of the ignition projects' build systems.
+gz-cmake provides a set of cmake modules that are used by the C++-based Gazebo projects. These modules help to control the quality and consistency of the Gazebo projects' build systems.
 
-These modules are tailored to the ignition projects, so their use for non-ignition projects might be limited, but they may serve as a useful reference for setting up a modern cmake build system using good practices.
+These modules are tailored to the Gazebo projects, so their use for non-Gazebo projects might be limited, but they may serve as a useful reference for setting up a modern cmake build system using good practices.
 
 # Install
 
@@ -57,10 +57,10 @@ The [Source Install](#source-install) instructions should be used if you need th
 
 ## Binary Install
 
-On Ubuntu systems, `apt-get` can be used to install `ignition-cmake`:
+On Ubuntu systems, `apt-get` can be used to install `gz-cmake`:
 
 ```
-$ sudo apt install libignition-cmake<#>-dev
+$ sudo apt install libgz-cmake<#>-dev
 ```
 
 Be sure to replace `<#>` with a number value, such as `1` or `2`, depending on which version you need.
@@ -69,7 +69,7 @@ Be sure to replace `<#>` with a number value, such as `1` or `2`, depending on w
 
 ### Prerequisites
 
-The only prerequisite of `ignition-cmake` is `cmake`. Ubuntu users can install cmake with the package manager:
+The only prerequisite of `gz-cmake` is `cmake`. Ubuntu users can install cmake with the package manager:
 
 ```
 $ sudo apt install cmake
@@ -80,8 +80,8 @@ $ sudo apt install cmake
 To build and install from source, you can clone the repo and use cmake to install the modules as though this is a regular cmake project:
 
 ```
-$ git clone https://github.com/ignitionrobotics/ign-cmake
-$ cd ign-cmake
+$ git clone https://github.com/gazebosim/gz-cmake
+$ cd gz-cmake
 $ mkdir build
 $ cd build
 $ cmake .. -DCMAKE_INSTALL_PREFIX=/path/to/install/dir
@@ -93,11 +93,13 @@ Replace `/path/to/install/dir` to whatever directory you want to install this pa
 
 # Usage
 
-This library is used internally by the ignition projects. See other ignition projects for examples of how this gets used.
+Documentation can be accessed at https://gazebosim.org/libs/cmake
+[Examples](examples/) are available in this repository.
+[Tutorials](tutorials/) are also available in this repository.
 
 # Documentation
 
-Documentation for `ignition-cmake` can be found within the source code, and also in the [MIGRATION.md guide](https://github.com/ignitionrobotics/ign-cmake/blob/master/MIGRATION.md).
+Documentation for `gz-cmake` can be found within the source code, and also in the [MIGRATION.md guide](https://github.com/gazebosim/gz-cmake/blob/master/MIGRATION.md).
 
 # Testing
 
@@ -113,27 +115,27 @@ $ make test
 
 * `cmake`: cmake modules that get installed by this package
 * `codecheck`: code linting and static analyzing utilities that get installed by this package
-* `config`: template files for producing the config-files of `ignition-cmake`; these are only used internally
-* `doc`: template files to help ignition projects generate their own documentation
-* `examples`: fake projects that are used to test `ignition-cmake`
-* `include`: C++ utility header files that get installed with `ignition-cmake`
-* `test`: a directory of tests for the C++ utility component of `ignition-cmake`
+* `config`: template files for producing the config-files of `gz-cmake`; these are only used internally
+* `doc`: template files to help Gazebo projects generate their own documentation
+* `examples`: fake projects that are used to test `gz-cmake`
+* `include`: C++ utility header files that get installed with `gz-cmake`
+* `test`: a directory of tests for the C++ utility component of `gz-cmake`
 * `tools`: scripts for continuous integration testing
 
 # Contributing
 
 Please see
-[CONTRIBUTING.md](https://ignitionrobotics.org/docs/all/contributing).
+[CONTRIBUTING.md](https://gazebosim.org/docs/all/contributing).
 
 # Code of Conduct
 
 Please see
-[CODE_OF_CONDUCT.md](https://github.com/ignitionrobotics/ign-gazebo/blob/main/CODE_OF_CONDUCT.md).
+[CODE_OF_CONDUCT.md](https://github.com/gazebosim/gz-sim/blob/main/CODE_OF_CONDUCT.md).
 
 # Versioning
 
-This library uses [Semantic Versioning](https://semver.org/). Additionally, this library is part of the [Ignition Robotics project](https://ignitionrobotics.org) which periodically releases a versioned set of compatible and complementary libraries. See the [Ignition Robotics website](https://ignitionrobotics.org) for version and release information.
+This library uses [Semantic Versioning](https://semver.org/). Additionally, this library is part of the [Gazebo project](https://gazebosim.org) which periodically releases a versioned set of compatible and complementary libraries. See the [Gazebo website](https://gazebosim.org) for version and release information.
 
 # License
 
-This library is licensed under [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0). See also the [LICENSE](https://github.com/ignitionrobotics/ign-cmake/blob/main/LICENSE) file.
+This library is licensed under [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0). See also the [LICENSE](https://github.com/gazebosim/gz-cmake/blob/main/LICENSE) file.

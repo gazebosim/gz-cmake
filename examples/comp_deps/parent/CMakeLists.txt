@@ -1,7 +1,7 @@
 
-ign_add_component(parent INTERFACE
+gz_add_component(parent INTERFACE
   GET_TARGET_NAME parent)
 
 install(
   DIRECTORY include/
-  DESTINATION "${IGN_INCLUDE_INSTALL_DIR_FULL}")
+  DESTINATION "${GZ_INCLUDE_INSTALL_DIR_FULL}")

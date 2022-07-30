@@ -3,19 +3,19 @@
 
 export CMAKE_FILES_TO_CHECK="
   $1/CMakeLists.txt
-  $1/cmake/ignition-all-config.cmake.in
-  $1/cmake/ignition-component-config.cmake.in
-  $1/cmake/ignition-config.cmake.in
-  $1/config/ignition-cmake-config.cmake.in"
+  $1/cmake/gz-all-config.cmake.in
+  $1/cmake/gz-component-config.cmake.in
+  $1/cmake/gz-config.cmake.in
+  $1/config/gz-cmake-config.cmake.in"
 unset TEST_CMAKE_MIN_REQUIRED_FAILED
-# first argument is root of ign-cmake repository
+# first argument is root of gz-cmake repository
 if [[ ! -d "$1"  \
    || ! -a "$1/CMakeLists.txt" \
-   || ! -a "$1/cmake/ignition-all-config.cmake.in" \
-   || ! -a "$1/cmake/ignition-component-config.cmake.in" \
-   || ! -a "$1/cmake/ignition-config.cmake.in" \
-   || ! -a "$1/config/ignition-cmake-config.cmake.in" ]]; then
-  echo the first argument must be the root of the ign-cmake repository
+   || ! -a "$1/cmake/gz-all-config.cmake.in" \
+   || ! -a "$1/cmake/gz-component-config.cmake.in" \
+   || ! -a "$1/cmake/gz-config.cmake.in" \
+   || ! -a "$1/config/gz-cmake-config.cmake.in" ]]; then
+  echo the first argument must be the root of the gz-cmake repository
   export TEST_CMAKE_MIN_REQUIRED_FAILED=1
 else
   grep -h '^cmake_minimum_required' $CMAKE_FILES_TO_CHECK \

@@ -7,5 +7,3 @@ if (UNIX)
     ${CMAKE_BINARY_DIR}/test_results
   )
 endif()
-
-add_subdirectory(warning)

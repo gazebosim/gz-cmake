@@ -20,13 +20,15 @@
 
 #include <ignition/utilities/detail/ExtraTestMacros.hh>
 
+#pragma message("gz-cmake (utilities) ExtraTestMacros is deprecated, use gz-utils")
+
 /// \brief Restrict the execution of the test for the Windows platform.
 /// The test will be compiled on Windows too but will never be run as
 /// part of the test suite. The macro uses the Disabled_ prefix provided
 /// by googletest. See
 /// https://chromium.googlesource.com/external/github.com/google/googletest/+/HEAD/googletest/docs/advanced.md
 #define IGN_UTILS_TEST_DISABLED_ON_WIN32(TestName) \
-  DETAIL_IGN_UTILS_TEST_DISABLED_ON_WIN32(TestName)
+  DETAIL_GZ_UTILS_TEST_DISABLED_ON_WIN32(TestName)
 
 /// \brief Restrict the execution of the test for the Mac platform.
 /// The test will be compiled on Windows too but will never be run as
@@ -34,7 +36,7 @@
 /// by googletest. See
 /// https://chromium.googlesource.com/external/github.com/google/googletest/+/HEAD/googletest/docs/advanced.md
 #define IGN_UTILS_TEST_DISABLED_ON_MAC(TestName) \
-  DETAIL_IGN_UTILS_TEST_DISABLED_ON_MAC(TestName)
+  DETAIL_GZ_UTILS_TEST_DISABLED_ON_MAC(TestName)
 
 /// \brief Restrict the execution of the test to just the Linux platform
 /// Other platforms will get the test compiled but it won't be run
@@ -42,6 +44,6 @@
 /// The macro uses the Disabled_ prefix provided by googletest. See
 /// https://chromium.googlesource.com/external/github.com/google/googletest/+/HEAD/googletest/docs/advanced.md
 #define IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(TestName) \
-  DETAIL_IGN_UTILS_TEST_ENABLED_ONLY_ON_LINUX(TestName)
+  DETAIL_GZ_UTILS_TEST_ENABLED_ONLY_ON_LINUX(TestName)
 
 #endif

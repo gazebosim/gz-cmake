@@ -28,11 +28,11 @@ endif()
 
 if(IFADDRS_FOUND)
 
-  include(IgnImportTarget)
+  include(GzImportTarget)
 
   # Since this is a header-only library, we should import it as an INTERFACE
   # target.
-  ign_import_target(IFADDRS INTERFACE)
+  gz_import_target(IFADDRS INTERFACE)
 
 endif()
 

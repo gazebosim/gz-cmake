@@ -50,11 +50,11 @@ endif()
 
 if(CPPZMQ_FOUND)
 
-  include(IgnImportTarget)
+  include(GzImportTarget)
 
   # Since this is a header-only library, we should import it as an INTERFACE
   # target.
-  ign_import_target(CPPZMQ INTERFACE)
+  gz_import_target(CPPZMQ INTERFACE)
 
   # Now, to use the CPPZMQ headers, you should call
   # target_link_libraries(<tgt> CPPZMQ::CPPZMQ) instead of using

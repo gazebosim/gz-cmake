@@ -1,8 +1,8 @@
 \page install Installation
 
-These instructions are for installing only Ignition CMake. If you're interested
-in using all the Ignition libraries, not only Igniton CMake, check out this
-[Ignition installation](https://ignitionrobotics.org/docs/latest/install).
+These instructions are for installing only Gazebo CMake. If you're interested
+in using all the Gazebo libraries, not only Gazebo CMake, check out this
+[Gazebo installation](https://gazebosim.org/docs/latest/install).
 
 We recommend following the binary install instructions to get up and running as
 quickly and painlessly as possible.
@@ -15,7 +15,7 @@ contribution.
 
 ## Ubuntu
 
-On Ubuntu, it's possible to install Ignition CMake as follows:
+On Ubuntu, it's possible to install Gazebo CMake as follows:
 
 Add OSRF packages:
   ```
@@ -24,9 +24,9 @@ Add OSRF packages:
   sudo apt update
   ```
 
-Install Ignition CMake:
+Install Gazebo CMake:
   ```
-  sudo apt install libignition-cmake<#>-dev
+  sudo apt install libgz-cmake<#>-dev
   ```
 
 Be sure to replace `<#>` with a number value, such as 1 or 2, depending on
@@ -40,9 +40,9 @@ On macOS, add OSRF packages:
   brew tap osrf/simulation
   ```
 
-Install Ignition CMake:
+Install Gazebo CMake:
   ```
-  brew install ignition-cmake<#>
+  brew install gz-cmake<#>
   ```
 
 Be sure to replace `<#>` with a number value, such as 1 or 2, depending on
@@ -61,36 +61,36 @@ To find `condabin`, search for "Anaconda Prompt" in the Windows search near the 
 
 1. Navigate to your `condabin` if necessary, and then create and activate a Conda environment:
   ```
-  conda create -n ign-ws
-  conda activate ign-ws
+  conda create -n gz-ws
+  conda activate gz-ws
   ```
 
-  Once you have activated an environment, a prefix like `(ign-ws)` will be prepended to your prompt, and you can use the `conda` command outside of `condabin`.
+  Once you have activated an environment, a prefix like `(gz-ws)` will be prepended to your prompt, and you can use the `conda` command outside of `condabin`.
 
   You can use `conda info --envs` to see all your environments.
 
   To remove an environment, use `conda env remove --name <env_name>`.
 
-2. Install Ignition CMake:
+2. Install Gazebo CMake:
   ```
-  conda install libignition-cmake<#> --channel conda-forge
+  conda install libgz-cmake<#> --channel conda-forge
   ```
 
   Be sure to replace `<#>` with a number value, such as 1 or 2, depending on which version you need.
 
   You can view all the versions with
   ```
-  conda search libignition-cmake* --channel conda-forge
+  conda search libgz-cmake* --channel conda-forge
   ```
 
   and view their dependencies with
   ```
-  conda search libignition-cmake* --channel conda-forge --info
+  conda search libgz-cmake* --channel conda-forge --info
   ```
 
   and install a specific minor version with
   ```
-  conda install libignition-cmake=2.6.1 --channel conda-forge
+  conda install libgz-cmake=2.6.1 --channel conda-forge
   ```
 
 # Source Install
@@ -113,8 +113,8 @@ sudo apt-add-repository -s "deb http://packages.osrfoundation.org/gazebo/ubuntu-
 Clone source code:
 
 ```
-# This checks out the `main` branch. You can append `-b ign-cmake#` (replace # with a number) to checkout a specific version
-git clone http://github.com/ignitionrobotics/ign-cmake
+# This checks out the `main` branch. You can append `-b gz-cmake#` (replace # with a number) to checkout a specific version
+git clone http://github.com/gazebosim/gz-cmake
 ```
 
 Install dependencies
@@ -124,7 +124,7 @@ sudo apt -y install $(sort -u $(find . -iname 'packages.apt') | tr '\n' ' ')
 
 Build and install as follows:
 ```
-cd ign-cmake
+cd gz-cmake
 mkdir build
 cd build
 cmake ..
@@ -153,11 +153,11 @@ To find `condabin`, search for "Anaconda Prompt" in the search field near the Wi
 
 1. Navigate to your `condabin` if necessary, and then create and activate a Conda environment:
   ```
-  conda create -n ign-ws
-  conda activate ign-ws
+  conda create -n gz-ws
+  conda activate gz-ws
   ```
 
-   Once you have activated an environment, a prefix like `(ign-ws)` will be prepended to your prompt, and you can use the `conda` command outside of `condabin`.
+   Once you have activated an environment, a prefix like `(gz-ws)` will be prepended to your prompt, and you can use the `conda` command outside of `condabin`.
 
    You can use `conda info --envs` to see all your environments.
 
@@ -170,13 +170,13 @@ To find `condabin`, search for "Anaconda Prompt" in the search field near the Wi
 
 3. Navigate to where you would like to build the library, and then clone the repository.
   ```
-  # Optionally, append `-b ign-cmake#` (replace # with a number) to check out a specific version
-  git clone https://github.com/ignitionrobotics/ign-cmake.git
+  # Optionally, append `-b gz-cmake#` (replace # with a number) to check out a specific version
+  git clone https://github.com/gazebosim/gz-cmake.git
   ```
 
 4. Build.
   ```
-  cd ign-cmake
+  cd gz-cmake
   mkdir build
   cd build
   cmake .. # Optionally, -DCMAKE_INSTALL_PREFIX=path\to\install
@@ -189,7 +189,7 @@ To find `condabin`, search for "Anaconda Prompt" in the search field near the Wi
 # Documentation
 
 API documentation and tutorials can be accessed at
-[https://ignitionrobotics.org/libs/cmake](https://ignitionrobotics.org/libs/cmake)
+[https://gazebosim.org/libs/cmake](https://gazebosim.org/libs/cmake)
 
 You can also generate the documentation from a clone of this repository by following these steps.
 
@@ -201,12 +201,12 @@ You can also generate the documentation from a clone of this repository by follo
 2. Clone the repository
 
   ```
-  git clone https://github.com/ignitionrobotics/ign-cmake
+  git clone https://github.com/gazebosim/gz-cmake
   ```
 
 3. Configure and build the documentation.
   ```
-  cd ign-cmake
+  cd gz-cmake
   mkdir build
   cd build
   cmake ..
@@ -218,7 +218,7 @@ You can also generate the documentation from a clone of this repository by follo
   firefox doxygen/html/index.html
   ```
 
-**Note** Alternatively, documentation for `ignition-cmake` can be found within the source code, and also in the [MIGRATION.md guide](https://github.com/ignitionrobotics/ign-cmake/blob/main/MIGRATION.md).
+**Note** Alternatively, documentation for `gz-cmake` can be found within the source code, and also in the [MIGRATION.md guide](https://github.com/gazebosim/gz-cmake/blob/main/MIGRATION.md).
 
 # Testing
 
@@ -245,5 +245,4 @@ $ make test
 ```
 
 
-See the [Writing Tests section of the ign-cmake contributor documentation](https://ignitionrobotics.org/docs/all/contributing#writing-tests) for help creating or modifying tests.
-
+See the [Writing Tests section of the gz-cmake contributor documentation](https://gazebosim.org/docs/all/contributing#writing-tests) for help creating or modifying tests.

@@ -17,22 +17,22 @@
 # Find uuid
 if (UNIX)
   if(NOT APPLE)
-    include(IgnPkgConfig)
-    ign_pkg_check_modules_quiet(UUID uuid)
+    include(GzPkgConfig)
+    gz_pkg_check_modules_quiet(UUID uuid)
 
     if(NOT UUID_FOUND)
-      include(IgnManualSearch)
-      ign_manual_search(UUID
-                        HEADER_NAMES "uuid.h"
-                        LIBRARY_NAMES "uuid libuuid"
-                        PATH_SUFFIXES "uuid")
+      include(GzManualSearch)
+      gz_manual_search(UUID
+                       HEADER_NAMES "uuid.h"
+                       LIBRARY_NAMES "uuid libuuid"
+                       PATH_SUFFIXES "uuid")
     endif()
 
     # The pkg-config or the manual search will place
     # <uuid_install_prefix>/include/uuid in INTERFACE_INCLUDE_DIRECTORIES,
     # but some projects exepect to use <uuid_install_prefix>/include, so
     # we add it as well.
-    # See https://github.com/ignitionrobotics/ign-cmake/issues/103
+    # See https://github.com/gazebosim/gz-cmake/issues/103
     if(TARGET UUID::UUID)
       get_property(uuid_include_dirs
         TARGET UUID::UUID
@@ -56,7 +56,7 @@ if (UNIX)
     endif()
   else()
     # On Apple platforms the UUID library is provided by the OS SDK
-    # See https://github.com/ignitionrobotics/ign-cmake/issues/127
+    # See https://github.com/gazebosim/gz-cmake/issues/127
     set(UUID_FOUND TRUE)
     if(NOT TARGET UUID::UUID)
       add_library(UUID::UUID INTERFACE IMPORTED)
