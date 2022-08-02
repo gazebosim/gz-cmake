@@ -268,6 +268,29 @@ if (NOT WIN32)
     get_preprocessor_entry(OGRE_TEMP_VERSION_CONTENT OGRE_VERSION_NAME OGRE2_VERSION_NAME)
     set(OGRE2_VERSION "${OGRE2_VERSION_MAJOR}.${OGRE2_VERSION_MINOR}.${OGRE2_VERSION_PATCH}")
 
+    set(GzOGRE2_VERSION_EXACT FALSE)
+    set(GzOGRE2_VERSION_COMPATIBLE FALSE)
+
+    if (NOT ("${OGRE2_VERSION_MAJOR}" EQUAL "${GzOGRE2_FIND_VERSION_MAJOR}"))
+      set(OGRE2_FOUND FALSE)
+      continue()
+    endif()
+
+    if (NOT ("${OGRE2_VERSION_MINOR}" EQUAL "${GzOGRE2_FIND_VERSION_MINOR}"))
+      message(STATUS "  ! ${GZ_OGRE2_PROJECT_NAME} found with incompatible version ${OGRE2_VERSION}")
+      set(OGRE2_FOUND FALSE)
+      continue()
+    endif()
+
+    if ("${OGRE2_VERSION}" VERSION_EQUAL "${GzOGRE2_FIND_VERSION}")
+      set(GzOGRE2_VERSION_EXACT TRUE)
+      set(GzOGRE2_VERSION_COMPATIBLE TRUE)
+    endif()
+
+    if ("${OGRE2_VERSION}" VERSION_GREATER "${GzOGRE2_FIND_VERSION}")
+      set(GzOGRE2_VERSION_COMPATIBLE TRUE)
+    endif()
+
     # find ogre components
     include(GzImportTarget)
     foreach(component ${GzOGRE2_FIND_COMPONENTS})
@@ -530,6 +553,14 @@ if (OGRE2_FOUND)
     PROPERTY INTERFACE_LINK_DIRECTORIES
     ${OGRE2_LIBRARY_DIRS}
   )
+else()
+  # Unset variables so that we don't leak incorrect versions
+  set(OGRE2_VERSION "")
+  set(OGRE2_VERSION_MAJOR "")
+  set(OGRE2_VERSION_MINOR "")
+  set(OGRE2_VERSION_PATCH "")
+  set(OGRE2_LIBRARIES "")
+  set(OGRE2_INCLUDE_DIRS "")
 endif()
 
 set(IgnOGRE2_FOUND ${GzOGRE2_FOUND})  # TODO(CH3): Deprecated. Remove on tock.
