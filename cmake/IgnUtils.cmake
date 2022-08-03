@@ -396,7 +396,7 @@ macro(ign_find_package PACKAGE_NAME)
         # ignition-<project>.pc file. This is probably an oversight in our build
         # system scripts, so we will emit a warning about this.
         message(AUTHOR_WARNING
-          " -- THIS MESSAGE IS INTENDED FOR IGNITION-${IGN_DESIGNATION_UPPER} AUTHORS --\n"
+          " -- THIS MESSAGE IS INTENDED FOR IGNITION-${GZ_DESIGNATION_UPPER} AUTHORS --\n"
           "    (IF YOU SEE THIS, PLEASE REPORT IT)\n"
           "Could not find pkg-config information for ${PACKAGE_NAME}. "
           "It was not provided by the find-module for the package, nor was it "
@@ -613,7 +613,7 @@ endfunction()
 # additional suffix (like .old or .backup) to prevent a file from being included.
 #
 # GENERATED_HEADERS should be generated headers which should be included by
-# ${IGN_DESIGNATION}.hh. This will only add them to the header, it will not
+# ${GZ_DESIGNATION}.hh. This will only add them to the header, it will not
 # generate or install them.
 #
 # This will also run configure_file on ign_auto_headers.hh.in and config.hh.in
@@ -734,7 +734,7 @@ function(ign_install_all_headers)
 
     # Define the input/output of the configuration for the core "master" header
     set(master_header_in ${IGNITION_CMAKE_DIR}/ign_auto_headers.hh.in)
-    set(master_header_out ${CMAKE_CURRENT_BINARY_DIR}/../${IGN_DESIGNATION}.hh)
+    set(master_header_out ${CMAKE_CURRENT_BINARY_DIR}/../${GZ_DESIGNATION}.hh)
 
   endif()
 
@@ -955,7 +955,7 @@ function(ign_create_core_library)
   _ign_add_library_or_component(
     LIB_NAME ${PROJECT_LIBRARY_TARGET_NAME}
     INCLUDE_DIR "${PROJECT_INCLUDE_DIR}"
-    EXPORT_BASE IGNITION_${IGN_DESIGNATION_UPPER}
+    EXPORT_BASE IGNITION_${GZ_DESIGNATION_UPPER}
     SOURCES ${sources}
     ${interface_option})
 
@@ -1139,7 +1139,7 @@ function(ign_add_component component_name)
   _ign_add_library_or_component(
     LIB_NAME ${component_target_name}
     INCLUDE_DIR "${PROJECT_INCLUDE_DIR}/${include_subdir}"
-    EXPORT_BASE IGNITION_${IGN_DESIGNATION_UPPER}_${component_name_upper}
+    EXPORT_BASE IGNITION_${GZ_DESIGNATION_UPPER}_${component_name_upper}
     SOURCES ${sources}
     ${interface_option})
 
