@@ -22,7 +22,7 @@ set(GZ_SANITIZER ""
     "Compile with a sanitizer. Options are: Address, Memory, MemoryWithOrigins, Undefined, Thread, Leak, 'Address;Undefined', CFI"
 )
 
-set(IGN_SANITIZER ""
+set(IGN_SANITIZER ""  # TODO(CH3): Deprecated. Remove on tock.
   CACHE STRING
   "Compile with a sanitizer. Options are: Address, Memory, MemoryWithOrigins, Undefined, Thread, Leak, 'Address;Undefined', CFI"
 )
@@ -54,7 +54,7 @@ function(test_san_flags return_var flags)
   set(CMAKE_REQUIRED_QUIET "${QUIET_BACKUP}")
 endfunction()
 
-if(NOT GZ_SANITIZER AND IGN_SANITIZER)
+if(NOT GZ_SANITIZER AND IGN_SANITIZER)  # TODO(CH3): Deprecated. Remove on tock.
   set(GZ_SANITIZER ${IGN_SANITIZER})
 endif()
 
