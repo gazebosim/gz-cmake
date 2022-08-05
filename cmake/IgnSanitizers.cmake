@@ -17,7 +17,7 @@
 
 include(CheckCXXSourceCompiles)
 
-set(GZ_SANITIZER ""  # Back-ported from gz-cmake3
+set(GZ_SANITIZER ""
     CACHE STRING
     "Compile with a sanitizer. Options are: Address, Memory, MemoryWithOrigins, Undefined, Thread, Leak, 'Address;Undefined', CFI"
 )
