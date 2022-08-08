@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10.2 FATAL_ERROR)
 project(gz-core_no_deps VERSION 0.1.0)
-find_package(gz-cmake3 REQUIRED)
+find_package(gz-cmake4 REQUIRED)
 gz_configure_project(
   REPLACE_INCLUDE_PATH gz/core_no_deps
 )
