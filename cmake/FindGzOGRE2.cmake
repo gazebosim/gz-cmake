@@ -56,13 +56,20 @@
 #                     COMPONENTS HlmsPbs HlmsUnlit Overlay)
 
 
+if(NOT (GzOGRE2_FIND_VERSION_MAJOR AND GzOGRE2_FIND_VERSION_MINOR))
+  message(WARNING 
+    "find_package(GzOGRE2) must be called with a VERSION argument with a minimum of major and minor version")
+  set(OGRE2_FOUND false)
+  return()
+endif()
+
 # Sanity check: exclude OGRE1 project releasing versions in two ways:
 #  - Legacy in from using 1.x.y until 1.12.y series
 #  - Modern versions using X.Y.Z starting with 13.y.z
 # Reduce valid versions to 2.x series
 if (${GzOGRE2_FIND_VERSION_MAJOR})
   if (${GzOGRE2_FIND_VERSION_MAJOR} VERSION_LESS "2" OR
-  ${GzOGRE2_FIND_VERSION_MAJOR} VERSION_GREATER_EQUAL "3")
+      ${GzOGRE2_FIND_VERSION_MAJOR} VERSION_GREATER_EQUAL "3")
     set (OGRE2_FOUND false)
     return()
   endif()
