@@ -1945,6 +1945,113 @@ macro(gz_build_tests)
 endmacro()
 
 #################################################
+# gz_build_examples(
+#     SOURCE_DIR <source_dir>
+#     BINARY_DIR <binary_dir>
+#     [COMPONENTS <project_component_dependencies>]
+#     [DEPENDENCIES <project_dependencies>]
+#
+# Build examples for a Gazebo project. Arguments are as follows:
+# Requires a CMakeLists.txt file to be in SOURCE_DIR that acts
+# as a top level project.
+#
+# This generates two test targets
+# * EXAMPLES_Configure_TEST - Equivalent of calling "cmake .." on
+#                             the examples directory
+#
+# * EXAMPLES_Build_TEST - Equivalent of calling "make" on the
+#                         examples directory
+#
+# These tests are run during "make test" or can be run specifically
+# via "ctest -R EXAMPLES_ -V"
+#
+# SOURCE_DIR: Required. Path to the examples folder.
+#             For example ${CMAKE_CURRENT_SOURCE_DIR}/examples
+#
+# BINARY_DIR: Required. Path to the output binary folder
+#             For example ${CMAKE_CURRENT_BINARY_DIR}/examples
+#
+# COMPONENTS: Optional. List of components built by this project
+#             that are used in the examples.
+#             For example "cli" for gz-utils
+#
+# DEPENCENCIES: Optional.  Gazebo library dependencies for this
+#               project
+#               For example: gz-utils2 gz-common5
+macro(gz_build_examples)
+  #------------------------------------
+  # Define the expected arguments
+  set(options)
+  set(oneValueArgs SOURCE_DIR BINARY_DIR)
+  set(multiValueArgs COMPONENTS DEPENDENCIES)
+
+  #------------------------------------
+  # Parse the arguments
+  _gz_cmake_parse_arguments(gz_build_examples "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+  set(BUILD_EXAMPLES_CMAKE "")
+  set(BUILD_EXAMPLES_INCLUDES "")
+
+  foreach(DEP ${gz_build_examples_DEPENDENCIES})
+    list(APPEND BUILD_EXAMPLES_CMAKE "-D${DEP}_DIR=${${DEP}_DIR}")
+
+    # For each dependency, also include the components that were requested
+    # at the find_package call to reduce verbosity in COMPONENTS arg
+    if (TARGET ${DEP}::requested)
+      get_target_property(REQUESTED_COMPONENTS ${DEP}::requested INTERFACE_LINK_LIBRARIES)
+
+      foreach(LINKLIB ${REQUESTED_COMPONENTS})
+        string(REGEX REPLACE "^${DEP}::" "" GZ_COMPONENT ${LINKLIB})
+
+        if (GZ_COMPONENT STREQUAL DEP)
+          continue()
+        endif()
+
+        list(APPEND BUILD_EXAMPLES_CMAKE "-D${GZ_COMPONENT}_DIR=${${GZ_COMPONENT}_DIR}")
+      endforeach()
+    endif()
+  endforeach()
+
+  # Add root project CMake directory
+  list(APPEND BUILD_EXAMPLES_CMAKE "-D${PROJECT_NAME}_DIR=${PROJECT_BINARY_DIR}/cmake")
+
+  # Add project component CMake directories
+  foreach (COMPONENT ${gz_build_examples_COMPONENTS})
+    list(APPEND BUILD_EXAMPLES_CMAKE "-D${PROJECT_NAME}-${COMPONENT}_DIR=${PROJECT_BINARY_DIR}/cmake")
+  endforeach()
+
+  # Get core library includes from target include directories
+  get_target_property(core_INCLUDES ${PROJECT_LIBRARY_TARGET_NAME} INTERFACE_INCLUDE_DIRECTORIES)
+  list(APPEND BUILD_EXAMPLES_INCLUDES ${core_INCLUDES} )
+
+  # Get component library includes
+  foreach (COMPONENT ${gz_build_examples_COMPONENTS})
+    get_target_property(component_INCLUDES ${PROJECT_LIBRARY_TARGET_NAME}-${COMPONENT} INTERFACE_INCLUDE_DIRECTORIES)
+
+    message(STATUS "${COMPONENT}_INCLUDES = ${component_INCLUDES}")
+    list(APPEND BUILD_EXAMPLES_INCLUDES ${component_INCLUDES} )
+  endforeach()
+
+  # Join everything with semicolon to be passed on command line
+  set(INCLUDES "$<JOIN:${BUILD_EXAMPLES_INCLUDES},;>")
+
+  add_test(
+    NAME EXAMPLES_Configure_TEST
+    COMMAND ${CMAKE_COMMAND} -S ${gz_build_examples_SOURCE_DIR}
+                             -B ${gz_build_examples_BINARY_DIR}
+                             ${BUILD_EXAMPLES_CMAKE}
+                             "-D${PROJECT_LIBRARY_TARGET_NAME}_INCLUDE_DIRS_OVERRIDE=${INCLUDES}"
+  )
+
+  add_test(
+    NAME EXAMPLES_Build_TEST
+    COMMAND ${CMAKE_COMMAND} --build ${gz_build_examples_BINARY_DIR}
+  )
+  set_tests_properties(EXAMPLES_Build_TEST
+    PROPERTIES DEPENDS "EXAMPLES_Configure_TEST")
+endmacro()
+
+#################################################
 # _gz_cmake_parse_arguments(<prefix> <options> <oneValueArgs> <multiValueArgs> [ARGN])
 #
 # Set <prefix> to match the prefix that is given to cmake_parse_arguments(~).
