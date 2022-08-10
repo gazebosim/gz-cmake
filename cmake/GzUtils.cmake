@@ -2037,7 +2037,9 @@ macro(gz_build_examples)
 
   add_test(
     NAME EXAMPLES_Configure_TEST
-    COMMAND ${CMAKE_COMMAND} -S ${gz_build_examples_SOURCE_DIR}
+    COMMAND ${CMAKE_COMMAND} -G${CMAKE_GENERATOR}
+                             -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+                             -S ${gz_build_examples_SOURCE_DIR}
                              -B ${gz_build_examples_BINARY_DIR}
                              ${BUILD_EXAMPLES_CMAKE}
                              "-D${PROJECT_LIBRARY_TARGET_NAME}_INCLUDE_DIRS_OVERRIDE=${INCLUDES}"
@@ -2046,6 +2048,7 @@ macro(gz_build_examples)
   add_test(
     NAME EXAMPLES_Build_TEST
     COMMAND ${CMAKE_COMMAND} --build ${gz_build_examples_BINARY_DIR}
+                             --config $<CONFIG>
   )
   set_tests_properties(EXAMPLES_Build_TEST
     PROPERTIES DEPENDS "EXAMPLES_Configure_TEST")
