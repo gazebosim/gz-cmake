@@ -56,13 +56,20 @@
 #                     COMPONENTS HlmsPbs HlmsUnlit Overlay)
 
 
+if(NOT (GzOGRE2_FIND_VERSION_MAJOR AND GzOGRE2_FIND_VERSION_MINOR))
+  message(WARNING 
+    "find_package(GzOGRE2) must be called with a VERSION argument with a minimum of major and minor version")
+  set(OGRE2_FOUND false)
+  return()
+endif()
+
 # Sanity check: exclude OGRE1 project releasing versions in two ways:
 #  - Legacy in from using 1.x.y until 1.12.y series
 #  - Modern versions using X.Y.Z starting with 13.y.z
 # Reduce valid versions to 2.x series
 if (${GzOGRE2_FIND_VERSION_MAJOR})
   if (${GzOGRE2_FIND_VERSION_MAJOR} VERSION_LESS "2" OR
-  ${GzOGRE2_FIND_VERSION_MAJOR} VERSION_GREATER_EQUAL "3")
+      ${GzOGRE2_FIND_VERSION_MAJOR} VERSION_GREATER_EQUAL "3")
     set (OGRE2_FOUND false)
     return()
   endif()
@@ -267,6 +274,29 @@ if (NOT WIN32)
     get_preprocessor_entry(OGRE_TEMP_VERSION_CONTENT OGRE_VERSION_PATCH OGRE2_VERSION_PATCH)
     get_preprocessor_entry(OGRE_TEMP_VERSION_CONTENT OGRE_VERSION_NAME OGRE2_VERSION_NAME)
     set(OGRE2_VERSION "${OGRE2_VERSION_MAJOR}.${OGRE2_VERSION_MINOR}.${OGRE2_VERSION_PATCH}")
+
+    set(GzOGRE2_VERSION_EXACT FALSE)
+    set(GzOGRE2_VERSION_COMPATIBLE FALSE)
+
+    if (NOT ("${OGRE2_VERSION_MAJOR}" EQUAL "${GzOGRE2_FIND_VERSION_MAJOR}"))
+      set(OGRE2_FOUND FALSE)
+      continue()
+    endif()
+
+    if (NOT ("${OGRE2_VERSION_MINOR}" EQUAL "${GzOGRE2_FIND_VERSION_MINOR}"))
+      message(STATUS "  ! ${GZ_OGRE2_PROJECT_NAME} found with incompatible version ${OGRE2_VERSION}")
+      set(OGRE2_FOUND FALSE)
+      continue()
+    endif()
+
+    if ("${OGRE2_VERSION}" VERSION_EQUAL "${GzOGRE2_FIND_VERSION}")
+      set(GzOGRE2_VERSION_EXACT TRUE)
+      set(GzOGRE2_VERSION_COMPATIBLE TRUE)
+    endif()
+
+    if ("${OGRE2_VERSION}" VERSION_GREATER "${GzOGRE2_FIND_VERSION}")
+      set(GzOGRE2_VERSION_COMPATIBLE TRUE)
+    endif()
 
     # find ogre components
     include(GzImportTarget)
@@ -530,6 +560,14 @@ if (OGRE2_FOUND)
     PROPERTY INTERFACE_LINK_DIRECTORIES
     ${OGRE2_LIBRARY_DIRS}
   )
+else()
+  # Unset variables so that we don't leak incorrect versions
+  set(OGRE2_VERSION "")
+  set(OGRE2_VERSION_MAJOR "")
+  set(OGRE2_VERSION_MINOR "")
+  set(OGRE2_VERSION_PATCH "")
+  set(OGRE2_LIBRARIES "")
+  set(OGRE2_INCLUDE_DIRS "")
 endif()
 
 set(IgnOGRE2_FOUND ${GzOGRE2_FOUND})  # TODO(CH3): Deprecated. Remove on tock.
