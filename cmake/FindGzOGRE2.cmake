@@ -1,3 +1,4 @@
+
 #===============================================================================
 # Copyright (C) 2018 Open Source Robotics Foundation
 #
@@ -75,30 +76,15 @@ if (${GzOGRE2_FIND_VERSION_MAJOR})
   endif()
 endif()
 
+function(colcon_do_nothing)
+  # This is a function to "trick" colcon to doing correct dependency order resolution
+  # without having to do a colcon.pkg file
+  find_package(OGRE-Next QUIET)
+endfunction()
+
 macro(append_library VAR LIB)
   if(EXISTS "${LIB}")
     list(APPEND ${VAR} ${LIB})
-  endif()
-endmacro()
-
-# Ubuntu Jammy version 2.2.5+dfsg3-0ubuntu2 is buggy in the pkg-config files
-# duplicating usr/usr for some paths in pkg-config
-macro(fix_pkgconfig_prefix_jammy_bug FILESYSTEM_PATH OUTPUT_VAR)
-  if (NOT EXISTS "${FILESYSTEM_PATH}")
-    string(REPLACE "/usr//usr" "/usr"
-      ${OUTPUT_VAR}
-      ${FILESYSTEM_PATH})
-  endif()
-endmacro()
-
-# Ubuntu Jammy version 2.2.5+dfsg3-0ubuntu2 is buggy in the pkg-config files
-# using a non existing path /usr/lib/${arch}/OGRE/OGRE-Next insted of the path
-# /usr/lib/${arch}/OGRE-Next which is the right one
-macro(fix_pkgconfig_resource_path_jammy_bug FILESYSTEM_PATH OUTPUT_VAR)
-  if (NOT EXISTS "${FILESYSTEM_PATH}")
-    string(REPLACE "OGRE/OGRE-Next" "OGRE-Next"
-      ${OUTPUT_VAR}
-      ${FILESYSTEM_PATH})
   endif()
 endmacro()
 
@@ -147,427 +133,205 @@ macro(get_preprocessor_entry CONTENTS KEYWORD VARIABLE)
   endif ()
 endmacro()
 
-if (NOT WIN32)
-  foreach (GZ_OGRE2_PROJECT_NAME "OGRE2" "OGRE-Next")
-    message(STATUS "Looking for OGRE using the name: ${GZ_OGRE2_PROJECT_NAME}")
-    if (GZ_OGRE2_PROJECT_NAME STREQUAL "OGRE2")
-      set(OGRE2_INSTALL_PATH "OGRE-2.${GzOGRE2_FIND_VERSION_MINOR}")
-      # For OGRE 2.3 debs built via OpenRobotics buildfarms, we use OgreNext
-      # For OGRE 2.3 macOS homebrew builds retain the OGRE name
-      # For OGRE 2.2 and below retain the OGRE name
-      if (${GzOGRE2_FIND_VERSION_MINOR} GREATER_EQUAL "3" AND NOT APPLE)
-        set(OGRE2LIBNAME "OgreNext")
-      else()
-        set(OGRE2LIBNAME "Ogre")
-      endif()
-    else()
-      # This matches OGRE2.2 debs built in upstream Ubuntu
-      set(OGRE2_INSTALL_PATH "OGRE-Next")
-      set(OGRE2LIBNAME "OgreNext")
-    endif()
+macro(find_package_ogre_next)
+  set(options)
+  set(oneValueArgs PROJECT_NAME INSTALL_PATH LIBRARY_NAME)
+  set(multiValueArgs)
 
-    set(PKG_CONFIG_PATH_ORIGINAL $ENV{PKG_CONFIG_PATH})
-    # Note: OGRE2 installed from debs is named OGRE-2.2 while the version
-    # installed from source does not have the 2.2 suffix
-    # look for OGRE2 installed from debs
-    gz_pkg_check_modules_quiet(${GZ_OGRE2_PROJECT_NAME} ${OGRE2_INSTALL_PATH} NO_CMAKE_ENVIRONMENT_PATH QUIET)
+  _gz_cmake_parse_arguments(find_package_ogre_next "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
-    if (${GZ_OGRE2_PROJECT_NAME}_FOUND)
-      set(GZ_PKG_NAME ${OGRE2_INSTALL_PATH})
-      set(OGRE2_FOUND ${${GZ_OGRE2_PROJECT_NAME}_FOUND})  # sync possible OGRE-Next to OGRE2
-      fix_pkgconfig_prefix_jammy_bug("${${GZ_OGRE2_PROJECT_NAME}_LIBRARY_DIRS}" OGRE2_LIBRARY_DIRS)
-      set(OGRE2_LIBRARIES ${${GZ_OGRE2_PROJECT_NAME}_LIBRARIES})  # sync possible Ogre-Next ot OGRE2
-    else()
-      # look for OGRE2 installed from source
-      set(PKG_CONFIG_PATH_TMP ${PKG_CONFIG_PATH_ORIGINAL})
-      execute_process(COMMAND pkg-config --variable pc_path pkg-config
-                      OUTPUT_VARIABLE _pkgconfig_invoke_result
-                      RESULT_VARIABLE _pkgconfig_failed)
-      if(_pkgconfig_failed)
-        GZ_BUILD_WARNING ("Failed to get pkg-config search paths")
-      elseif (NOT _pkgconfig_invoke_result STREQUAL "")
-        set (PKG_CONFIG_PATH_TMP "${PKG_CONFIG_PATH_TMP}:${_pkgconfig_invoke_result}")
-      endif()
+  set(OGRE_NEXT_PROJECT_NAME ${find_package_ogre_next_PROJECT_NAME})
+  set(OGRE_NEXT_INSTALL_PATH ${find_package_ogre_next_INSTALL_PATH})
+  set(OGRE_NEXT_LIBRARY_NAME ${find_package_ogre_next_LIBRARY_NAME})
+  set(OGRE_NEXT_FOUND FALSE)
 
-      # check and see if there are any paths at all
-      if ("${PKG_CONFIG_PATH_TMP}" STREQUAL "")
-        message("No valid pkg-config search paths found")
-        return()
-      endif()
+  gz_pkg_check_modules_quiet(${OGRE_NEXT_PROJECT_NAME} ${OGRE_NEXT_INSTALL_PATH} NO_CMAKE_ENVIRONMENT_PATH QUIET)
 
-      string(REPLACE ":" ";" PKG_CONFIG_PATH_TMP ${PKG_CONFIG_PATH_TMP})
+  if (NOT ${OGRE_NEXT_PROJECT_NAME}_FOUND)
+    message(STATUS "(GzOGRE2): Searching for ${OGRE_NEXT_PROJECT_NAME} (${GzOGRE2_FIND_VERSION_MAJOR}.${GzOGRE2_FIND_VERSION_MINOR}.${GzOGRE2_FIND_VERSION_PATCH}): NOT FOUND")
+  else()
+    message(STATUS "(GzOGRE2): Searching for ${OGRE_NEXT_PROJECT_NAME} (${GzOGRE2_FIND_VERSION_MAJOR}.${GzOGRE2_FIND_VERSION_MINOR}.${GzOGRE2_FIND_VERSION_PATCH}): Found Candidate")
 
-      # loop through pkg config paths and find an ogre version that is >= 2.0.0
-      foreach(pkg_path ${PKG_CONFIG_PATH_TMP})
-        set(ENV{PKG_CONFIG_PATH} ${pkg_path})
-        pkg_check_modules(OGRE2 "OGRE" NO_CMAKE_ENVIRONMENT_PATH QUIET)
-        if (OGRE2_FOUND)
-          if (${OGRE2_VERSION} VERSION_LESS 2.0.0)
-            set (OGRE2_FOUND false)
-          else ()
-            # pkg_check_modules does not provide complete path to libraries
-            # So update variable to point to full path
-            set(OGRE2_LIBRARY_NAME ${OGRE2_LIBRARIES})
-            find_library(OGRE2_LIBRARY NAMES ${OGRE2_LIBRARY_NAME}
-                                       HINTS ${OGRE2_LIBRARY_DIRS} NO_DEFAULT_PATH)
-            if ("${OGRE2_LIBRARY}" STREQUAL "OGRE2_LIBRARY-NOTFOUND")
-              set(OGRE2_FOUND false)
-              continue()
-            else()
-              set(OGRE2_LIBRARIES ${OGRE2_LIBRARY})
-            endif()
-            set(GZ_PKG_NAME "OGRE")
-            break()
-          endif()
-        endif()
-      endforeach()
-    endif()
+    set(OGRE_NEXT_LIBRARIES ${${OGRE_NEXT_PROJECT_NAME}_LIBRARIES})
+    set(OGRE_NEXT_LIBRARY_DIRS ${${OGRE_NEXT_PROJECT_NAME}_LIBRARY_DIRS})
+    set(OGRE_NEXT_INCLUDE_DIRS ${${OGRE_NEXT_PROJECT_NAME}_INCLUDE_DIRS})
+    set(GZ_PKG_NAME ${OGRE_NEXT_PROJECT_NAME})
 
-    if (NOT OGRE2_FOUND)
-      message(STATUS "  ! ${GZ_OGRE2_PROJECT_NAME} not found")
-      continue()
-    endif()
-
-    # use pkg-config to find ogre plugin path
-    # do it here before resetting the pkg-config paths
-    execute_process(COMMAND pkg-config --variable=plugindir ${GZ_PKG_NAME}
-                    OUTPUT_VARIABLE _pkgconfig_invoke_result
-                    RESULT_VARIABLE _pkgconfig_failed)
-    if(_pkgconfig_failed)
-      GZ_BUILD_WARNING ("Failed to find OGRE's plugin directory. The build will succeed, but there will likely be run-time errors.")
-    else()
-      fix_pkgconfig_prefix_jammy_bug("${_pkgconfig_invoke_result}" OGRE2_PLUGINDIR)
-    endif()
-
-    # reset pkg config path
-    set(ENV{PKG_CONFIG_PATH} ${PKG_CONFIG_PATH_ORIGINAL})
-
-    set(OGRE2_INCLUDE_DIRS ${${GZ_OGRE2_PROJECT_NAME}_INCLUDE_DIRS})  # sync possible OGRE-Next to OGRE2
-
-    # verify ogre header can be found in the include path
-    find_path(OGRE2_INCLUDE
+    # Pull in the header to check the version 
+    # Don't cache this variable because of mulitple macro invocations
+    unset(OGRE_NEXT_INCLUDE)
+    find_path(OGRE_NEXT_INCLUDE
       NAMES Ogre.h
-      PATHS ${OGRE2_INCLUDE_DIRS}
+      HINTS ${OGRE_NEXT_INCLUDE_DIRS} 
       NO_DEFAULT_PATH
+      NO_CACHE
     )
 
-    if(NOT OGRE2_INCLUDE)
-      set(OGRE2_FOUND false)
-      continue()
-    endif()
+    if (OGRE_NEXT_INCLUDE)
+      file(READ ${OGRE_NEXT_INCLUDE}/OgrePrerequisites.h OGRE_NEXT_TEMP_VERSION_CONTENT)
+      get_preprocessor_entry(OGRE_NEXT_TEMP_VERSION_CONTENT OGRE_VERSION_MAJOR OGRE_NEXT_VERSION_MAJOR)
+      get_preprocessor_entry(OGRE_NEXT_TEMP_VERSION_CONTENT OGRE_VERSION_MINOR OGRE_NEXT_VERSION_MINOR)
+      get_preprocessor_entry(OGRE_NEXT_TEMP_VERSION_CONTENT OGRE_VERSION_PATCH OGRE_NEXT_VERSION_PATCH)
+      get_preprocessor_entry(OGRE_NEXT_TEMP_VERSION_CONTENT OGRE_VERSION_NAME  OGRE_NEXT_VERSION_NAME)
+      set(OGRE_NEXT_VERSION "${OGRE_NEXT_VERSION_MAJOR}.${OGRE_NEXT_VERSION_MINOR}.${OGRE_NEXT_VERSION_PATCH}")
+      message(STATUS "(GzOGRE2): Found version: (${OGRE_NEXT_VERSION})")
+      set(OGRE_NEXT_FOUND TRUE)
 
-    # manually search and append the the RenderSystem/GL3Plus path to
-    # OGRE2_INCLUDE_DIRS so OGRE GL headers can be found
-    foreach (dir ${OGRE2_INCLUDE_DIRS})
-      get_filename_component(dir_name "${dir}" NAME)
-      if ("${dir_name}" STREQUAL ${GZ_PKG_NAME})
-        set(dir_include "${dir}/RenderSystems/GL3Plus")
-      else()
-        set(dir_include "${dir}")
-      endif()
-      list(APPEND OGRE2_INCLUDE_DIRS ${dir_include})
-    endforeach()
+      execute_process(COMMAND pkg-config --variable=plugindir ${OGRE_NEXT_INSTALL_PATH}
+                      OUTPUT_VARIABLE _pkgconfig_invoke_result
+                      RESULT_VARIABLE _pkgconfig_failed)
 
-    file(READ ${OGRE2_INCLUDE}/OgrePrerequisites.h OGRE_TEMP_VERSION_CONTENT)
-    get_preprocessor_entry(OGRE_TEMP_VERSION_CONTENT OGRE_VERSION_MAJOR OGRE2_VERSION_MAJOR)
-    get_preprocessor_entry(OGRE_TEMP_VERSION_CONTENT OGRE_VERSION_MINOR OGRE2_VERSION_MINOR)
-    get_preprocessor_entry(OGRE_TEMP_VERSION_CONTENT OGRE_VERSION_PATCH OGRE2_VERSION_PATCH)
-    get_preprocessor_entry(OGRE_TEMP_VERSION_CONTENT OGRE_VERSION_NAME OGRE2_VERSION_NAME)
-    set(OGRE2_VERSION "${OGRE2_VERSION_MAJOR}.${OGRE2_VERSION_MINOR}.${OGRE2_VERSION_PATCH}")
+      if(NOT _pkgconfig_failed)
+        set(OGRE_NEXT_VERSION_EXACT FALSE)
+        set(OGRE_NEXT_VERSION_COMPATIBLE FALSE)
 
-    set(GzOGRE2_VERSION_EXACT FALSE)
-    set(GzOGRE2_VERSION_COMPATIBLE FALSE)
+        if (NOT ("${OGRE_NEXT_VERSION_MAJOR}" EQUAL "${GzOGRE2_FIND_VERSION_MAJOR}"))
+          set(OGRE_NEXT_FOUND FALSE)
+        endif()
 
-    if (NOT ("${OGRE2_VERSION_MAJOR}" EQUAL "${GzOGRE2_FIND_VERSION_MAJOR}"))
-      set(OGRE2_FOUND FALSE)
-      continue()
-    endif()
+        if (NOT ("${OGRE_NEXT_VERSION_MINOR}" EQUAL "${GzOGRE2_FIND_VERSION_MINOR}"))
+          message(STATUS "  ! ${OGRE_NEXT_PROJECT_NAME} found with incompatible version ${OGRE2_VERSION}")
+          set(OGRE_NEXT_FOUND FALSE)
+        endif()
 
-    if (NOT ("${OGRE2_VERSION_MINOR}" EQUAL "${GzOGRE2_FIND_VERSION_MINOR}"))
-      message(STATUS "  ! ${GZ_OGRE2_PROJECT_NAME} found with incompatible version ${OGRE2_VERSION}")
-      set(OGRE2_FOUND FALSE)
-      continue()
-    endif()
+        if ("${OGRE_NEXT_VERSION}" VERSION_EQUAL "${GzOGRE2_FIND_VERSION}")
+          set(OGRE_NEXT_VERSION_EXACT TRUE)
+          set(OGRE_NEXT_VERSION_COMPATIBLE TRUE)
+        elseif ("${OGRE_NEXT_VERSION}" VERSION_GREATER_EQUAL "${GzOGRE2_FIND_VERSION}")
+          set(OGRE_NEXT_VERSION_EXACT FALSE)
+          set(OGRE_NEXT_VERSION_COMPATIBLE TRUE)
+        endif()
 
-    if ("${OGRE2_VERSION}" VERSION_EQUAL "${GzOGRE2_FIND_VERSION}")
-      set(GzOGRE2_VERSION_EXACT TRUE)
-      set(GzOGRE2_VERSION_COMPATIBLE TRUE)
-    endif()
-
-    if ("${OGRE2_VERSION}" VERSION_GREATER "${GzOGRE2_FIND_VERSION}")
-      set(GzOGRE2_VERSION_COMPATIBLE TRUE)
-    endif()
-
-    # find ogre components
-    include(GzImportTarget)
-    foreach(component ${GzOGRE2_FIND_COMPONENTS})
-      find_library(OGRE2-${component}
-        NAMES
-          "${OGRE2LIBNAME}${component}_d.${OGRE2_VERSION}"
-          "${OGRE2LIBNAME}${component}_d"
-          "${OGRE2LIBNAME}${component}.${OGRE2_VERSION}"
-          "${OGRE2LIBNAME}${component}"
-        HINTS ${OGRE2_LIBRARY_DIRS})
-      if (NOT "${OGRE2-${component}}" STREQUAL "OGRE2-${component}-NOTFOUND")
-        message(STATUS "  + component ${component}: found")
-        # create a new target for each component
-        set(component_TARGET_NAME "GzOGRE2-${component}::GzOGRE2-${component}")
-        set(component_INCLUDE_DIRS ${OGRE2_INCLUDE_DIRS})
-
-          foreach (dir ${OGRE2_INCLUDE_DIRS})
-            get_filename_component(dir_name "${dir}" NAME)
-            if ("${dir_name}" STREQUAL ${GZ_PKG_NAME})
-              # 1. append the Hlms/Common include dir if it exists.
-              string(FIND ${component} "Hlms" HLMS_POS)
-              if(${HLMS_POS} GREATER -1)
-                set(dir_include "${dir}/Hlms/Common")
-                if (EXISTS ${dir_include})
-                  list(APPEND component_INCLUDE_DIRS ${dir_include})
-                endif()
-              endif()
-              # 2. append the PlanarReflections include
-              if(${component} STREQUAL "PlanarReflections")
-                 list(APPEND component_INCLUDE_DIRS "${dir}/PlanarReflections")
-              endif()
+        if (OGRE_NEXT_FOUND)
+          set (OGRE_NEXT_COMPONENTS_FOUND TRUE)
+          foreach(component ${GzOGRE2_FIND_COMPONENTS})
+            unset(OGRE_NEXT-${component})
+            find_library(OGRE_NEXT-${component}
+              NAMES
+                "${OGRE_NEXT_LIBRARY_NAME}${component}_d.${OGRE_NEXT_VERSION}"
+                "${OGRE_NEXT_LIBRARY_NAME}${component}_d"
+                "${OGRE_NEXT_LIBRARY_NAME}${component}.${OGRE_NEXT_VERSION}"
+                "${OGRE_NEXT_LIBRARY_NAME}${component}"
+              HINTS ${OGRE_NEXT_LIBRARY_DIRS}
+              NO_CACHE
+            )
+            if (NOT "${OGRE_NEXT-${component}}" STREQUAL "OGRE_NEXT-${component}-NOTFOUND")
+              message(STATUS "  + component ${component}: found")
+            else()
+              message(STATUS "  + component ${component}: not found")
+              set(OGRE_NEXT_COMPONENTS_FOUND FALSE)
             endif()
           endforeach()
-
-        set(component_LIBRARY_DIRS ${OGRE2_LIBRARY_DIRS})
-        set(component_LIBRARIES ${OGRE2-${component}})
-        gz_import_target(${component} TARGET_NAME ${component_TARGET_NAME}
-            LIB_VAR component_LIBRARIES
-            INCLUDE_VAR component_INCLUDE_DIRS)
-
-          # Forward the link directories to be used by RPath
-        set_property(
-          TARGET ${component_TARGET_NAME} 
-          PROPERTY INTERFACE_LINK_DIRECTORIES
-          ${OGRE2_LIBRARY_DIRS}
-        )
-        # add it to the list of ogre libraries
-        list(APPEND OGRE2_LIBRARIES ${component_TARGET_NAME})
-
-      elseif(GzOGRE2_FIND_REQUIRED_${component})
-        message(STATUS "  ! component ${component}: not found!")
-        set(OGRE2_FOUND false)
-      endif()
-    endforeach()
-
-    # OGRE was found using the current value in the loop. No need to iterate
-    # more times.
-    if (OGRE2_FOUND)
-      break()
-    else()
-      message(STATUS "  ! ${GZ_OGRE2_PROJECT_NAME} not found")
-    endif()
-  endforeach()
-
-  if (NOT OGRE2_FOUND)
-    return()
-  endif()
-
-  if ("${OGRE2_PLUGINDIR}" STREQUAL "")
-    # set path to find ogre plugins
-    # keep variable naming consistent with ogre 1
-    # TODO currently using harded paths based on dir structure in ubuntu
-    foreach(resource_path ${OGRE2_LIBRARY_DIRS})
-      list(APPEND OGRE2_RESOURCE_PATH "${resource_path}/OGRE")
-    endforeach()
-  else()
-    set(OGRE2_RESOURCE_PATH ${OGRE2_PLUGINDIR})
-    # Seems that OGRE2_PLUGINDIR can end in a newline, which will cause problems
-    # when we pass it to the compiler later.
-    string(REPLACE "\n" "" OGRE2_RESOURCE_PATH ${OGRE2_RESOURCE_PATH})
-  endif()
-  fix_pkgconfig_resource_path_jammy_bug("${OGRE2_RESOURCE_PATH}" OGRE2_RESOURCE_PATH)
-
-  # We need to manually specify the pkgconfig entry (and type of entry),
-  # because gz_pkg_check_modules does not work for it.
-  include(GzPkgConfig)
-  gz_pkg_config_library_entry(GzOGRE2 OgreMain)
-else() #WIN32
-
-  set(OGRE2_FOUND TRUE)
-  set(OGRE_LIBRARIES "")
-  set(OGRE2_VERSION "")
-  set(OGRE2_VERSION_MAJOR "")
-  set(OGRE2_VERSION_MINOR "")
-  set(OGRE2_RESOURCE_PATH "")
-
-  set(OGRE2_SEARCH_VER "OGRE-${GzOGRE2_FIND_VERSION_MAJOR}.${GzOGRE2_FIND_VERSION_MINOR}")
-  set(OGRE2_PATHS "")
-  set(OGRE2_INC_PATHS "")
-  foreach(_rootPath ${VCPKG_CMAKE_FIND_ROOT_PATH})
-      list(APPEND OGRE2_PATHS "${_rootPath}/lib/${OGRE2_SEARCH_VER}/")
-      list(APPEND OGRE2_PATHS "${_rootPath}/lib/${OGRE2_SEARCH_VER}/manual-link/")
-      list(APPEND OGRE2_INC_PATHS "${_rootPath}/include/${OGRE2_SEARCH_VER}")
-  endforeach()
-
-  find_library(OGRE2_LIBRARY
-    NAMES "OgreMain"
-    HINTS ${OGRE2_PATHS}
-    NO_DEFAULT_PATH)
-
-  find_path(OGRE2_INCLUDE
-    NAMES "Ogre.h"
-    HINTS ${OGRE2_INC_PATHS})
-
-  if("${OGRE2_LIBRARY}" STREQUAL "OGRE2_LIBRARY-NOTFOUND")
-    set(OGRE2_FOUND false)
-  else()
-    set(OGRE2_LIBRARIES ${OGRE2_LIBRARY})
-  endif()
-
-  if(NOT OGRE2_INCLUDE)
-    set(OGRE2_FOUND false)
-  endif()
-
-  if (OGRE2_FOUND)
-    set(OGRE2_INCLUDE_DIRS ${OGRE2_INCLUDE})
-    set(OGRE2_LIBRARY_DIRS ${OGRE2_PATHS})
-
-    file(READ ${OGRE2_INCLUDE}/OgrePrerequisites.h OGRE_TEMP_VERSION_CONTENT)
-    get_preprocessor_entry(OGRE_TEMP_VERSION_CONTENT OGRE_VERSION_MAJOR OGRE2_VERSION_MAJOR)
-    get_preprocessor_entry(OGRE_TEMP_VERSION_CONTENT OGRE_VERSION_MINOR OGRE2_VERSION_MINOR)
-    get_preprocessor_entry(OGRE_TEMP_VERSION_CONTENT OGRE_VERSION_PATCH OGRE2_VERSION_PATCH)
-    get_preprocessor_entry(OGRE_TEMP_VERSION_CONTENT OGRE_VERSION_NAME OGRE2_VERSION_NAME)
-    set(OGRE2_VERSION "${OGRE2_VERSION_MAJOR}.${OGRE2_VERSION_MINOR}.${OGRE2_VERSION_PATCH}")
-    set(OGRE_TEMP_VERSION_CONTENT "")
-
-    macro(ogre_find_component COMPONENT HEADER PATH_HINTS)
-      set(PREFIX OGRE2_${COMPONENT})
-      find_path(${PREFIX}_INCLUDE_DIR
-          NAMES ${HEADER}
-          HINTS ${OGRE2_INCLUDE_DIRS}
-          PATH_SUFFIXES
-              ${PATH_HINTS} ${COMPONENT} ${OGRE2_SEARCH_VER}/${COMPONENT})
-
-      find_library(${PREFIX}_LIBRARY
-          NAMES
-              "Ogre${COMPONENT}"
-              "Ogre${COMPONENT}_d"
-          HINTS
-              ${OGRE2_LIBRARY_DIRS}
-          NO_DEFAULT_PATH)
-
-      if (NOT ${PREFIX}_FOUND)
-        if (${PREFIX}_INCLUDE_DIR AND ${PREFIX}_LIBRARY)
-          set(${PREFIX}_FOUND TRUE)
-          set(${PREFIX}_INCLUDE_DIRS ${${PREFIX}_INCLUDE_DIR})
-          set(${PREFIX}_LIBRARIES ${${PREFIX}_LIBRARY})
-          message(STATUS "Found ${PREFIX}: ${${PREFIX}_LIBRARIES}")
         endif()
       endif()
-  endmacro()
-
-  macro(ogre_find_plugin PLUGIN HEADER)
-    set(PREFIX OGRE2_${PLUGIN})
-    string(REPLACE "RenderSystem_" "" PLUGIN_TEMP ${PLUGIN})
-    string(REPLACE "Plugin_" "" PLUGIN_NAME ${PLUGIN_TEMP})
-      # header files for plugins are not usually needed, but find them anyway if they are present
-    set(OGRE2_PLUGIN_PATH_SUFFIXES
-      PlugIns
-      PlugIns/${PLUGIN_NAME}
-      Plugins
-      Plugins/${PLUGIN_NAME}
-      ${PLUGIN}
-      RenderSystems
-      RenderSystems/${PLUGIN_NAME}
-      ${ARGN})
-    find_path(
-      ${PREFIX}_INCLUDE_DIR
-      NAMES
-        ${HEADER}
-      HINTS
-        ${OGRE2_INCLUDE_DIRS} ${OGRE_PREFIX_SOURCE}
-      PATH_SUFFIXES
-        ${OGRE2_PLUGIN_PATH_SUFFIXES})
-    find_library(${PREFIX}_LIBRARY
-      NAMES ${PLUGIN}
-      HINTS  ${OGRE2_LIBRARY_DIRS}
-      PATH_SUFFIXES "" opt "${OGRE2_SEARCH_VER}" "${OGRE2_SEARCH_VER}/opt")
-
-    if (NOT ${PREFIX}_FOUND)
-      if (${PREFIX}_INCLUDE_DIR AND ${PREFIX}_LIBRARY)
-          set(${PREFIX}_FOUND TRUE)
-          set(${PREFIX}_INCLUDE_DIRS ${${PREFIX}_INCLUDE_DIR})
-          set(${PREFIX}_LIBRARIES ${${PREFIX}_LIBRARY})
-          message(STATUS "Found ${PREFIX}: ${${PREFIX}_LIBRARIES}")
-      endif()
+      set(OGRE_NEXT_FOUND ${OGRE_NEXT_COMPONENTS_FOUND})
     endif()
-  endmacro()
-
-  ogre_find_component(Overlay OgreOverlaySystem.h "Overlay")
-  ogre_find_component(HlmsPbs OgreHlmsPbs.h Hlms/Pbs/)
-  ogre_find_component(HlmsUnlit OgreHlmsUnlit.h Hlms/Unlit)
-
-  ogre_find_plugin(Plugin_ParticleFX OgreParticleFXPrerequisites.h PlugIns/ParticleFX/include)
-  ogre_find_plugin(RenderSystem_GL3Plus OgreGL3PlusRenderSystem.h RenderSystems/GL3Plus/include)
-  ogre_find_plugin(RenderSystem_Direct3D11 OgreD3D11RenderSystem.h RenderSystems/Direct3D11/include)
-
-  foreach(component ${GzOGRE2_FIND_COMPONENTS})
-    set(PREFIX OGRE2_${component})
-    if(${PREFIX}_FOUND)
-      set(component_TARGET_NAME "GzOGRE2-${component}::GzOGRE2-${component}")
-      set(component_INCLUDE_DIRS ${${PREFIX}_INCLUDE_DIRS})
-      # append the Hlms/Common include dir if it exists.
-      string(FIND ${component} "Hlms" HLMS_POS)
-      if(${HLMS_POS} GREATER -1)
-        foreach (dir ${OGRE2_INCLUDE_DIRS})
-          get_filename_component(dir_name "${dir}" NAME)
-          if ("${dir_name}" STREQUAL "OGRE-${OGRE2_VERSION_MAJOR}.${OGRE2_VERSION_MINOR}")
-            set(dir_include "${dir}/Hlms/Common")
-            if (EXISTS ${dir_include})
-              list(APPEND component_INCLUDE_DIRS ${dir_include})
-            endif()
-          endif()
-        endforeach()
-      endif()
-
-      set(component_LIBRARIES ${${PREFIX}_LIBRARIES})
-
-      gz_import_target(${component}
-        TARGET_NAME ${component_TARGET_NAME}
-        LIB_VAR component_LIBRARIES
-        INCLUDE_VAR component_INCLUDE_DIRS
-      )
-      list(APPEND OGRE2_LIBRARIES ${component_TARGET_NAME})
-    endif()
-  endforeach()
-
-  set(OGRE2_PLUGINS_VCPKG Plugin_ParticleFX RenderSystem_GL3Plus RenderSystem_Direct3D11)
-  foreach(PLUGIN ${OGRE2_PLUGINS_VCPKG})
-    if(OGRE2_${PLUGIN}_FOUND)
-      list(APPEND OGRE2_INCLUDE_DIRS ${OGRE2_${PLUGIN}_INCLUDE_DIRS})
-    endif()
-  endforeach()
   endif()
+endmacro()
+
+# This should cover the most cases.
+if (NOT OGRE_NEXT_FOUND)
+  find_package_ogre_next(
+    PROJECT_NAME "Ogre-Next"
+    INSTALL_PATH "OGRE-Next"
+    LIBRARY_NAME "OgreNext"
+  )
 endif()
 
-set(GzOGRE2_FOUND false)
-# create OGRE2 target
-if (OGRE2_FOUND)
-  set(GzOGRE2_FOUND true)
+if (NOT OGRE_NEXT_FOUND)
+  message(STATUS "Searching for OGRE 2.3 from debs")
+  find_package_ogre_next(
+    PROJECT_NAME "OGRE-2.${GzOGRE2_FIND_VERSION_MINOR}"
+    INSTALL_PATH "OGRE-2.${GzOGRE2_FIND_VERSION_MINOR}"
+    LIBRARY_NAME "OgreNext" 
+  )
+endif()
 
+if (OGRE_NEXT_FOUND)
+  include(GzImportTarget)
+  foreach(component ${GzOGRE2_FIND_COMPONENTS})
+    unset(OGRE_NEXT-${component})
+    find_library(OGRE_NEXT-${component}
+      NAMES
+        "${OGRE_NEXT_LIBRARY_NAME}${component}_d.${OGRE_NEXT_VERSION}"
+        "${OGRE_NEXT_LIBRARY_NAME}${component}_d"
+        "${OGRE_NEXT_LIBRARY_NAME}${component}.${OGRE_NEXT_VERSION}"
+        "${OGRE_NEXT_LIBRARY_NAME}${component}"
+      HINTS ${OGRE_NEXT_LIBRARY_DIRS}
+      NO_CACHE)
+
+    set(component_TARGET_NAME "GzOGRE2-${component}::GzOGRE2-${component}")
+    set(component_INCLUDE_DIRS ${OGRE_NEXT_INCLUDE_DIRS})
+
+    # Do include directory munging for components
+    foreach (dir ${OGRE_NEXT_INCLUDE_DIRS})
+      get_filename_component(dir_name "${dir}" NAME)
+      if ("${dir_name}" STREQUAL ${GZ_PKG_NAME})
+        # 1. append the Hlms/Common include dir if it exists.
+        string(FIND ${component} "Hlms" HLMS_POS)
+        if(${HLMS_POS} GREATER -1)
+          set(dir_include "${dir}/Hlms/Common")
+          if (EXISTS ${dir_include})
+            list(APPEND component_INCLUDE_DIRS ${dir_include})
+          endif()
+        endif()
+        # 2. append the PlanarReflections include
+        if(${component} STREQUAL "PlanarReflections")
+           list(APPEND component_INCLUDE_DIRS "${dir}/PlanarReflections")
+        endif()
+      endif()
+    endforeach()
+
+    set(component_LIBRARY_DIRS ${OGRE_NEXT_LIBRARY_DIRS})
+    set(component_LIBRARIES ${OGRE_NEXT-${component}})
+    gz_import_target(${component} TARGET_NAME ${component_TARGET_NAME}
+      LIB_VAR component_LIBRARIES
+      INCLUDE_VAR component_INCLUDE_DIRS
+    )
+
+    set_property(
+      TARGET ${component_TARGET_NAME} 
+      PROPERTY INTERFACE_LINK_DIRECTORIES
+      ${OGRE_NEXT_LIBRARY_DIRS}
+    )
+    list(APPEND OGRE_NEXT_LIBRARIES ${component_TARGET_NAME})
+  endforeach()
+
+  set(OGRE_NEXT_RESOURCE_PATH "")
+  if ("${OGRE_NEXT_PLUGINDIR}" STREQUAL "")
+    foreach(resource_path ${OGRE_NEXT_LIBRARY_DIRS})
+      list(APPEND OGRE_NEXT_RESOURCE_PATH "${resource_path}/${OGRE_NEXT_INSTALL_PATH}")
+    endforeach()
+  else()
+    set(OGRE_NEXT_RESOURCE_PATH ${OGRE_NEXT_PLUGINDIR})
+    # Seems that OGRE2_PLUGINDIR can end in a newline, which will cause problems
+    # when we pass it to the compiler later.
+    string(REPLACE "\n" "" OGRE_NEXT_RESOURCE_PATH ${OGRE_NEXT_RESOURCE_PATH})
+  endif()
+
+  set(GzOGRE2_FOUND TRUE)
   gz_import_target(GzOGRE2
     TARGET_NAME GzOGRE2::GzOGRE2
-    LIB_VAR OGRE2_LIBRARIES
-    INCLUDE_VAR OGRE2_INCLUDE_DIRS)
-
-  # Forward the link directories to be used by RPath
+    LIB_VAR OGRE_NEXT_LIBRARIES
+    INCLUDE_VAR OGRE_NEXT_INCLUDE_DIRS
+  )
   set_property(
     TARGET GzOGRE2::GzOGRE2
     PROPERTY INTERFACE_LINK_DIRECTORIES
-    ${OGRE2_LIBRARY_DIRS}
+    ${OGRE_NEXT_LIBRARY_DIRS}
   )
-else()
-  # Unset variables so that we don't leak incorrect versions
-  set(OGRE2_VERSION "")
-  set(OGRE2_VERSION_MAJOR "")
-  set(OGRE2_VERSION_MINOR "")
-  set(OGRE2_VERSION_PATCH "")
-  set(OGRE2_LIBRARIES "")
-  set(OGRE2_INCLUDE_DIRS "")
+
+  set(OGRE2_FOUND ${OGRE_NEXT_FOUND})
+  set(OGRE2_VERSION ${OGRE_NEXT_VERSION})
+  set(OGRE2_VERSION_MAJOR ${OGRE_NEXT_VERSION_MAJOR})
+  set(OGRE2_VERSION_MINOR ${OGRE_NEXT_VERSION_MINOR})
+  set(OGRE2_VERSION_PATCH ${OGRE_NEXT_VERSION_PATCH})
+  set(OGRE2_LIBRARIES ${OGRE_NEXT_LIBRARIES})
+  set(OGRE2_INCLUDE ${OGRE_NEXT_INCLUDE})  # Specifically used for ogre2/terra engine
+  set(OGRE2_INCLUDE_DIRS ${OGRE_NEXT_INCLUDE_DIRS})
+  set(OGRE2_RESOURCE_PATH ${OGRE_NEXT_RESOURCE_PATH})
+  set(GzOGRE2_VERSION_EXACT ${OGRE_NEXT_VERSION_EXACT}) 
+  set(GzOGRE2_VERSION_COMPATIBLE ${OGRE_NEXT_VERSION_COMPATIBLE})
 endif()
 
 set(IgnOGRE2_FOUND ${GzOGRE2_FOUND})  # TODO(CH3): Deprecated. Remove on tock.
