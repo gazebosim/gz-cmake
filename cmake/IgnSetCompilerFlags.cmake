@@ -308,7 +308,9 @@ macro(ign_setup_msvc)
     set(MSVC_RELWITHDEBINFO_FLAGS "${MSVC_RELEASE_FLAGS} /UNDEBUG")
 
     # INCREMENTAL:NO fix LNK4075 warning
-    set(MSVC_RELWITHDEBINFO_LINKER_FLAGS "/INCREMENTAL:NO")
+    # LTCG: need when using /GL above
+    #  see https://docs.microsoft.com/en-us/cpp/build/reference/gl-whole-program-optimization
+    set(MSVC_RELWITHDEBINFO_LINKER_FLAGS "/INCREMENTAL:NO /LTCG")
 
     # cmake automatically provides /Zi /Ob0 /Od /RTC1
     set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} ${MSVC_DEBUG_FLAGS}")
