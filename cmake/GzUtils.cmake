@@ -1975,7 +1975,7 @@ endmacro()
 #             that are used in the examples.
 #             For example "cli" for gz-utils
 #
-# DEPENCENCIES: Optional.  Gazebo library dependencies for this
+# DEPENCENCIES: Optional. Gazebo library dependencies for this
 #               project
 #               For example: gz-utils2 gz-common5
 macro(gz_build_examples)
