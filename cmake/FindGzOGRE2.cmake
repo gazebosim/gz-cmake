@@ -182,6 +182,8 @@ macro(find_package_ogre_next)
                       RESULT_VARIABLE _pkgconfig_failed)
 
       if(NOT _pkgconfig_failed)
+        set(OGRE_NEXT_PLUGINDIR ${pkgconfig_invoke_result})
+
         set(OGRE_NEXT_VERSION_EXACT FALSE)
         set(OGRE_NEXT_VERSION_COMPATIBLE FALSE)
 
