@@ -20,7 +20,10 @@ include(IgnCMake)
 
 #--------------------------------------
 # Set up the project
-ign_configure_project(VERSION_SUFFIX)
+ign_configure_project(
+  REPLACE_IGNITION_INCLUDE_PATH gz/cmake
+  VERSION_SUFFIX
+)
 
 #--------------------------------------
 # Set project-specific options
