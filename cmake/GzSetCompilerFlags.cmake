@@ -301,12 +301,14 @@ macro(_gz_setup_msvc)
     # W2: Warning level 2: significant warnings.
     #     TODO: Recommend Wall in the future.
     #     Note: MSVC /Wall generates tons of warnings on gtest code.
-    set(MSVC_MINIMAL_FLAGS "/Gy /W2")
+    set(MSVC_WARNING_LEVEL "/W2")
+    set(MSVC_DEBUG_LEVEL "/Zi")
+    set(MSVC_MINIMAL_FLAGS "/Gy ${MSVC_WARNING_LEVEL}")
 
     # Zi: Produce complete debug information
     # Note: We provide Zi to ordinary release mode because it does not impact
     # performance and can be helpful for debugging.
-    set(MSVC_DEBUG_FLAGS "${MSVC_MINIMAL_FLAGS} /Zi")
+    set(MSVC_DEBUG_FLAGS "${MSVC_MINIMAL_FLAGS} ${MSVC_DEBUG_LEVEL}")
 
     # GL: Enable Whole Program Optimization
     set(MSVC_RELEASE_FLAGS "${MSVC_DEBUG_FLAGS} /GL")
@@ -342,6 +344,29 @@ macro(_gz_setup_msvc)
     # TODO: What flags should be set for PROFILE and COVERAGE build types?
     #       Is it even possible to generate those build types on Windows?
 
+    # Replace any higher warnings with our selected level
+    string(REPLACE "/W3" ${MSVC_WARNING_LEVEL} CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG}")
+    string(REPLACE "/W3" ${MSVC_WARNING_LEVEL} CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}")
+    string(REPLACE "/W3" ${MSVC_WARNING_LEVEL} CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO}")
+    string(REPLACE "/W3" ${MSVC_WARNING_LEVEL} CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO}")
+    string(REPLACE "/W3" ${MSVC_WARNING_LEVEL} CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE}")
+    string(REPLACE "/W3" ${MSVC_WARNING_LEVEL} CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
+    string(REPLACE "/W3" ${MSVC_WARNING_LEVEL} CMAKE_C_FLAGS_MINSIZEREL "${CMAKE_C_FLAGS_MINSIZEREL}")
+    string(REPLACE "/W3" ${MSVC_WARNING_LEVEL} CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL}")
+
+    if (DEFINED ENV{GZ_CMAKE_MSVC_Z7})
+      # This provides an "escape hatch" to allow Z7 to be set for the MSVC build flags
+      # While Zi is suitable for speeding up rebuilds in local development, it prevents
+      # caching with a tool like ccache/buildcache.
+      string(REPLACE ${MSVC_DEBUG_LEVEL} "/Z7" CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG}")
+      string(REPLACE ${MSVC_DEBUG_LEVEL} "/Z7" CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}")
+      string(REPLACE ${MSVC_DEBUG_LEVEL} "/Z7" CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO}")
+      string(REPLACE ${MSVC_DEBUG_LEVEL} "/Z7" CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO}")
+      string(REPLACE ${MSVC_DEBUG_LEVEL} "/Z7" CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE}")
+      string(REPLACE ${MSVC_DEBUG_LEVEL} "/Z7" CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
+      string(REPLACE ${MSVC_DEBUG_LEVEL} "/Z7" CMAKE_C_FLAGS_MINSIZEREL "${CMAKE_C_FLAGS_MINSIZEREL}")
+      string(REPLACE ${MSVC_DEBUG_LEVEL} "/Z7" CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL}")
+    endif()
   endif()
 
   # Use the dynamically loaded run-time library in Windows by default. The
