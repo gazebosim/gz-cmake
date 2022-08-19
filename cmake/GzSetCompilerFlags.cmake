@@ -27,6 +27,7 @@
 macro(_gz_set_compiler_flags)
 
   option(USE_GZ_RECOMMENDED_FLAGS "Build project using the compiler flags recommended by the Gazebo developers" ON)
+  option(USE_GZ_RECOMMENDED_MSVC_CACHING "Build project using /Z7 rather than /Zi for better ccache/buildcache performance" OFF)
 
   if(MSVC)
     _gz_setup_msvc()
@@ -319,6 +320,7 @@ macro(_gz_setup_msvc)
     # INCREMENTAL:NO fix LNK4075 warning
     # LTCG: need when using /GL above
     #  see https://docs.microsoft.com/en-us/cpp/build/reference/gl-whole-program-optimization
+    set(MSVC_RELEASE_LINKER_FLAGS "/INCREMENTAL:NO /LTCG")
     set(MSVC_RELWITHDEBINFO_LINKER_FLAGS "/INCREMENTAL:NO /LTCG")
 
     # cmake automatically provides /Zi /Ob0 /Od /RTC1
@@ -354,7 +356,7 @@ macro(_gz_setup_msvc)
     string(REPLACE "/W3" ${MSVC_WARNING_LEVEL} CMAKE_C_FLAGS_MINSIZEREL "${CMAKE_C_FLAGS_MINSIZEREL}")
     string(REPLACE "/W3" ${MSVC_WARNING_LEVEL} CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL}")
 
-    if (DEFINED ENV{GZ_CMAKE_MSVC_Z7})
+    if (USE_GZ_RECOMMENDED_MSVC_CACHING)
       # This provides an "escape hatch" to allow Z7 to be set for the MSVC build flags
       # While Zi is suitable for speeding up rebuilds in local development, it prevents
       # caching with a tool like ccache/buildcache.
