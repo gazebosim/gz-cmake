@@ -1828,7 +1828,7 @@ endmacro()
 # Descriptions of the function arguments are as follows:
 #
 # <export type>: Currently the macros supports two export types colcon and plain-cmake.
-#                In the colocn export type colcon.pkg and hooks file will be created
+#                In the colcon export type colcon.pkg and hooks file will be created
 #                In plain cmake a setup.sh file will be created and configured.
 #
 macro(ign_environment_hook export_type)
@@ -1927,15 +1927,17 @@ macro(ign_export_variable variable_name variable_path)
 endmacro()
 
 #######################################################
-# ign_add_plugins(path_to_plugins)
+# ign_add_plugins(path_to_plugins plugin_extension )
 # Installs all the plugins inside the folder using various arguments from the user
 # Also provides the path to ign_environment_hook()
 # Other than common link_libraries and directories,you can simply add specific plugin dependencies one by one after this macro
-# The deafult file type is .cc for plugins,you can add other file types using PLUGIN_EXTENSION argument
 # For adding GUI plugins,one can simply pass GUI true as argument
 # Descriptions of the function arguments are as follows:
 #
-# <path_to_plugin>: Path of the folder where plugins are present
+# <path_to_plugins>: Path of the folder where plugins are present
+#
+# <plugin_extension>: Required. Macros will assume files of this extension inside the specifc folder as plugins.
+#                     Defaults to .cc extension
 #
 # [GUI]: Optional.If provided, it will build the plugin as a gui plugin.
 #
@@ -1944,9 +1946,6 @@ endmacro()
 #
 # [SCOPE]: Optional. STATIC, SHARED, or MODULE may be given to specify the type of library to be created.
 #          Defaults to SHARED library
-#
-# [PLUGIN_EXTENSION]: Optional. Macros will assume files of this extension inside the specifc folder as plugins.
-#                     Defaults to .cc extension
 #
 # [COMMON_PUBLIC_LIBRARIES]: Optional. Specify libraries or flags to use when linking a given target and/or its dependents. 
 #                            Specified libraries will be used for all the plugins inside the folder.
@@ -1964,18 +1963,15 @@ endmacro()
 #                              Specified directories will be used for all the plugins inside the folder.
 #                              PRIVATE items will populate the LINK_DIRECTORIES property of <target>.
 #
-macro(ign_add_plugins path_to_plugins)
+macro(ign_add_plugins path_to_plugins plugin_extension)
   set(options GUI)
   set(oneValueArgs INSTALL_DESTINATION SCOPE)
-  set(multiValueArgs COMMON_PUBLIC_LIBRARIES COMMON_PRIVATE_LINK_LIBRARIES COMMON_PUBLIC_DIRECTORIES COMMON_PRIVATE_LINK_DIRECTORIES PLUGIN_EXTENSION)
+  set(multiValueArgs COMMON_PUBLIC_LIBRARIES COMMON_PRIVATE_LINK_LIBRARIES COMMON_PUBLIC_DIRECTORIES COMMON_PRIVATE_LINK_DIRECTORIES)
 
   _ign_cmake_parse_arguments(ign_add_plugin "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
  
-  if(NOT ign_add_plugin_PLUGIN_EXTENSION)
-    list(APPEND ign_add_plugin_PLUGIN_EXTENSION ".cc")
-  endif()
   set(source_list_plugins)
-  foreach(EXTENSION ${ign_add_plugin_PLUGIN_EXTENSION})
+  foreach(EXTENSION ${plugin_extension})
     set(source_list_plugin_${EXTENSION})
     file(GLOB source_list_plugin_${EXTENSION} CONFIGURE_DEPENDS
     "${path_to_plugins}/*${EXTENSION}"
@@ -2060,17 +2056,18 @@ macro(ign_export_plugin path_to_install_destination)
 endmacro()  
 
 #####################################################
-# ign_add_executables(path_to_executables)
+# ign_add_executables(path_to_executables executable_extension)
 # Installs all the executables inside the folder using various arguments from the user
 # Other than common link_libraries and directories,you can simply add specific executable dependencies one by one after this macro
-# The deafult file type is .cc for executables,you can add other file types using EXECUTABLES_EXTENSION argument
 # Descriptions of the function arguments are as follows:
+#
+# <path_to_executables>: Path of the folder where executables are present
+#
+# <executable_extension>: Macros will assume files of this extension inside the specifc folder as executable.
+#                         Defaults to .cc extension
 #
 # INSTALL_DESTINATION]: Optional. Destination of the folder where plugins will be installed.
 #                       Defaults to lib for normal plugins and lib/gui for gui plugins.
-#
-# [EXECUTABLE_EXTENSION]: Optional. Macros will assume files of this extension inside the specifc folder as executable.
-#                         Defaults to .cc extension
 #
 # [COMMON_PUBLIC_LIBRARIES]: Optional. Specify libraries or flags to use when linking a given target and/or its dependents. 
 #                            Specified libraries will be used for all the executables inside the folder.
@@ -2088,18 +2085,14 @@ endmacro()
 #                              Specified directories will be used for all the executables inside the folder.
 #                              PRIVATE items will populate the LINK_DIRECTORIES property of <target>.
 #
-macro(ign_add_executables path_to_executables)
+macro(ign_add_executables path_to_executables executable_extension)
 
   set(oneValueArgs INSTALL_DESTINATION)
-  set(multiValueArgs COMMON_PUBLIC_LIBRARIES COMMON_PRIVATE_LINK_LIBRARIES COMMON_PUBLIC_DIRECTORIES COMMON_PRIVATE_LINK_DIRECTORIES EXECUTABLE_EXTENSION)
+  set(multiValueArgs COMMON_PUBLIC_LIBRARIES COMMON_PRIVATE_LINK_LIBRARIES COMMON_PUBLIC_DIRECTORIES COMMON_PRIVATE_LINK_DIRECTORIES)
 
   _ign_cmake_parse_arguments(ign_add_executable "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
-  if(NOT ign_add_executable_EXECUTABLE_EXTENSION)
-    list(APPEND ign_add_executable_EXECUTABLE_EXTENSION ".cc")
-  endif()
-
-  foreach(EXTENSION ${ign_add_executable_EXECUTABLE_EXTENSION})
+  foreach(EXTENSION ${executable_extension})
 
     file(GLOB source_list_executable_${EXTENSION} CONFIGURE_DEPENDS
     "${path_to_executables}/*${EXTENSION}"
@@ -2144,14 +2137,16 @@ macro(ign_add_executables path_to_executables)
   
 endmacro()
 #################################################################################
-# ign_add_msgs(path_to_msgs)
+# ign_add_msgs(path_to_msgs msg_extension)
 # Installs all the msgs inside the folder using various arguments from the user
 # Also provides the path to ign_environment_hook()
 # Other than pre coded dependencies,you can simply add specific message dependencies one by one after this macro
-# The deafult file type is .proto for msgs,you can add other file types using MSG_EXTENSION argument
 # Descriptions of the function arguments are as follows:
 #
 # <path_to_msgs>: Path to folder where msgs are stored.
+#
+# <msg_extension>: Macros will assume files of this extension inside the specifc folder as msgs.
+#                     Defaults to .proto extension
 #
 # [COMMON_LANGUAGE]: Required. Programming language in which mentioned msgs are wriiten.
 #                    Common for all the msgs in the folder.
@@ -2168,21 +2163,15 @@ endmacro()
 # [SCOPE]: Optional. STATIC, SHARED, or MODULE may be given to specify the type of library to be created.
 #          Defaults to SHARED library
 #
-# [MSG_EXTENSION]: Optional. Macros will assume files of this extension inside the specifc folder as msgs.
-#                     Defaults to .proto extension
-#
-macro(ign_add_msgs path_to_msgs)
+macro(ign_add_msgs path_to_msgs msg_extension)
 
   set(oneValueArgs INSTALL_DESTINATION SCOPE)
-  set(multiValueArgs MSG_EXTENSION COMMON_LANGUAGE COMMON_IMPORT_DIRS COMMON_PROTOC_OUT_DIR)
+  set(multiValueArgs COMMON_LANGUAGE COMMON_IMPORT_DIRS COMMON_PROTOC_OUT_DIR)
 
   _ign_cmake_parse_arguments(ign_add_msg "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
-  if(NOT ign_add_msg_MSG_EXTENSION)
-    list(APPEND ign_add_msg_MSG_EXTENSION ".proto")
-  endif()
 
-  foreach(EXTENSION ${ign_add_msg_MSG_EXTENSION})
+  foreach(EXTENSION ${msg_extension})
 
     file(GLOB source_list_msg_${EXTENSION} CONFIGURE_DEPENDS
     "${path_to_msgs}/*${EXTENSION}"
