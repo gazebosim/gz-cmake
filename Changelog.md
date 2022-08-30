@@ -1,6 +1,17 @@
 ## Gazebo CMake 2.x
 
-### Gazebo CMake 2.14.0 (2022-07-25)
+### Gazebo CMake 2.15.0 (2022-08-29)
+
+1. ign -> gz: add `gz/*` header files
+    * [Pull request #303](https://github.com/gazebosim/gz-cmake/pull/303)
+
+1. Backport `GZ_SANITIZER` variable
+    * [Pull request #294](https://github.com/gazebosim/gz-cmake/pull/294)
+
+1. Update doxygen file
+    * [Pull request #276](https://github.com/gazebosim/gz-cmake/pull/276)
+
+### Ignition CMake 2.14.0 (2022-07-25)
 
 1. Add code coverage ignore file
     * [Pull request #279](https://github.com/gazebosim/gz-cmake/pull/279)

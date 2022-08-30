@@ -19,7 +19,7 @@
 #ifndef GZ_UTILITIES_DETAIL_SUPPRESSWARNING_HH_
 #define GZ_UTILITIES_DETAIL_SUPPRESSWARNING_HH_
 
-#include <ignition/utilities/SuppressWarning.hh>
+#include <gz/utilities/SuppressWarning.hh>
 
 #define DETAIL_GZ_UTILS_STRINGIFY(x) #x
 

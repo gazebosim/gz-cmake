@@ -3,13 +3,6 @@
 echo "Usage: sh upload_doc.sh [y/n]"
 echo "  Optional [y/n] argument indicates whether to upload the docs to S3 automatically."
 
-# Check if the node was configured to use s3cmd
-# This is done by running s3cmd --configure
-if [ ! -f "${HOME}/.s3cfg" ]; then
-    echo "No $HOME/.s3cfg file found. Please config the software first in your system"
-    exit 1
-fi
-
 # Make documentation if not build
 if [ ! -f "@CMAKE_BINARY_DIR@/doxygen/html/index.html" ]; then
   make doc
