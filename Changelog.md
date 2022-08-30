@@ -11,7 +11,7 @@
 1. Update doxygen file
     * [Pull request #276](https://github.com/gazebosim/gz-cmake/pull/276)
 
-### Ignition CMake 2.14.0 (2022-07-25)
+### Gazebo CMake 2.14.0 (2022-07-25)
 
 1. Add code coverage ignore file
     * [Pull request #279](https://github.com/gazebosim/gz-cmake/pull/279)
