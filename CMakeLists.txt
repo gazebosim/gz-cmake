@@ -97,6 +97,9 @@ file(RELATIVE_PATH
   "${CMAKE_INSTALL_PREFIX}"
 )
 
+# TODO(jrivero): CMake 3.20 provides cmake_path(APPEND) which implements the
+# same functionality as join_paths(). Remove JoinPaths in the next major version
+# if all the supported platforms are in 3.20 version.
 include(JoinPaths)
 join_paths(IGN_PC_LIBDIR "\${prefix}" "${CMAKE_INSTALL_LIBDIR}")
 join_paths(IGN_PC_INCLUDEDIR "\${prefix}" "${CMAKE_INSTALL_INCLUDEDIR}" "${IGN_INCLUDE_INSTALL_DIR_POSTFIX}")
