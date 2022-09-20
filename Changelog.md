@@ -1,3 +1,64 @@
+## Gazebo CMake 3.x
+
+### Gazebo CMake 3.0.0 (2022-09-23)
+
+1. CMake macro to find the assimp library
+    * [Pull request #278](https://github.com/gazebosim/gz-cmake/pull/278)
+    * [Pull request #291](https://github.com/gazebosim/gz-cmake/pull/291)
+    * [Pull request #292](https://github.com/gazebosim/gz-cmake/pull/292)
+
+1. Changes for OGRE-2.3
+    * [Pull request #283](https://github.com/gazebosim/gz-cmake/pull/283)
+    * [Pull request #297](https://github.com/gazebosim/gz-cmake/pull/297)
+
+1. Migrate ign -> gz
+    * [Pull request #308](https://github.com/gazebosim/gz-cmake/pull/308)
+    * [Pull request #277](https://github.com/gazebosim/gz-cmake/pull/277)
+    * [Pull request #274](https://github.com/gazebosim/gz-cmake/pull/274)
+    * [Pull request #273](https://github.com/gazebosim/gz-cmake/pull/273)
+    * [Pull request #271](https://github.com/gazebosim/gz-cmake/pull/271)
+    * [Pull request #267](https://github.com/gazebosim/gz-cmake/pull/267)
+    * [Pull request #266](https://github.com/gazebosim/gz-cmake/pull/266)
+    * [Pull request #265](https://github.com/gazebosim/gz-cmake/pull/265)
+    * [Pull request #263](https://github.com/gazebosim/gz-cmake/pull/263)
+    * [Pull request #260](https://github.com/gazebosim/gz-cmake/pull/260)
+    * [Pull request #258](https://github.com/gazebosim/gz-cmake/pull/258)
+    * [Pull request #257](https://github.com/gazebosim/gz-cmake/pull/257)
+    * [Pull request #256](https://github.com/gazebosim/gz-cmake/pull/256)
+    * [Pull request #255](https://github.com/gazebosim/gz-cmake/pull/255)
+    * [Pull request #254](https://github.com/gazebosim/gz-cmake/pull/254)
+    * [Pull request #253](https://github.com/gazebosim/gz-cmake/pull/253)
+    * [Pull request #252](https://github.com/gazebosim/gz-cmake/pull/252)
+    * [Pull request #250](https://github.com/gazebosim/gz-cmake/pull/250)
+    * [Pull request #249](https://github.com/gazebosim/gz-cmake/pull/249)
+    * [Pull request #247](https://github.com/gazebosim/gz-cmake/pull/247)
+    * [Pull request #246](https://github.com/gazebosim/gz-cmake/pull/246)
+    * [Pull request #245](https://github.com/gazebosim/gz-cmake/pull/245)
+    * [Pull request #244](https://github.com/gazebosim/gz-cmake/pull/244)
+
+1. Removed hardcoded gtest include folder
+    * [Pull request #268](https://github.com/gazebosim/gz-cmake/pull/268)
+
+1. Deprecate utilities in favor of ign-utils
+    * [Pull request #233](https://github.com/gazebosim/gz-cmake/pull/233)
+
+1. Replace deprecated PythonInterp with Python3
+    * [Pull request #213](https://github.com/gazebosim/gz-cmake/pull/213)
+
+1. Disable long-running buildsystem tests by default
+    * [Pull request #97](https://github.com/gazebosim/gz-cmake/pull/97)
+
+1. Infrastructure
+    * [Pull request #242](https://github.com/gazebosim/gz-cmake/pull/242)
+    * [Pull request #209](https://github.com/gazebosim/gz-cmake/pull/209)
+    * [Pull request #169](https://github.com/gazebosim/gz-cmake/pull/169)
+    * [Pull request #90](https://github.com/gazebosim/gz-cmake/pull/90)
+    * [Pull request #89](https://github.com/gazebosim/gz-cmake/pull/89)
+    * [Pull request #87](https://github.com/gazebosim/gz-cmake/pull/87)
+    * [Pull request #83](https://github.com/gazebosim/gz-cmake/pull/83)
+    * [Pull request #77](https://github.com/gazebosim/gz-cmake/pull/77)
+    * [Pull request #75](https://github.com/gazebosim/gz-cmake/pull/75)
+
 ## Gazebo CMake 2.x
 
 ### Gazebo CMake 2.15.0 (2022-08-29)
