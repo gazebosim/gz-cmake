@@ -121,16 +121,16 @@ macro(ign_setup_packages)
     # (but later on when installing)
     set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
 
-    set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${IGN_LIB_INSTALL_DIR}")
+    set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_FULL_LIBDIR}")
 
     # add the automatically determined parts of the RPATH
     # which point to directories outside the build tree to the install RPATH
     set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
     # the RPATH to be used when installing, but only if its not a system directory
-    list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${CMAKE_INSTALL_PREFIX}/${IGN_LIB_INSTALL_DIR}" isSystemDir)
+    list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${CMAKE_INSTALL_FULL_LIBDIR}" isSystemDir)
     if("${isSystemDir}" STREQUAL "-1")
-      set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${IGN_LIB_INSTALL_DIR}")
+      set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_FULL_LIBDIR}")
     endif("${isSystemDir}" STREQUAL "-1")
   endif()
 
@@ -198,12 +198,16 @@ function(_ign_create_pkgconfig)
   endif()
 
   set(pkgconfig_output "${CMAKE_BINARY_DIR}/cmake/pkgconfig/${target_name}.pc")
-  set(pkgconfig_install_dir "${IGN_LIB_INSTALL_DIR}/pkgconfig")
+  set(pkgconfig_install_dir "${CMAKE_INSTALL_FULL_LIBDIR}/pkgconfig")
   file(RELATIVE_PATH
     PC_CONFIG_RELATIVE_PATH_TO_PREFIX
-    "${CMAKE_INSTALL_PREFIX}/${pkgconfig_install_dir}"
+    "${pkgconfig_install_dir}"
     "${CMAKE_INSTALL_PREFIX}"
   )
+
+  include("${IGNITION_CMAKE_DIR}/JoinPaths.cmake")
+  join_paths(PC_LIBDIR "\${prefix}" "${CMAKE_INSTALL_LIBDIR}")
+  join_paths(PC_INCLUDEDIR "\${prefix}" "${CMAKE_INSTALL_INCLUDEDIR}" "${IGN_INCLUDE_INSTALL_DIR_POSTFIX}")
 
   configure_file(${pkgconfig_input} ${pkgconfig_output} @ONLY)
 
