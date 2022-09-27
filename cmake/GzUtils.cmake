@@ -1951,8 +1951,8 @@ endmacro()
 #     [COMPONENTS <project_component_dependencies>]
 #     [DEPENDENCIES <project_dependencies>]
 #
-# Build examples for a Gazebo project. Arguments are as follows:
 # Requires a CMakeLists.txt file to be in SOURCE_DIR that acts
+# Build examples for a Gazebo project. 
 # as a top level project.
 #
 # This generates two test targets
@@ -1965,19 +1965,23 @@ endmacro()
 # These tests are run during "make test" or can be run specifically
 # via "ctest -R EXAMPLES_ -V"
 #
+# Arguments are as follows:
+#
 # SOURCE_DIR: Required. Path to the examples folder.
 #             For example ${CMAKE_CURRENT_SOURCE_DIR}/examples
 #
 # BINARY_DIR: Required. Path to the output binary folder
 #             For example ${CMAKE_CURRENT_BINARY_DIR}/examples
 #
-# COMPONENTS: Optional. List of components built by this project
-#             that are used in the examples.
-#             For example "cli" for gz-utils
+# COMPONENTS: 
+#     Optional. List of components built by this project that are used in the examples.
+#     For example "cli" for gz-utils
 #
-# DEPENCENCIES: Optional. Gazebo library dependencies for this
-#               project
-#               For example: gz-utils2 gz-common5
+# DEPENDENCIES: 
+#     Optional. Additional Gazebo library dependencies for this example 
+#     This is in addition to things that the project library already depends on.
+#     For example: gz-utils2 gz-common5
+
 macro(gz_build_examples)
   #------------------------------------
   # Define the expected arguments
@@ -1992,6 +1996,45 @@ macro(gz_build_examples)
   set(BUILD_EXAMPLES_CMAKE "")
   set(BUILD_EXAMPLES_INCLUDES "")
 
+  get_target_property(PROJECT_LIBRARY_DEPS ${PROJECT_LIBRARY_TARGET_NAME} INTERFACE_LINK_LIBRARIES)
+
+  # Below here we are generating a series of arguments to the cmake command that is to follow.
+  # Since we may be building in a colcon workspace or otherwise isolated, we are passing
+  # in the resolved dependency directories via -Ddep_DIR=${dep_DIR}
+
+  # Always depends on on gz-cmake
+  list(APPEND BUILD_EXAMPLES_CMAKE "-Dgz-cmake${GZ_CMAKE_VER}_DIR=${gz-cmake${GZ_CMAKE_VER}_DIR}")
+
+  # Iterate through the project library dependencies and add them to the cmake args
+  foreach(PROJECT_LIBRARY_DEP ${PROJECT_LIBRARY_DEPS})
+    get_target_property(DEP_NAME ${PROJECT_LIBRARY_DEP} NAME)
+
+    string(REPLACE "::" ";" DEP_NAME ${DEP_NAME})
+    list(GET DEP_NAME 0 DEP_PACKAGE)
+    list(GET DEP_NAME 0 DEP_COMPONENT)
+    list(APPEND BUILD_EXAMPLES_CMAKE "-D${DEP_PACKAGE}_DIR=${${DEP_PACKAGE}_DIR}")
+
+    # For each dependency, also include the components that were requested
+    # at the find_package call to reduce verbosity in COMPONENTS arg
+    if (TARGET ${DEP}::requested)
+      get_target_property(REQUESTED_COMPONENTS ${DEP}::requested INTERFACE_LINK_LIBRARIES)
+
+      foreach(LINKLIB ${REQUESTED_COMPONENTS})
+        string(REGEX REPLACE "^${DEP}::" "" GZ_COMPONENT ${LINKLIB})
+
+        if (GZ_COMPONENT STREQUAL DEP)
+          continue()
+        endif()
+
+        list(APPEND BUILD_EXAMPLES_CMAKE "-D${GZ_COMPONENT}_DIR=${${GZ_COMPONENT}_DIR}")
+      endforeach()
+    endif()
+  endforeach()
+
+  # Iterate through additional dependencies, that is things that the project library 
+  # doesn't depend on, but are needed for the examples.
+  # While this opens up the possibility of using any gazebo packages as part of the 
+  # examples, care should be exercised to not introduce circular depdendencies.
   foreach(DEP ${gz_build_examples_DEPENDENCIES})
     list(APPEND BUILD_EXAMPLES_CMAKE "-D${DEP}_DIR=${${DEP}_DIR}")
 
