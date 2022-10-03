@@ -1855,7 +1855,7 @@ macro(ign_environment_hook export_type)
       file(APPEND ${CMAKE_CURRENT_SOURCE_DIR}/hooks/hook.dsv.in
       "prepend-non-duplicate;${variable_export_path}\n")
     endforeach()
-    file(WRITE ${CMAKE_CURRENT_SOURCE_DIR}/colcon.pkg "{\n  \"hooks\": [\"share/${CMAKE_PROJECT_NAME}/hooks/hook.dsv\"]\n}")
+    # file(WRITE ${CMAKE_CURRENT_SOURCE_DIR}/colcon.pkg "{\n  \"hooks\": [\"share/${CMAKE_PROJECT_NAME}/hooks/hook.dsv\"]\n}")
 
     configure_file(
       "hooks/hook.dsv.in"
