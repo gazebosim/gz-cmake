@@ -17,9 +17,14 @@
 
 include(CheckCXXSourceCompiles)
 
-set(IGN_SANITIZER ""
+set(GZ_SANITIZER ""
     CACHE STRING
     "Compile with a sanitizer. Options are: Address, Memory, MemoryWithOrigins, Undefined, Thread, Leak, 'Address;Undefined', CFI"
+)
+
+set(IGN_SANITIZER ""  # TODO(CH3): Deprecated. Remove on tock.
+  CACHE STRING
+  "Compile with a sanitizer. Options are: Address, Memory, MemoryWithOrigins, Undefined, Thread, Leak, 'Address;Undefined', CFI"
 )
 
 function(append value)
@@ -49,13 +54,17 @@ function(test_san_flags return_var flags)
   set(CMAKE_REQUIRED_QUIET "${QUIET_BACKUP}")
 endfunction()
 
-if(IGN_SANITIZER)
+if(NOT GZ_SANITIZER AND IGN_SANITIZER)  # TODO(CH3): Deprecated. Remove on tock.
+  set(GZ_SANITIZER ${IGN_SANITIZER})
+endif()
+
+if(GZ_SANITIZER)
   append("-fno-omit-frame-pointer" CMAKE_C_FLAGS CMAKE_CXX_FLAGS)
 
   unset(SANITIZER_SELECTED_FLAGS)
 
   if(UNIX)
-    if(IGN_SANITIZER MATCHES "([Aa]ddress)")
+    if(GZ_SANITIZER MATCHES "([Aa]ddress)")
       # Optional: -fno-optimize-sibling-calls -fsanitize-address-use-after-scope
       message(STATUS "Testing with Address sanitizer")
       set(SANITIZER_ADDR_FLAG "-fsanitize=address")
@@ -75,10 +84,10 @@ if(IGN_SANITIZER)
       endif()
     endif()
 
-    if(IGN_SANITIZER MATCHES "([Mm]emory([Ww]ith[Oo]rigins)?)")
+    if(GZ_SANITIZER MATCHES "([Mm]emory([Ww]ith[Oo]rigins)?)")
       # Optional: -fno-optimize-sibling-calls -fsanitize-memory-track-origins=2
       set(SANITIZER_MEM_FLAG "-fsanitize=memory")
-      if(IGN_SANITIZER MATCHES "([Mm]emory[Ww]ith[Oo]rigins)")
+      if(GZ_SANITIZER MATCHES "([Mm]emory[Ww]ith[Oo]rigins)")
         message(STATUS "Testing with MemoryWithOrigins sanitizer")
         append("-fsanitize-memory-track-origins" SANITIZER_MEM_FLAG)
       else()
@@ -86,7 +95,7 @@ if(IGN_SANITIZER)
       endif()
       test_san_flags(SANITIZER_MEM_AVAILABLE ${SANITIZER_MEM_FLAG})
       if(SANITIZER_MEM_AVAILABLE)
-        if(IGN_SANITIZER MATCHES "([Mm]emory[Ww]ith[Oo]rigins)")
+        if(GZ_SANITIZER MATCHES "([Mm]emory[Ww]ith[Oo]rigins)")
           message(STATUS "  Building with MemoryWithOrigins sanitizer")
         else()
           message(STATUS "  Building with Memory sanitizer")
@@ -105,7 +114,7 @@ if(IGN_SANITIZER)
       endif()
     endif()
 
-    if(IGN_SANITIZER MATCHES "([Uu]ndefined)")
+    if(GZ_SANITIZER MATCHES "([Uu]ndefined)")
       message(STATUS "Testing with Undefined Behaviour sanitizer")
       set(SANITIZER_UB_FLAG "-fsanitize=undefined")
       if(EXISTS "${BLACKLIST_FILE}")
@@ -128,7 +137,7 @@ if(IGN_SANITIZER)
       endif()
     endif()
 
-    if(IGN_SANITIZER MATCHES "([Tt]hread)")
+    if(GZ_SANITIZER MATCHES "([Tt]hread)")
       message(STATUS "Testing with Thread sanitizer")
       set(SANITIZER_THREAD_FLAG "-fsanitize=thread")
       test_san_flags(SANITIZER_THREAD_AVAILABLE ${SANITIZER_THREAD_FLAG})
@@ -147,7 +156,7 @@ if(IGN_SANITIZER)
       endif()
     endif()
 
-    if(IGN_SANITIZER MATCHES "([Ll]eak)")
+    if(GZ_SANITIZER MATCHES "([Ll]eak)")
       message(STATUS "Testing with Leak sanitizer")
       set(SANITIZER_LEAK_FLAG "-fsanitize=leak")
       test_san_flags(SANITIZER_LEAK_AVAILABLE ${SANITIZER_LEAK_FLAG})
@@ -166,7 +175,7 @@ if(IGN_SANITIZER)
       endif()
     endif()
 
-    if(IGN_SANITIZER MATCHES "([Cc][Ff][Ii])")
+    if(GZ_SANITIZER MATCHES "([Cc][Ff][Ii])")
       message(STATUS "Testing with Control Flow Integrity(CFI) sanitizer")
       set(SANITIZER_CFI_FLAG "-fsanitize=cfi")
       test_san_flags(SANITIZER_CFI_AVAILABLE ${SANITIZER_CFI_FLAG})
@@ -197,7 +206,7 @@ if(IGN_SANITIZER)
           " Sanitizer flags ${SANITIZER_SELECTED_FLAGS} are not compatible.")
     endif()
   elseif(MSVC)
-    if(IGN_SANITIZER MATCHES "([Aa]ddress)")
+    if(GZ_SANITIZER MATCHES "([Aa]ddress)")
       message(STATUS "Building with Address sanitizer")
       append("-fsanitize=address" CMAKE_C_FLAGS CMAKE_CXX_FLAGS)
 
@@ -208,11 +217,11 @@ if(IGN_SANITIZER)
     else()
       message(
         FATAL_ERROR
-          "This sanitizer not yet supported in the MSVC environment: ${IGN_SANITIZER}"
+          "This sanitizer not yet supported in the MSVC environment: ${GZ_SANITIZER}"
       )
     endif()
   else()
-    message(FATAL_ERROR "IGN_SANITIZER is not supported on this platform.")
+    message(FATAL_ERROR "GZ_SANITIZER is not supported on this platform.")
   endif()
 
 endif()
