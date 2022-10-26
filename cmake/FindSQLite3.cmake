@@ -59,5 +59,6 @@ endif()
 
 # Workaround for https://github.com/gazebosim/gz-cmake/issues/312
 if(TARGET SQLite3::SQLite3 AND NOT TARGET SQLite::SQLite3)
-  add_library(SQLite::SQLite3 ALIAS SQLite3::SQLite3)
+  add_library(SQLite::SQLite3 INTERFACE)
+  target_link_libraries(SQLite::SQLite3 INTERFACE SQLite3::SQLite3)
 endif()
