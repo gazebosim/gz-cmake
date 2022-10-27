@@ -20,7 +20,7 @@ include(GzCMake)
 
 #--------------------------------------
 # Set up the project
-gz_configure_project(VERSION_SUFFIX pre1)
+gz_configure_project(VERSION_SUFFIX)
 
 #--------------------------------------
 # Set project-specific options
@@ -60,7 +60,7 @@ set(gz_version_output "${PROJECT_NAME_LOWER}-config-version.cmake")
 set(gz_config_install_dir "${CMAKE_INSTALL_DATAROOTDIR}/cmake/${PROJECT_NAME_LOWER}")
 set(gz_pkgconfig_input "${CMAKE_CURRENT_SOURCE_DIR}/config/gz-cmake.pc.in")
 set(gz_pkgconfig_output "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.pc")
-set(gz_pkgconfig_install_dir "${GZ_LIB_INSTALL_DIR}/pkgconfig")
+set(gz_pkgconfig_install_dir "${CMAKE_INSTALL_FULL_LIBDIR}/pkgconfig")
 set(gz_utilities_target ${PROJECT_EXPORT_NAME}-utilities)
 set(gz_utilities_import_target_name ${PROJECT_EXPORT_NAME}::${gz_utilities_target})
 set(gz_utilities_target_output_filename "${gz_utilities_target}-targets.cmake")
@@ -93,9 +93,17 @@ install(
 # Configure and install the pkgconfig file (needed for utilities headers)
 file(RELATIVE_PATH
   GZ_PC_CONFIG_RELATIVE_PATH_TO_PREFIX
-  "${CMAKE_INSTALL_PREFIX}/${gz_pkgconfig_install_dir}"
+  "${gz_pkgconfig_install_dir}"
   "${CMAKE_INSTALL_PREFIX}"
 )
+
+# TODO(jrivero): CMake 3.20 provides cmake_path(APPEND) which implements the
+# same functionality as join_paths(). Remove JoinPaths in the next major version
+# if all the supported platforms are in 3.20 version.
+include(JoinPaths)
+join_paths(GZ_PC_LIBDIR "\${prefix}" "${CMAKE_INSTALL_LIBDIR}")
+join_paths(GZ_PC_INCLUDEDIR "\${prefix}" "${CMAKE_INSTALL_INCLUDEDIR}" "${GZ_INCLUDE_INSTALL_DIR_POSTFIX}")
+
 configure_file(${gz_pkgconfig_input} ${gz_pkgconfig_output} @ONLY)
 
 install(
