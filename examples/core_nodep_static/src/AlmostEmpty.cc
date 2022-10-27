@@ -17,7 +17,7 @@
 
 #include <ignition/core_no_deps_static/Export.hh>
 
-namespace ignition
+namespace gz
 {
   namespace core_no_deps
   {

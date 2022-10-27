@@ -1,7 +1,7 @@
 
 #################################################
 # ign_find_package(<PACKAGE_NAME>
-#                  [REQUIRED] [PRIVATE] [EXACT] [QUIET] [BUILD_ONLY] [PKGCONFIG_IGNORE]
+#                  [REQUIRED] [PRIVATE] [EXACT] [QUIET] [CONFIG] [BUILD_ONLY] [PKGCONFIG_IGNORE]
 #                  [COMPONENTS <components_of_PACKAGE_NAME>]
 #                  [OPTIONAL_COMPONENTS <components_of_PACKAGE_NAME>]
 #                  [REQUIRED_BY <components_of_project>]
@@ -49,6 +49,10 @@
 #          find_package(~) command. This macro will still print its normal
 #          output, except there will be no warning if the package is missing,
 #          unless REQUIRED or REQUIRED_BY is specified.
+#
+# [CONFIG]: Optional. If provided, it will be passed forward to cmake's
+#          find_package(~) command. This will trigger Config mode search rather than
+#          Module mode.
 #
 # [BUILD_ONLY]: Optional. Use this to indicate that the project only needs this
 #               package while building, and it does not need to be available to
@@ -138,7 +142,7 @@ macro(ign_find_package PACKAGE_NAME)
 
   #------------------------------------
   # Define the expected arguments
-  set(options REQUIRED PRIVATE EXACT QUIET BUILD_ONLY PKGCONFIG_IGNORE)
+  set(options REQUIRED PRIVATE EXACT QUIET CONFIG BUILD_ONLY PKGCONFIG_IGNORE)
   set(oneValueArgs VERSION PRETTY PURPOSE EXTRA_ARGS PKGCONFIG PKGCONFIG_LIB PKGCONFIG_VER_COMPARISON)
   set(multiValueArgs REQUIRED_BY PRIVATE_FOR COMPONENTS OPTIONAL_COMPONENTS)
 
@@ -160,6 +164,10 @@ macro(ign_find_package PACKAGE_NAME)
 
   if(ign_find_package_EXACT)
     list(APPEND ${PACKAGE_NAME}_find_package_args EXACT)
+  endif()
+
+  if(ign_find_package_CONFIG)
+    list(APPEND ${PACKAGE_NAME}_find_package_args CONFIG)
   endif()
 
   if(ign_find_package_COMPONENTS)
@@ -275,6 +283,11 @@ macro(ign_find_package PACKAGE_NAME)
       ign_string_append(${PACKAGE_NAME}_dependency_args EXACT)
     endif()
 
+    # If we have specified to use CONFIG mode, we should provide that as well.
+    if(ign_find_package_CONFIG)
+      ign_string_append(${PACKAGE_NAME}_dependency_args CONFIG)
+    endif()
+
     # NOTE (MXG): 7 seems to be the number of escapes required to get
     # "${ign_package_required}" and "${ign_package_quiet}" to show up correctly
     # as strings in the final config-file outputs. It is unclear to me why the
@@ -383,7 +396,7 @@ macro(ign_find_package PACKAGE_NAME)
         # ignition-<project>.pc file. This is probably an oversight in our build
         # system scripts, so we will emit a warning about this.
         message(AUTHOR_WARNING
-          " -- THIS MESSAGE IS INTENDED FOR IGNITION-${IGN_DESIGNATION_UPPER} AUTHORS --\n"
+          " -- THIS MESSAGE IS INTENDED FOR IGNITION-${GZ_DESIGNATION_UPPER} AUTHORS --\n"
           "    (IF YOU SEE THIS, PLEASE REPORT IT)\n"
           "Could not find pkg-config information for ${PACKAGE_NAME}. "
           "It was not provided by the find-module for the package, nor was it "
@@ -600,7 +613,7 @@ endfunction()
 # additional suffix (like .old or .backup) to prevent a file from being included.
 #
 # GENERATED_HEADERS should be generated headers which should be included by
-# ${IGN_DESIGNATION}.hh. This will only add them to the header, it will not
+# ${GZ_DESIGNATION}.hh. This will only add them to the header, it will not
 # generate or install them.
 #
 # This will also run configure_file on ign_auto_headers.hh.in and config.hh.in
@@ -721,7 +734,7 @@ function(ign_install_all_headers)
 
     # Define the input/output of the configuration for the core "master" header
     set(master_header_in ${IGNITION_CMAKE_DIR}/ign_auto_headers.hh.in)
-    set(master_header_out ${CMAKE_CURRENT_BINARY_DIR}/../${IGN_DESIGNATION}.hh)
+    set(master_header_out ${CMAKE_CURRENT_BINARY_DIR}/../${GZ_DESIGNATION}.hh)
 
   endif()
 
@@ -942,7 +955,7 @@ function(ign_create_core_library)
   _ign_add_library_or_component(
     LIB_NAME ${PROJECT_LIBRARY_TARGET_NAME}
     INCLUDE_DIR "${PROJECT_INCLUDE_DIR}"
-    EXPORT_BASE IGNITION_${IGN_DESIGNATION_UPPER}
+    EXPORT_BASE IGNITION_${GZ_DESIGNATION_UPPER}
     SOURCES ${sources}
     ${interface_option})
 
@@ -1126,7 +1139,7 @@ function(ign_add_component component_name)
   _ign_add_library_or_component(
     LIB_NAME ${component_target_name}
     INCLUDE_DIR "${PROJECT_INCLUDE_DIR}/${include_subdir}"
-    EXPORT_BASE IGNITION_${IGN_DESIGNATION_UPPER}_${component_name_upper}
+    EXPORT_BASE IGNITION_${GZ_DESIGNATION_UPPER}_${component_name_upper}
     SOURCES ${sources}
     ${interface_option})
 
