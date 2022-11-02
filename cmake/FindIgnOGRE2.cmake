@@ -141,6 +141,7 @@ macro(get_preprocessor_entry CONTENTS KEYWORD VARIABLE)
 endmacro()
 
 if (NOT WIN32)
+  set(PKG_CONFIG_PATH_ORIGINAL $ENV{PKG_CONFIG_PATH})
   foreach (IGN_OGRE2_PROJECT_NAME "OGRE2" "OGRE-Next")
     message(STATUS "Looking for OGRE using the name: ${IGN_OGRE2_PROJECT_NAME}")
     if (IGN_OGRE2_PROJECT_NAME STREQUAL "OGRE2")
@@ -151,7 +152,6 @@ if (NOT WIN32)
       set(OGRE2LIBNAME "OgreNext")
     endif()
 
-    set(PKG_CONFIG_PATH_ORIGINAL $ENV{PKG_CONFIG_PATH})
     # Note: OGRE2 installed from debs is named OGRE-2.2 while the version
     # installed from source does not have the 2.2 suffix
     # look for OGRE2 installed from debs
@@ -210,6 +210,10 @@ if (NOT WIN32)
 
     if (NOT OGRE2_FOUND)
       message(STATUS "  ! ${IGN_OGRE2_PROJECT_NAME} not found")
+
+      # reset pkg config path
+      set(ENV{PKG_CONFIG_PATH} ${PKG_CONFIG_PATH_ORIGINAL})
+
       continue()
     endif()
 
