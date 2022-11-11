@@ -2,6 +2,9 @@
 
 ### Gazebo CMake 3.0.1 (2022-10-11)
 
+1. 1. FindIgnOGRE2: preserve PKG_CONFIG_PATH
+    * [Pull request #319](https://github.com/gazebosim/ign-cmake/pull/319)
+
 1. FindSQLite3: Add SQLite::SQLite3 ALIAS
     * [Pull request #313](https://github.com/gazebosim/gz-cmake/pull/313)
 
