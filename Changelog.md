@@ -1,5 +1,19 @@
 ## Gazebo CMake 3.x
 
+### Gazebo CMake 3.0.1 (2022-10-11)
+
+1. FindSQLite3: Add SQLite::SQLite3 ALIAS
+    * [Pull request #313](https://github.com/gazebosim/gz-cmake/pull/313)
+
+1. FindUUID: Do not wrap LIBRARY_NAMES argument with quotes
+    * [Pull request #315](https://github.com/gazebosim/gz-cmake/pull/315)
+
+1. Disable source tooltips
+    * [Pull request #314](https://github.com/gazebosim/gz-cmake/pull/314)
+
+1. Don't assume `CMAKE_INSTALL_*DIR` variables are relative
+    * [Pull request #305](https://github.com/gazebosim/gz-cmake/pull/305)
+
 ### Gazebo CMake 3.0.0 (2022-09-23)
 
 1. CMake macro to find the assimp library
