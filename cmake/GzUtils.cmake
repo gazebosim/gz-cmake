@@ -2007,6 +2007,10 @@ macro(gz_build_examples)
 
   # Iterate through the project library dependencies and add them to the cmake args
   foreach(PROJECT_LIBRARY_DEP ${PROJECT_LIBRARY_DEPS})
+    if (NOT TARGET ${PROJECT_LIBRARY_DEP})
+      continue()
+    endif()
+
     get_target_property(DEP_NAME ${PROJECT_LIBRARY_DEP} NAME)
 
     string(REPLACE "::" ";" DEP_NAME ${DEP_NAME})
@@ -2031,9 +2035,9 @@ macro(gz_build_examples)
     endif()
   endforeach()
 
-  # Iterate through additional dependencies, that is things that the project library 
+  # Iterate through additional dependencies, that is things that the project library
   # doesn't depend on, but are needed for the examples.
-  # While this opens up the possibility of using any gazebo packages as part of the 
+  # While this opens up the possibility of using any gazebo packages as part of the
   # examples, care should be exercised to not introduce circular depdendencies.
   foreach(DEP ${gz_build_examples_DEPENDENCIES})
     list(APPEND BUILD_EXAMPLES_CMAKE "-D${DEP}_DIR=${${DEP}_DIR}")
@@ -2082,6 +2086,10 @@ macro(gz_build_examples)
     NAME EXAMPLES_Configure_TEST
     COMMAND ${CMAKE_COMMAND} -G${CMAKE_GENERATOR}
                              -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+                             -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+                             -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
+                             -DCMAKE_C_FLAGS=${CMAKE_C_FLAGS}
+                             -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
                              -S ${gz_build_examples_SOURCE_DIR}
                              -B ${gz_build_examples_BINARY_DIR}
                              ${BUILD_EXAMPLES_CMAKE}
