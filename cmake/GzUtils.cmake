@@ -1948,11 +1948,10 @@ endmacro()
 # gz_build_examples(
 #     SOURCE_DIR <source_dir>
 #     BINARY_DIR <binary_dir>
-#     [COMPONENTS <project_component_dependencies>]
 #     [DEPENDENCIES <project_dependencies>]
 #
 # Requires a CMakeLists.txt file to be in SOURCE_DIR that acts
-# Build examples for a Gazebo project. 
+# Build examples for a Gazebo project.
 # as a top level project.
 #
 # This generates two test targets
@@ -1973,12 +1972,8 @@ endmacro()
 # BINARY_DIR: Required. Path to the output binary folder
 #             For example ${CMAKE_CURRENT_BINARY_DIR}/examples
 #
-# COMPONENTS: 
-#     Optional. List of components built by this project that are used in the examples.
-#     For example "cli" for gz-utils
-#
-# DEPENDENCIES: 
-#     Optional. Additional Gazebo library dependencies for this example 
+# DEPENDENCIES:
+#     Optional. Additional Gazebo library dependencies for this example
 #     This is in addition to things that the project library already depends on.
 #     For example: gz-utils2 gz-common5
 
@@ -1987,7 +1982,7 @@ macro(gz_build_examples)
   # Define the expected arguments
   set(options)
   set(oneValueArgs SOURCE_DIR BINARY_DIR)
-  set(multiValueArgs COMPONENTS DEPENDENCIES)
+  set(multiValueArgs DEPENDENCIES)
 
   #------------------------------------
   # Parse the arguments
@@ -2020,6 +2015,7 @@ macro(gz_build_examples)
 
     # For each dependency, also include the components that were requested
     # at the find_package call to reduce verbosity in COMPONENTS arg
+
     if (TARGET ${DEP}::requested)
       get_target_property(REQUESTED_COMPONENTS ${DEP}::requested INTERFACE_LINK_LIBRARIES)
 
@@ -2062,8 +2058,7 @@ macro(gz_build_examples)
   # Add root project CMake directory
   list(APPEND BUILD_EXAMPLES_CMAKE "-D${PROJECT_NAME}_DIR=${PROJECT_BINARY_DIR}/cmake")
 
-  # Add project component CMake directories
-  foreach (COMPONENT ${gz_build_examples_COMPONENTS})
+  foreach (COMPONENT ${gz_configure_build_COMPONENTS})
     list(APPEND BUILD_EXAMPLES_CMAKE "-D${PROJECT_NAME}-${COMPONENT}_DIR=${PROJECT_BINARY_DIR}/cmake")
   endforeach()
 
@@ -2072,10 +2067,8 @@ macro(gz_build_examples)
   list(APPEND BUILD_EXAMPLES_INCLUDES ${core_INCLUDES} )
 
   # Get component library includes
-  foreach (COMPONENT ${gz_build_examples_COMPONENTS})
+  foreach (COMPONENT ${gz_configure_build_COMPONENTS})
     get_target_property(component_INCLUDES ${PROJECT_LIBRARY_TARGET_NAME}-${COMPONENT} INTERFACE_INCLUDE_DIRECTORIES)
-
-    message(STATUS "${COMPONENT}_INCLUDES = ${component_INCLUDES}")
     list(APPEND BUILD_EXAMPLES_INCLUDES ${component_INCLUDES} )
   endforeach()
 
@@ -2085,6 +2078,7 @@ macro(gz_build_examples)
   add_test(
     NAME EXAMPLES_Configure_TEST
     COMMAND ${CMAKE_COMMAND} -G${CMAKE_GENERATOR}
+                             --no-warn-unused-cli
                              -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
                              -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
                              -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
