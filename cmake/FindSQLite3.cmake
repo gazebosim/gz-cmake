@@ -23,6 +23,8 @@
 # Variables defined by this module:
 #
 # SQLite3::SQLite3          Imported target for sqlite3
+# SQLite::SQLite3           Imported target for sqlite3, for
+#                           compatibility with upstream CMake
 # SQLite3_FOUND             System has sqlite3 library and headers
 
 if(SQLite3_FIND_VERSION)
@@ -53,4 +55,11 @@ if(MSVC)
 
   gz_import_target(SQLite3)
 
+endif()
+
+# Workaround for https://github.com/gazebosim/gz-cmake/issues/312
+if(TARGET SQLite3::SQLite3 AND NOT TARGET SQLite::SQLite3)
+  add_library(SQLite::SQLite3 INTERFACE IMPORTED)
+  # Equivalent to target_link_libraries INTERFACE, but compatible with CMake 3.10
+  set_target_properties(SQLite::SQLite3 PROPERTIES INTERFACE_LINK_LIBRARIES SQLite3::SQLite3)
 endif()
