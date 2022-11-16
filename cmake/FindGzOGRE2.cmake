@@ -56,13 +56,20 @@
 #                     COMPONENTS HlmsPbs HlmsUnlit Overlay)
 
 
+if(NOT (GzOGRE2_FIND_VERSION_MAJOR AND GzOGRE2_FIND_VERSION_MINOR))
+  message(WARNING 
+    "find_package(GzOGRE2) must be called with a VERSION argument with a minimum of major and minor version")
+  set(OGRE2_FOUND false)
+  return()
+endif()
+
 # Sanity check: exclude OGRE1 project releasing versions in two ways:
 #  - Legacy in from using 1.x.y until 1.12.y series
 #  - Modern versions using X.Y.Z starting with 13.y.z
 # Reduce valid versions to 2.x series
 if (${GzOGRE2_FIND_VERSION_MAJOR})
   if (${GzOGRE2_FIND_VERSION_MAJOR} VERSION_LESS "2" OR
-  ${GzOGRE2_FIND_VERSION_MAJOR} VERSION_GREATER_EQUAL "3")
+      ${GzOGRE2_FIND_VERSION_MAJOR} VERSION_GREATER_EQUAL "3")
     set (OGRE2_FOUND false)
     return()
   endif()
@@ -141,6 +148,7 @@ macro(get_preprocessor_entry CONTENTS KEYWORD VARIABLE)
 endmacro()
 
 if (NOT WIN32)
+  set(PKG_CONFIG_PATH_ORIGINAL $ENV{PKG_CONFIG_PATH})
   foreach (GZ_OGRE2_PROJECT_NAME "OGRE2" "OGRE-Next")
     message(STATUS "Looking for OGRE using the name: ${GZ_OGRE2_PROJECT_NAME}")
     if (GZ_OGRE2_PROJECT_NAME STREQUAL "OGRE2")
@@ -159,7 +167,6 @@ if (NOT WIN32)
       set(OGRE2LIBNAME "OgreNext")
     endif()
 
-    set(PKG_CONFIG_PATH_ORIGINAL $ENV{PKG_CONFIG_PATH})
     # Note: OGRE2 installed from debs is named OGRE-2.2 while the version
     # installed from source does not have the 2.2 suffix
     # look for OGRE2 installed from debs
@@ -218,6 +225,10 @@ if (NOT WIN32)
 
     if (NOT OGRE2_FOUND)
       message(STATUS "  ! ${GZ_OGRE2_PROJECT_NAME} not found")
+
+      # reset pkg config path
+      set(ENV{PKG_CONFIG_PATH} ${PKG_CONFIG_PATH_ORIGINAL})
+
       continue()
     endif()
 
@@ -268,6 +279,29 @@ if (NOT WIN32)
     get_preprocessor_entry(OGRE_TEMP_VERSION_CONTENT OGRE_VERSION_NAME OGRE2_VERSION_NAME)
     set(OGRE2_VERSION "${OGRE2_VERSION_MAJOR}.${OGRE2_VERSION_MINOR}.${OGRE2_VERSION_PATCH}")
 
+    set(GzOGRE2_VERSION_EXACT FALSE)
+    set(GzOGRE2_VERSION_COMPATIBLE FALSE)
+
+    if (NOT ("${OGRE2_VERSION_MAJOR}" EQUAL "${GzOGRE2_FIND_VERSION_MAJOR}"))
+      set(OGRE2_FOUND FALSE)
+      continue()
+    endif()
+
+    if (NOT ("${OGRE2_VERSION_MINOR}" EQUAL "${GzOGRE2_FIND_VERSION_MINOR}"))
+      message(STATUS "  ! ${GZ_OGRE2_PROJECT_NAME} found with incompatible version ${OGRE2_VERSION}")
+      set(OGRE2_FOUND FALSE)
+      continue()
+    endif()
+
+    if ("${OGRE2_VERSION}" VERSION_EQUAL "${GzOGRE2_FIND_VERSION}")
+      set(GzOGRE2_VERSION_EXACT TRUE)
+      set(GzOGRE2_VERSION_COMPATIBLE TRUE)
+    endif()
+
+    if ("${OGRE2_VERSION}" VERSION_GREATER "${GzOGRE2_FIND_VERSION}")
+      set(GzOGRE2_VERSION_COMPATIBLE TRUE)
+    endif()
+
     # find ogre components
     include(GzImportTarget)
     foreach(component ${GzOGRE2_FIND_COMPONENTS})
@@ -308,9 +342,9 @@ if (NOT WIN32)
             LIB_VAR component_LIBRARIES
             INCLUDE_VAR component_INCLUDE_DIRS)
 
-          # Forward the link directories to be used by RPath
+        # Forward the link directories to be used by RPath
         set_property(
-          TARGET ${component_TARGET_NAME} 
+          TARGET ${component_TARGET_NAME}
           PROPERTY INTERFACE_LINK_DIRECTORIES
           ${OGRE2_LIBRARY_DIRS}
         )
@@ -530,6 +564,14 @@ if (OGRE2_FOUND)
     PROPERTY INTERFACE_LINK_DIRECTORIES
     ${OGRE2_LIBRARY_DIRS}
   )
+else()
+  # Unset variables so that we don't leak incorrect versions
+  set(OGRE2_VERSION "")
+  set(OGRE2_VERSION_MAJOR "")
+  set(OGRE2_VERSION_MINOR "")
+  set(OGRE2_VERSION_PATCH "")
+  set(OGRE2_LIBRARIES "")
+  set(OGRE2_INCLUDE_DIRS "")
 endif()
 
 set(IgnOGRE2_FOUND ${GzOGRE2_FOUND})  # TODO(CH3): Deprecated. Remove on tock.
