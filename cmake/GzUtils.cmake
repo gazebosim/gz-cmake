@@ -1801,7 +1801,8 @@ endmacro()
 #                 SOURCES <sources>
 #                 [LIB_DEPS <library_dependencies>]
 #                 [INCLUDE_DIRS <include_dependencies>]
-#                 [TEST_LIST <output_var>])
+#                 [TEST_LIST <output_var>]
+#                 [ENVIRONMENT <environment>])
 #
 # Build tests for a Gazebo project. Arguments are as follows:
 #
@@ -1826,6 +1827,8 @@ endmacro()
 #                      will also skip the step of copying the runtime library
 #                      into your executable's directory.
 #
+# ENVIRONMENT: Optional. Used to set the ENVIRONMENT property of the tests.
+#
 macro(ign_build_tests)
   # TODO(chapulina) Enable warnings after all libraries have migrated.
   # message(WARNING "ign_build_tests is deprecated, use gz_build_tests instead.")
@@ -1846,7 +1849,7 @@ macro(gz_build_tests)
     # Define the expected arguments
     set(options SOURCE EXCLUDE_PROJECT_LIB) # NOTE: DO NOT USE "SOURCE", we're adding it here to catch typos
     set(oneValueArgs TYPE TEST_LIST)
-    set(multiValueArgs SOURCES LIB_DEPS INCLUDE_DIRS)
+    set(multiValueArgs SOURCES LIB_DEPS INCLUDE_DIRS ENVIRONMENT)
 
     #------------------------------------
     # Parse the arguments
@@ -1918,6 +1921,10 @@ macro(gz_build_tests)
       add_test(NAME ${target_name} COMMAND
         ${target_name} --gtest_output=xml:${CMAKE_BINARY_DIR}/test_results/${target_name}.xml)
 
+      if(gz_build_tests_ENVIRONMENT)
+        set_property(TEST ${target_name} PROPERTY ENVIRONMENT ${gz_build_tests_ENVIRONMENT})
+      endif()
+
       if(UNIX)
         # gtest requies pthread when compiled on a Unix machine
         target_link_libraries(${target_name} pthread)
@@ -1969,5 +1976,172 @@ macro(_gz_cmake_parse_arguments prefix options oneValueArgs multiValueArgs)
       "The version of gz-cmake currently being used is ${gz-cmake${GZ_CMAKE_VERSION_MAJOR}_VERSION}\n")
 
   endif()
+
+endmacro()
+
+#################################################
+# gz_add_get_install_prefix_impl(GET_INSTALL_PREFIX_FUNCTION <get_install_prefix_function>
+#                                GET_INSTALL_PREFIX_HEADER <get_install_prefix_function>
+#                                OVERRIDE_INSTALL_PREFIX_ENV_VARIABLE <override_install_prefix_env_variable>)
+#
+# This macro adds to ${PROJECT_LIBRARY_TARGET_NAME} the implementation of
+# of the function passed by GET_INSTALL_PREFIX_FUNCTION and declared in
+# GET_INSTALL_PREFIX_HEADER .
+#
+# The defined functions implements a GET_INSTALL_PREFIX_FUNCTION that returns
+# the installation directory of the package (CMAKE_INSTALL_PREFIX at build time)
+# as following:
+# * if the library is shared and GZ_ENABLE_RELOCATABLE_INSTALL is ON, by extracting the
+#   location of the shared library via dladdr, and computing the corresponding
+#   install prefix from it
+# * if the library is static or GZ_ENABLE_RELOCATABLE_INSTALL is OFF, by using the exact
+#   value of CMAKE_INSTALL_PREFIX that was hardcoded in the library at compilation time
+#
+# As in some cases it is important to have the ability to control and change the value returned by
+# the GET_INSTALL_PREFIX_FUNCTION at runtime, in both cases the library returns the value of
+# the OVERRIDE_INSTALL_PREFIX_ENV_VARIABLE if the environment variable is defined
+#
+# To use this macro, please add gz_find_package(DL)
+# in the dependencies of your project
+macro(gz_add_get_install_prefix_impl)
+  set(_options)
+  set(_oneValueArgs
+    GET_INSTALL_PREFIX_FUNCTION
+    GET_INSTALL_PREFIX_HEADER
+    OVERRIDE_INSTALL_PREFIX_ENV_VARIABLE
+  )
+  set(_multiValueArgs )
+  cmake_parse_arguments(gz_add_get_install_prefix_impl "${_options}" "${_oneValueArgs}" "${_multiValueArgs}" ${ARGN})
+
+  if(NOT DEFINED gz_add_get_install_prefix_impl_GET_INSTALL_PREFIX_FUNCTION)
+    message(FATAL_ERROR
+      "gz_add_get_install_prefix_impl: missing parameter GET_INSTALL_PREFIX_FUNCTION")
+  endif()
+
+  if(NOT DEFINED gz_add_get_install_prefix_impl_GET_INSTALL_PREFIX_HEADER)
+    message(FATAL_ERROR
+      "gz_add_get_install_prefix_impl: missing parameter GET_INSTALL_PREFIX_HEADER")
+  endif()
+
+  if(NOT DEFINED gz_add_get_install_prefix_impl_OVERRIDE_INSTALL_PREFIX_ENV_VARIABLE)
+    message(FATAL_ERROR
+      "gz_add_get_install_prefix_impl: missing parameter OVERRIDE_INSTALL_PREFIX_ENV_VARIABLE")
+  endif()
+
+
+  if(NOT TARGET ${PROJECT_LIBRARY_TARGET_NAME})
+    message(FATAL_ERROR
+      "Target ${PROJECT_LIBRARY_TARGET_NAME} required by gz_add_get_install_prefix_impl\n"
+      "does not exist.")
+  endif()
+
+  if(NOT TARGET ${DL_TARGET})
+    message(FATAL_ERROR
+      "gz_add_get_install_prefix_impl called without DL_TARGET defined,\n"
+      "please add gz_find_package(DL) if you want to use gz_add_get_install_prefix_impl.")
+  endif()
+
+  get_target_property(target_type ${PROJECT_LIBRARY_TARGET_NAME} TYPE)
+  if(NOT (target_type STREQUAL "STATIC_LIBRARY" OR target_type STREQUAL "MODULE_LIBRARY" OR target_type STREQUAL "SHARED_LIBRARY"))
+    message(FATAL_ERROR "gz_add_get_install_prefix_impl: library ${_library} is of unsupported type ${target_type}")
+  endif()
+
+
+  set(gz_add_get_install_prefix_impl_GENERATED_CPP
+        ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_LIBRARY_TARGET_NAME}_get_install_prefix_impl.cc)
+
+  # Write cpp for shared or module library type
+  option(GZ_ENABLE_RELOCATABLE_INSTALL "If ON, enable the feature of providing a relocatable install prefix in shared library." OFF)
+  if ((target_type STREQUAL "MODULE_LIBRARY" OR target_type STREQUAL "SHARED_LIBRARY") AND GZ_ENABLE_RELOCATABLE_INSTALL)
+    # We can't query the LOCATION property of the target due to https://cmake.org/cmake/help/v3.25/policy/CMP0026.html
+    # We can only access the directory of the library at generation time via $<TARGET_FILE_DIR:tgt>
+    file(GENERATE OUTPUT "${gz_add_get_install_prefix_impl_GENERATED_CPP}"
+         CONTENT
+"// This file is automatically generated by the gz_add_get_install_prefix_impl CMake macro.
+
+#include <cstdlib>
+#include <filesystem>
+#include <string>
+#include <system_error>
+
+#include <dlfcn.h>
+
+#include <${gz_add_get_install_prefix_impl_GET_INSTALL_PREFIX_HEADER}>
+
+std::string ${gz_add_get_install_prefix_impl_GET_INSTALL_PREFIX_FUNCTION}()
+{
+  if(const char* override_env_var = std::getenv(\"${gz_add_get_install_prefix_impl_OVERRIDE_INSTALL_PREFIX_ENV_VARIABLE}\"))
+  {
+    return std::string(override_env_var);
+  }
+
+  std::error_code fs_error;
+  std::filesystem::path library_location;
+
+  // Get location of the library
+  Dl_info address_info;
+  int res_val = dladdr(reinterpret_cast<void *>(&${gz_add_get_install_prefix_impl_GET_INSTALL_PREFIX_FUNCTION}), &address_info);
+  if (address_info.dli_fname && res_val > 0)
+  {
+    library_location = address_info.dli_fname;
+  }
+  else
+  {
+    return \"${CMAKE_INSTALL_PREFIX}\";
+  }
+
+  const std::filesystem::path library_directory = library_location.parent_path();
+  // Given the library_directory, return the install prefix via the relative path
+#ifndef _WIN32
+  const std::filesystem::path rel_path_from_install_prefix_to_lib = std::string(\"${CMAKE_INSTALL_LIBDIR}\");
+#else
+  const std::filesystem::path rel_path_from_install_prefix_to_lib = std::string(\"${CMAKE_INSTALL_BINDIR}\");
+#endif
+  const std::filesystem::path rel_path_from_lib_to_install_prefix =
+    std::filesystem::relative(std::filesystem::current_path(), std::filesystem::current_path() / rel_path_from_install_prefix_to_lib, fs_error);
+
+  if (fs_error)
+  {
+    return \"${CMAKE_INSTALL_PREFIX}\";
+  }
+
+  const std::filesystem::path install_prefix = library_directory / rel_path_from_lib_to_install_prefix;
+  const std::filesystem::path install_prefix_canonical = std::filesystem::canonical(install_prefix, fs_error);
+
+  if (fs_error)
+  {
+    return \"${CMAKE_INSTALL_PREFIX}\";
+  }
+
+  // Return install prefix
+  return install_prefix_canonical.string();
+}
+")
+  else()
+    # For static library, fallback to just provide return CMAKE_INSTALL_PREFIX
+    file(GENERATE OUTPUT "${gz_add_get_install_prefix_impl_GENERATED_CPP}"
+         CONTENT
+"// This file is automatically generated by the gz_add_get_install_prefix_impl CMake macro.
+#include <string>
+
+#include <${gz_add_get_install_prefix_impl_GET_INSTALL_PREFIX_HEADER}>
+
+std::string ${gz_add_get_install_prefix_impl_GET_INSTALL_PREFIX_FUNCTION}()
+{
+  if(const char* override_env_var = std::getenv(\"${gz_add_get_install_prefix_impl_OVERRIDE_INSTALL_PREFIX_ENV_VARIABLE}\"))
+  {
+    return std::string(override_env_var);
+  }
+
+  return \"${CMAKE_INSTALL_PREFIX}\";
+}
+")
+endif()
+
+  # Add cpp to library
+  target_sources(${PROJECT_LIBRARY_TARGET_NAME} PRIVATE ${gz_add_get_install_prefix_impl_GENERATED_CPP})
+
+  # Link DL_TARGET that provides dladdr
+  target_link_libraries(${PROJECT_LIBRARY_TARGET_NAME} PRIVATE ${DL_TARGET})
 
 endmacro()
