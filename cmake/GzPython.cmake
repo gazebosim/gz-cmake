@@ -18,10 +18,10 @@ if(${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.19")
   set(IGN_PYTHON_VERSION ${GZ_PYTHON_VERSION} CACHE STRING  # TODO(CH3): Deprecated. Remove on tock.
     "Deprecated. Use [GZ_PYTHON_VERSION] instead! Specify specific Python version to use ('major.minor' or 'major')")
 
-  find_package(Python3 ${GZ_PYTHON_VERSION} QUIET)
+  find_package(Python3 ${GZ_PYTHON_VERSION} QUIET REQUIRED)
 elseif(${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.12")
   # no support for finding specific versions
-  find_package(Python3 QUIET)
+  find_package(Python3 QUIET REQUIRED)
 else()
   # TODO: remove this block as soon as the CMake version can safely be bumped to => 3.12
   set(GZ_PYTHON_VERSION "" CACHE STRING
@@ -32,7 +32,7 @@ else()
     set(GZ_PYTHON_VERSION "3")
   endif()
 
-  find_package(PythonInterp ${GZ_PYTHON_VERSION} QUIET)
+  find_package(PythonInterp ${GZ_PYTHON_VERSION} QUIET REQUIRED)
 
   if(PYTHONINTERP_FOUND)
     set(Python3_Interpreter_FOUND ${PYTHONINTERP_FOUND})
