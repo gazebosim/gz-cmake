@@ -15,8 +15,6 @@
 if(${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.19")
   set(GZ_PYTHON_VERSION "" CACHE STRING
     "Specify specific Python3 version to use ('major.minor' or 'versionMin...[<]versionMax')")
-  set(IGN_PYTHON_VERSION ${GZ_PYTHON_VERSION} CACHE STRING  # TODO(CH3): Deprecated. Remove on tock.
-    "Deprecated. Use [GZ_PYTHON_VERSION] instead! Specify specific Python version to use ('major.minor' or 'major')")
 
   find_package(Python3 ${GZ_PYTHON_VERSION} QUIET)
 elseif(${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.12")

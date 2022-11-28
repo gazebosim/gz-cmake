@@ -27,17 +27,6 @@
 # that symbols are hidden unless explicitly marked as visible.
 # Pass the argument QUIT_IF_BUILD_ERRORS to have this macro quit cmake when the
 # build_errors
-macro(ign_configure_build)
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_configure_build is deprecated, use gz_configure_build instead.")
-  set(options HIDE_SYMBOLS_BY_DEFAULT QUIT_IF_BUILD_ERRORS)
-  set(oneValueArgs)
-  set(multiValueArgs COMPONENTS)
-  cmake_parse_arguments(gz_configure_build "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-
-  set(gz_configure_build_skip_parsing true)
-  gz_configure_build()
-endmacro()
 macro(gz_configure_build)
 
   # Deprecated, remove skip parsing logic in version 4
@@ -307,11 +296,6 @@ macro(_gz_set_cxx_feature_flags)
   set(GZ_CXX_14_FEATURES cxx_std_14)
   set(GZ_CXX_17_FEATURES cxx_std_17)
 
-  set(IGN_KNOWN_CXX_STANDARDS ${GZ_KNOWN_CXX_STANDARDS})  # TODO(CH3): IGN_KNOWN_CXX_STANDARDS IS DEPRECATED.
-  set(IGN_CXX_11_FEATURES ${GZ_CXX_11_FEATURES})  # TODO(CH3): IGN_CXX_11_FEATURES IS DEPRECATED.
-  set(IGN_CXX_14_FEATURES ${GZ_CXX_14_FEATURES})  # TODO(CH3): IGN_CXX_14_FEATURES IS DEPRECATED.
-  set(IGN_CXX_17_FEATURES ${GZ_CXX_17_FEATURES})  # TODO(CH3): IGN_CXX_17_FEATURES IS DEPRECATED.
-
 endmacro()
 
 function(_gz_find_include_script)
@@ -343,8 +327,6 @@ function(_gz_find_include_script)
       add_subdirectory("${include_start}/include")
     elseif(EXISTS "${include_start}/include/gz/CMakeLists.txt")
       add_subdirectory("${include_start}/include/gz")
-    elseif(EXISTS "${include_start}/include/ignition/CMakeLists.txt")  # TODO(CH3): Deprecated. Remove on tock.
-      add_subdirectory("${include_start}/include/ignition")
     elseif(EXISTS "${include_start}/include/${PROJECT_INCLUDE_DIR}/CMakeLists.txt")
       add_subdirectory("${include_start}/include/${PROJECT_INCLUDE_DIR}")
     else()

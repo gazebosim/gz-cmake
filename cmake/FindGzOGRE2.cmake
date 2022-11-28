@@ -573,6 +573,3 @@ else()
   set(OGRE2_LIBRARIES "")
   set(OGRE2_INCLUDE_DIRS "")
 endif()
-
-set(IgnOGRE2_FOUND ${GzOGRE2_FOUND})  # TODO(CH3): Deprecated. Remove on tock.
-set(IGN_PKG_NAME ${GZ_PKG_NAME})  # TODO(CH3): Deprecated. Remove on tock.

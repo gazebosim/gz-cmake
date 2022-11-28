@@ -41,18 +41,6 @@
 #
 # PATH_SUFFIXES: Optional. Parameter forwarded to the find_path and find_library calls.
 #
-macro(ign_manual_search package)
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_manual_search is deprecated, use gz_manual_search instead.")
-
-  set(options INTERFACE)
-  set(oneValueArgs "TARGET_NAME")
-  set(multiValueArgs "HEADER_NAMES" "LIBRARY_NAMES" "PATH_SUFFIXES")
-  _gz_cmake_parse_arguments(gz_manual_search "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-
-  set(gz_manual_search_skip_parsing true)
-  gz_manual_search(${package})
-endmacro()
 macro(gz_manual_search package)
 
   # Deprecated, remove skip parsing logic in version 4

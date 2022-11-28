@@ -111,14 +111,6 @@ macro(_gz_setup_packages)
   set(GZ_LIB_INSTALL_DIR ${CMAKE_INSTALL_LIBDIR})
   set(GZ_BIN_INSTALL_DIR ${CMAKE_INSTALL_BINDIR})
 
-  set(IGN_INCLUDE_INSTALL_DIR ${GZ_INCLUDE_INSTALL_DIR})  # TODO(CH3): Deprecated. Remove on tock.
-  set(IGN_INCLUDE_INSTALL_DIR_POSTFIX ${GZ_INCLUDE_INSTALL_DIR_POSTFIX})  # TODO(CH3): Deprecated. Remove on tock.
-  set(IGN_INCLUDE_INSTALL_DIR_FULL ${GZ_INCLUDE_INSTALL_DIR_FULL})  # TODO(CH3): Deprecated. Remove on tock.
-  set(IGN_DATA_INSTALL_DIR_POSTFIX ${GZ_DATA_INSTALL_DIR_POSTFIX})  # TODO(CH3): Deprecated. Remove on tock.
-  set(IGN_DATA_INSTALL_DIR ${GZ_DATA_INSTALL_DIR})  # TODO(CH3): Deprecated. Remove on tock.
-  set(IGN_LIB_INSTALL_DIR ${GZ_LIB_INSTALL_DIR})  # TODO(CH3): Deprecated. Remove on tock.
-  set(IGN_BIN_INSTALL_DIR ${GZ_BIN_INSTALL_DIR})  # TODO(CH3): Deprecated. Remove on tock.
-
   #============================================================================
   # Handle the user's RPATH setting
   option(USE_FULL_RPATH "Turn on to enable the full RPATH" OFF)
@@ -155,12 +147,6 @@ macro(_gz_setup_packages)
 
 endmacro()
 
-macro(ign_create_packages)
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_create_packages is deprecated, use gz_create_packages instead.")
-
-  gz_create_packages()
-endmacro()
 macro(gz_create_packages)
 
   #============================================================================
