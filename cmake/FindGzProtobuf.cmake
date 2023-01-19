@@ -103,5 +103,12 @@ if(${Protobuf_FOUND})
     set_target_properties(protobuf::protoc PROPERTIES
       IMPORTED_LOCATION ${PROTOBUF_PROTOC_EXECUTABLE})
   endif()
+  
+  # See: https://github.com/osrf/buildfarmer/issues/377
+  if(MSVC)
+    target_compile_options(protobuf::protoc PUBLIC /wd4251)
+    target_compile_options(protobuf::libprotoc PUBLIC /wd4251)
+    target_compile_options(protobuf::libprotobuf PUBLIC /wd4251)
+  endif()
 
 endif()
