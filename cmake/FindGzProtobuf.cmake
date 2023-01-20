@@ -106,9 +106,9 @@ if(${Protobuf_FOUND})
   
   # See: https://github.com/osrf/buildfarmer/issues/377
   if(MSVC)
-    target_compile_options(protobuf::protoc PUBLIC /wd4251)
-    target_compile_options(protobuf::libprotoc PUBLIC /wd4251)
-    target_compile_options(protobuf::libprotobuf PUBLIC /wd4251)
+    target_compile_options(protobuf::protoc INTERFACE /wd4251)
+    target_compile_options(protobuf::libprotoc INTERFACE /wd4251)
+    target_compile_options(protobuf::libprotobuf INTERFACE /wd4251)
   endif()
 
 endif()
