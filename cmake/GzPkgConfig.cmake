@@ -124,6 +124,10 @@ macro(gz_pkg_check_modules_quiet package signature)
       set(gz_pkg_check_modules_quiet_arg)
     endif()
 
+    # unset LIBRARIES variable in case it contains full paths already
+    # due to previous calls of this function searching for the same package.
+    unset(${package}_LIBRARIES)
+
     pkg_check_modules(${package}
                       ${gz_pkg_check_modules_quiet_arg}
                       ${gz_pkg_check_modules_no_cmake_environment_path_arg}
@@ -166,11 +170,6 @@ macro(gz_pkg_check_modules_quiet package signature)
       # better solution.
       unset(${package}_FOUND CACHE)
       set(${package}_FOUND TRUE)
-
-      # unset cached libraries variable if not empty before calling
-      # gz_pkg_check_modules_quiet to avoid using incorrect libname
-      # in the find_library call
-      unset(${package}_LIBRARIES CACHE)
 
       # For some reason, pkg_check_modules does not provide complete paths to the
       # libraries it returns, even though find_package is conventionally supposed
