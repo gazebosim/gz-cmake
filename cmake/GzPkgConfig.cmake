@@ -167,6 +167,11 @@ macro(gz_pkg_check_modules_quiet package signature)
       unset(${package}_FOUND CACHE)
       set(${package}_FOUND TRUE)
 
+      # unset cached libraries variable if not empty before calling
+      # gz_pkg_check_modules_quiet to avoid using incorrect libname
+      # in the find_library call
+      unset(${package}_LIBRARIES CACHE)
+
       # For some reason, pkg_check_modules does not provide complete paths to the
       # libraries it returns, even though find_package is conventionally supposed
       # to provide complete library paths. Having only the library name is harmful
