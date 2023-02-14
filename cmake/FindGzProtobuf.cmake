@@ -103,7 +103,7 @@ if(${Protobuf_FOUND})
     set_target_properties(protobuf::protoc PROPERTIES
       IMPORTED_LOCATION ${PROTOBUF_PROTOC_EXECUTABLE})
   endif()
-  
+
   # See: https://github.com/osrf/buildfarmer/issues/377
   if(MSVC)
     target_compile_options(protobuf::protoc INTERFACE /wd4251)

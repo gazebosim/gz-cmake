@@ -28,4 +28,3 @@ release will remove the deprecated code.
     **Replacement**: `Gz` prefixed CMake files
 1. **Deprecated**: `IGN/IGNITION` prefixed CMake variables and options
     **Replacement**: `GZ` prefixed CMake variables and options
-

@@ -235,4 +235,3 @@ find_package_handle_standard_args(
 
 include(GzPkgConfig)
 gz_pkg_config_library_entry(OptiX OptiX)
-

@@ -57,7 +57,7 @@
 
 
 if(NOT (GzOGRE2_FIND_VERSION_MAJOR AND GzOGRE2_FIND_VERSION_MINOR))
-  message(WARNING 
+  message(WARNING
     "find_package(GzOGRE2) must be called with a VERSION argument with a minimum of major and minor version")
   set(OGRE2_FOUND false)
   return()
