@@ -87,7 +87,7 @@ function(ign_add_benchmarks)
 
   file(GENERATE
     OUTPUT
-    "${CMAKE_CURRENT_BINARY_DIR}/benchmark_targets"
+    "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/benchmark_targets"
     CONTENT
     "${BENCHMARK_TARGETS_LIST}")
 
@@ -96,7 +96,7 @@ function(ign_add_benchmarks)
     COMMAND python3 ${IGNITION_CMAKE_BENCHMARK_DIR}/run_benchmarks.py
       --project-name ${PROJECT_NAME}
       --version-file ${CMAKE_CURRENT_BINARY_DIR}/version_info.json
-      --benchmark-targets ${CMAKE_CURRENT_BINARY_DIR}/benchmark_targets
+      --benchmark-targets ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/benchmark_targets
       --results-root ${CMAKE_BINARY_DIR}/benchmark_results
   )
   add_dependencies(run_benchmarks ${BENCHMARK_TARGETS} version_info_target)
