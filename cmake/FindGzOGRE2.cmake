@@ -375,7 +375,11 @@ if (NOT WIN32)
     # keep variable naming consistent with ogre 1
     # TODO currently using harded paths based on dir structure in ubuntu
     foreach(resource_path ${OGRE2_LIBRARY_DIRS})
-      list(APPEND OGRE2_RESOURCE_PATH "${resource_path}/OGRE")
+      foreach (ogre2_plugin_dir_name "OGRE" "OGRE-Next")
+        if (EXISTS "${resource_path}/${ogre2_plugin_dir_name}")
+          list(APPEND OGRE2_RESOURCE_PATH "${resource_path}/${ogre2_plugin_dir_name}")
+        endif()
+      endforeach()
     endforeach()
   else()
     set(OGRE2_RESOURCE_PATH ${OGRE2_PLUGINDIR})
