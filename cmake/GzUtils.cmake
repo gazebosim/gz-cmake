@@ -1948,7 +1948,6 @@ endmacro()
 # gz_build_examples(
 #     SOURCE_DIR <source_dir>
 #     BINARY_DIR <binary_dir>
-#     [DEPENDENCIES <project_dependencies>]
 #
 # Requires a CMakeLists.txt file to be in SOURCE_DIR that acts
 # Build examples for a Gazebo project.
@@ -1972,108 +1971,19 @@ endmacro()
 # BINARY_DIR: Required. Path to the output binary folder
 #             For example ${CMAKE_CURRENT_BINARY_DIR}/examples
 #
-# DEPENDENCIES:
-#     Optional. Additional Gazebo library dependencies for this example
-#     This is in addition to things that the project library already depends on.
-#     For example: gz-utils2 gz-common5
-
 macro(gz_build_examples)
   #------------------------------------
   # Define the expected arguments
   set(options)
   set(oneValueArgs SOURCE_DIR BINARY_DIR)
-  set(multiValueArgs DEPENDENCIES)
 
   #------------------------------------
   # Parse the arguments
   _gz_cmake_parse_arguments(gz_build_examples "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
-  set(BUILD_EXAMPLES_CMAKE "")
-  set(BUILD_EXAMPLES_INCLUDES "")
-
-  get_target_property(PROJECT_LIBRARY_DEPS ${PROJECT_LIBRARY_TARGET_NAME} INTERFACE_LINK_LIBRARIES)
-
-  # Below here we are generating a series of arguments to the cmake command that is to follow.
-  # Since we may be building in a colcon workspace or otherwise isolated, we are passing
-  # in the resolved dependency directories via -Ddep_DIR=${dep_DIR}
-
-  # Always depends on on gz-cmake
-  list(APPEND BUILD_EXAMPLES_CMAKE "-Dgz-cmake${GZ_CMAKE_VER}_DIR=${gz-cmake${GZ_CMAKE_VER}_DIR}")
-
-  # Iterate through the project library dependencies and add them to the cmake args
-  foreach(PROJECT_LIBRARY_DEP ${PROJECT_LIBRARY_DEPS})
-    if (NOT TARGET ${PROJECT_LIBRARY_DEP})
-      continue()
-    endif()
-
-    get_target_property(DEP_NAME ${PROJECT_LIBRARY_DEP} NAME)
-
-    string(REPLACE "::" ";" DEP_NAME ${DEP_NAME})
-    list(GET DEP_NAME 0 DEP_PACKAGE)
-    list(GET DEP_NAME 0 DEP_COMPONENT)
-    list(APPEND BUILD_EXAMPLES_CMAKE "-D${DEP_PACKAGE}_DIR=${${DEP_PACKAGE}_DIR}")
-
-    # For each dependency, also include the components that were requested
-    # at the find_package call to reduce verbosity in COMPONENTS arg
-
-    if (TARGET ${DEP}::requested)
-      get_target_property(REQUESTED_COMPONENTS ${DEP}::requested INTERFACE_LINK_LIBRARIES)
-
-      foreach(LINKLIB ${REQUESTED_COMPONENTS})
-        string(REGEX REPLACE "^${DEP}::" "" GZ_COMPONENT ${LINKLIB})
-
-        if (GZ_COMPONENT STREQUAL DEP)
-          continue()
-        endif()
-
-        list(APPEND BUILD_EXAMPLES_CMAKE "-D${GZ_COMPONENT}_DIR=${${GZ_COMPONENT}_DIR}")
-      endforeach()
-    endif()
-  endforeach()
-
-  # Iterate through additional dependencies, that is things that the project library
-  # doesn't depend on, but are needed for the examples.
-  # While this opens up the possibility of using any gazebo packages as part of the
-  # examples, care should be exercised to not introduce circular depdendencies.
-  foreach(DEP ${gz_build_examples_DEPENDENCIES})
-    list(APPEND BUILD_EXAMPLES_CMAKE "-D${DEP}_DIR=${${DEP}_DIR}")
-
-    # For each dependency, also include the components that were requested
-    # at the find_package call to reduce verbosity in COMPONENTS arg
-    if (TARGET ${DEP}::requested)
-      get_target_property(REQUESTED_COMPONENTS ${DEP}::requested INTERFACE_LINK_LIBRARIES)
-
-      foreach(LINKLIB ${REQUESTED_COMPONENTS})
-        string(REGEX REPLACE "^${DEP}::" "" GZ_COMPONENT ${LINKLIB})
-
-        if (GZ_COMPONENT STREQUAL DEP)
-          continue()
-        endif()
-
-        list(APPEND BUILD_EXAMPLES_CMAKE "-D${GZ_COMPONENT}_DIR=${${GZ_COMPONENT}_DIR}")
-      endforeach()
-    endif()
-  endforeach()
-
-  # Add root project CMake directory
-  list(APPEND BUILD_EXAMPLES_CMAKE "-D${PROJECT_NAME}_DIR=${PROJECT_BINARY_DIR}/cmake")
-
-  foreach (COMPONENT ${gz_configure_build_COMPONENTS})
-    list(APPEND BUILD_EXAMPLES_CMAKE "-D${PROJECT_NAME}-${COMPONENT}_DIR=${PROJECT_BINARY_DIR}/cmake")
-  endforeach()
-
-  # Get core library includes from target include directories
-  get_target_property(core_INCLUDES ${PROJECT_LIBRARY_TARGET_NAME} INTERFACE_INCLUDE_DIRECTORIES)
-  list(APPEND BUILD_EXAMPLES_INCLUDES ${core_INCLUDES} )
-
-  # Get component library includes
-  foreach (COMPONENT ${gz_configure_build_COMPONENTS})
-    get_target_property(component_INCLUDES ${PROJECT_LIBRARY_TARGET_NAME}-${COMPONENT} INTERFACE_INCLUDE_DIRECTORIES)
-    list(APPEND BUILD_EXAMPLES_INCLUDES ${component_INCLUDES} )
-  endforeach()
-
-  # Join everything with semicolon to be passed on command line
-  set(INCLUDES "$<JOIN:${BUILD_EXAMPLES_INCLUDES},;>")
+  set(gz_build_examples_CMAKE_PREFIX_PATH $ENV{CMAKE_PREFIX_PATH})
+  string(REPLACE ":" ";" gz_build_examples_CMAKE_PREFIX_PATH ${gz_build_examples_CMAKE_PREFIX_PATH})
+  list(APPEND gz_build_examples_CMAKE_PREFIX_PATH ${CMAKE_INSTALL_PREFIX})
 
   add_test(
     NAME EXAMPLES_Configure_TEST
@@ -2084,10 +1994,9 @@ macro(gz_build_examples)
                              -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
                              -DCMAKE_C_FLAGS=${CMAKE_C_FLAGS}
                              -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
+                             -DCMAKE_PREFIX_PATH=${gz_build_examples_CMAKE_PREFIX_PATH}
                              -S ${gz_build_examples_SOURCE_DIR}
                              -B ${gz_build_examples_BINARY_DIR}
-                             ${BUILD_EXAMPLES_CMAKE}
-                             "-D${PROJECT_LIBRARY_TARGET_NAME}_INCLUDE_DIRS_OVERRIDE=${INCLUDES}"
   )
 
   add_test(
