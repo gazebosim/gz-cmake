@@ -1949,8 +1949,8 @@ endmacro()
 #     SOURCE_DIR <source_dir>
 #     BINARY_DIR <binary_dir>
 #
-# Requires a CMakeLists.txt file to be in SOURCE_DIR that acts
 # Build examples for a Gazebo project.
+# Requires a CMakeLists.txt file to be in SOURCE_DIR that acts
 # as a top level project.
 #
 # This generates two test targets
@@ -1994,7 +1994,7 @@ macro(gz_build_examples)
                              -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
                              -DCMAKE_C_FLAGS=${CMAKE_C_FLAGS}
                              -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
-                             -DCMAKE_PREFIX_PATH=${gz_build_examples_CMAKE_PREFIX_PATH}
+                             "-DCMAKE_PREFIX_PATH=${gz_build_examples_CMAKE_PREFIX_PATH}"
                              -S ${gz_build_examples_SOURCE_DIR}
                              -B ${gz_build_examples_BINARY_DIR}
   )
