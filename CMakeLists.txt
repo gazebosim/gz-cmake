@@ -159,6 +159,11 @@ install(
   DESTINATION ${gz_modules_install_dir}
   COMPONENT modules)
 
+install(
+  DIRECTORY cmake/symlink_install/
+  DESTINATION ${gz_modules_install_dir}/symlink_install
+  COMPONENT modules)
+
 file(GLOB pkgconfig_templates "cmake/pkgconfig/*.in")
 
 install(

@@ -31,6 +31,7 @@ include(GzConfigureBuild)
 include(GzImportTarget)
 include(GzPkgConfig)
 include(GzSanitizers)
+include(GzSymlinkInstall)
 
 #============================================================================
 # Native cmake modules
