@@ -50,7 +50,7 @@ macro(gz_configure_project)
     # Define the expected arguments
     set(options NO_PROJECT_PREFIX NO_IGNITION_PREFIX)  # TODO(CH3): NO_IGNITION_PREFIX IS DEPRECATED.
     set(oneValueArgs REPLACE_INCLUDE_PATH REPLACE_IGNITION_INCLUDE_PATH VERSION_SUFFIX)  # TODO(CH3): REPLACE_IGNITION_INCLUDE_PATH IS DEPRECATED.
-    set(multiValueArgs) # We are not using multiValueArgs yet
+    set(multiValueArgs CONFIG_EXTRAS)
 
     #------------------------------------
     # Parse the arguments
@@ -144,6 +144,56 @@ macro(gz_configure_project)
   set(PKG_NAME ${PROJECT_NAME_LOWER})
 
   message(STATUS "${PROJECT_NAME} version ${PROJECT_VERSION_FULL}")
+
+  #============================================================================
+  # Handle extra cmake configurations
+  set(PACKAGE_CONFIG_EXTRA_FILES "")
+  set(extras)
+
+  if (DEFINED PACKAGE_CONFIG_EXTRAS)
+    list(APPEND extras ${PACKAGE_CONFIG_EXTRAS})
+  endif()
+
+  if (DEFINED gz_configure_project_CONFIG_EXTRAS)
+    list(APPEND extras ${gz_configure_project_CONFIG_EXTRAS})
+  endif()
+
+  foreach(extra ${extras})
+    assert_file_exists("${extra}"
+      "gz_configure_project() called with extra file '${extra}' which does not exist")
+    stamp("${extra}")
+
+    # expand template
+    string_ends_with("${extra}" ".cmake.in" is_template)
+    if(is_template)
+      get_filename_component(extra_filename "${extra}" NAME)
+      # cut of .in extension
+      string(LENGTH "${extra_filename}" length)
+      math(EXPR offset "${length} - 3")
+      string(SUBSTRING "${extra_filename}" 0 ${offset} extra_filename)
+      configure_file(
+        "${extra}"
+        ${CMAKE_CURRENT_BINARY_DIR}/gz-cmake/${extra_filename}
+        @ONLY
+      )
+      set(extra
+        "${CMAKE_CURRENT_BINARY_DIR}/gz-cmake/${extra_filename}")
+    endif()
+
+    # install cmake file and register for CMake config file
+    string_ends_with("${extra}" ".cmake" is_cmake)
+    if(is_cmake)
+      install(FILES
+        ${extra}
+        DESTINATION lib/cmake/${PROJECT_NAME}/
+      )
+      get_filename_component(extra_filename "${extra}" NAME)
+      list(APPEND PACKAGE_CONFIG_EXTRA_FILES "${extra_filename}")
+    else()
+      message(FATAL_ERROR "gz_configure_project() the CONFIG_EXTRAS file '${extra}' "
+        "does neither end with '.cmake' nor with '.cmake.in'.")
+    endif()
+  endforeach()
 
   #============================================================================
   # Identify the operating system
