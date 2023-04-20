@@ -2003,6 +2003,20 @@ endmacro()
 #
 # To use this macro, please add gz_find_package(DL)
 # in the dependencies of your project
+#
+# Arguments are as follows:
+#
+# GET_INSTALL_PREFIX_FUNCTION: Required. The name (with namespace) of the function that returns
+#          the install directory of the package. Example: gz::${GZ_DESIGNATION}::getInstallPrefix
+#
+# GET_INSTALL_PREFIX_HEADER: Required. The name (with full relative path) of the include that contains
+#          the declaration of the ${GET_INSTALL_PREFIX_FUNCTION} function.
+#          Example: gz/${GZ_DESIGNATION}/InstallationDirectories.hh
+#
+# OVERRIDE_INSTALL_PREFIX_ENV_VARIABLE: Required. The name of the environmental variable that can be
+#          used to override the value returned by ${GET_INSTALL_PREFIX_FUNCTION} at runtime.
+#          Example: GZ_${GZ_DESIGNATION_UPPER}_INSTALL_PREFIX
+
 macro(gz_add_get_install_prefix_impl)
   set(_options)
   set(_oneValueArgs
@@ -2068,6 +2082,12 @@ macro(gz_add_get_install_prefix_impl)
 
 #include <${gz_add_get_install_prefix_impl_GET_INSTALL_PREFIX_HEADER}>
 
+#ifdef _MSC_VER
+  // Disable warnings related to the use of std::getenv
+  // See https://stackoverflow.com/questions/66090389/c17-what-new-with-error-c4996-getenv-this-function-or-variable-may-be-un
+  #pragma warning(disable: 4996)
+#endif
+
 std::string ${gz_add_get_install_prefix_impl_GET_INSTALL_PREFIX_FUNCTION}()
 {
   if(const char* override_env_var = std::getenv(\"${gz_add_get_install_prefix_impl_OVERRIDE_INSTALL_PREFIX_ENV_VARIABLE}\"))
@@ -2116,6 +2136,10 @@ std::string ${gz_add_get_install_prefix_impl_GET_INSTALL_PREFIX_FUNCTION}()
   // Return install prefix
   return install_prefix_canonical.string();
 }
+
+#ifdef _MSC_VER
+  #pragma warning(pop)
+#endif
 ")
   else()
     # For static library, fallback to just provide return CMAKE_INSTALL_PREFIX
@@ -2126,6 +2150,13 @@ std::string ${gz_add_get_install_prefix_impl_GET_INSTALL_PREFIX_FUNCTION}()
 
 #include <${gz_add_get_install_prefix_impl_GET_INSTALL_PREFIX_HEADER}>
 
+#ifdef _MSC_VER
+  #pragma warning(push)
+  // Disable warnings related to the use of std::getenv
+  // See https://stackoverflow.com/questions/66090389/c17-what-new-with-error-c4996-getenv-this-function-or-variable-may-be-un
+  #pragma warning(disable: 4996)
+#endif
+
 std::string ${gz_add_get_install_prefix_impl_GET_INSTALL_PREFIX_FUNCTION}()
 {
   if(const char* override_env_var = std::getenv(\"${gz_add_get_install_prefix_impl_OVERRIDE_INSTALL_PREFIX_ENV_VARIABLE}\"))
@@ -2135,6 +2166,10 @@ std::string ${gz_add_get_install_prefix_impl_GET_INSTALL_PREFIX_FUNCTION}()
 
   return \"${CMAKE_INSTALL_PREFIX}\";
 }
+
+#ifdef _MSC_VER
+  #pragma warning(pop)
+#endif
 ")
 endif()
 

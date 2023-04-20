@@ -19,8 +19,8 @@
 #include <iostream>
 #include <filesystem>
 
-#include <get_install_prefix_test_shared.h>
-#include <get_install_prefix_test_static.h>
+#include "get_install_prefix_test_shared.h"
+#include "get_install_prefix_test_static.h"
 #include <get_install_prefix_test_cmake_variables.h>
 
 std::string toCanonical(const std::string input_path)
