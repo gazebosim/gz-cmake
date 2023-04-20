@@ -141,6 +141,7 @@ macro(get_preprocessor_entry CONTENTS KEYWORD VARIABLE)
 endmacro()
 
 if (NOT WIN32)
+  set(PKG_CONFIG_PATH_ORIGINAL $ENV{PKG_CONFIG_PATH})
   foreach (IGN_OGRE2_PROJECT_NAME "OGRE2" "OGRE-Next")
     message(STATUS "Looking for OGRE using the name: ${IGN_OGRE2_PROJECT_NAME}")
     if (IGN_OGRE2_PROJECT_NAME STREQUAL "OGRE2")
@@ -151,7 +152,6 @@ if (NOT WIN32)
       set(OGRE2LIBNAME "OgreNext")
     endif()
 
-    set(PKG_CONFIG_PATH_ORIGINAL $ENV{PKG_CONFIG_PATH})
     # Note: OGRE2 installed from debs is named OGRE-2.2 while the version
     # installed from source does not have the 2.2 suffix
     # look for OGRE2 installed from debs
@@ -210,6 +210,10 @@ if (NOT WIN32)
 
     if (NOT OGRE2_FOUND)
       message(STATUS "  ! ${IGN_OGRE2_PROJECT_NAME} not found")
+
+      # reset pkg config path
+      set(ENV{PKG_CONFIG_PATH} ${PKG_CONFIG_PATH_ORIGINAL})
+
       continue()
     endif()
 
@@ -260,6 +264,29 @@ if (NOT WIN32)
     get_preprocessor_entry(OGRE_TEMP_VERSION_CONTENT OGRE_VERSION_NAME OGRE2_VERSION_NAME)
     set(OGRE2_VERSION "${OGRE2_VERSION_MAJOR}.${OGRE2_VERSION_MINOR}.${OGRE2_VERSION_PATCH}")
 
+    set(IgnOGRE2_VERSION_EXACT FALSE)
+    set(IgnOGRE2_VERSION_COMPATIBLE FALSE)
+
+    if (NOT ("${OGRE2_VERSION_MAJOR}" EQUAL "${IgnOGRE2_FIND_VERSION_MAJOR}"))
+      set(OGRE2_FOUND FALSE)
+      continue()
+    endif()
+
+    if (NOT ("${OGRE2_VERSION_MINOR}" EQUAL "${IgnOGRE2_FIND_VERSION_MINOR}"))
+      message(STATUS "  ! ${IGN_OGRE2_PROJECT_NAME} found with incompatible version ${OGRE2_VERSION}")
+      set(OGRE2_FOUND FALSE)
+      continue()
+    endif()
+
+    if ("${OGRE2_VERSION}" VERSION_EQUAL "${IgnOGRE2_FIND_VERSION}")
+      set(IgnOGRE2_VERSION_EXACT TRUE)
+      set(IgnOGRE2_VERSION_COMPATIBLE TRUE)
+    endif()
+
+    if ("${OGRE2_VERSION}" VERSION_GREATER "${IgnOGRE2_FIND_VERSION}")
+      set(IgnOGRE2_VERSION_COMPATIBLE TRUE)
+    endif()
+
     # find ogre components
     include(IgnImportTarget)
     foreach(component ${IgnOGRE2_FIND_COMPONENTS})
@@ -300,6 +327,12 @@ if (NOT WIN32)
             LIB_VAR component_LIBRARIES
             INCLUDE_VAR component_INCLUDE_DIRS)
 
+        # Forward the link directories to be used by RPath
+        set_property(
+          TARGET ${component_TARGET_NAME}
+          PROPERTY INTERFACE_LINK_DIRECTORIES
+          ${OGRE2_LIBRARY_DIRS}
+        )
         # add it to the list of ogre libraries
         list(APPEND OGRE2_LIBRARIES ${component_TARGET_NAME})
 
@@ -509,4 +542,19 @@ if (OGRE2_FOUND)
     TARGET_NAME IgnOGRE2::IgnOGRE2
     LIB_VAR OGRE2_LIBRARIES
     INCLUDE_VAR OGRE2_INCLUDE_DIRS)
+
+  # Forward the link directories to be used by RPath
+  set_property(
+    TARGET IgnOGRE2::IgnOGRE2
+    PROPERTY INTERFACE_LINK_DIRECTORIES
+    ${OGRE2_LIBRARY_DIRS}
+  )
+else()
+  # Unset variables so that we don't leak incorrect versions
+  set(OGRE2_VERSION "")
+  set(OGRE2_VERSION_MAJOR "")
+  set(OGRE2_VERSION_MINOR "")
+  set(OGRE2_VERSION_PATCH "")
+  set(OGRE2_LIBRARIES "")
+  set(OGRE2_INCLUDE_DIRS "")
 endif()

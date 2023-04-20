@@ -1,5 +1,23 @@
 ## Ignition CMake 2.x
 
+### Ignition CMake 2.16.0 (2022-10-08)
+
+1. FindIgnOGRE2: preserve PKG_CONFIG_PATH
+    * [Pull request #319](https://github.com/gazebosim/ign-cmake/pull/319)
+
+1. FindSQLite3: Add SQLite::SQLite3 ALIAS
+    * [Pull request #313](https://github.com/gazebosim/ign-cmake/pull/313)
+    * [Pull request #317](https://github.com/gazebosim/ign-cmake/pull/317)
+
+1. FindUUID: Do not wrap LIBRARY_NAMES argument with quotes
+    * [Pull request #315](https://github.com/gazebosim/ign-cmake/pull/315)
+
+1. Don't assume `CMAKE_INSTALL_*DIR` variables are relative
+    * [Pull request #305](https://github.com/gazebosim/ign-cmake/pull/305)
+
+1. Remove check for s3cfg
+    * [Pull request #308](https://github.com/gazebosim/ign-cmake/pull/308)
+
 ### Ignition CMake 2.15.0 (2022-08-29)
 
 1. ign -> gz: add `gz/*` header files
