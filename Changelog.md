@@ -1,5 +1,8 @@
 ## Gazebo CMake 3.x
 
+1. Add optional binary relocatability in downstream libraries
+    * [Pull request #334](https://github.com/gazebosim/gz-cmake/pull/334)
+
 ### Gazebo CMake 3.0.1 (2022-10-11)
 
 1. 1. FindIgnOGRE2: preserve PKG_CONFIG_PATH
