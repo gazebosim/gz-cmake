@@ -60,11 +60,7 @@ function(_gz_add_version_info_target)
 endfunction()
 
 function(gz_add_benchmarks)
-
-  # Deprecated, remove skip parsing logic in version 4
-  if (NOT gz_add_benchmarks_skip_parsing)
-    cmake_parse_arguments(BENCHMARK "" "" "SOURCES" ${ARGN})
-  endif()
+  cmake_parse_arguments(BENCHMARK "" "" "SOURCES" ${ARGN})
 
   if(NOT BUILD_TESTING)
     return()

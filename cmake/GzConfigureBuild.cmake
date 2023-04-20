@@ -28,16 +28,11 @@
 # Pass the argument QUIT_IF_BUILD_ERRORS to have this macro quit cmake when the
 # build_errors
 macro(gz_configure_build)
-
-  # Deprecated, remove skip parsing logic in version 4
-  if (NOT gz_configure_build_skip_parsing)
-    #============================================================================
-    # Parse the arguments that are passed in
-    set(options HIDE_SYMBOLS_BY_DEFAULT QUIT_IF_BUILD_ERRORS)
-    set(oneValueArgs)
-    set(multiValueArgs COMPONENTS)
-    cmake_parse_arguments(gz_configure_build "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-  endif()
+  # Parse the arguments that are passed in
+  set(options HIDE_SYMBOLS_BY_DEFAULT QUIT_IF_BUILD_ERRORS)
+  set(oneValueArgs)
+  set(multiValueArgs COMPONENTS)
+  cmake_parse_arguments(gz_configure_build "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   #============================================================================
   # Examine the build type. If we do not recognize the type, we will generate

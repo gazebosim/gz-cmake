@@ -63,19 +63,13 @@ endmacro()
 #
 # For usage instructions, see gz_pkg_check_modules(~) above.
 macro(gz_pkg_check_modules_quiet package signature)
-
-  # Deprecated, remove skip parsing logic in version 4
-  if (NOT gz_pkg_check_modules_quiet_skip_parsing)
-    #------------------------------------
-    # Define the expected arguments
-    set(options INTERFACE NO_CMAKE_ENVIRONMENT_PATH QUIET)
-    set(oneValueArgs "TARGET_NAME")
-    set(multiValueArgs)
-
-    #------------------------------------
-    # Parse the arguments
-    _gz_cmake_parse_arguments(gz_pkg_check_modules "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-  endif()
+  # Define the expected arguments
+  set(options INTERFACE NO_CMAKE_ENVIRONMENT_PATH QUIET)
+  set(oneValueArgs "TARGET_NAME")
+  set(multiValueArgs)
+  #------------------------------------
+  # Parse the arguments
+  _gz_cmake_parse_arguments(gz_pkg_check_modules "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   if(gz_pkg_check_modules_INTERFACE)
     set(_gz_pkg_check_modules_interface_option INTERFACE)

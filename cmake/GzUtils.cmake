@@ -141,18 +141,14 @@
 macro(gz_find_package PACKAGE_NAME_)
   set(PACKAGE_NAME ${PACKAGE_NAME_})  # Allow for variable rebinds
 
-  # Deprecated, remove skip parsing logic in version 4
-  if (NOT gz_find_package_skip_parsing)
-    #------------------------------------
-    # Define the expected arguments
-    set(options REQUIRED PRIVATE EXACT QUIET CONFIG BUILD_ONLY PKGCONFIG_IGNORE)
-    set(oneValueArgs VERSION PRETTY PURPOSE EXTRA_ARGS PKGCONFIG PKGCONFIG_LIB PKGCONFIG_VER_COMPARISON)
-    set(multiValueArgs REQUIRED_BY PRIVATE_FOR COMPONENTS OPTIONAL_COMPONENTS)
+  # Define the expected arguments
+  set(options REQUIRED PRIVATE EXACT QUIET CONFIG BUILD_ONLY PKGCONFIG_IGNORE)
+  set(oneValueArgs VERSION PRETTY PURPOSE EXTRA_ARGS PKGCONFIG PKGCONFIG_LIB PKGCONFIG_VER_COMPARISON)
+  set(multiValueArgs REQUIRED_BY PRIVATE_FOR COMPONENTS OPTIONAL_COMPONENTS)
 
-    #------------------------------------
-    # Parse the arguments
-    _gz_cmake_parse_arguments(gz_find_package "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-  endif()
+  #------------------------------------
+  # Parse the arguments
+  _gz_cmake_parse_arguments(gz_find_package "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   #------------------------------------
   # Construct the arguments to pass to find_package
@@ -500,22 +496,16 @@ endmacro()
 #
 # Macro to append a value to a string
 macro(gz_string_append output_var val)
-
-  # Deprecated, remove skip parsing logic in version 4
-  if (NOT gz_string_append_skip_parsing)
-    #------------------------------------
-    # Define the expected arguments
-    # NOTE: options cannot be set to PARENT_SCOPE alone, so we put it explicitly
-    # into cmake_parse_arguments(~). We use a semicolon to concatenate it with
-    # this options variable, so all other options should be specified here.
-    set(options)
-    set(oneValueArgs DELIM)
-    set(multiValueArgs)
-
-    #------------------------------------
-    # Parse the arguments
-    _gz_cmake_parse_arguments(gz_string_append "PARENT_SCOPE;${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-  endif()
+  # Define the expected arguments
+  # NOTE: options cannot be set to PARENT_SCOPE alone, so we put it explicitly
+  # into cmake_parse_arguments(~). We use a semicolon to concatenate it with
+  # this options variable, so all other options should be specified here.
+  set(options)
+  set(oneValueArgs DELIM)
+  set(multiValueArgs)
+  #------------------------------------
+  # Parse the arguments
+  _gz_cmake_parse_arguments(gz_string_append "PARENT_SCOPE;${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   if(gz_string_append_DELIM)
     set(delim "${gz_string_append_DELIM}")
@@ -662,19 +652,13 @@ endfunction()
 # config.hh file since it would be redundant with the core library.
 #
 function(gz_install_all_headers)
-
-  # Deprecated, remove skip parsing logic in version 4
-  if (NOT gz_install_all_headers_skip_parsing)
-    #------------------------------------
-    # Define the expected arguments
-    set(options)
-    set(oneValueArgs COMPONENT)
-    set(multiValueArgs EXCLUDE_FILES EXCLUDE_DIRS GENERATED_HEADERS)
-
-    #------------------------------------
-    # Parse the arguments
-    _gz_cmake_parse_arguments(gz_install_all_headers "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-  endif()
+  # Define the expected arguments
+  set(options)
+  set(oneValueArgs COMPONENT)
+  set(multiValueArgs EXCLUDE_FILES EXCLUDE_DIRS GENERATED_HEADERS)
+  #------------------------------------
+  # Parse the arguments
+  _gz_cmake_parse_arguments(gz_install_all_headers "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   #------------------------------------
   # Build the list of directories
@@ -949,19 +933,13 @@ endmacro()
 # are not allowed to use either of them if you use the CXX_STANDARD argument.
 #
 function(gz_create_core_library)
-
-  # Deprecated, remove skip parsing logic in version 4
-  if (NOT gz_create_core_library_skip_parsing)
-    #------------------------------------
-    # Define the expected arguments
-    set(options INTERFACE)
-    set(oneValueArgs INCLUDE_SUBDIR LEGACY_PROJECT_PREFIX CXX_STANDARD PRIVATE_CXX_STANDARD INTERFACE_CXX_STANDARD GET_TARGET_NAME)
-    set(multiValueArgs SOURCES)
-
-    #------------------------------------
-    # Parse the arguments
-    cmake_parse_arguments(gz_create_core_library "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-  endif()
+  # Define the expected arguments
+  set(options INTERFACE)
+  set(oneValueArgs INCLUDE_SUBDIR LEGACY_PROJECT_PREFIX CXX_STANDARD PRIVATE_CXX_STANDARD INTERFACE_CXX_STANDARD GET_TARGET_NAME)
+  set(multiValueArgs SOURCES)
+  #------------------------------------
+  # Parse the arguments
+  cmake_parse_arguments(gz_create_core_library "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   if(gz_create_core_library_SOURCES)
     set(sources ${gz_create_core_library_SOURCES})
@@ -1112,19 +1090,13 @@ endfunction()
 # library, then you probably do not need to specify the standard, because it
 # will get inherited from the core library.
 function(gz_add_component component_name)
-
-  # Deprecated, remove skip parsing logic in version 4
-  if (NOT gz_add_component_skip_parsing)
-    #------------------------------------
-    # Define the expected arguments
-    set(options INTERFACE INDEPENDENT_FROM_PROJECT_LIB PRIVATELY_DEPENDS_ON_PROJECT_LIB INTERFACE_DEPENDS_ON_PROJECT_LIB)
-    set(oneValueArgs INCLUDE_SUBDIR GET_TARGET_NAME)
-    set(multiValueArgs SOURCES DEPENDS_ON_COMPONENTS)
-
-    #------------------------------------
-    # Parse the arguments
-    cmake_parse_arguments(gz_add_component "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-  endif()
+  # Define the expected arguments
+  set(options INTERFACE INDEPENDENT_FROM_PROJECT_LIB PRIVATELY_DEPENDS_ON_PROJECT_LIB INTERFACE_DEPENDS_ON_PROJECT_LIB)
+  set(oneValueArgs INCLUDE_SUBDIR GET_TARGET_NAME)
+  set(multiValueArgs SOURCES DEPENDS_ON_COMPONENTS)
+  #------------------------------------
+  # Parse the arguments
+  cmake_parse_arguments(gz_add_component "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   if(POLICY CMP0079)
     cmake_policy(SET CMP0079 NEW)
@@ -1598,23 +1570,17 @@ endmacro()
 #                      into your executable's directory.
 #
 macro(gz_build_executables)
+  # Define the expected arguments
+  set(options EXCLUDE_PROJECT_LIB)
+  set(oneValueArgs PREFIX EXEC_LIST)
+  set(multiValueArgs SOURCES LIB_DEPS INCLUDE_DIRS)
 
-  # Deprecated, remove skip parsing logic in version 4
-  if (NOT gz_build_executables_skip_parsing)
-    #------------------------------------
-    # Define the expected arguments
-    set(options EXCLUDE_PROJECT_LIB)
-    set(oneValueArgs PREFIX EXEC_LIST)
-    set(multiValueArgs SOURCES LIB_DEPS INCLUDE_DIRS)
-
-    if(gz_build_executables_EXEC_LIST)
-      set(${gz_build_executables_EXEC_LIST} "")
-    endif()
-
-    #------------------------------------
-    # Parse the arguments
-    _gz_cmake_parse_arguments(gz_build_executables "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  if(gz_build_executables_EXEC_LIST)
+    set(${gz_build_executables_EXEC_LIST} "")
   endif()
+  #------------------------------------
+  # Parse the arguments
+  _gz_cmake_parse_arguments(gz_build_executables "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   foreach(exec_file ${gz_build_executables_SOURCES})
 
@@ -1676,19 +1642,13 @@ endmacro()
 #                      into your executable's directory.
 #
 macro(gz_build_tests)
-
-  # Deprecated, remove skip parsing logic in version 4
-  if (NOT gz_build_tests_skip_parsing)
-    #------------------------------------
-    # Define the expected arguments
-    set(options SOURCE EXCLUDE_PROJECT_LIB) # NOTE: DO NOT USE "SOURCE", we're adding it here to catch typos
-    set(oneValueArgs TYPE TEST_LIST)
-    set(multiValueArgs SOURCES LIB_DEPS INCLUDE_DIRS)
-
-    #------------------------------------
-    # Parse the arguments
-    _gz_cmake_parse_arguments(gz_build_tests "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-  endif()
+  # Define the expected arguments
+  set(options SOURCE EXCLUDE_PROJECT_LIB) # NOTE: DO NOT USE "SOURCE", we're adding it here to catch typos
+  set(oneValueArgs TYPE TEST_LIST)
+  set(multiValueArgs SOURCES LIB_DEPS INCLUDE_DIRS)
+  #------------------------------------
+  # Parse the arguments
+  _gz_cmake_parse_arguments(gz_build_tests "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   if(NOT gz_build_tests_TYPE)
     # If you have encountered this error, you are probably migrating to the
