@@ -31,6 +31,15 @@
 #################################################
 # Initialize the Gazebo project
 macro(gz_configure_project)
+  # Define the expected arguments
+  set(options NO_PROJECT_PREFIX NO_IGNITION_PREFIX)  # TODO(CH3): NO_IGNITION_PREFIX IS DEPRECATED.
+  set(oneValueArgs REPLACE_INCLUDE_PATH REPLACE_IGNITION_INCLUDE_PATH VERSION_SUFFIX)  # TODO(CH3): REPLACE_IGNITION_INCLUDE_PATH IS DEPRECATED.
+  set(multiValueArgs) # We are not using multiValueArgs yet
+
+  #------------------------------------
+  # Parse the arguments
+  _gz_cmake_parse_arguments(gz_configure_project "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
   # Note: The following are automatically defined by project(~) in cmake v3:
   # PROJECT_NAME
   # PROJECT_VERSION_MAJOR
