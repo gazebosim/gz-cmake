@@ -139,8 +139,7 @@
 #                             out, whether or not it is provided.
 #
 macro(ign_find_package PACKAGE_NAME)
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_find_package is deprecated, use gz_find_package instead.")
+  message(WARNING "ign_find_package is deprecated, use gz_find_package instead.")
 
   set(options REQUIRED PRIVATE EXACT QUIET CONFIG BUILD_ONLY PKGCONFIG_IGNORE)
   set(oneValueArgs VERSION PRETTY PURPOSE EXTRA_ARGS PKGCONFIG PKGCONFIG_LIB PKGCONFIG_VER_COMPARISON)
@@ -512,8 +511,7 @@ endmacro()
 #
 # Macro to append a value to a string
 macro(ign_string_append output_var val)
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_string_append is deprecated, use gz_string_append instead.")
+  message(WARNING "ign_string_append is deprecated, use gz_string_append instead.")
 
   set(options)
   set(oneValueArgs DELIM)
@@ -590,8 +588,7 @@ endmacro()
 # These output variables can be consumed directly by gz_create_core_library(~),
 # gz_add_component(~), gz_build_tests(~), and gz_build_executables(~).
 function(ign_get_libsources_and_unittests lib_sources_var tests_var)
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_get_libsources_and_unittests is deprecated, use gz_get_libsources_and_unittests instead.")
+  message(WARNING "ign_get_libsources_and_unittests is deprecated, use gz_get_libsources_and_unittests instead.")
 
   gz_get_libsources_and_unittests(${lib_sources_var} ${tests_var})
 
@@ -651,8 +648,7 @@ endfunction()
 # <sources>. Remove their paths to make them suitable for passing into
 # gz_add_[library/tests].
 function(ign_get_sources sources_var)
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_get_sources is deprecated, use gz_get_sources instead.")
+  message(WARNING "ign_get_sources is deprecated, use gz_get_sources instead.")
 
   gz_get_sources(${sources_var})
 
@@ -707,8 +703,7 @@ endfunction()
 # config.hh file since it would be redundant with the core library.
 #
 function(ign_install_all_headers)
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_install_all_headers is deprecated, use gz_install_all_headers instead.")
+  message(WARNING "ign_install_all_headers is deprecated, use gz_install_all_headers instead.")
 
   set(options)
   set(oneValueArgs COMPONENT)
@@ -880,8 +875,7 @@ endfunction()
 #################################################
 # gz_build_error macro
 macro(ign_build_error)
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_build_error is deprecated, use gz_build_error instead.")
+  message(WARNING "ign_build_error is deprecated, use gz_build_error instead.")
 
   foreach(str ${ARGN})
     set(msg "\t${str}")
@@ -898,8 +892,7 @@ endmacro(gz_build_error)
 #################################################
 # gz_build_warning macro
 macro(ign_build_warning)
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_build_warning is deprecated, use gz_build_warning instead.")
+  message(WARNING "ign_build_warning is deprecated, use gz_build_warning instead.")
 
   foreach(str ${ARGN})
     list(APPEND build_warnings "${str}")
@@ -1025,8 +1018,7 @@ endmacro()
 # are not allowed to use either of them if you use the CXX_STANDARD argument.
 #
 function(ign_create_core_library)
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_create_core_library is deprecated, use gz_create_core_library instead.")
+  message(WARNING "ign_create_core_library is deprecated, use gz_create_core_library instead.")
 
   set(options INTERFACE)
   set(oneValueArgs INCLUDE_SUBDIR LEGACY_PROJECT_PREFIX CXX_STANDARD PRIVATE_CXX_STANDARD INTERFACE_CXX_STANDARD GET_TARGET_NAME)
@@ -1204,8 +1196,7 @@ endfunction()
 # library, then you probably do not need to specify the standard, because it
 # will get inherited from the core library.
 function(ign_add_component component_name)
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_add_component is deprecated, use gz_add_component instead.")
+  message(WARNING "ign_add_component is deprecated, use gz_add_component instead.")
 
   set(options INTERFACE INDEPENDENT_FROM_PROJECT_LIB PRIVATELY_DEPENDS_ON_PROJECT_LIB INTERFACE_DEPENDS_ON_PROJECT_LIB)
   set(oneValueArgs INCLUDE_SUBDIR GET_TARGET_NAME)
@@ -1620,8 +1611,7 @@ endmacro()
 
 #################################################
 macro(ign_add_executable _name)
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_add_executable is deprecated, use gz_add_executable instead.")
+  message(WARNING "ign_add_executable is deprecated, use gz_add_executable instead.")
   gz_add_executable(${_name} ${ARGN})
 endmacro()
 macro(gz_add_executable _name)
@@ -1639,8 +1629,7 @@ endmacro()
 # You MUST pass in targets to include, not directory names. We must not use
 # explicit directory names here if we want our package to be relocatable.
 function(ign_target_interface_include_directories name)
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_target_interface_include_directories is deprecated, use gz_target_interface_include_directories instead.")
+  message(WARNING "ign_target_interface_include_directories is deprecated, use gz_target_interface_include_directories instead.")
 
   gz_target_interface_include_directories(name)
 endfunction()
@@ -1656,8 +1645,7 @@ endfunction()
 
 #################################################
 macro(ign_install_includes _subdir)
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_install_includes is deprecated, use gz_install_includes instead.")
+  message(WARNING "ign_install_includes is deprecated, use gz_install_includes instead.")
   gz_install_includes(${_subdir} ${ARGN})
 endmacro()
 macro(gz_install_includes _subdir)
@@ -1667,8 +1655,7 @@ endmacro()
 
 #################################################
 macro(ign_install_executable _name )
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_install_executable is deprecated, use gz_install_executable instead.")
+  message(WARNING "ign_install_executable is deprecated, use gz_install_executable instead.")
   gz_install_executable(${_name} ${ARGN})
 endmacro()
 macro(gz_install_executable _name)
@@ -1734,8 +1721,7 @@ endmacro()
 #                      into your executable's directory.
 #
 macro(ign_build_executables)
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_build_executables is deprecated, use gz_build_executables instead.")
+  message(WARNING "ign_build_executables is deprecated, use gz_build_executables instead.")
 
   set(options EXCLUDE_PROJECT_LIB)
   set(oneValueArgs PREFIX EXEC_LIST)
@@ -1827,8 +1813,7 @@ endmacro()
 #                      into your executable's directory.
 #
 macro(ign_build_tests)
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_build_tests is deprecated, use gz_build_tests instead.")
+  message(WARNING "ign_build_tests is deprecated, use gz_build_tests instead.")
 
   set(options SOURCE EXCLUDE_PROJECT_LIB) # NOTE: DO NOT USE "SOURCE", we're adding it here to catch typos
   set(oneValueArgs TYPE TEST_LIST)

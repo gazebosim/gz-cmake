@@ -41,8 +41,7 @@
 #       This usage note applies to gz_pkg_check_modules_quiet(~) as well.
 #
 macro(ign_pkg_check_modules package signature)
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_pkg_check_modules is deprecated, use gz_pkg_check_modules instead.")
+  message(WARNING "ign_pkg_check_modules is deprecated, use gz_pkg_check_modules instead.")
 
   gz_pkg_check_modules(${package} ${signature})
 endmacro()
@@ -69,8 +68,7 @@ endmacro()
 #
 # For usage instructions, see gz_pkg_check_modules(~) above.
 macro(ign_pkg_check_modules_quiet package signature)
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_pkg_check_modules_quiet is deprecated, use gz_pkg_check_modules_quiet instead.")
+  message(WARNING "ign_pkg_check_modules_quiet is deprecated, use gz_pkg_check_modules_quiet instead.")
 
   set(options INTERFACE NO_CMAKE_ENVIRONMENT_PATH QUIET)
   set(oneValueArgs "TARGET_NAME")
@@ -202,8 +200,7 @@ endmacro()
 # use the cmake config-file to retrieve the package information, and then use
 # this macro to generate the relevant pkg-config information.
 macro(ign_pkg_config_entry package string)
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_pkg_config_entry is deprecated, use gz_pkg_config_entry instead.")
+  message(WARNING "ign_pkg_config_entry is deprecated, use gz_pkg_config_entry instead.")
 
   gz_pkg_config_entry(${package} ${string})
 endmacro()
@@ -219,8 +216,7 @@ endmacro()
 # find-module that handles a library package which does not install a pkg-config
 # <package>.pc file.
 macro(ign_pkg_config_library_entry package lib_name)
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_pkg_config_library_entry is deprecated, use gz_pkg_config_library_entry instead.")
+  message(WARNING "ign_pkg_config_library_entry is deprecated, use gz_pkg_config_library_entry instead.")
 
   gz_pkg_config_library_entry(${package} ${lib_name})
 endmacro()

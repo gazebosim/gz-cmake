@@ -42,8 +42,7 @@
 # PATH_SUFFIXES: Optional. Parameter forwarded to the find_path and find_library calls.
 #
 macro(ign_manual_search package)
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_manual_search is deprecated, use gz_manual_search instead.")
+  message(WARNING "ign_manual_search is deprecated, use gz_manual_search instead.")
 
   set(options INTERFACE)
   set(oneValueArgs "TARGET_NAME")
