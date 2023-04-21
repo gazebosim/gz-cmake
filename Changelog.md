@@ -1,11 +1,36 @@
 ## Gazebo CMake 3.x
 
+### Gazebo CMake 3.1.0 (2023-04-21)
+
 1. Add optional binary relocatability in downstream libraries
     * [Pull request #334](https://github.com/gazebosim/gz-cmake/pull/334)
+    * Thanks to Silvio Traversaro
+
+1. Fix doxygen warnings.
+    * [Pull request #333](https://github.com/gazebosim/ign-cmake/pull/333)
+    * Thanks to Benjamin Perseghetti
+
+1. Use CONFIG in gz_add_benchmark to avoid Windows collisions
+    * [Pull request #340](https://github.com/gazebosim/ign-cmake/pull/340)
+
+1. Unset cache variable in gz_pkg_check_modules_quiet
+    * [Pull request #337](https://github.com/gazebosim/ign-cmake/pull/337)
+
+1. LICENSE: add Apache 2.0 license text
+    * [Pull request #338](https://github.com/gazebosim/ign-cmake/pull/338)
+
+1. Disable protobuf warnings on protobuf target (#335)
+    * [Pull request #335) (#336](https://github.com/gazebosim/ign-cmake/pull/335) (#336)
+
+1. Disable protobuf warnings on protobuf target
+    * [Pull request #335](https://github.com/gazebosim/ign-cmake/pull/335)
+
+1. Fix FindAVDEVICE.cmake in case without pkg-config installed with ffmpeg >= 5.1
+    * [Pull request #330](https://github.com/gazebosim/ign-cmake/pull/330)
 
 ### Gazebo CMake 3.0.1 (2022-10-11)
 
-1. 1. FindIgnOGRE2: preserve PKG_CONFIG_PATH
+1. FindIgnOGRE2: preserve PKG_CONFIG_PATH
     * [Pull request #319](https://github.com/gazebosim/ign-cmake/pull/319)
 
 1. FindSQLite3: Add SQLite::SQLite3 ALIAS
