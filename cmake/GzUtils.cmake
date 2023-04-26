@@ -1842,6 +1842,7 @@ macro(ign_build_tests)
   gz_build_tests(${PACKAGE_NAME})
 endmacro()
 macro(gz_build_tests)
+  include(GoogleTest)
 
   # Deprecated, remove skip parsing logic in version 4
   if (NOT gz_build_tests_skip_parsing)
@@ -1907,10 +1908,6 @@ macro(gz_build_tests)
       set(${gz_build_tests_TEST_LIST} ${test_list})
     endif()
 
-    # Find the Python interpreter for running the
-    # check_test_ran.py script
-    include(GzPython)
-
     # Build all the tests
     foreach(target_name ${test_list})
 
@@ -1918,8 +1915,9 @@ macro(gz_build_tests)
         target_compile_options(${target_name} PRIVATE -DUSE_LOW_MEMORY_TESTS=1)
       endif()
 
-      add_test(NAME ${target_name} COMMAND
-        ${target_name} --gtest_output=xml:${CMAKE_BINARY_DIR}/test_results/${target_name}.xml)
+      gtest_discover_tests(${target_name}
+                          PROPERTIES TIMEOUT 240
+                          XML_OUTPUT_DIR ${CMAKE_BINARY_DIR}/test_results/)
 
       if(gz_build_tests_ENVIRONMENT)
         set_property(TEST ${target_name} PROPERTY ENVIRONMENT ${gz_build_tests_ENVIRONMENT})
@@ -1933,14 +1931,6 @@ macro(gz_build_tests)
       target_compile_definitions(${target_name} PRIVATE
         "TESTING_PROJECT_SOURCE_DIR=\"${PROJECT_SOURCE_DIR}\"")
 
-      set_tests_properties(${target_name} PROPERTIES TIMEOUT 240)
-
-      if(Python3_Interpreter_FOUND)
-        # Check that the test produced a result and create a failure if it didn't.
-        # Guards against crashed and timed out tests.
-        add_test(check_${target_name} ${Python3_EXECUTABLE} ${GZ_CMAKE_TOOLS_DIR}/check_test_ran.py
-          ${CMAKE_BINARY_DIR}/test_results/${target_name}.xml)
-      endif()
     endforeach()
 
   else()
