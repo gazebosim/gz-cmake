@@ -138,33 +138,17 @@
 #                             is provided using VERSION, then this will be left
 #                             out, whether or not it is provided.
 #
-macro(ign_find_package PACKAGE_NAME)
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_find_package is deprecated, use gz_find_package instead.")
-
-  set(options REQUIRED PRIVATE EXACT QUIET CONFIG BUILD_ONLY PKGCONFIG_IGNORE)
-  set(oneValueArgs VERSION PRETTY PURPOSE EXTRA_ARGS PKGCONFIG PKGCONFIG_LIB PKGCONFIG_VER_COMPARISON)
-  set(multiValueArgs REQUIRED_BY PRIVATE_FOR COMPONENTS OPTIONAL_COMPONENTS)
-  _gz_cmake_parse_arguments(gz_find_package "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-
-  set(gz_find_package_skip_parsing true)
-  gz_find_package(${PACKAGE_NAME})
-endmacro()
 macro(gz_find_package PACKAGE_NAME_)
   set(PACKAGE_NAME ${PACKAGE_NAME_})  # Allow for variable rebinds
 
-  # Deprecated, remove skip parsing logic in version 4
-  if (NOT gz_find_package_skip_parsing)
-    #------------------------------------
-    # Define the expected arguments
-    set(options REQUIRED PRIVATE EXACT QUIET CONFIG BUILD_ONLY PKGCONFIG_IGNORE)
-    set(oneValueArgs VERSION PRETTY PURPOSE EXTRA_ARGS PKGCONFIG PKGCONFIG_LIB PKGCONFIG_VER_COMPARISON)
-    set(multiValueArgs REQUIRED_BY PRIVATE_FOR COMPONENTS OPTIONAL_COMPONENTS)
+  # Define the expected arguments
+  set(options REQUIRED PRIVATE EXACT QUIET CONFIG BUILD_ONLY PKGCONFIG_IGNORE)
+  set(oneValueArgs VERSION PRETTY PURPOSE EXTRA_ARGS PKGCONFIG PKGCONFIG_LIB PKGCONFIG_VER_COMPARISON)
+  set(multiValueArgs REQUIRED_BY PRIVATE_FOR COMPONENTS OPTIONAL_COMPONENTS)
 
-    #------------------------------------
-    # Parse the arguments
-    _gz_cmake_parse_arguments(gz_find_package "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-  endif()
+  #------------------------------------
+  # Parse the arguments
+  _gz_cmake_parse_arguments(gz_find_package "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   #------------------------------------
   # Construct the arguments to pass to find_package
@@ -511,39 +495,17 @@ endmacro()
 #          space
 #
 # Macro to append a value to a string
-macro(ign_string_append output_var val)
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_string_append is deprecated, use gz_string_append instead.")
-
+macro(gz_string_append output_var val)
+  # Define the expected arguments
+  # NOTE: options cannot be set to PARENT_SCOPE alone, so we put it explicitly
+  # into cmake_parse_arguments(~). We use a semicolon to concatenate it with
+  # this options variable, so all other options should be specified here.
   set(options)
   set(oneValueArgs DELIM)
   set(multiValueArgs)
+  #------------------------------------
+  # Parse the arguments
   _gz_cmake_parse_arguments(gz_string_append "PARENT_SCOPE;${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-
-  set(gz_string_append_skip_parsing true)
-  gz_string_append(${output_var} ${val})
-
-  if(gz_string_append_PARENT_SCOPE)
-    set(${output_var} ${${output_var}} PARENT_SCOPE)
-  endif()
-endmacro()
-macro(gz_string_append output_var val)
-
-  # Deprecated, remove skip parsing logic in version 4
-  if (NOT gz_string_append_skip_parsing)
-    #------------------------------------
-    # Define the expected arguments
-    # NOTE: options cannot be set to PARENT_SCOPE alone, so we put it explicitly
-    # into cmake_parse_arguments(~). We use a semicolon to concatenate it with
-    # this options variable, so all other options should be specified here.
-    set(options)
-    set(oneValueArgs DELIM)
-    set(multiValueArgs)
-
-    #------------------------------------
-    # Parse the arguments
-    _gz_cmake_parse_arguments(gz_string_append "PARENT_SCOPE;${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-  endif()
 
   if(gz_string_append_DELIM)
     set(delim "${gz_string_append_DELIM}")
@@ -589,15 +551,6 @@ endmacro()
 #
 # These output variables can be consumed directly by gz_create_core_library(~),
 # gz_add_component(~), gz_build_tests(~), and gz_build_executables(~).
-function(ign_get_libsources_and_unittests lib_sources_var tests_var)
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_get_libsources_and_unittests is deprecated, use gz_get_libsources_and_unittests instead.")
-
-  gz_get_libsources_and_unittests(${lib_sources_var} ${tests_var})
-
-  set(${lib_sources_var} ${${lib_sources_var}} PARENT_SCOPE)
-  set(${tests_var} ${${tests_var}} PARENT_SCOPE)
-endfunction()
 function(gz_get_libsources_and_unittests lib_sources_var tests_var)
 
   # Glob all the source files
@@ -650,14 +603,6 @@ endfunction()
 # From the current directory, grab all the source files and place them into
 # <sources>. Remove their paths to make them suitable for passing into
 # gz_add_[library/tests].
-function(ign_get_sources sources_var)
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_get_sources is deprecated, use gz_get_sources instead.")
-
-  gz_get_sources(${sources_var})
-
-  set(${sources_var} ${${sources_var}} PARENT_SCOPE)
-endfunction()
 function(gz_get_sources sources_var)
 
   # GLOB all the source files
@@ -706,32 +651,14 @@ endfunction()
 # If the COMPONENT option is specified, this will skip over configuring a
 # config.hh file since it would be redundant with the core library.
 #
-function(ign_install_all_headers)
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_install_all_headers is deprecated, use gz_install_all_headers instead.")
-
+function(gz_install_all_headers)
+  # Define the expected arguments
   set(options)
   set(oneValueArgs COMPONENT)
   set(multiValueArgs EXCLUDE_FILES EXCLUDE_DIRS GENERATED_HEADERS)
+  #------------------------------------
+  # Parse the arguments
   _gz_cmake_parse_arguments(gz_install_all_headers "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-
-  set(gz_install_all_headers_skip_parsing true)
-  gz_install_all_headers()
-endfunction()
-function(gz_install_all_headers)
-
-  # Deprecated, remove skip parsing logic in version 4
-  if (NOT gz_install_all_headers_skip_parsing)
-    #------------------------------------
-    # Define the expected arguments
-    set(options)
-    set(oneValueArgs COMPONENT)
-    set(multiValueArgs EXCLUDE_FILES EXCLUDE_DIRS GENERATED_HEADERS)
-
-    #------------------------------------
-    # Parse the arguments
-    _gz_cmake_parse_arguments(gz_install_all_headers "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-  endif()
 
   #------------------------------------
   # Build the list of directories
@@ -813,8 +740,6 @@ function(gz_install_all_headers)
       set(gz_headers "${gz_headers}#include <${PROJECT_INCLUDE_DIR}/${header}>\n")
   endforeach()
 
-  set(ign_headers ${gz_headers})  # TODO(CH3): Deprecated. Remove on tock.
-
   if(gz_install_all_headers_COMPONENT)
 
     set(component_name ${gz_install_all_headers_COMPONENT})
@@ -879,15 +804,6 @@ endfunction()
 
 #################################################
 # gz_build_error macro
-macro(ign_build_error)
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_build_error is deprecated, use gz_build_error instead.")
-
-  foreach(str ${ARGN})
-    set(msg "\t${str}")
-    list(APPEND build_errors ${msg})
-  endforeach()
-endmacro(ign_build_error)
 macro(gz_build_error)
   foreach(str ${ARGN})
     set(msg "\t${str}")
@@ -897,14 +813,6 @@ endmacro(gz_build_error)
 
 #################################################
 # gz_build_warning macro
-macro(ign_build_warning)
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_build_warning is deprecated, use gz_build_warning instead.")
-
-  foreach(str ${ARGN})
-    list(APPEND build_warnings "${str}")
-  endforeach(str ${ARGN})
-endmacro(ign_build_warning)
 macro(gz_build_warning)
   foreach(str ${ARGN})
     list(APPEND build_warnings "${str}")
@@ -1024,36 +932,14 @@ endmacro()
 # conflict. However, both of those arguments conflict with CXX_STANDARD, so you
 # are not allowed to use either of them if you use the CXX_STANDARD argument.
 #
-function(ign_create_core_library)
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_create_core_library is deprecated, use gz_create_core_library instead.")
-
+function(gz_create_core_library)
+  # Define the expected arguments
   set(options INTERFACE)
   set(oneValueArgs INCLUDE_SUBDIR LEGACY_PROJECT_PREFIX CXX_STANDARD PRIVATE_CXX_STANDARD INTERFACE_CXX_STANDARD GET_TARGET_NAME)
   set(multiValueArgs SOURCES)
+  #------------------------------------
+  # Parse the arguments
   cmake_parse_arguments(gz_create_core_library "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-
-  set(gz_create_core_library_skip_parsing true)
-  gz_create_core_library()
-
-  if(gz_create_core_library_GET_TARGET_NAME)
-    set(${gz_create_core_library_GET_TARGET_NAME} ${${gz_create_core_library_GET_TARGET_NAME}} PARENT_SCOPE)
-  endif()
-endfunction()
-function(gz_create_core_library)
-
-  # Deprecated, remove skip parsing logic in version 4
-  if (NOT gz_create_core_library_skip_parsing)
-    #------------------------------------
-    # Define the expected arguments
-    set(options INTERFACE)
-    set(oneValueArgs INCLUDE_SUBDIR LEGACY_PROJECT_PREFIX CXX_STANDARD PRIVATE_CXX_STANDARD INTERFACE_CXX_STANDARD GET_TARGET_NAME)
-    set(multiValueArgs SOURCES)
-
-    #------------------------------------
-    # Parse the arguments
-    cmake_parse_arguments(gz_create_core_library "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-  endif()
 
   if(gz_create_core_library_SOURCES)
     set(sources ${gz_create_core_library_SOURCES})
@@ -1174,8 +1060,8 @@ endfunction()
 #                          inter-component dependencies in an Gazebo package.
 #
 # [INCLUDE_SUBDIR]: Optional. If specified, the public include headers for this
-#                   component will go into "ignition/<project>/<subdirectory_name>/".
-#                   If not specified, they will go into "ignition/<project>/<component>/"
+#                   component will go into "gz/<project>/<subdirectory_name>/".
+#                   If not specified, they will go into "gz/<project>/<component>/"
 #
 # [GET_TARGET_NAME]: Optional. The variable that follows this argument will be
 #                    set to the library target name that gets produced by this
@@ -1203,37 +1089,14 @@ endfunction()
 # specifying the C++ standard. If your component publicly depends on the core
 # library, then you probably do not need to specify the standard, because it
 # will get inherited from the core library.
-function(ign_add_component component_name)
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_add_component is deprecated, use gz_add_component instead.")
-
+function(gz_add_component component_name)
+  # Define the expected arguments
   set(options INTERFACE INDEPENDENT_FROM_PROJECT_LIB PRIVATELY_DEPENDS_ON_PROJECT_LIB INTERFACE_DEPENDS_ON_PROJECT_LIB)
   set(oneValueArgs INCLUDE_SUBDIR GET_TARGET_NAME)
   set(multiValueArgs SOURCES DEPENDS_ON_COMPONENTS)
+  #------------------------------------
+  # Parse the arguments
   cmake_parse_arguments(gz_add_component "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-
-  set(gz_add_component_skip_parsing true)
-  gz_add_component(${component_name})
-
-  # Pass the component's target name back to the caller if requested
-  if(gz_add_component_GET_TARGET_NAME)
-    set(${gz_add_component_GET_TARGET_NAME} ${${gz_add_component_GET_TARGET_NAME}} PARENT_SCOPE)
-  endif()
-endfunction()
-function(gz_add_component component_name)
-
-  # Deprecated, remove skip parsing logic in version 4
-  if (NOT gz_add_component_skip_parsing)
-    #------------------------------------
-    # Define the expected arguments
-    set(options INTERFACE INDEPENDENT_FROM_PROJECT_LIB PRIVATELY_DEPENDS_ON_PROJECT_LIB INTERFACE_DEPENDS_ON_PROJECT_LIB)
-    set(oneValueArgs INCLUDE_SUBDIR GET_TARGET_NAME)
-    set(multiValueArgs SOURCES DEPENDS_ON_COMPONENTS)
-
-    #------------------------------------
-    # Parse the arguments
-    cmake_parse_arguments(gz_add_component "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-  endif()
 
   if(POLICY CMP0079)
     cmake_policy(SET CMP0079 NEW)
@@ -1409,13 +1272,13 @@ function(gz_add_component component_name)
   # Add this component to the "all" target
   target_link_libraries(${PROJECT_LIBRARY_TARGET_NAME}-all INTERFACE ${lib_name})
   get_property(all_known_components TARGET ${PROJECT_LIBRARY_TARGET_NAME}-all
-    PROPERTY INTERFACE_IGN_ALL_KNOWN_COMPONENTS)
+    PROPERTY INTERFACE_GZ_ALL_KNOWN_COMPONENTS)
   if(NOT all_known_components)
     set_property(TARGET ${PROJECT_LIBRARY_TARGET_NAME}-all
-      PROPERTY INTERFACE_IGN_ALL_KNOWN_COMPONENTS "${component_target_name}")
+      PROPERTY INTERFACE_GZ_ALL_KNOWN_COMPONENTS "${component_target_name}")
   else()
     set_property(TARGET ${PROJECT_LIBRARY_TARGET_NAME}-all
-      PROPERTY INTERFACE_IGN_ALL_KNOWN_COMPONENTS "${all_known_components};${component_target_name}")
+      PROPERTY INTERFACE_GZ_ALL_KNOWN_COMPONENTS "${all_known_components};${component_target_name}")
   endif()
 endfunction()
 
@@ -1442,7 +1305,7 @@ function(_gz_export_target_all)
   # find_all_pkg_components is used as a variable in gz-all-config.cmake.in
   set(find_all_pkg_components "")
   get_property(all_known_components TARGET ${PROJECT_LIBRARY_TARGET_NAME}-all
-    PROPERTY INTERFACE_IGN_ALL_KNOWN_COMPONENTS)
+    PROPERTY INTERFACE_GZ_ALL_KNOWN_COMPONENTS)
 
   if(all_known_components)
     foreach(component ${all_known_components})
@@ -1581,12 +1444,6 @@ macro(_gz_add_library_or_component)
     # Configure the public-facing header for exporting and deprecating. This
     # header provides commentary for the macros so that developers can know their
     # purpose.
-
-    # TODO(CH3): Remove this on ticktock
-    # This is to allow IGNITION_ prefixed export macros to generate in Export.hh
-    # _using_gz_export_base is used in Export.hh.in's configuration!
-    string(REGEX REPLACE "^GZ_" "IGNITION_" _gz_export_base ${export_base})
-
     configure_file(
       "${GZ_CMAKE_DIR}/Export.hh.in"
       "${binary_include_dir}/Export.hh")
@@ -1619,11 +1476,6 @@ macro(_gz_add_library_or_component)
 endmacro()
 
 #################################################
-macro(ign_add_executable _name)
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_add_executable is deprecated, use gz_add_executable instead.")
-  gz_add_executable(${_name} ${ARGN})
-endmacro()
 macro(gz_add_executable _name)
   add_executable(${_name} ${ARGN})
   target_link_libraries(${_name} ${general_libraries})
@@ -1638,12 +1490,6 @@ endmacro()
 #
 # You MUST pass in targets to include, not directory names. We must not use
 # explicit directory names here if we want our package to be relocatable.
-function(ign_target_interface_include_directories name)
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_target_interface_include_directories is deprecated, use gz_target_interface_include_directories instead.")
-
-  gz_target_interface_include_directories(name)
-endfunction()
 function(gz_target_interface_include_directories name)
 
   foreach(include_target ${ARGN})
@@ -1655,22 +1501,12 @@ function(gz_target_interface_include_directories name)
 endfunction()
 
 #################################################
-macro(ign_install_includes _subdir)
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_install_includes is deprecated, use gz_install_includes instead.")
-  gz_install_includes(${_subdir} ${ARGN})
-endmacro()
 macro(gz_install_includes _subdir)
   install(FILES ${ARGN}
     DESTINATION ${GZ_INCLUDE_INSTALL_DIR}/${_subdir} COMPONENT headers)
 endmacro()
 
 #################################################
-macro(ign_install_executable _name )
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_install_executable is deprecated, use gz_install_executable instead.")
-  gz_install_executable(${_name} ${ARGN})
-endmacro()
 macro(gz_install_executable _name)
   set_target_properties(${_name} PROPERTIES VERSION ${PROJECT_VERSION_FULL})
   install (TARGETS ${_name} DESTINATION ${GZ_BIN_INSTALL_DIR})
@@ -1733,39 +1569,18 @@ endmacro()
 #                      will also skip the step of copying the runtime library
 #                      into your executable's directory.
 #
-macro(ign_build_executables)
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_build_executables is deprecated, use gz_build_executables instead.")
-
+macro(gz_build_executables)
+  # Define the expected arguments
   set(options EXCLUDE_PROJECT_LIB)
   set(oneValueArgs PREFIX EXEC_LIST)
   set(multiValueArgs SOURCES LIB_DEPS INCLUDE_DIRS)
+
   if(gz_build_executables_EXEC_LIST)
     set(${gz_build_executables_EXEC_LIST} "")
   endif()
+  #------------------------------------
+  # Parse the arguments
   _gz_cmake_parse_arguments(gz_build_executables "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-
-  set(gz_build_executables_skip_parsing true)
-  gz_build_executables(${PACKAGE_NAME})
-endmacro()
-macro(gz_build_executables)
-
-  # Deprecated, remove skip parsing logic in version 4
-  if (NOT gz_build_executables_skip_parsing)
-    #------------------------------------
-    # Define the expected arguments
-    set(options EXCLUDE_PROJECT_LIB)
-    set(oneValueArgs PREFIX EXEC_LIST)
-    set(multiValueArgs SOURCES LIB_DEPS INCLUDE_DIRS)
-
-    if(gz_build_executables_EXEC_LIST)
-      set(${gz_build_executables_EXEC_LIST} "")
-    endif()
-
-    #------------------------------------
-    # Parse the arguments
-    _gz_cmake_parse_arguments(gz_build_executables "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-  endif()
 
   foreach(exec_file ${gz_build_executables_SOURCES})
 
@@ -1826,32 +1641,14 @@ endmacro()
 #                      will also skip the step of copying the runtime library
 #                      into your executable's directory.
 #
-macro(ign_build_tests)
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_build_tests is deprecated, use gz_build_tests instead.")
-
+macro(gz_build_tests)
+  # Define the expected arguments
   set(options SOURCE EXCLUDE_PROJECT_LIB) # NOTE: DO NOT USE "SOURCE", we're adding it here to catch typos
   set(oneValueArgs TYPE TEST_LIST)
   set(multiValueArgs SOURCES LIB_DEPS INCLUDE_DIRS)
+  #------------------------------------
+  # Parse the arguments
   _gz_cmake_parse_arguments(gz_build_tests "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-
-  set(gz_build_tests_skip_parsing true)
-  gz_build_tests(${PACKAGE_NAME})
-endmacro()
-macro(gz_build_tests)
-
-  # Deprecated, remove skip parsing logic in version 4
-  if (NOT gz_build_tests_skip_parsing)
-    #------------------------------------
-    # Define the expected arguments
-    set(options SOURCE EXCLUDE_PROJECT_LIB) # NOTE: DO NOT USE "SOURCE", we're adding it here to catch typos
-    set(oneValueArgs TYPE TEST_LIST)
-    set(multiValueArgs SOURCES LIB_DEPS INCLUDE_DIRS)
-
-    #------------------------------------
-    # Parse the arguments
-    _gz_cmake_parse_arguments(gz_build_tests "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-  endif()
 
   if(NOT gz_build_tests_TYPE)
     # If you have encountered this error, you are probably migrating to the

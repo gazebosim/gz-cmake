@@ -1,7 +1,5 @@
 # Gazebo CMake : CMake Modules for Gazebo Projects
 
-**Maintainer:** grey AT openrobotics.org
-
 [![GitHub open issues](https://img.shields.io/github/issues-raw/gazebosim/gz-cmake.svg)](https://github.com/gazebosim/gz-cmake/issues)
 [![GitHub open pull requests](https://img.shields.io/github/issues-pr-raw/gazebosim/gz-cmake.svg)](https://github.com/gazebosim/gz-cmake/pulls)
 [![Discourse topics](https://img.shields.io/discourse/https/community.gazebosim.org/topics.svg)](https://community.gazebosim.org)

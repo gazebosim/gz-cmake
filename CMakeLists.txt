@@ -174,28 +174,6 @@ set(tick_tocked_cmake_files
   "GzPython.cmake"
   "GzBenchmark.cmake")
 
-# TODO(CH3): Deprecated. Remove on tock.
-# Install symlinks for IgnPython and IgnBenchmark
-foreach(cmake_file ${tick_tocked_cmake_files})
-  string(REGEX REPLACE "^Gz" "Ign" ign_cmake_file ${cmake_file})
-  file(MAKE_DIRECTORY "${PROJECT_BINARY_DIR}/cmake")
-
-  if (WIN32)  # Windows requires copy instead of symlink
-    install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E copy \
-        ${CMAKE_INSTALL_PREFIX}\/${gz_modules_install_dir}\/${cmake_file} \
-        ${PROJECT_BINARY_DIR}\/cmake/${ign_cmake_file})")
-  else()
-    install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink \
-        ${CMAKE_INSTALL_PREFIX}\/${gz_modules_install_dir}\/${cmake_file} \
-        ${PROJECT_BINARY_DIR}\/cmake/${ign_cmake_file})")
-  endif()
-
-  install(
-    FILES ${PROJECT_BINARY_DIR}/cmake/${ign_cmake_file}
-    DESTINATION ${gz_modules_install_dir}
-    COMPONENT modules)
-endforeach()
-
 include(CTest)
 if (BUILD_TESTING)
   add_subdirectory(test)
@@ -244,7 +222,6 @@ _gz_setup_target_for_codecheck()
 
 # Docs
 set(GZ_CMAKE_DOXYGEN_DIR "${CMAKE_CURRENT_SOURCE_DIR}/doc/doxygen")
-set(IGNITION_CMAKE_DOXYGEN_DIR ${GZ_CMAKE_DOXYGEN_DIR})  # TODO(CH3): Deprecated. Remove on tock.
 
 configure_file(${CMAKE_SOURCE_DIR}/api.md.in ${CMAKE_BINARY_DIR}/api.md)
 configure_file(${CMAKE_SOURCE_DIR}/tutorials.md.in ${CMAKE_BINARY_DIR}/tutorials.md)

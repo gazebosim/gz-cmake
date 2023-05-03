@@ -81,7 +81,6 @@ macro(_gz_setup_unix)
         "processor type (i386 and x86_64)")
     if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
       set(GZ_ADD_fPIC_TO_LIBRARIES true)
-      set(IGN_ADD_fPIC_TO_LIBRARIES ${GZ_ADD_fPIC_TO_LIBRARIES})  # TODO(CH3): Deprecated. Remove on tock.
     endif(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
   endif(CMAKE_UNAME)
 
@@ -352,13 +351,7 @@ macro(_gz_setup_msvc)
   # In some cases, a user might want to compile with the static runtime. This
   # should ONLY be done if they do not intend to use the Gazebo library as
   # part of a plugin-based framework.
-
-  if(IGN_USE_STATIC_RUNTIME)  # TODO(CH3): Deprecated. Remove on tock.
-    message(WARNING "Deprecated. Use [GZ_USE_STATIC_RUNTIME] instead! Use the static runtime (strongly discouraged)")
-    set(GZ_USE_STATIC_RUNTIME ${IGN_USE_STATIC_RUNTIME})
-  else()
-    option(GZ_USE_STATIC_RUNTIME "Use the static runtime (strongly discouraged)" OFF)
-  endif()
+  option(GZ_USE_STATIC_RUNTIME "Use the static runtime (strongly discouraged)" OFF)
 
   if(BUILD_SHARED_LIBS)
     # Users should not choose the static runtime unless they are compiling a

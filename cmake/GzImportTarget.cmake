@@ -43,18 +43,6 @@
 # CFLAGS_VAR: Optional. Explicitly specify the name of the cflags variable for
 #             this package. Default is <package>_CFLAGS.
 #
-macro(ign_import_target package)
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_import_target is deprecated, use gz_import_target instead.")
-
-  set(options "INTERFACE")
-  set(oneValueArgs "TARGET_NAME" "LIB_VAR" "INCLUDE_VAR" "CFLAGS_VAR")
-  set(multiValueArgs) # We are not using multiValueArgs yet
-  _gz_cmake_parse_arguments(gz_import_target "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-
-  set(gz_import_target_skip_parsing true)
-  gz_import_target(${package})
-endmacro()
 macro(gz_import_target package)
 
   if (NOT gz_import_target_skip_parsing)

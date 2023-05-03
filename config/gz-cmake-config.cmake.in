@@ -49,7 +49,6 @@ if( NOT GZ_CMAKE_VERSION_MAJOR
   # This variable does not follow the usual cmake naming convention because it
   # is a non-standard package variable.
   set(GZ_CMAKE_VERSION_MAJOR @PROJECT_VERSION_MAJOR@)
-  set(IGNITION_CMAKE_VERSION_MAJOR ${GZ_CMAKE_VERSION_MAJOR})  # TODO(CH3): Deprecated. Remove on tock.
 
   #--------------------------------------
   # Initialize the GZ_CMAKE_DIR variable with the location of the cmake
@@ -68,10 +67,4 @@ if( NOT GZ_CMAKE_VERSION_MAJOR
   set(GZ_CMAKE_CODECHECK_DIR "@PACKAGE_GZ_DATA_INSTALL_DIR@/codecheck")
   set(GZ_CMAKE_BENCHMARK_DIR "@PACKAGE_GZ_DATA_INSTALL_DIR@/benchmark")
   set(GZ_CMAKE_TOOLS_DIR "@PACKAGE_GZ_DATA_INSTALL_DIR@/tools")
-
-  set(IGNITION_CMAKE_DOXYGEN_DIR ${GZ_CMAKE_DOXYGEN_DIR})  # TODO(CH3): Deprecated. Remove on tock.
-  set(IGNITION_CMAKE_CODECHECK_DIR ${GZ_CMAKE_CODECHECK_DIR})  # TODO(CH3): Deprecated. Remove on tock.
-  set(IGNITION_CMAKE_BENCHMARK_DIR ${GZ_CMAKE_BENCHMARK_DIR})  # TODO(CH3): Deprecated. Remove on tock.
-  set(IGNITION_CMAKE_TOOLS_DIR ${GZ_CMAKE_TOOLS_DIR})  # TODO(CH3): Deprecated. Remove on tock.
-
 endif()

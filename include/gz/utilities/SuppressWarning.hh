@@ -30,13 +30,13 @@
  * Usage example:
  *
  * SomeClass *ptr = CreatePtr();
- * IGN_UTILS_WARN_IGNORE__NON_VIRTUAL_DESTRUCTOR
+ * GZ_UTILS_WARN_IGNORE__NON_VIRTUAL_DESTRUCTOR
  * delete ptr;
- * IGN_UTILS_WARN_RESUME__NON_VIRTUAL_DESTRUCTOR
+ * GZ_UTILS_WARN_RESUME__NON_VIRTUAL_DESTRUCTOR
  *
  */
 
-// Be sure to call the IGN_UTILS_WARN_RESUME__XXXXX macro at the end of the
+// Be sure to call the GZ_UTILS_WARN_RESUME__XXXXX macro at the end of the
 // block of code where the warning suppression is needed. Otherwise, you might
 // inadvertently suppress legitimate warnings.
 
@@ -48,22 +48,22 @@
 /// We want to suppress this warning when we know for certain (via the design
 /// of our implementation) that the pointer is definitely not pointing to a more
 /// derived type.
-#define IGN_UTILS_WARN_IGNORE__NON_VIRTUAL_DESTRUCTOR \
-  DETAIL_IGN_UTILS_WARN_IGNORE__NON_VIRTUAL_DESTRUCTOR
+#define GZ_UTILS_WARN_IGNORE__NON_VIRTUAL_DESTRUCTOR \
+  DETAIL_GZ_UTILS_WARN_IGNORE__NON_VIRTUAL_DESTRUCTOR
 
-#define IGN_UTILS_WARN_RESUME__NON_VIRTUAL_DESTRUCTOR \
-  DETAIL_IGN_UTILS_WARN_RESUME__NON_VIRTUAL_DESTRUCTOR
+#define GZ_UTILS_WARN_RESUME__NON_VIRTUAL_DESTRUCTOR \
+  DETAIL_GZ_UTILS_WARN_RESUME__NON_VIRTUAL_DESTRUCTOR
 
 /// \brief Microsoft Visual Studio does not automatically export the interface
 /// information for member variables that belong to interface classes of a DLL.
 /// Instead it issues this warning. When the member variable is private, we
 /// choose to suppress the warning instead of needlessly adding the class
 /// information to the DLL interface.
-#define IGN_UTILS_WARN_IGNORE__DLL_INTERFACE_MISSING \
-  DETAIL_IGN_UTILS_WARN_IGNORE__DLL_INTERFACE_MISSING
+#define GZ_UTILS_WARN_IGNORE__DLL_INTERFACE_MISSING \
+  DETAIL_GZ_UTILS_WARN_IGNORE__DLL_INTERFACE_MISSING
 
-#define IGN_UTILS_WARN_RESUME__DLL_INTERFACE_MISSING \
-  DETAIL_IGN_UTILS_WARN_RESUME__DLL_INTERFACE_MISSING
+#define GZ_UTILS_WARN_RESUME__DLL_INTERFACE_MISSING \
+  DETAIL_GZ_UTILS_WARN_RESUME__DLL_INTERFACE_MISSING
 
 // TODO(anyone): Add more warning types as they become relevant.
 // Do not add warning types to suppress unless they are genuinely necessary.

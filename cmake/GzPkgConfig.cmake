@@ -40,12 +40,6 @@
 #       Without the version comparison, the quotes and spacing are irrelevant.
 #       This usage note applies to gz_pkg_check_modules_quiet(~) as well.
 #
-macro(ign_pkg_check_modules package signature)
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_pkg_check_modules is deprecated, use gz_pkg_check_modules instead.")
-
-  gz_pkg_check_modules(${package} ${signature})
-endmacro()
 macro(gz_pkg_check_modules package signature)
 
   gz_pkg_check_modules_quiet(${package} "${signature}" ${ARGN})
@@ -68,32 +62,14 @@ endmacro()
 # variables for you, whether or not pkg-config is available.
 #
 # For usage instructions, see gz_pkg_check_modules(~) above.
-macro(ign_pkg_check_modules_quiet package signature)
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_pkg_check_modules_quiet is deprecated, use gz_pkg_check_modules_quiet instead.")
-
+macro(gz_pkg_check_modules_quiet package signature)
+  # Define the expected arguments
   set(options INTERFACE NO_CMAKE_ENVIRONMENT_PATH QUIET)
   set(oneValueArgs "TARGET_NAME")
   set(multiValueArgs)
+  #------------------------------------
+  # Parse the arguments
   _gz_cmake_parse_arguments(gz_pkg_check_modules "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-
-  set(gz_pkg_check_modules_quiet_skip_parsing true)
-  gz_pkg_check_modules_quiet(${package} ${signature})
-endmacro()
-macro(gz_pkg_check_modules_quiet package signature)
-
-  # Deprecated, remove skip parsing logic in version 4
-  if (NOT gz_pkg_check_modules_quiet_skip_parsing)
-    #------------------------------------
-    # Define the expected arguments
-    set(options INTERFACE NO_CMAKE_ENVIRONMENT_PATH QUIET)
-    set(oneValueArgs "TARGET_NAME")
-    set(multiValueArgs)
-
-    #------------------------------------
-    # Parse the arguments
-    _gz_cmake_parse_arguments(gz_pkg_check_modules "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-  endif()
 
   if(gz_pkg_check_modules_INTERFACE)
     set(_gz_pkg_check_modules_interface_option INTERFACE)
@@ -197,12 +173,6 @@ endmacro()
 # cmake config-file (*-config.cmake) and a pkg-config file (*.pc), then you can
 # use the cmake config-file to retrieve the package information, and then use
 # this macro to generate the relevant pkg-config information.
-macro(ign_pkg_config_entry package string)
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_pkg_config_entry is deprecated, use gz_pkg_config_entry instead.")
-
-  gz_pkg_config_entry(${package} ${string})
-endmacro()
 macro(gz_pkg_config_entry package string)
 
   set(${package}_PKGCONFIG_ENTRY "${string}")
@@ -214,12 +184,6 @@ endmacro()
 # be found as a plain library by pkg-config. This should be used in any
 # find-module that handles a library package which does not install a pkg-config
 # <package>.pc file.
-macro(ign_pkg_config_library_entry package lib_name)
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_pkg_config_library_entry is deprecated, use gz_pkg_config_library_entry instead.")
-
-  gz_pkg_config_library_entry(${package} ${lib_name})
-endmacro()
 macro(gz_pkg_config_library_entry package lib_name)
 
   set(${package}_PKGCONFIG_ENTRY "-l${lib_name}")
