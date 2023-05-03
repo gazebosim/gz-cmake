@@ -31,8 +31,7 @@
 #################################################
 # Initialize the Gazebo project
 macro(ign_configure_project)
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_configure_project is deprecated, use gz_configure_project instead.")
+  message(WARNING "ign_configure_project is deprecated, use gz_configure_project instead.")
 
   set(options NO_PROJECT_PREFIX NO_IGNITION_PREFIX)  # TODO(CH3): NO_IGNITION_PREFIX IS DEPRECATED.
   set(oneValueArgs REPLACE_INCLUDE_PATH REPLACE_IGNITION_INCLUDE_PATH VERSION_SUFFIX)  # TODO(CH3): REPLACE_IGNITION_INCLUDE_PATH IS DEPRECATED.
@@ -209,8 +208,7 @@ endmacro()
 #################################################
 # Check the OS type.
 macro(ign_check_os)
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_check_os is deprecated, use gz_check_os instead.")
+  message(WARNING "ign_check_os is deprecated, use gz_check_os instead.")
   gz_check_os()
 endmacro()
 macro(gz_check_os)
