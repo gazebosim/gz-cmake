@@ -156,8 +156,7 @@ macro(_gz_setup_packages)
 endmacro()
 
 macro(ign_create_packages)
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_create_packages is deprecated, use gz_create_packages instead.")
+  message(WARNING "ign_create_packages is deprecated, use gz_create_packages instead.")
 
   gz_create_packages()
 endmacro()

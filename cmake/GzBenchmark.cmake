@@ -60,8 +60,7 @@ function(_gz_add_version_info_target)
 endfunction()
 
 function(ign_add_benchmarks)
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_add_benchmarks is deprecated, use gz_add_benchmarks instead.")
+  message(WARNING "ign_add_benchmarks is deprecated, use gz_add_benchmarks instead.")
 
   cmake_parse_arguments(BENCHMARK "" "" "SOURCES" ${ARGN})
 

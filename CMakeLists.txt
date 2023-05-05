@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.10.2 FATAL_ERROR)
 #============================================================================
 # Initialize the project
 #============================================================================
-project(gz-cmake3 VERSION 3.0.1)
+project(gz-cmake3 VERSION 3.1.0)
 
 #--------------------------------------
 # Initialize the GZ_CMAKE_DIR variable with the location of the cmake
