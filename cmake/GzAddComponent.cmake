@@ -72,8 +72,7 @@
 # library, then you probably do not need to specify the standard, because it
 # will get inherited from the core library.
 function(ign_add_component component_name)
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_add_component is deprecated, use gz_add_component instead.")
+  message(WARNING "ign_add_component is deprecated, use gz_add_component instead.")
 
   set(options INTERFACE INDEPENDENT_FROM_PROJECT_LIB PRIVATELY_DEPENDS_ON_PROJECT_LIB INTERFACE_DEPENDS_ON_PROJECT_LIB)
   set(oneValueArgs INCLUDE_SUBDIR GET_TARGET_NAME)

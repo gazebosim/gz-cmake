@@ -23,8 +23,7 @@
 #
 # Macro to append a value to a string
 macro(ign_string_append output_var val)
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_string_append is deprecated, use gz_string_append instead.")
+  message(WARNING "ign_string_append is deprecated, use gz_string_append instead.")
 
   set(options)
   set(oneValueArgs DELIM)

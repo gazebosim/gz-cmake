@@ -42,8 +42,7 @@
 #                      into your executable's directory.
 #
 macro(ign_build_tests)
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_build_tests is deprecated, use gz_build_tests instead.")
+  message(WARNING "ign_build_tests is deprecated, use gz_build_tests instead.")
 
   set(options SOURCE EXCLUDE_PROJECT_LIB) # NOTE: DO NOT USE "SOURCE", we're adding it here to catch typos
   set(oneValueArgs TYPE TEST_LIST)

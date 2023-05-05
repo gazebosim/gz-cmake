@@ -13,8 +13,7 @@
 
 #################################################
 macro(ign_install_executable _name )
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_install_executable is deprecated, use gz_install_executable instead.")
+  message(WARNING "ign_install_executable is deprecated, use gz_install_executable instead.")
   gz_install_executable(${_name} ${ARGN})
 endmacro()
 macro(gz_install_executable _name)
@@ -25,8 +24,7 @@ endmacro()
 
 #################################################
 macro(ign_add_executable _name)
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_add_executable is deprecated, use gz_add_executable instead.")
+  message(WARNING "ign_add_executable is deprecated, use gz_add_executable instead.")
   gz_add_executable(${_name} ${ARGN})
 endmacro()
 macro(gz_add_executable _name)
@@ -67,8 +65,7 @@ endmacro()
 #                      into your executable's directory.
 #
 macro(ign_build_executables)
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_build_executables is deprecated, use gz_build_executables instead.")
+  message(WARNING "ign_build_executables is deprecated, use gz_build_executables instead.")
 
   set(options EXCLUDE_PROJECT_LIB)
   set(oneValueArgs PREFIX EXEC_LIST)

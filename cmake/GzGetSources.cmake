@@ -18,8 +18,7 @@
 # <sources>. Remove their paths to make them suitable for passing into
 # gz_add_[library/tests].
 function(ign_get_sources sources_var)
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_get_sources is deprecated, use gz_get_sources instead.")
+  message(WARNING "ign_get_sources is deprecated, use gz_get_sources instead.")
 
   gz_get_sources(${sources_var})
 
