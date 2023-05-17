@@ -152,8 +152,7 @@
 #                             out, whether or not it is provided.
 #
 macro(ign_find_package PACKAGE_NAME)
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_find_package is deprecated, use gz_find_package instead.")
+  message(WARNING "ign_find_package is deprecated, use gz_find_package instead.")
 
   set(options REQUIRED PRIVATE EXACT QUIET CONFIG BUILD_ONLY PKGCONFIG_IGNORE)
   set(oneValueArgs VERSION PRETTY PURPOSE EXTRA_ARGS PKGCONFIG PKGCONFIG_LIB PKGCONFIG_VER_COMPARISON)

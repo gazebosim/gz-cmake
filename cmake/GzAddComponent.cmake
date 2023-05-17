@@ -20,9 +20,9 @@
 #                   [INDEPENDENT_FROM_PROJECT_LIB]
 #                   [PRIVATELY_DEPENDS_ON_PROJECT_LIB]
 #                   [INTERFACE_DEPENDS_ON_PROJECT_LIB]
-#                   [CXX_STANDARD <10|14|17>]
-#                   [PRIVATE_CXX_STANDARD <10|14|17>]
-#                   [INTERFACE_CXX_STANDARD <10|14|17>])
+#                   [CXX_STANDARD <11|14|17>]
+#                   [PRIVATE_CXX_STANDARD <11|14|17>]
+#                   [INTERFACE_CXX_STANDARD <11|14|17>])
 #
 # This function will produce a "component" library for your project. This is the
 # recommended way to produce plugins or library modules.
@@ -72,8 +72,7 @@
 # library, then you probably do not need to specify the standard, because it
 # will get inherited from the core library.
 function(ign_add_component component_name)
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_add_component is deprecated, use gz_add_component instead.")
+  message(WARNING "ign_add_component is deprecated, use gz_add_component instead.")
 
   set(options INTERFACE INDEPENDENT_FROM_PROJECT_LIB PRIVATELY_DEPENDS_ON_PROJECT_LIB INTERFACE_DEPENDS_ON_PROJECT_LIB)
   set(oneValueArgs INCLUDE_SUBDIR GET_TARGET_NAME)
@@ -90,7 +89,7 @@ function(ign_add_component component_name)
 endfunction()
 function(gz_add_component component_name)
 
-  # Deprecated, remove skip parsing logic in version 3
+  # Deprecated, remove skip parsing logic in version 4
   if (NOT gz_add_component_skip_parsing)
     #------------------------------------
     # Define the expected arguments

@@ -21,8 +21,7 @@
 # These output variables can be consumed directly by gz_create_core_library(~),
 # gz_add_component(~), gz_build_tests(~), and gz_build_executables(~).
 function(ign_get_libsources_and_unittests lib_sources_var tests_var)
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_get_libsources_and_unittests is deprecated, use gz_get_libsources_and_unittests instead.")
+  message(WARNING "ign_get_libsources_and_unittests is deprecated, use gz_get_libsources_and_unittests instead.")
 
   gz_get_libsources_and_unittests(${lib_sources_var} ${tests_var})
 

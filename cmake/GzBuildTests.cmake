@@ -16,7 +16,8 @@
 #                 SOURCES <sources>
 #                 [LIB_DEPS <library_dependencies>]
 #                 [INCLUDE_DIRS <include_dependencies>]
-#                 [TEST_LIST <output_var>])
+#                 [TEST_LIST <output_var>]
+#                 [ENVIRONMENT <environment>])
 #
 # Build tests for a Gazebo project. Arguments are as follows:
 #
@@ -41,9 +42,10 @@
 #                      will also skip the step of copying the runtime library
 #                      into your executable's directory.
 #
+# ENVIRONMENT: Optional. Used to set the ENVIRONMENT property of the tests.
+#
 macro(ign_build_tests)
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_build_tests is deprecated, use gz_build_tests instead.")
+  message(WARNING "ign_build_tests is deprecated, use gz_build_tests instead.")
 
   set(options SOURCE EXCLUDE_PROJECT_LIB) # NOTE: DO NOT USE "SOURCE", we're adding it here to catch typos
   set(oneValueArgs TYPE TEST_LIST)
@@ -61,7 +63,7 @@ macro(gz_build_tests)
     # Define the expected arguments
     set(options SOURCE EXCLUDE_PROJECT_LIB) # NOTE: DO NOT USE "SOURCE", we're adding it here to catch typos
     set(oneValueArgs TYPE TEST_LIST)
-    set(multiValueArgs SOURCES LIB_DEPS INCLUDE_DIRS)
+    set(multiValueArgs SOURCES LIB_DEPS INCLUDE_DIRS ENVIRONMENT)
 
     #------------------------------------
     # Parse the arguments
@@ -132,6 +134,10 @@ macro(gz_build_tests)
 
       add_test(NAME ${target_name} COMMAND
         ${target_name} --gtest_output=xml:${CMAKE_BINARY_DIR}/test_results/${target_name}.xml)
+
+      if(gz_build_tests_ENVIRONMENT)
+        set_property(TEST ${target_name} PROPERTY ENVIRONMENT ${gz_build_tests_ENVIRONMENT})
+      endif()
 
       if(UNIX)
         # gtest requies pthread when compiled on a Unix machine

@@ -56,8 +56,7 @@
 # are not allowed to use either of them if you use the CXX_STANDARD argument.
 #
 function(ign_create_core_library)
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_create_core_library is deprecated, use gz_create_core_library instead.")
+  message(WARNING "ign_create_core_library is deprecated, use gz_create_core_library instead.")
 
   set(options INTERFACE)
   set(oneValueArgs INCLUDE_SUBDIR LEGACY_PROJECT_PREFIX CXX_STANDARD PRIVATE_CXX_STANDARD INTERFACE_CXX_STANDARD GET_TARGET_NAME)

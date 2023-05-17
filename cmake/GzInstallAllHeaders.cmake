@@ -21,8 +21,7 @@
 # You MUST pass in targets to include, not directory names. We must not use
 # explicit directory names here if we want our package to be relocatable.
 function(ign_target_interface_include_directories name)
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_target_interface_include_directories is deprecated, use gz_target_interface_include_directories instead.")
+  message(WARNING "ign_target_interface_include_directories is deprecated, use gz_target_interface_include_directories instead.")
 
   gz_target_interface_include_directories(name)
 endfunction()
@@ -38,8 +37,7 @@ endfunction()
 
 #################################################
 macro(ign_install_includes _subdir)
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_install_includes is deprecated, use gz_install_includes instead.")
+  message(WARNING "ign_install_includes is deprecated, use gz_install_includes instead.")
   gz_install_includes(${_subdir} ${ARGN})
 endmacro()
 macro(gz_install_includes _subdir)
@@ -76,8 +74,7 @@ endmacro()
 # config.hh file since it would be redundant with the core library.
 #
 function(ign_install_all_headers)
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_install_all_headers is deprecated, use gz_install_all_headers instead.")
+  message(WARNING "ign_install_all_headers is deprecated, use gz_install_all_headers instead.")
 
   set(options)
   set(oneValueArgs COMPONENT)
