@@ -9,7 +9,7 @@
     * [Pull request #338](https://github.com/gazebosim/ign-cmake/pull/338)
 
 1. Disable protobuf warnings on protobuf target (#335)
-    * [Pull request #335) (#336](https://github.com/gazebosim/ign-cmake/pull/335) (#336)
+    * [Pull request #335](https://github.com/gazebosim/ign-cmake/pull/335)
 
 1. Fix FindAVDEVICE.cmake in case without pkg-config installed with ffmpeg >= 5.1
     * [Pull request #330](https://github.com/gazebosim/ign-cmake/pull/330)
