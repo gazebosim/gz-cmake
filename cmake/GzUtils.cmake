@@ -293,6 +293,70 @@ endmacro()
 
 
 #################################################
+# gz_build_examples(
+#     SOURCE_DIR <source_dir>
+#     BINARY_DIR <binary_dir>
+#
+# Build examples for a Gazebo project.
+# Requires a CMakeLists.txt file to be in SOURCE_DIR that acts
+# as a top level project.
+#
+# This generates two test targets
+# * EXAMPLES_Configure_TEST - Equivalent of calling "cmake .." on
+#                             the examples directory
+#
+# * EXAMPLES_Build_TEST - Equivalent of calling "make" on the
+#                         examples directory
+#
+# These tests are run during "make test" or can be run specifically
+# via "ctest -R EXAMPLES_ -V"
+#
+# Arguments are as follows:
+#
+# SOURCE_DIR: Required. Path to the examples folder.
+#             For example ${CMAKE_CURRENT_SOURCE_DIR}/examples
+#
+# BINARY_DIR: Required. Path to the output binary folder
+#             For example ${CMAKE_CURRENT_BINARY_DIR}/examples
+#
+macro(gz_build_examples)
+  #------------------------------------
+  # Define the expected arguments
+  set(options)
+  set(oneValueArgs SOURCE_DIR BINARY_DIR)
+
+  #------------------------------------
+  # Parse the arguments
+  _gz_cmake_parse_arguments(gz_build_examples "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+  set(gz_build_examples_CMAKE_PREFIX_PATH $ENV{CMAKE_PREFIX_PATH})
+  string(REPLACE ":" ";" gz_build_examples_CMAKE_PREFIX_PATH ${gz_build_examples_CMAKE_PREFIX_PATH})
+  list(APPEND gz_build_examples_CMAKE_PREFIX_PATH ${CMAKE_INSTALL_PREFIX})
+
+  add_test(
+    NAME EXAMPLES_Configure_TEST
+    COMMAND ${CMAKE_COMMAND} -G${CMAKE_GENERATOR}
+                             --no-warn-unused-cli
+                             -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+                             -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+                             -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
+                             -DCMAKE_C_FLAGS=${CMAKE_C_FLAGS}
+                             -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
+                             "-DCMAKE_PREFIX_PATH=${gz_build_examples_CMAKE_PREFIX_PATH}"
+                             -S ${gz_build_examples_SOURCE_DIR}
+                             -B ${gz_build_examples_BINARY_DIR}
+  )
+
+  add_test(
+    NAME EXAMPLES_Build_TEST
+    COMMAND ${CMAKE_COMMAND} --build ${gz_build_examples_BINARY_DIR}
+                             --config $<CONFIG>
+  )
+  set_tests_properties(EXAMPLES_Build_TEST
+    PROPERTIES DEPENDS "EXAMPLES_Configure_TEST")
+endmacro()
+
+#################################################
 # _gz_cmake_parse_arguments(<prefix> <options> <oneValueArgs> <multiValueArgs> [ARGN])
 #
 # Set <prefix> to match the prefix that is given to cmake_parse_arguments(~).

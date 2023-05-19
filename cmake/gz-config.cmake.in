@@ -137,7 +137,12 @@ endif()
 # contain imported targets, so @PKG_NAME@_INCLUDE_DIRS is never needed.
 set(@PKG_NAME@_CORE_LIBRARY @simple_import_name@)
 set(@PKG_NAME@_LIBRARIES @gz_namespace@requested)
-set_and_check(@PKG_NAME@_INCLUDE_DIRS "@PACKAGE_GZ_INCLUDE_INSTALL_DIR_FULL@")
+
+if (NOT @PKG_NAME@_INCLUDE_DIRS_OVERRIDE)
+  set_and_check(@PKG_NAME@_INCLUDE_DIRS "@PACKAGE_GZ_INCLUDE_INSTALL_DIR_FULL@")
+else()
+  set_and_check(@PKG_NAME@_INCLUDE_DIRS ${@PKG_NAME@_INCLUDE_DIRS_OVERRIDE})
+endif()
 
 # Backwards compatibility variables
 set(@LEGACY_PROJECT_PREFIX@_LIBRARIES ${@PKG_NAME@_LIBRARIES})
