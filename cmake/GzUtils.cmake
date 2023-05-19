@@ -25,6 +25,60 @@ include(GzRelocatableBinaries)
 include(GzStringAppend)
 
 #################################################
+# assert that a file exists
+# From ament/ament_cmake_core/core/assert_file_exists.cmake (Apache 2.0)
+function(_gz_assert_file_exists filename error_message)
+  if(NOT IS_ABSOLUTE "${filename}")
+    set(filename "${CMAKE_CURRENT_LIST_DIR}/${filename}")
+  endif()
+  if(NOT EXISTS "${filename}")
+    message(FATAL_ERROR "${error_message}")
+  endif()
+endfunction()
+
+#################################################
+# From ament/ament_cmake_core/core/stamp.cmake (Apache 2.0)
+#   :param path:  file name
+#
+#   Uses ``configure_file`` to generate a file ``filepath.stamp`` hidden
+#   somewhere in the build tree.  This will cause cmake to rebuild its
+#   cache when ``filepath`` is modified.
+#
+function(_gz_stamp path)
+  get_filename_component(filename "${path}" NAME)
+  configure_file(
+    "${path}"
+    "${CMAKE_CURRENT_BINARY_DIR}/gz-cmake/stamps/${filename}.stamp"
+    COPYONLY
+  )
+endfunction()
+
+#################################################
+# From ament/ament_cmake_core/core/string_ends_with.cmake (Apache 2.0)
+# Check if a string ends with a specific suffix.
+#
+# :param str: the string
+# :type str: string
+# :param suffix: the suffix
+# :type suffix: string
+# :param var: the output variable name
+# :type var: bool
+#
+function(_gz_string_ends_with str suffix var)
+  string(LENGTH "${str}" str_length)
+  string(LENGTH "${suffix}" suffix_length)
+  set(value FALSE)
+  if(NOT ${str_length} LESS ${suffix_length})
+    math(EXPR str_offset "${str_length} - ${suffix_length}")
+    string(SUBSTRING "${str}" ${str_offset} ${suffix_length} str_suffix)
+    if(str_suffix STREQUAL suffix)
+      set(value TRUE)
+    endif()
+  endif()
+  set(${var} ${value} PARENT_SCOPE)
+endfunction()
+
+#################################################
 # Macro to turn a list into a string
 # Internal to gz-cmake.
 macro(_gz_list_to_string _output _input_list)
