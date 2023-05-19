@@ -149,10 +149,6 @@ macro(gz_configure_project)
   set(PACKAGE_CONFIG_EXTRA_FILES "")
   set(extras)
 
-  if (DEFINED PACKAGE_CONFIG_EXTRAS)
-    list(APPEND extras ${PACKAGE_CONFIG_EXTRAS})
-  endif()
-
   if (DEFINED gz_configure_project_CONFIG_EXTRAS)
     list(APPEND extras ${gz_configure_project_CONFIG_EXTRAS})
   endif()
