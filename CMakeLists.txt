@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.10.2 FATAL_ERROR)
 #============================================================================
 # Initialize the project
 #============================================================================
-project(ignition-cmake2 VERSION 2.16.0)
+project(ignition-cmake2 VERSION 2.17.0)
 
 #--------------------------------------
 # Initialize the IGNITION_CMAKE_DIR variable with the location of the cmake
