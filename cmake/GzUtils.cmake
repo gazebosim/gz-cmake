@@ -27,7 +27,7 @@ include(GzStringAppend)
 #################################################
 # assert that a file exists
 # From ament/ament_cmake_core/core/assert_file_exists.cmake (Apache 2.0)
-function(assert_file_exists filename error_message)
+function(_gz_assert_file_exists filename error_message)
   if(NOT IS_ABSOLUTE "${filename}")
     set(filename "${CMAKE_CURRENT_LIST_DIR}/${filename}")
   endif()
@@ -44,7 +44,7 @@ endfunction()
 #   somewhere in the build tree.  This will cause cmake to rebuild its
 #   cache when ``filepath`` is modified.
 #
-function(stamp path)
+function(_gz_stamp path)
   get_filename_component(filename "${path}" NAME)
   configure_file(
     "${path}"
@@ -64,7 +64,7 @@ endfunction()
 # :param var: the output variable name
 # :type var: bool
 #
-function(string_ends_with str suffix var)
+function(_gz_string_ends_with str suffix var)
   string(LENGTH "${str}" str_length)
   string(LENGTH "${suffix}" suffix_length)
   set(value FALSE)

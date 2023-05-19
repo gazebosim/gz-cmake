@@ -154,12 +154,12 @@ macro(gz_configure_project)
   endif()
 
   foreach(extra ${extras})
-    assert_file_exists("${extra}"
+    _gz_assert_file_exists("${extra}"
       "gz_configure_project() called with extra file '${extra}' which does not exist")
-    stamp("${extra}")
+    _gz_stamp("${extra}")
 
     # expand template
-    string_ends_with("${extra}" ".cmake.in" is_template)
+    _gz_string_ends_with("${extra}" ".cmake.in" is_template)
     if(is_template)
       get_filename_component(extra_filename "${extra}" NAME)
       # cut of .in extension
@@ -176,7 +176,7 @@ macro(gz_configure_project)
     endif()
 
     # install cmake file and register for CMake config file
-    string_ends_with("${extra}" ".cmake" is_cmake)
+    _gz_string_ends_with("${extra}" ".cmake" is_cmake)
     if(is_cmake)
       install(FILES
         ${extra}
