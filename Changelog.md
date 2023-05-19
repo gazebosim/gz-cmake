@@ -1,5 +1,19 @@
 ## Gazebo CMake 3.x
 
+### Gazebo CMake 3.2.0 (2023-05-19)
+
+1. Add support for adding cmake extras to packages
+    * [Pull request #345](https://github.com/gazebosim/gz-cmake/pull/345)
+
+1. Build examples using native CMake
+    * [Pull request #301](https://github.com/gazebosim/gz-cmake/pull/301)
+
+1. Split gzutils into functional pieces
+    * [Pull request #344](https://github.com/gazebosim/gz-cmake/pull/344)
+
+1. Enable ign_ warnings to push the transition to gz_
+    * [Pull request #346](https://github.com/gazebosim/gz-cmake/pull/346)
+
 ### Gazebo CMake 3.1.0 (2023-04-21)
 
 1. Add optional binary relocatability in downstream libraries
