@@ -1,5 +1,13 @@
 ## Gazebo CMake 3.x
 
+### Gazebo CMake 3.2.1 (2023-05-30)
+
+1. Check for empty variables before performing REPLACE
+    * [Pull request #354](https://github.com/gazebosim/gz-cmake/pull/354)
+
+1. GzSetCompilerFlags: Fix detection of clang-cl
+    * [Pull request #353](https://github.com/gazebosim/gz-cmake/pull/353)
+
 ### Gazebo CMake 3.2.0 (2023-05-19)
 
 1. Add support for adding cmake extras to packages
