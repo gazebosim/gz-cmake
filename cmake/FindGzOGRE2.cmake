@@ -405,8 +405,8 @@ else() #WIN32
       list(APPEND OGRE2_PATHS "${_rootPath}/lib/${OGRE2_SEARCH_VER}/")
       list(APPEND OGRE2_PATHS "${_rootPath}/lib/${OGRE2_SEARCH_VER}/manual-link/")
       list(APPEND OGRE2_INC_PATHS "${_rootPath}/include/${OGRE2_SEARCH_VER}")
-      # vcpkg ogre-next 2.3 version should work with CMAKE_BUILD_TYPE
-      list(APPEND OGRE2_PATHS "${_rootPath}/lib/${CMAKE_BUILD_TYPE}/")
+      # vcpkg ogre-next 2.3 uses plain OGRE naming for dirs
+      list(APPEND OGRE2_INC_PATHS "${_rootPath}/include/OGRE")
   endforeach()
 
   find_library(OGRE2_LIBRARY
