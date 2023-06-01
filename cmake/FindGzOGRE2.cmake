@@ -464,43 +464,51 @@ else() #WIN32
           message(STATUS "Found ${PREFIX}: ${${PREFIX}_LIBRARIES}")
         endif()
       endif()
+
+      message(STATUS "PF ${{PREFIX}_FOUND}")
+      message(STATUS "PID ${{PREFIX}_INCLUDE_DIRS}")
+      message(STATUS "PL ${{PREFIX}_LIBRARIES}")
   endmacro()
 
   macro(ogre_find_plugin PLUGIN HEADER)
-    set(PREFIX OGRE2_${PLUGIN})
-    string(REPLACE "RenderSystem_" "" PLUGIN_TEMP ${PLUGIN})
-    string(REPLACE "Plugin_" "" PLUGIN_NAME ${PLUGIN_TEMP})
-      # header files for plugins are not usually needed, but find them anyway if they are present
-    set(OGRE2_PLUGIN_PATH_SUFFIXES
-      PlugIns
-      PlugIns/${PLUGIN_NAME}
-      Plugins
-      Plugins/${PLUGIN_NAME}
-      ${PLUGIN}
-      RenderSystems
-      RenderSystems/${PLUGIN_NAME}
-      ${ARGN})
-    find_path(
-      ${PREFIX}_INCLUDE_DIR
-      NAMES
-        ${HEADER}
-      HINTS
-        ${OGRE2_INCLUDE_DIRS} ${OGRE_PREFIX_SOURCE}
-      PATH_SUFFIXES
-        ${OGRE2_PLUGIN_PATH_SUFFIXES})
-    find_library(${PREFIX}_LIBRARY
-      NAMES ${PLUGIN}
-      HINTS  ${OGRE2_LIBRARY_DIRS}
-      PATH_SUFFIXES "" opt "${OGRE2_SEARCH_VER}" "${OGRE2_SEARCH_VER}/opt")
+      set(PREFIX OGRE2_${PLUGIN})
+      string(REPLACE "RenderSystem_" "" PLUGIN_TEMP ${PLUGIN})
+      string(REPLACE "Plugin_" "" PLUGIN_NAME ${PLUGIN_TEMP})
+        # header files for plugins are not usually needed, but find them anyway if they are present
+      set(OGRE2_PLUGIN_PATH_SUFFIXES
+        PlugIns
+        PlugIns/${PLUGIN_NAME}
+        Plugins
+        Plugins/${PLUGIN_NAME}
+        ${PLUGIN}
+        RenderSystems
+        RenderSystems/${PLUGIN_NAME}
+        ${ARGN})
+      find_path(
+        ${PREFIX}_INCLUDE_DIR
+        NAMES
+          ${HEADER}
+        HINTS
+          ${OGRE2_INCLUDE_DIRS} ${OGRE_PREFIX_SOURCE}
+        PATH_SUFFIXES
+          ${OGRE2_PLUGIN_PATH_SUFFIXES})
+      find_library(${PREFIX}_LIBRARY
+        NAMES ${PLUGIN}
+        HINTS  ${OGRE2_LIBRARY_DIRS}
+        PATH_SUFFIXES "" opt "${OGRE2_SEARCH_VER}" "${OGRE2_SEARCH_VER}/opt")
 
-    if (NOT ${PREFIX}_FOUND)
-      if (${PREFIX}_INCLUDE_DIR AND ${PREFIX}_LIBRARY)
-          set(${PREFIX}_FOUND TRUE)
-          set(${PREFIX}_INCLUDE_DIRS ${${PREFIX}_INCLUDE_DIR})
-          set(${PREFIX}_LIBRARIES ${${PREFIX}_LIBRARY})
-          message(STATUS "Found ${PREFIX}: ${${PREFIX}_LIBRARIES}")
+      if (NOT ${PREFIX}_FOUND)
+        if (${PREFIX}_INCLUDE_DIR AND ${PREFIX}_LIBRARY)
+            set(${PREFIX}_FOUND TRUE)
+            set(${PREFIX}_INCLUDE_DIRS ${${PREFIX}_INCLUDE_DIR})
+            set(${PREFIX}_LIBRARIES ${${PREFIX}_LIBRARY})
+            message(STATUS "Found ${PREFIX}: ${${PREFIX}_LIBRARIES}")
+        endif()
       endif()
-    endif()
+
+      message(STATUS "PF ${{PREFIX}_FOUND}")
+      message(STATUS "PID ${{PREFIX}_INCLUDE_DIRS}")
+      message(STATUS "PL ${{PREFIX}_LIBRARIES}")
   endmacro()
 
   ogre_find_component(Overlay OgreOverlaySystem.h "Overlay")
@@ -513,6 +521,11 @@ else() #WIN32
 
   foreach(component ${GzOGRE2_FIND_COMPONENTS})
     set(PREFIX OGRE2_${component})
+
+    message(STATUS "[P] PF ${{PREFIX}_FOUND}")
+    message(STATUS "[P] PID ${{PREFIX}_INCLUDE_DIRS}")
+    message(STATUS "[P] PL ${{PREFIX}_LIBRARIES}")
+
     if(${PREFIX}_FOUND)
       set(component_TARGET_NAME "GzOGRE2-${component}::GzOGRE2-${component}")
       set(component_INCLUDE_DIRS ${${PREFIX}_INCLUDE_DIRS})
