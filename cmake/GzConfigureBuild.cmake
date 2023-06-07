@@ -28,8 +28,7 @@
 # Pass the argument QUIT_IF_BUILD_ERRORS to have this macro quit cmake when the
 # build_errors
 macro(ign_configure_build)
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_configure_build is deprecated, use gz_configure_build instead.")
+  message(WARNING "ign_configure_build is deprecated, use gz_configure_build instead.")
   set(options HIDE_SYMBOLS_BY_DEFAULT QUIT_IF_BUILD_ERRORS)
   set(oneValueArgs)
   set(multiValueArgs COMPONENTS)

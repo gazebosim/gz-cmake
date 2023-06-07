@@ -39,9 +39,13 @@ macro(_gz_set_compiler_flags)
     _gz_setup_apple()
   endif()
 
-  # Check if we are compiling with Clang and cache it
+  # Check if we are compiling with Clang with GNU-like flags and cache it
   if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    set(CLANG true)
+    if(CMAKE_CXX_COMPILER_FRONTEND_VARIANT STREQUAL "MSVC")
+      set(CLANG false)
+    else()
+      set(CLANG true)
+    endif()
   endif()
 
   # Check if we are compiling with GCC and cache it
