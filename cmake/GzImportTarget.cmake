@@ -44,8 +44,7 @@
 #             this package. Default is <package>_CFLAGS.
 #
 macro(ign_import_target package)
-  # TODO(chapulina) Enable warnings after all libraries have migrated.
-  # message(WARNING "ign_import_target is deprecated, use gz_import_target instead.")
+  message(WARNING "ign_import_target is deprecated, use gz_import_target instead.")
 
   set(options "INTERFACE")
   set(oneValueArgs "TARGET_NAME" "LIB_VAR" "INCLUDE_VAR" "CFLAGS_VAR")
