@@ -51,13 +51,13 @@ macro(gz_build_examples)
 
   set(gz_build_examples_CMAKE_PREFIX_PATH $ENV{CMAKE_PREFIX_PATH})
 
-  if (${gz_build_examples_CMAKE_PREFIX_PATH})
+  if (gz_build_examples_CMAKE_PREFIX_PATH)
     # Replace colons from environment variable with semicolon cmake list delimiter
     # Only perform if string has contents, otherwise cmake will complain about REPLACE command
     string(REPLACE ":" ";" gz_build_examples_CMAKE_PREFIX_PATH ${gz_build_examples_CMAKE_PREFIX_PATH})
   endif()
 
-  if (${CMAKE_INSTALL_PREFIX})
+  if (CMAKE_INSTALL_PREFIX)
     list(APPEND gz_build_examples_CMAKE_PREFIX_PATH ${CMAKE_INSTALL_PREFIX})
   endif()
 

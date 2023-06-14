@@ -57,7 +57,7 @@
 
 
 if(NOT (GzOGRE2_FIND_VERSION_MAJOR AND GzOGRE2_FIND_VERSION_MINOR))
-  message(WARNING 
+  message(WARNING
     "find_package(GzOGRE2) must be called with a VERSION argument with a minimum of major and minor version")
   set(OGRE2_FOUND false)
   return()
@@ -84,7 +84,7 @@ endmacro()
 # Ubuntu Jammy version 2.2.5+dfsg3-0ubuntu2 is buggy in the pkg-config files
 # duplicating usr/usr for some paths in pkg-config
 macro(fix_pkgconfig_prefix_jammy_bug FILESYSTEM_PATH OUTPUT_VAR)
-  if (NOT EXISTS "${FILESYSTEM_PATH}")
+  if (EXISTS "${FILESYSTEM_PATH}")
     string(REPLACE "/usr//usr" "/usr"
       ${OUTPUT_VAR}
       ${FILESYSTEM_PATH})
@@ -95,7 +95,7 @@ endmacro()
 # using a non existing path /usr/lib/${arch}/OGRE/OGRE-Next insted of the path
 # /usr/lib/${arch}/OGRE-Next which is the right one
 macro(fix_pkgconfig_resource_path_jammy_bug FILESYSTEM_PATH OUTPUT_VAR)
-  if (NOT EXISTS "${FILESYSTEM_PATH}")
+  if (EXISTS "${FILESYSTEM_PATH}")
     string(REPLACE "OGRE/OGRE-Next" "OGRE-Next"
       ${OUTPUT_VAR}
       ${FILESYSTEM_PATH})
@@ -375,7 +375,11 @@ if (NOT WIN32)
     # keep variable naming consistent with ogre 1
     # TODO currently using harded paths based on dir structure in ubuntu
     foreach(resource_path ${OGRE2_LIBRARY_DIRS})
-      list(APPEND OGRE2_RESOURCE_PATH "${resource_path}/OGRE")
+      foreach (ogre2_plugin_dir_name "OGRE" "OGRE-Next")
+        if (EXISTS "${resource_path}/${ogre2_plugin_dir_name}")
+          list(APPEND OGRE2_RESOURCE_PATH "${resource_path}/${ogre2_plugin_dir_name}")
+        endif()
+      endforeach()
     endforeach()
   else()
     set(OGRE2_RESOURCE_PATH ${OGRE2_PLUGINDIR})
