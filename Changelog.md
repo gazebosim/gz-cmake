@@ -1,5 +1,13 @@
 ## Gazebo CMake 3.x
 
+### Gazebo CMake 3.2.1 (2023-06-26)
+
+1. Fix incorrect if comparison in build_examples
+    * [Pull request #356](https://github.com/gazebosim/gz-cmake/pull/356)
+
+1. Fix finding ogre 2.3 installed from source
+    * [Pull request #342](https://github.com/gazebosim/gz-cmake/pull/342)
+
 ### Gazebo CMake 3.2.1 (2023-05-30)
 
 1. Check for empty variables before performing REPLACE
