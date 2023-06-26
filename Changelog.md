@@ -1,6 +1,6 @@
 ## Gazebo CMake 3.x
 
-### Gazebo CMake 3.2.1 (2023-06-26)
+### Gazebo CMake 3.2.2 (2023-06-26)
 
 1. Fix incorrect if comparison in build_examples
     * [Pull request #356](https://github.com/gazebosim/gz-cmake/pull/356)
