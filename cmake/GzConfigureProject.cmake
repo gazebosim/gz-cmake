@@ -161,6 +161,16 @@ macro(gz_configure_project)
   # Create package information
   _gz_setup_packages()
 
+  #============================================================================
+  # Configure and install cmake extras files
+  # Do this after _gz_setup_packages() to ensure GNUInstallDirs has been called
+  set(PROJECT_CMAKE_EXTRAS_INSTALL_DIR ${CMAKE_INSTALL_FULL_LIBDIR}/cmake/${PROJECT_NAME})
+  file(RELATIVE_PATH
+    PROJECT_CMAKE_EXTRAS_PATH_TO_PREFIX
+    "${PROJECT_CMAKE_EXTRAS_INSTALL_DIR}"
+    "${CMAKE_INSTALL_PREFIX}"
+  )
+
   foreach(extra ${extras})
     _gz_assert_file_exists("${extra}"
       "gz_configure_project() called with extra file '${extra}' which does not exist")
@@ -188,7 +198,7 @@ macro(gz_configure_project)
     if(is_cmake)
       install(FILES
         ${extra}
-        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}/
+        DESTINATION ${PROJECT_CMAKE_EXTRAS_INSTALL_DIR}
       )
       get_filename_component(extra_filename "${extra}" NAME)
       list(APPEND PACKAGE_CONFIG_EXTRA_FILES "${extra_filename}")
