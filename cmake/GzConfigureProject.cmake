@@ -153,6 +153,14 @@ macro(gz_configure_project)
     list(APPEND extras ${gz_configure_project_CONFIG_EXTRAS})
   endif()
 
+  #============================================================================
+  # Identify the operating system
+  gz_check_os()
+
+  #============================================================================
+  # Create package information
+  _gz_setup_packages()
+
   foreach(extra ${extras})
     _gz_assert_file_exists("${extra}"
       "gz_configure_project() called with extra file '${extra}' which does not exist")
@@ -189,14 +197,6 @@ macro(gz_configure_project)
         "does neither end with '.cmake' nor with '.cmake.in'.")
     endif()
   endforeach()
-
-  #============================================================================
-  # Identify the operating system
-  gz_check_os()
-
-  #============================================================================
-  # Create package information
-  _gz_setup_packages()
 
   #============================================================================
   # Initialize build errors/warnings
