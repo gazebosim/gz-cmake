@@ -162,7 +162,7 @@ macro(gz_configure_project)
     _gz_string_ends_with("${extra}" ".cmake.in" is_template)
     if(is_template)
       get_filename_component(extra_filename "${extra}" NAME)
-      # cut of .in extension
+      # cut off .in extension
       string(LENGTH "${extra_filename}" length)
       math(EXPR offset "${length} - 3")
       string(SUBSTRING "${extra_filename}" 0 ${offset} extra_filename)
@@ -180,7 +180,7 @@ macro(gz_configure_project)
     if(is_cmake)
       install(FILES
         ${extra}
-        DESTINATION lib/cmake/${PROJECT_NAME}/
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}/
       )
       get_filename_component(extra_filename "${extra}" NAME)
       list(APPEND PACKAGE_CONFIG_EXTRA_FILES "${extra_filename}")
