@@ -19,6 +19,30 @@
 #     gz/${GZ_DESIGNATION}
 # VERSION_SUFFIX: Optional. Specify a prerelease version suffix.
 #
+# The following variables are automatically defined by project(~) in cmake 3:
+#   PROJECT_NAME
+#   PROJECT_VERSION_MAJOR
+#   PROJECT_VERSION_MINOR
+#   PROJECT_VERSION_PATCH
+#
+# This macro defines the following variables as well:
+#   GZ_DESIGNATION
+#   GZ_DESIGNATION_LOWER
+#   GZ_DESIGNATION_UPPER
+#   PKG_NAME
+#   PROJECT_CMAKE_EXTRAS_INSTALL_DIR
+#   PROJECT_CMAKE_EXTRAS_PATH_TO_PREFIX
+#   PROJECT_INCLUDE_DIR
+#   PROJECT_NAME_NO_VERSION
+#   PROJECT_NAME_NO_VERSION_LOWER
+#   PROJECT_NAME_NO_VERSION_UPPER
+#   PROJECT_NAME_LOWER
+#   PROJECT_NAME_UPPER
+#   PROJECT_VERSION
+#   PROJECT_VERSION_FULL
+#   PROJECT_VERSION_FULL_NO_SUFFIX
+#   PROJECT_VERSION_SUFFIX
+#
 #===============================================================================
 # Copyright (C) 2017 Open Source Robotics Foundation
 #
