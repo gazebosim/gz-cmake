@@ -1,5 +1,16 @@
 ## Gazebo CMake 3.x
 
+### Gazebo CMake 3.3.0 (2023-08-10)
+
+1. GzConfigureProject: improve documentation
+    * [Pull request #364](https://github.com/gazebosim/gz-cmake/pull/364)
+
+1. Compute relative path for cmake extras
+    * [Pull request #362](https://github.com/gazebosim/gz-cmake/pull/362)
+
+1. GzConfigureProject: fix extras install
+    * [Pull request #360](https://github.com/gazebosim/gz-cmake/pull/360)
+
 ### Gazebo CMake 3.2.2 (2023-06-26)
 
 1. Fix incorrect if comparison in build_examples
