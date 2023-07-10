@@ -136,6 +136,20 @@
 
 ## Gazebo CMake 2.x
 
+### Gazebo CMake 2.17.0 (2023-05-19)
+
+1. Use CONFIG in gz_add_benchmark to avoid Windows collisions
+    * [Pull request #341](https://github.com/gazebosim/ign-cmake/pull/341)
+
+1. LICENSE: add Apache 2.0 license text
+    * [Pull request #338](https://github.com/gazebosim/ign-cmake/pull/338)
+
+1. Disable protobuf warnings on protobuf target (#335)
+    * [Pull request #335](https://github.com/gazebosim/ign-cmake/pull/335)
+
+1. Fix FindAVDEVICE.cmake in case without pkg-config installed with ffmpeg >= 5.1
+    * [Pull request #330](https://github.com/gazebosim/ign-cmake/pull/330)
+
 ### Gazebo CMake 2.16.0 (2022-10-08)
 
 1. FindIgnOGRE2: preserve PKG_CONFIG_PATH
