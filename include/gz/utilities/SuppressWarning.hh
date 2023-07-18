@@ -18,6 +18,8 @@
 #ifndef GZ_UTILITIES_SUPPRESSWARNING_HH_
 #define GZ_UTILITIES_SUPPRESSWARNING_HH_
 
+#warning "This is deprecated, use gz/utils/SuppressWarning.hh instead."
+
 #include <gz/utilities/detail/SuppressWarning.hh>
 
 // This header contains cross-platform macros for suppressing warnings. Please
