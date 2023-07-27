@@ -137,7 +137,12 @@ endif()
 # contain imported targets, so @PKG_NAME@_INCLUDE_DIRS is never needed.
 set(@PKG_NAME@_CORE_LIBRARY @simple_import_name@)
 set(@PKG_NAME@_LIBRARIES @gz_namespace@requested)
-set_and_check(@PKG_NAME@_INCLUDE_DIRS "@PACKAGE_GZ_INCLUDE_INSTALL_DIR_FULL@")
+
+if (NOT @PKG_NAME@_INCLUDE_DIRS_OVERRIDE)
+  set_and_check(@PKG_NAME@_INCLUDE_DIRS "@PACKAGE_GZ_INCLUDE_INSTALL_DIR_FULL@")
+else()
+  set_and_check(@PKG_NAME@_INCLUDE_DIRS ${@PKG_NAME@_INCLUDE_DIRS_OVERRIDE})
+endif()
 
 # Backwards compatibility variables
 set(@LEGACY_PROJECT_PREFIX@_LIBRARIES ${@PKG_NAME@_LIBRARIES})
@@ -177,3 +182,9 @@ set(@PROJECT_NAME_NO_VERSION_UPPER@_DOXYGEN_TAGFILE "${PACKAGE_PREFIX_DIR}/@GZ_D
 
 # Specify the API url. This is where the doxygen tag file will resolve URLS to.
 set(@PROJECT_NAME_NO_VERSION_UPPER@_API_URL "https://gazebosim.org/api/@GZ_DESIGNATION@/@PROJECT_VERSION_MAJOR@")
+
+# include all config extra files
+set(_extras "@PACKAGE_CONFIG_EXTRA_FILES@")
+foreach(_extra ${_extras})
+  include("${@PROJECT_NAME@_DIR}/${_extra}")
+endforeach()

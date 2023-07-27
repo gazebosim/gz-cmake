@@ -2,16 +2,46 @@
 # GzConfigureProject
 # -------------------
 #
-# gz_configure_project([VERSION_SUFFIX <pre|alpha|beta|etc>])
+# gz_configure_project([NO_PROJECT_PREFIX]
+#                      [REPLACE_INCLUDE_PATH <new_include_path>]
+#                      [CONFIG_EXTRAS <extra_config_files>]
+#                      [VERSION_SUFFIX <pre|alpha|beta|etc>])
 #
 # Sets up a Gazebo library project.
 #
+# CONFIG_EXTRAS: Optional. If provided, the list that follows should indicate
+#     extra cmake template files that will be configured and installed to the
+#     same folder as the cmake configuration files for the core library target.
 # NO_PROJECT_PREFIX: Optional. Don't use gz- as prefix in
 #     cmake project name.
 # REPLACE_INCLUDE_PATH: Optional. Specify include folder
 #     names to replace the default value of
 #     gz/${GZ_DESIGNATION}
 # VERSION_SUFFIX: Optional. Specify a prerelease version suffix.
+#
+# The following variables are automatically defined by project(~) in cmake 3:
+#   PROJECT_NAME
+#   PROJECT_VERSION_MAJOR
+#   PROJECT_VERSION_MINOR
+#   PROJECT_VERSION_PATCH
+#
+# This macro defines the following variables as well:
+#   GZ_DESIGNATION
+#   GZ_DESIGNATION_LOWER
+#   GZ_DESIGNATION_UPPER
+#   PKG_NAME
+#   PROJECT_CMAKE_EXTRAS_INSTALL_DIR
+#   PROJECT_CMAKE_EXTRAS_PATH_TO_PREFIX
+#   PROJECT_INCLUDE_DIR
+#   PROJECT_NAME_NO_VERSION
+#   PROJECT_NAME_NO_VERSION_LOWER
+#   PROJECT_NAME_NO_VERSION_UPPER
+#   PROJECT_NAME_LOWER
+#   PROJECT_NAME_UPPER
+#   PROJECT_VERSION
+#   PROJECT_VERSION_FULL
+#   PROJECT_VERSION_FULL_NO_SUFFIX
+#   PROJECT_VERSION_SUFFIX
 #
 #===============================================================================
 # Copyright (C) 2017 Open Source Robotics Foundation
@@ -34,7 +64,7 @@ macro(gz_configure_project)
   # Define the expected arguments
   set(options NO_PROJECT_PREFIX NO_IGNITION_PREFIX)  # TODO(CH3): NO_IGNITION_PREFIX IS DEPRECATED.
   set(oneValueArgs REPLACE_INCLUDE_PATH REPLACE_IGNITION_INCLUDE_PATH VERSION_SUFFIX)  # TODO(CH3): REPLACE_IGNITION_INCLUDE_PATH IS DEPRECATED.
-  set(multiValueArgs) # We are not using multiValueArgs yet
+  set(multiValueArgs CONFIG_EXTRAS)
 
   #------------------------------------
   # Parse the arguments
@@ -112,12 +142,68 @@ macro(gz_configure_project)
   message(STATUS "${PROJECT_NAME} version ${PROJECT_VERSION_FULL}")
 
   #============================================================================
+  # Handle extra cmake configurations
+  set(PACKAGE_CONFIG_EXTRA_FILES "")
+  set(extras)
+
+  if (DEFINED gz_configure_project_CONFIG_EXTRAS)
+    list(APPEND extras ${gz_configure_project_CONFIG_EXTRAS})
+  endif()
+
+  #============================================================================
   # Identify the operating system
   gz_check_os()
 
   #============================================================================
   # Create package information
   _gz_setup_packages()
+
+  #============================================================================
+  # Configure and install cmake extras files
+  # Do this after _gz_setup_packages() to ensure GNUInstallDirs has been called
+  set(PROJECT_CMAKE_EXTRAS_INSTALL_DIR ${CMAKE_INSTALL_FULL_LIBDIR}/cmake/${PROJECT_NAME})
+  file(RELATIVE_PATH
+    PROJECT_CMAKE_EXTRAS_PATH_TO_PREFIX
+    "${PROJECT_CMAKE_EXTRAS_INSTALL_DIR}"
+    "${CMAKE_INSTALL_PREFIX}"
+  )
+
+  foreach(extra ${extras})
+    _gz_assert_file_exists("${extra}"
+      "gz_configure_project() called with extra file '${extra}' which does not exist")
+    _gz_stamp("${extra}")
+
+    # expand template
+    _gz_string_ends_with("${extra}" ".cmake.in" is_template)
+    if(is_template)
+      get_filename_component(extra_filename "${extra}" NAME)
+      # cut off .in extension
+      string(LENGTH "${extra_filename}" length)
+      math(EXPR offset "${length} - 3")
+      string(SUBSTRING "${extra_filename}" 0 ${offset} extra_filename)
+      configure_file(
+        "${extra}"
+        ${CMAKE_CURRENT_BINARY_DIR}/gz-cmake/${extra_filename}
+        @ONLY
+      )
+      set(extra
+        "${CMAKE_CURRENT_BINARY_DIR}/gz-cmake/${extra_filename}")
+    endif()
+
+    # install cmake file and register for CMake config file
+    _gz_string_ends_with("${extra}" ".cmake" is_cmake)
+    if(is_cmake)
+      install(FILES
+        ${extra}
+        DESTINATION ${PROJECT_CMAKE_EXTRAS_INSTALL_DIR}
+      )
+      get_filename_component(extra_filename "${extra}" NAME)
+      list(APPEND PACKAGE_CONFIG_EXTRA_FILES "${extra_filename}")
+    else()
+      message(FATAL_ERROR "gz_configure_project() the CONFIG_EXTRAS file '${extra}' "
+        "does neither end with '.cmake' nor with '.cmake.in'.")
+    endif()
+  endforeach()
 
   #============================================================================
   # Initialize build errors/warnings
