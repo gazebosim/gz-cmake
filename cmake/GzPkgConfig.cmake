@@ -128,7 +128,7 @@ macro(gz_pkg_check_modules_quiet package signature)
       # variable is blank, then we'll unset it from the CACHE to avoid
       # conflicts and confusion.
       #
-      # TODO(MXG): Consider giving a different prefix (e.g. IGN_PC_${package})
+      # TODO(MXG): Consider giving a different prefix (e.g. GZ_PC_${package})
       # to pkg_check_modules(~) so that the cached variables don't collide. That
       # would also help with the next TODO below.
       if(NOT ${package}_INCLUDE_DIRS)
