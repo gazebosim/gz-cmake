@@ -66,10 +66,6 @@ macro(gz_import_target package)
     set(target_name ${package}::${package})
   endif()
 
-  if(${target_name} MATCHES "^Ign[^:]*::Ign")
-    message(DEPRECATION "Ign prefixed ${target_name} is deprecated (e.g. IgnOGRE::IgnOGRE)! Please use Gz prefix instead (e.g. GzOGRE::GzOGRE)")
-  endif()
-
   if(NOT TARGET ${target_name})
 
     #------------------------------------
@@ -93,27 +89,9 @@ macro(gz_import_target package)
     # against the variable package_LIBRARIES with the old-fashioned
     # target_link_libraries(mytarget ${package_LIBRARIES}
     if(NOT gz_import_target_INTERFACE)
-      # TODO(CH3): Remove Global upon deprecation. Remove it on hard-tock.
-      # It's needed to let the alias work!
-      add_library(${target_name} UNKNOWN IMPORTED GLOBAL)
-
-      # TODO(CH3): Deprecated. Remove on tock.
-      if(${target_name} MATCHES "^Gz[^:]*::Gz")
-        string(REGEX REPLACE "^Gz" "Ign" alias_name ${target_name})
-        string(REGEX REPLACE "::Gz" "::Ign" alias_name ${alias_name})
-        add_library(${alias_name} ALIAS ${target_name})
-      endif()
+      add_library(${target_name} UNKNOWN IMPORTED)
     else()
-      # TODO(CH3): Remove Global upon deprecation. Remove it on hard-tock.
-      # It's needed to let the alias work!
-      add_library(${target_name} INTERFACE IMPORTED GLOBAL)
-
-      # TODO(CH3): Deprecated. Remove on tock.
-      if(${target_name} MATCHES "^Gz[^:]*::Gz")
-        string(REGEX REPLACE "^Gz" "Ign" alias_name ${target_name})
-        string(REGEX REPLACE "::Gz" "::Ign" alias_name ${alias_name})
-        add_library(${alias_name} ALIAS ${target_name})
-      endif()
+      add_library(${target_name} INTERFACE IMPORTED)
     endif()
 
     # Do not bother with the IMPORTED_LOCATION or IMPORTED_IMPLIB variables if it

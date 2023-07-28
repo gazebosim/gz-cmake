@@ -44,5 +44,3 @@ if(BULLET_FOUND)
     INCLUDE_VAR BULLET_INCLUDE_DIRS
   )
 endif()
-
-set(IgnBullet_FOUND ${GzBullet_FOUND})  # TODO(CH3): Deprecated. Remove on tock.

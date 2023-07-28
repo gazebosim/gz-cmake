@@ -265,5 +265,3 @@ if(OGRE_FOUND)
     LIB_VAR OGRE_LIBRARIES
     INCLUDE_VAR OGRE_INCLUDE_DIRS)
 endif()
-
-set(IgnOGRE_FOUND ${GzOGRE_FOUND})  # TODO(CH3): Deprecated. Remove on tock.

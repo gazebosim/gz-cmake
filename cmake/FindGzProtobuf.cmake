@@ -78,7 +78,6 @@ if(${Protobuf_FOUND})
   # If we have found Protobuf, then set the GzProtobuf_FOUND flag to true so
   # that gz_find_package(~) knows that we were successful.
   set(GzProtobuf_FOUND true)
-  set(IgnProtobuf_FOUND true)  # TODO(CH3): Deprecated. Remove on tock.
 
   # Older versions of protobuf don't create imported targets, so we will create
   # them here if they have not been provided.
