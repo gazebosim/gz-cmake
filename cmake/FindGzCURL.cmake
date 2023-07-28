@@ -37,18 +37,12 @@ endif()
 find_package(CURL ${GzCURL_FIND_VERSION} ${gz_quiet_arg})
 
 set(GzCURL_FOUND ${CURL_FOUND})
-set(IgnCURL_FOUND ${GzCURL_FOUND})   # TODO(CH3): Deprecated. Remove on tock.
 
 if(${GzCURL_FOUND})
 
   set(GzCURL_INCLUDE_DIRS ${CURL_INCLUDE_DIRS})
   set(GzCURL_LIBRARIES ${CURL_LIBRARIES})
   set(GzCURL_VERSION ${CURL_VERSION_STRING})
-
-  # TODO(CH3): Deprecated. Remove on tock.
-  set(IgnCURL_INCLUDE_DIRS ${GzCURL_INCLUDE_DIRS})
-  set(IgnCURL_LIBRARIES ${GzCURL_LIBRARIES})
-  set(IgnCURL_VERSION ${GzCURL_VERSION})
 
   # Older versions of curl don't create imported targets, so we will create
   # them here if they have not been provided.

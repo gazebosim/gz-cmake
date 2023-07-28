@@ -198,36 +198,7 @@ macro(gz_find_package PACKAGE_NAME_)
 
   #------------------------------------
   # Call find_package with the provided arguments
-
-  # TODO(CH3): Deprecated. Remove on tock.
-  if(${PACKAGE_NAME} MATCHES "^Ign")
-
-    # NOTE(CH3): Deliberately use QUIET since we expect Ign to fail
-    find_package(${${PACKAGE_NAME}_find_package_args} QUIET)
-
-    if(NOT ${PACKAGE_NAME}_FOUND)
-      # Try Gz prepended version instead!
-      string(REGEX REPLACE "^Ign(ition)?" "Gz" PACKAGE_NAME_GZ ${PACKAGE_NAME})
-
-      set(${PACKAGE_NAME_GZ}_find_package_args ${${PACKAGE_NAME}_find_package_args})
-      list(POP_FRONT ${PACKAGE_NAME_GZ}_find_package_args)
-      list(PREPEND ${PACKAGE_NAME_GZ}_find_package_args ${PACKAGE_NAME_GZ})
-
-      find_package(${${PACKAGE_NAME_GZ}_find_package_args})
-      if(${PACKAGE_NAME_GZ}_FOUND)
-
-        message(DEPRECATION "Ign prefixed package name [${PACKAGE_NAME}] is deprecated! Automatically using the Gz prefix instead: [${PACKAGE_NAME_GZ}]")
-        set(PACKAGE_NAME ${PACKAGE_NAME_GZ})
-
-      endif()
-
-    endif()
-  else()
-
-    # TODO(CH3): On removal on tock, unindent this and just have this line!!
-    find_package(${${PACKAGE_NAME}_find_package_args})
-
-  endif()
+  find_package(${${PACKAGE_NAME}_find_package_args})
 
 
   #------------------------------------
