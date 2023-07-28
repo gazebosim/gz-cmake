@@ -62,6 +62,8 @@
 # Initialize the Gazebo project
 macro(gz_configure_project)
   # Define the expected arguments
+  set(options NO_PROJECT_PREFIX)
+  set(oneValueArgs REPLACE_INCLUDE_PATH VERSION_SUFFIX)
   set(multiValueArgs CONFIG_EXTRAS)
 
   #------------------------------------
