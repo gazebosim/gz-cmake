@@ -205,8 +205,11 @@ macro(ign_pkg_config_entry package string)
   gz_pkg_config_entry(${package} ${string})
 endmacro()
 macro(gz_pkg_config_entry package string)
-
-  set(${package}_PKGCONFIG_ENTRY "${string}")
+  # The input string may contain an operator without a version,
+  # e.g "protobuf >= ". But this is not valid pkg-config syntax. This regex
+  # search/replace will remove the operator if the version is empty.
+  string(REGEX REPLACE " *[<>=]+ *$" "" entry ${string})
+  set(${package}_PKGCONFIG_ENTRY "${entry}")
   set(${package}_PKGCONFIG_TYPE PKGCONFIG_REQUIRES)
 
 endmacro()
