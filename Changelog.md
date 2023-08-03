@@ -1,6 +1,15 @@
 ## Gazebo CMake 3.x
 
-### Gazebo CMake 3.3.0 (2023-08-10)
+### Gazebo CMake 3.3.1 (2023-08-03)
+
+1. Fix pkg_config_entry when version number is not specified
+    * [Pull request #374](https://github.com/gazebosim/gz-cmake/pull/374)
+
+1. Infrastructure
+    * [Pull request #372](https://github.com/gazebosim/gz-cmake/pull/372)
+    * [Pull request #371](https://github.com/gazebosim/gz-cmake/pull/371)
+
+### Gazebo CMake 3.3.0 (2023-07-10)
 
 1. GzConfigureProject: improve documentation
     * [Pull request #364](https://github.com/gazebosim/gz-cmake/pull/364)
