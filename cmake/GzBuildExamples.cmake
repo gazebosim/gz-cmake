@@ -40,46 +40,52 @@
 #             For example ${CMAKE_CURRENT_BINARY_DIR}/examples
 #
 macro(gz_build_examples)
-  #------------------------------------
-  # Define the expected arguments
-  set(options)
-  set(oneValueArgs SOURCE_DIR BINARY_DIR)
+  option(BUILD_EXAMPLES "Build examples" OFF)
 
-  #------------------------------------
-  # Parse the arguments
-  _gz_cmake_parse_arguments(gz_build_examples "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  if(NOT ${BUILD_EXAMPLES})
+    message(STATUS "Building examples disabled")
+  else()
+    #------------------------------------
+    # Define the expected arguments
+    set(options)
+    set(oneValueArgs SOURCE_DIR BINARY_DIR)
 
-  set(gz_build_examples_CMAKE_PREFIX_PATH $ENV{CMAKE_PREFIX_PATH})
+    #------------------------------------
+    # Parse the arguments
+    _gz_cmake_parse_arguments(gz_build_examples "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
-  if (gz_build_examples_CMAKE_PREFIX_PATH)
-    # Replace colons from environment variable with semicolon cmake list delimiter
-    # Only perform if string has contents, otherwise cmake will complain about REPLACE command
-    string(REPLACE ":" ";" gz_build_examples_CMAKE_PREFIX_PATH ${gz_build_examples_CMAKE_PREFIX_PATH})
+    set(gz_build_examples_CMAKE_PREFIX_PATH $ENV{CMAKE_PREFIX_PATH})
+
+    if (gz_build_examples_CMAKE_PREFIX_PATH)
+      # Replace colons from environment variable with semicolon cmake list delimiter
+      # Only perform if string has contents, otherwise cmake will complain about REPLACE command
+      string(REPLACE ":" ";" gz_build_examples_CMAKE_PREFIX_PATH ${gz_build_examples_CMAKE_PREFIX_PATH})
+    endif()
+
+    if (CMAKE_INSTALL_PREFIX)
+      list(APPEND gz_build_examples_CMAKE_PREFIX_PATH ${CMAKE_INSTALL_PREFIX})
+    endif()
+
+    add_test(
+      NAME EXAMPLES_Configure_TEST
+      COMMAND ${CMAKE_COMMAND} -G${CMAKE_GENERATOR}
+                               --no-warn-unused-cli
+                               -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+                               -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+                               -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
+                               -DCMAKE_C_FLAGS=${CMAKE_C_FLAGS}
+                               -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
+                               "-DCMAKE_PREFIX_PATH=${gz_build_examples_CMAKE_PREFIX_PATH}"
+                               -S ${gz_build_examples_SOURCE_DIR}
+                               -B ${gz_build_examples_BINARY_DIR}
+    )
+
+    add_test(
+      NAME EXAMPLES_Build_TEST
+      COMMAND ${CMAKE_COMMAND} --build ${gz_build_examples_BINARY_DIR}
+                               --config $<CONFIG>
+    )
+    set_tests_properties(EXAMPLES_Build_TEST
+      PROPERTIES DEPENDS "EXAMPLES_Configure_TEST")
   endif()
-
-  if (CMAKE_INSTALL_PREFIX)
-    list(APPEND gz_build_examples_CMAKE_PREFIX_PATH ${CMAKE_INSTALL_PREFIX})
-  endif()
-
-  add_test(
-    NAME EXAMPLES_Configure_TEST
-    COMMAND ${CMAKE_COMMAND} -G${CMAKE_GENERATOR}
-                             --no-warn-unused-cli
-                             -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-                             -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
-                             -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
-                             -DCMAKE_C_FLAGS=${CMAKE_C_FLAGS}
-                             -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
-                             "-DCMAKE_PREFIX_PATH=${gz_build_examples_CMAKE_PREFIX_PATH}"
-                             -S ${gz_build_examples_SOURCE_DIR}
-                             -B ${gz_build_examples_BINARY_DIR}
-  )
-
-  add_test(
-    NAME EXAMPLES_Build_TEST
-    COMMAND ${CMAKE_COMMAND} --build ${gz_build_examples_BINARY_DIR}
-                             --config $<CONFIG>
-  )
-  set_tests_properties(EXAMPLES_Build_TEST
-    PROPERTIES DEPENDS "EXAMPLES_Configure_TEST")
 endmacro()
