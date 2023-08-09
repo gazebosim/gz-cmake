@@ -218,14 +218,13 @@ if (NOT WIN32)
     endif()
 
     # use pkg-config to find ogre plugin path
-    # do it here before resetting the pkg-config paths
-    execute_process(COMMAND pkg-config --variable=plugindir ${IGN_PKG_NAME}
-                    OUTPUT_VARIABLE _pkgconfig_invoke_result
-                    RESULT_VARIABLE _pkgconfig_failed)
-    if(_pkgconfig_failed)
+    # do it here before resetting the pkg-config paths  
+    pkg_get_variable(OGRE2_PLUGINDIR ${IGN_PKG_NAME} plugindir)
+
+    if(NOT OGRE2_PLUGINDIR)
       IGN_BUILD_WARNING ("Failed to find OGRE's plugin directory. The build will succeed, but there will likely be run-time errors.")
     else()
-      fix_pkgconfig_prefix_jammy_bug("${_pkgconfig_invoke_result}" OGRE2_PLUGINDIR)
+      fix_pkgconfig_prefix_jammy_bug("${OGRE2_PLUGINDIR}" OGRE2_PLUGINDIR)
     endif()
 
     # reset pkg config path
