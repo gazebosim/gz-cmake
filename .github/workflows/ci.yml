@@ -13,7 +13,7 @@ jobs:
         id: ci
         uses: gazebo-tooling/action-gz-ci@focal
         with:
-          cmake-args: '-DBUILDSYSTEM_TESTING=True'
+          cmake-args: '-DBUILDSYSTEM_TESTING=True -DBUILD_EXAMPLES=True'
   jammy-ci:
     runs-on: ubuntu-latest
     name: Ubuntu Jammy CI
@@ -24,5 +24,5 @@ jobs:
         id: ci
         uses: gazebo-tooling/action-gz-ci@jammy
         with:
-          cmake-args: '-DBUILDSYSTEM_TESTING=True -DGZ_ENABLE_RELOCATABLE_INSTALL=True'
+          cmake-args: '-DBUILDSYSTEM_TESTING=True -DGZ_ENABLE_RELOCATABLE_INSTALL=True -DBUILD_EXAMPLES=True'
 
