@@ -1,5 +1,20 @@
 ## Gazebo CMake 3.x
 
+### Gazebo CMake 3.4.0 (2023-08-25)
+
+1. Only link against DL in the case that it is needed
+    * [Pull request #380](https://github.com/gazebosim/gz-cmake/pull/380)
+    * [Pull request #382](https://github.com/gazebosim/gz-cmake/pull/382)
+
+1. Disable building examples by default
+    * [Pull request #377](https://github.com/gazebosim/gz-cmake/pull/377)
+
+1. FindIgnOgre*: fix LIBRARY_DIRS and PLUGINDIR resolution when using pkgconfig
+    * [Pull request #376](https://github.com/gazebosim/gz-cmake/pull/376)
+
+1. Use CONFIG in gz_add_benchmark to avoid Windows collisions
+    * [Pull request #341](https://github.com/gazebosim/gz-cmake/pull/341)
+
 ### Gazebo CMake 3.3.1 (2023-08-03)
 
 1. Fix pkg_config_entry when version number is not specified
