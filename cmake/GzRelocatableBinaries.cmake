@@ -91,6 +91,7 @@ macro(gz_add_get_install_prefix_impl)
 
   # Write cpp for shared or module library type
   option(GZ_ENABLE_RELOCATABLE_INSTALL "If ON, enable the feature of providing a relocatable install prefix in shared library." OFF)
+
   if ((target_type STREQUAL "MODULE_LIBRARY" OR target_type STREQUAL "SHARED_LIBRARY") AND GZ_ENABLE_RELOCATABLE_INSTALL)
     # We can't query the LOCATION property of the target due to https://cmake.org/cmake/help/v3.25/policy/CMP0026.html
     # We can only access the directory of the library at generation time via $<TARGET_FILE_DIR:tgt>
