@@ -147,7 +147,8 @@ macro(get_preprocessor_entry CONTENTS KEYWORD VARIABLE)
   endif ()
 endmacro()
 
-if (NOT WIN32)
+find_package(PkgConfig QUIET)
+if (PkgConfig_FOUND)
   set(PKG_CONFIG_PATH_ORIGINAL $ENV{PKG_CONFIG_PATH})
   foreach (GZ_OGRE2_PROJECT_NAME "OGRE2" "OGRE-Next")
     message(STATUS "Looking for OGRE using the name: ${GZ_OGRE2_PROJECT_NAME}")
@@ -247,6 +248,8 @@ if (NOT WIN32)
 
     set(OGRE2_INCLUDE_DIRS ${${GZ_OGRE2_PROJECT_NAME}_INCLUDE_DIRS})  # sync possible OGRE-Next to OGRE2
 
+    unset(OGRE2_INCLUDE CACHE)
+    unset(OGRE2_INCLUDE)
     # verify ogre header can be found in the include path
     find_path(OGRE2_INCLUDE
       NAMES Ogre.h
@@ -392,7 +395,7 @@ if (NOT WIN32)
   # because gz_pkg_check_modules does not work for it.
   include(GzPkgConfig)
   gz_pkg_config_library_entry(GzOGRE2 OgreMain)
-else() #WIN32
+else() #PkgConfig_FOUND
 
   set(OGRE2_FOUND TRUE)
   set(OGRE_LIBRARIES "")
@@ -579,3 +582,4 @@ endif()
 
 set(IgnOGRE2_FOUND ${GzOGRE2_FOUND})  # TODO(CH3): Deprecated. Remove on tock.
 set(IGN_PKG_NAME ${GZ_PKG_NAME})  # TODO(CH3): Deprecated. Remove on tock.
+
