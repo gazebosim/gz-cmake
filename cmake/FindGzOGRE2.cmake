@@ -26,7 +26,6 @@
 # to be set before calling find_package:
 #
 #  GZ_OGRE2_PROJECT_NAME    Possible values: OGRE2 (default) or OGRE-Next
-#                            (Only on UNIX, not in use for Windows)
 #                            Specify the project name used in the packaging.
 #                            It will impact directly in the name of the
 #                            CMake/pkg-config modules being used.
@@ -42,9 +41,6 @@
 #  OGRE2_VERSION_PATCH      OGRE patch version
 #  OGRE2_RESOURCE_PATH      Path to ogre plugins directory
 #  GzOGRE2::GzOGRE2       Imported target for OGRE2
-#
-# On Windows, we assume that all the OGRE* defines are passed in manually
-# to CMake.
 #
 # Supports finding the following OGRE2 components: HlmsPbs, HlmsUnlit, Overlay,
 #  PlanarReflections
