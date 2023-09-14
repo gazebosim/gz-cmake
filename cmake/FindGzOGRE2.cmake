@@ -26,7 +26,6 @@
 # to be set before calling find_package:
 #
 #  GZ_OGRE2_PROJECT_NAME    Possible values: OGRE2 (default) or OGRE-Next
-#                            (Only on UNIX, not in use for Windows)
 #                            Specify the project name used in the packaging.
 #                            It will impact directly in the name of the
 #                            CMake/pkg-config modules being used.
@@ -42,9 +41,6 @@
 #  OGRE2_VERSION_PATCH      OGRE patch version
 #  OGRE2_RESOURCE_PATH      Path to ogre plugins directory
 #  GzOGRE2::GzOGRE2       Imported target for OGRE2
-#
-# On Windows, we assume that all the OGRE* defines are passed in manually
-# to CMake.
 #
 # Supports finding the following OGRE2 components: HlmsPbs, HlmsUnlit, Overlay,
 #  PlanarReflections
@@ -147,7 +143,8 @@ macro(get_preprocessor_entry CONTENTS KEYWORD VARIABLE)
   endif ()
 endmacro()
 
-if (NOT WIN32)
+find_package(PkgConfig QUIET)
+if (PkgConfig_FOUND)
   set(PKG_CONFIG_PATH_ORIGINAL $ENV{PKG_CONFIG_PATH})
   foreach (GZ_OGRE2_PROJECT_NAME "OGRE2" "OGRE-Next")
     message(STATUS "Looking for OGRE using the name: ${GZ_OGRE2_PROJECT_NAME}")
@@ -247,6 +244,8 @@ if (NOT WIN32)
 
     set(OGRE2_INCLUDE_DIRS ${${GZ_OGRE2_PROJECT_NAME}_INCLUDE_DIRS})  # sync possible OGRE-Next to OGRE2
 
+    unset(OGRE2_INCLUDE CACHE)
+    unset(OGRE2_INCLUDE)
     # verify ogre header can be found in the include path
     find_path(OGRE2_INCLUDE
       NAMES Ogre.h
@@ -392,7 +391,7 @@ if (NOT WIN32)
   # because gz_pkg_check_modules does not work for it.
   include(GzPkgConfig)
   gz_pkg_config_library_entry(GzOGRE2 OgreMain)
-else() #WIN32
+else() #PkgConfig_FOUND
 
   set(OGRE2_FOUND TRUE)
   set(OGRE_LIBRARIES "")
@@ -579,3 +578,4 @@ endif()
 
 set(IgnOGRE2_FOUND ${GzOGRE2_FOUND})  # TODO(CH3): Deprecated. Remove on tock.
 set(IGN_PKG_NAME ${GZ_PKG_NAME})  # TODO(CH3): Deprecated. Remove on tock.
+
