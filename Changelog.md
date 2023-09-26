@@ -1,5 +1,10 @@
 ## Gazebo CMake 3.x
 
+### Gazebo CMake 3.4.1 (2023-09-26)
+
+1. Fixed finding Ogre2 on Windows+Conda
+    * [Pull request #384](https://github.com/gazebosim/gz-cmake/pull/384)
+
 ### Gazebo CMake 3.4.0 (2023-08-25)
 
 1. Only link against DL in the case that it is needed
