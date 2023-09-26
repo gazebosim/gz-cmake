@@ -7,6 +7,11 @@ release will remove the deprecated code.
 
 ## Gazebo CMake 2.X to 3.X
 
+1. **Breaking**: Examples are now built using native cmake.
+  Two targets will be generated for each set of examples: `EXAMPLES_Build_TEST` and `EXAMPLES_Configure_TEST`
+  Examples are not built by default, but instead require `BUILD_EXAMPLES:bool=True` to be set.
+  This is because examples require the package of interest to be installed via `make install`.
+
 1. **Breaking**: The project name has been changed to use the `gz-` prefix, you **must** use the `gz` prefix!
   * This also means that any generated code that use the project name (e.g. CMake variables, in-source macros) would have to be migrated.
   * Some non-exhaustive examples of this include:
