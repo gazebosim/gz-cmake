@@ -74,17 +74,10 @@ macro(gz_add_get_install_prefix_impl)
       "gz_add_get_install_prefix_impl: missing parameter OVERRIDE_INSTALL_PREFIX_ENV_VARIABLE")
   endif()
 
-
   if(NOT TARGET ${PROJECT_LIBRARY_TARGET_NAME})
     message(FATAL_ERROR
       "Target ${PROJECT_LIBRARY_TARGET_NAME} required by gz_add_get_install_prefix_impl\n"
       "does not exist.")
-  endif()
-
-  if(NOT TARGET ${DL_TARGET})
-    message(FATAL_ERROR
-      "gz_add_get_install_prefix_impl called without DL_TARGET defined,\n"
-      "please add gz_find_package(DL) if you want to use gz_add_get_install_prefix_impl.")
   endif()
 
   get_target_property(target_type ${PROJECT_LIBRARY_TARGET_NAME} TYPE)
@@ -98,7 +91,14 @@ macro(gz_add_get_install_prefix_impl)
 
   # Write cpp for shared or module library type
   option(GZ_ENABLE_RELOCATABLE_INSTALL "If ON, enable the feature of providing a relocatable install prefix in shared library." OFF)
+
   if ((target_type STREQUAL "MODULE_LIBRARY" OR target_type STREQUAL "SHARED_LIBRARY") AND GZ_ENABLE_RELOCATABLE_INSTALL)
+    if(NOT TARGET ${DL_TARGET})
+      message(FATAL_ERROR
+        "gz_add_get_install_prefix_impl called without DL_TARGET defined,\n"
+        "please add gz_find_package(DL) if you want to use gz_add_get_install_prefix_impl.")
+    endif()
+
     # We can't query the LOCATION property of the target due to https://cmake.org/cmake/help/v3.25/policy/CMP0026.html
     # We can only access the directory of the library at generation time via $<TARGET_FILE_DIR:tgt>
     file(GENERATE OUTPUT "${gz_add_get_install_prefix_impl_GENERATED_CPP}"
@@ -208,7 +208,10 @@ endif()
   # Add cpp to library
   target_sources(${PROJECT_LIBRARY_TARGET_NAME} PRIVATE ${gz_add_get_install_prefix_impl_GENERATED_CPP})
 
+# Only link DL in the case that it is needed.
+if ((target_type STREQUAL "MODULE_LIBRARY" OR target_type STREQUAL "SHARED_LIBRARY") AND GZ_ENABLE_RELOCATABLE_INSTALL)
   # Link DL_TARGET that provides dladdr
   target_link_libraries(${PROJECT_LIBRARY_TARGET_NAME} PRIVATE ${DL_TARGET})
+endif()
 
 endmacro()
