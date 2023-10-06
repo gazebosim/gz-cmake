@@ -137,6 +137,9 @@ macro(_gz_setup_gcc_or_clang)
     CUSTOM_ALL_FLAGS
         -Wall -Wextra -Wno-long-long -Wno-unused-value -Wfloat-equal
         -Wshadow -Winit-self -Wswitch-default -Wmissing-include-dirs -pedantic
+        -Wlifetime -Wformat=2 -Wold-style-cast -Woverloaded-virtual -Wduplicated-cond
+        -Wduplicated-branches -Wlogical-op -Wnull-dereference -Wnon-virtual-dtor
+        -Wimplicit-fallthrough
         )
 
   # -ggdb3: Produce comprehensive debug information that can be utilized by gdb
