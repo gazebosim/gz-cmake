@@ -155,8 +155,8 @@ macro(ign_find_package PACKAGE_NAME)
   message(WARNING "ign_find_package is deprecated, use gz_find_package instead.")
 
   set(options REQUIRED PRIVATE EXACT QUIET CONFIG BUILD_ONLY PKGCONFIG_IGNORE)
-  set(oneValueArgs VERSION PRETTY PURPOSE EXTRA_ARGS PKGCONFIG PKGCONFIG_LIB PKGCONFIG_VER_COMPARISON)
-  set(multiValueArgs REQUIRED_BY PRIVATE_FOR COMPONENTS OPTIONAL_COMPONENTS)
+  set(VERSION PRETTY PURPOSE PKGCONFIG PKGCONFIG_LIB PKGCONFIG_VER_COMPARISON)
+  set(multiValueArgs REQUIRED_BY PRIVATE_FOR COMPONENTS OPTIONAL_COMPONENTS EXTRA_ARGS)
   _gz_cmake_parse_arguments(gz_find_package "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   set(gz_find_package_skip_parsing true)
@@ -170,8 +170,8 @@ macro(gz_find_package PACKAGE_NAME_)
     #------------------------------------
     # Define the expected arguments
     set(options REQUIRED PRIVATE EXACT QUIET CONFIG BUILD_ONLY PKGCONFIG_IGNORE)
-    set(oneValueArgs VERSION PRETTY PURPOSE EXTRA_ARGS PKGCONFIG PKGCONFIG_LIB PKGCONFIG_VER_COMPARISON)
-    set(multiValueArgs REQUIRED_BY PRIVATE_FOR COMPONENTS OPTIONAL_COMPONENTS)
+    set(oneValueArgs VERSION PRETTY PURPOSE PKGCONFIG PKGCONFIG_LIB PKGCONFIG_VER_COMPARISON)
+    set(multiValueArgs REQUIRED_BY PRIVATE_FOR COMPONENTS OPTIONAL_COMPONENTS EXTRA_ARGS)
 
     #------------------------------------
     # Parse the arguments
