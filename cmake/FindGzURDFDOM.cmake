@@ -50,5 +50,3 @@ if(NOT GzURDFDOM_FOUND)
     find_package_handle_standard_args(GzURDFDOM DEFAULT_MSG)
   endif()
 endif()
-
-set(IgnURDFDOM_FOUND ${GzURDFDOM_FOUND})  # TODO(CH3): Deprecated. Remove on tock.
