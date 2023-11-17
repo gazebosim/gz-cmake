@@ -1,5 +1,5 @@
 
-:: NOTE: This script is only meant to be used as part of the ignition developers' CI system
+:: NOTE: This script is only meant to be used as part of the Gazebo developers' CI system
 :: Users and developers should build and install this library using cmake and Visual Studio
 
 :: gz-cmake has no dependencies

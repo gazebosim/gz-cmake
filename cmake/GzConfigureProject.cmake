@@ -62,8 +62,8 @@
 # Initialize the Gazebo project
 macro(gz_configure_project)
   # Define the expected arguments
-  set(options NO_PROJECT_PREFIX NO_IGNITION_PREFIX)  # TODO(CH3): NO_IGNITION_PREFIX IS DEPRECATED.
-  set(oneValueArgs REPLACE_INCLUDE_PATH REPLACE_IGNITION_INCLUDE_PATH VERSION_SUFFIX)  # TODO(CH3): REPLACE_IGNITION_INCLUDE_PATH IS DEPRECATED.
+  set(options NO_PROJECT_PREFIX)
+  set(oneValueArgs REPLACE_INCLUDE_PATH VERSION_SUFFIX)
   set(multiValueArgs CONFIG_EXTRAS)
 
   #------------------------------------

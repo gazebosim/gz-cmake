@@ -168,12 +168,6 @@ install(
 
 message(STATUS "Install prefix: ${CMAKE_INSTALL_PREFIX}")
 
-# TODO(CH3): Deprecated. Remove on tock.
-# Install symlinks for IgnPython and IgnBenchmark
-set(tick_tocked_cmake_files
-  "GzPython.cmake"
-  "GzBenchmark.cmake")
-
 include(CTest)
 if (BUILD_TESTING)
   add_subdirectory(test)
