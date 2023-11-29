@@ -5,6 +5,10 @@ Deprecated code produces compile-time warnings. These warning serve as
 notification to users that their code should be upgraded. The next major
 release will remove the deprecated code.
 
+## Gazebo CMake 3.X to 4.X
+
+1. The minimum required cmake version is now 3.22.1.
+
 ## Gazebo CMake 2.X to 3.X
 
 1. **Breaking**: Examples are now built using native cmake.

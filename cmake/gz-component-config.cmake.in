@@ -29,7 +29,7 @@
 # taking on these version settings, and then that stack will POP after the
 # find_package(~) has exited, so this will not affect the cmake policy settings
 # of a caller.
-cmake_minimum_required(VERSION 3.10.2 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.22.1 FATAL_ERROR)
 
 if(@component_pkg_name@_CONFIG_INCLUDED)
   return()
