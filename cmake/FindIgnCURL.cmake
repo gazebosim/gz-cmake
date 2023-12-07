@@ -51,7 +51,7 @@ if(${IgnCURL_FOUND})
     set_target_properties(curl::curl PROPERTIES
         INTERFACE_LINK_LIBRARIES CURL::libcurl)
   endif()
-  
+
   include(IgnImportTarget)
 
   if(NOT TARGET curl::curl)

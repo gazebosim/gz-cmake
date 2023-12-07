@@ -1,0 +1,30 @@
+name: CMake Linter
+
+on: [push, pull_request]
+
+jobs:
+  run_cmakelint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+
+      - name: Install cmakelint
+        run: |
+          python -m pip install --upgrade pip
+          # cmake-lint does not find real problems with CMAke syntax
+          python -m pip install cmakelang
+
+      - name: run cmake-lint
+        working-directory: ${{github.workspace}}
+        run: |
+          cmake-lint --version
+          for f in cmake/*.cmake; do
+            echo "Processing ${f}"
+            cmake-lint -c tools/cmakelang-config.py -- $f
+          done
