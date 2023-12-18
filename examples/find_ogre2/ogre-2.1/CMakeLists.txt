@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10.2 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.22.1 FATAL_ERROR)
 project(gz-ogre-2.1 VERSION 0.1.0)
 
 find_package(gz-cmake4 REQUIRED)
