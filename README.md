@@ -9,9 +9,9 @@
 
 Build | Status
 -- | --
-Ubuntu Focal | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_cmake-ci-main-focal-amd64)](https://build.osrfoundation.org/job/ignition_cmake-ci-main-focal-amd64)
-Homebrew      | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_cmake-ci-main-homebrew-amd64)](https://build.osrfoundation.org/job/ignition_cmake-ci-main-homebrew-amd64)
-Windows       | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=ignition_cmake-ci-main-windows7-amd64)](https://build.osrfoundation.org/job/ignition_cmake-ci-main-windows7-amd64)
+Ubuntu Jammy  | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=gz_cmake-ci-gz-cmake3-jammy-amd64)](https://build.osrfoundation.org/job/gz_cmake-ci-gz-cmake3-jammy-amd64)
+Homebrew      | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=gz_cmake-ci-gz-cmake3-homebrew-amd64)](https://build.osrfoundation.org/job/gz_cmake-ci-gz-cmake3-homebrew-amd64)
+Windows       | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=gz_cmake-3-win)](https://build.osrfoundation.org/job/gz_cmake-3-win)
 
 # Table of Contents
 
