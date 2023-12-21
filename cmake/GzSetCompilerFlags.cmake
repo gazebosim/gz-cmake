@@ -77,18 +77,7 @@ endmacro()
 # Configure settings for Unix
 # Internal to gz-cmake.
 macro(_gz_setup_unix)
-
-  find_program(CMAKE_UNAME uname /bin /usr/bin /usr/local/bin )
-  if(CMAKE_UNAME)
-    exec_program(${CMAKE_UNAME} ARGS -m OUTPUT_VARIABLE CMAKE_SYSTEM_PROCESSOR)
-    set(CMAKE_SYSTEM_PROCESSOR ${CMAKE_SYSTEM_PROCESSOR} CACHE INTERNAL
-        "processor type (i386 and x86_64)")
-    if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
-      set(GZ_ADD_fPIC_TO_LIBRARIES true)
-      set(IGN_ADD_fPIC_TO_LIBRARIES ${GZ_ADD_fPIC_TO_LIBRARIES})  # TODO(CH3): Deprecated. Remove on tock.
-    endif(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
-  endif(CMAKE_UNAME)
-
+  # No custom setup for Unix systems
 endmacro()
 
 #################################################
