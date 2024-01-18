@@ -176,6 +176,11 @@
 
 ## Gazebo CMake 2.x
 
+### Gazebo CMake 2.17.1 (2023-08-31)
+
+1. FindIgnOgre*: fix LIBRARY_DIRS and PLUGINDIR resolution when using pkgconfig
+    * [Pull request #376](https://github.com/gazebosim/gz-cmake/pull/376)
+
 ### Gazebo CMake 2.17.0 (2023-05-19)
 
 1. Use CONFIG in gz_add_benchmark to avoid Windows collisions
