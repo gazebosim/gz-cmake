@@ -214,12 +214,6 @@ macro(_gz_add_library_or_component)
     add_library(${lib_name} ${sources})
   endif()
 
-  #------------------------------------
-  # Add fPIC if we are supposed to
-  if(GZ_ADD_fPIC_TO_LIBRARIES AND NOT _gz_add_library_INTERFACE)
-    target_compile_options(${lib_name} PRIVATE -fPIC)
-  endif()
-
   if(NOT _gz_add_library_INTERFACE)
 
     #------------------------------------
