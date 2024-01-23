@@ -186,7 +186,7 @@ foreach(cmake_file ${tick_tocked_cmake_files})
         ${PROJECT_BINARY_DIR}\/cmake/${ign_cmake_file})")
   else()
     install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink \
-        ${CMAKE_INSTALL_PREFIX}\/${gz_modules_install_dir}\/${cmake_file} \
+        ${cmake_file} \
         ${PROJECT_BINARY_DIR}\/cmake/${ign_cmake_file})")
   endif()
 
