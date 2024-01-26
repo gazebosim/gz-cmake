@@ -113,12 +113,12 @@ endmacro()
 # Internal to gz-cmake.
 macro(_gz_setup_gcc_or_clang)
 
-  if(gz_configure_build_HIDE_SYMBOLS_BY_DEFAULT)
-    set(CMAKE_C_VISIBILITY_PRESET "hidden")
-    set(CMAKE_CXX_VISIBILITY_PRESET "hidden")
-  else()
+  if(gz_configure_build_EXPOSE_SYMBOLS_BY_DEFAULT)
     set(CMAKE_C_VISIBILITY_PRESET "default")
     set(CMAKE_CXX_VISIBILITY_PRESET "default")
+  else()
+    set(CMAKE_C_VISIBILITY_PRESET "hidden")
+    set(CMAKE_CXX_VISIBILITY_PRESET "hidden")
   endif()
 
 
