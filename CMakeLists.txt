@@ -36,17 +36,20 @@ add_subdirectory(doc)
 #--------------------------------------
 # Install the benchmark files
 install(DIRECTORY benchmark/
-        DESTINATION ${GZ_DATA_INSTALL_DIR}/benchmark)
+        DESTINATION ${GZ_DATA_INSTALL_DIR}/benchmark
+        USE_SOURCE_PERMISSIONS)
 
 #--------------------------------------
 # Install the codecheck files
 install(DIRECTORY codecheck/
-        DESTINATION ${GZ_DATA_INSTALL_DIR}/codecheck)
+        DESTINATION ${GZ_DATA_INSTALL_DIR}/codecheck
+        USE_SOURCE_PERMISSIONS)
 
 #--------------------------------------
 # Install the tools files
 install(DIRECTORY tools/
-        DESTINATION ${GZ_DATA_INSTALL_DIR}/tools)
+        DESTINATION ${GZ_DATA_INSTALL_DIR}/tools
+        USE_SOURCE_PERMISSIONS)
 
 #============================================================================
 # Configure the package to be installed
