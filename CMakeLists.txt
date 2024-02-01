@@ -36,17 +36,20 @@ add_subdirectory(doc)
 #--------------------------------------
 # Install the benchmark files
 install(DIRECTORY benchmark/
-        DESTINATION ${GZ_DATA_INSTALL_DIR}/benchmark)
+        DESTINATION ${GZ_DATA_INSTALL_DIR}/benchmark
+        USE_SOURCE_PERMISSIONS)
 
 #--------------------------------------
 # Install the codecheck files
 install(DIRECTORY codecheck/
-        DESTINATION ${GZ_DATA_INSTALL_DIR}/codecheck)
+        DESTINATION ${GZ_DATA_INSTALL_DIR}/codecheck
+        USE_SOURCE_PERMISSIONS)
 
 #--------------------------------------
 # Install the tools files
 install(DIRECTORY tools/
-        DESTINATION ${GZ_DATA_INSTALL_DIR}/tools)
+        DESTINATION ${GZ_DATA_INSTALL_DIR}/tools
+        USE_SOURCE_PERMISSIONS)
 
 #============================================================================
 # Configure the package to be installed
@@ -186,7 +189,7 @@ foreach(cmake_file ${tick_tocked_cmake_files})
         ${PROJECT_BINARY_DIR}\/cmake/${ign_cmake_file})")
   else()
     install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink \
-        ${CMAKE_INSTALL_PREFIX}\/${gz_modules_install_dir}\/${cmake_file} \
+        ${cmake_file} \
         ${PROJECT_BINARY_DIR}\/cmake/${ign_cmake_file})")
   endif()
 
