@@ -35,6 +35,6 @@ jobs:
         uses: actions/checkout@v4
       - name: Compile and test
         id: ci
-        uses: gazebo-tooling/action-gz-ci@jrivero/initial_noble_branch
+        uses: gazebo-tooling/action-gz-ci@jrivero/jammy_fixes_1
         with:
           cmake-args: '-DBUILDSYSTEM_TESTING=True -DGZ_ENABLE_RELOCATABLE_INSTALL=True'
