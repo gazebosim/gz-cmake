@@ -3,10 +3,6 @@ name: Ubuntu CI
 on:
   pull_request:
   push:
-    branches:
-      - 'ign-cmake[0-9]'
-      - 'gz-cmake[0-9]'
-      - 'main'
 
 jobs:
   focal-ci:
