@@ -231,6 +231,10 @@ macro(gz_find_package PACKAGE_NAME_)
       set(${PACKAGE_NAME}_msg "${${PACKAGE_NAME}_msg} - ${gz_find_package_PURPOSE}")
     endif()
 
+    if (NOT DEFINED GZ_REQUIRE_DEPS_FOR_COMPONENT_${PACKAGE_NAME})
+      set (GZ_REQUIRE_DEPS_FOR_COMPONENT_${PACKAGE_NAME} false)
+    endif()
+
     #------------------------------------
     # If the package is unavailable, tell the user.
     if(gz_find_package_REQUIRED)
@@ -243,16 +247,22 @@ macro(gz_find_package PACKAGE_NAME_)
       foreach(component ${gz_find_package_REQUIRED_BY})
 
         if(NOT SKIP_${component})
-          # Otherwise, if it was only required by some of the components, create
-          # a warning about which components will not be available, unless the
-          # user explicitly requested that it be skipped
-          gz_build_warning("Skipping component [${component}]: ${${PACKAGE_NAME}_msg}.\n    ^~~~~ Set SKIP_${component}=true in cmake to suppress this warning.\n ")
 
-          # Create a variable to indicate that we need to skip the component
-          set(INTERNAL_SKIP_${component} true)
+          if(GZ_REQUIRE_DEPS_FOR_COMPONENT_${component})
+            # Elevete the problem to an error if GZ_REQUIRE_DEPS_FOR_COMPONENT_ is used
+            gz_build_error("${${PACKAGE_NAME}_msg}\n.    ^~~~~ Forced by using GZ_REQUIRE_DEPS_FOR_COMPONENT_${component}=true")
+          else()
+            # Otherwise, if it was only required by some of the components, create
+            # a warning about which components will not be available, unless the
+            # user explicitly requested that it be skipped
+            gz_build_warning("Skipping component [${component}]: ${${PACKAGE_NAME}_msg}.\n    ^~~~~ Set SKIP_${component}=true in cmake to suppress this warning.\n ")
 
-          # Track the missing dependencies
-          gz_string_append(${component}_MISSING_DEPS "${${PACKAGE_NAME}_pretty}" DELIM ", ")
+            # Create a variable to indicate that we need to skip the component
+            set(INTERNAL_SKIP_${component} true)
+
+            # Track the missing dependencies
+            gz_string_append(${component}_MISSING_DEPS "${${PACKAGE_NAME}_pretty}" DELIM ", ")
+          endif()
         endif()
 
       endforeach()

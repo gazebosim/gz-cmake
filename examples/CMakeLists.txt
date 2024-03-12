@@ -235,3 +235,22 @@ if(UNIX)
       python3 -c "exec(\"import sys\\nwith open('${sanitizer_compiler_log}') as f:sys.exit(0) if 'fsanitize=address' in f.read() else sys.exit(1)\")"
   )
 endif()
+
+ExternalProject_Add(
+  TestRequiredArgs
+
+  DEPENDS FAKE_INSTALL
+  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/use_component_depsD"
+  LOG_BUILD ON
+  LOG_CONFIGURE ON
+  # BUILD_ALWAYS needed since cmake doesn't notice when
+  # example files change.
+  # See alternate approach in a2113e0997c9 if this becomes too slow
+  BUILD_ALWAYS 1
+  BUILD_COMMAND ${CMAKE_COMMAND} --build . --clean-first
+  CMAKE_ARGS
+    "-DCMAKE_PREFIX_PATH=${example_INSTALL_DIR}"
+    "-DCMAKE_BUILD_TYPE=Debug"  # Example install dir is Debug
+    "-DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/install/use_component_depsD"
+    "-DCMAKE_VERBOSE_MAKEFILE:BOOL=ON"
+    "-DGZ_REQUIRE_DEPS_FOR_COMPONENT_child=ON")
