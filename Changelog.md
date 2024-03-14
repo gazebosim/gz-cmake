@@ -1,5 +1,40 @@
 ## Gazebo CMake 3.x
 
+### Gazebo CMake 3.5.0 (2024-03-14)
+
+1. Remove @mxgrey as codeowner and assign maintainership to @scpeters
+    * [Pull request #414](https://github.com/gazebosim/gz-cmake/pull/414)
+
+1. Replace `exec_program` with `execute_process`
+    * [Pull request #402](https://github.com/gazebosim/gz-cmake/pull/402)
+
+1. cppcheck uses c++17
+    * [Pull request #404](https://github.com/gazebosim/gz-cmake/pull/404)
+
+1. Preserve executable permissions when installing scripts
+    * [Pull request #407](https://github.com/gazebosim/gz-cmake/pull/407)
+
+1. Use a consistent Python interpreter in all scripts
+    * [Pull request #406](https://github.com/gazebosim/gz-cmake/pull/406)
+
+1. Drop shebang from `upload_doc.sh`
+    * [Pull request #408](https://github.com/gazebosim/gz-cmake/pull/408)
+
+1. Use a relative symlink for `Ign*` cmake modules
+    * [Pull request #405](https://github.com/gazebosim/gz-cmake/pull/405)
+
+1. Remove exec_program call
+    * [Pull request #399](https://github.com/gazebosim/gz-cmake/pull/399)
+
+1. Update CI badges in README
+    * [Pull request #398](https://github.com/gazebosim/gz-cmake/pull/398)
+
+1. Infrastructure
+    * [Pull request #395](https://github.com/gazebosim/gz-cmake/pull/395)
+
+1. Change `EXTRA_ARGS` to be a `multiValueArgs` in `GzFindPackage`
+    * [Pull request #393](https://github.com/gazebosim/gz-cmake/pull/393)
+
 ### Gazebo CMake 3.4.1 (2023-09-26)
 
 1. Fixed finding Ogre2 on Windows+Conda
