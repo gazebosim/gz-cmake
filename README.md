@@ -1,6 +1,6 @@
 # Ignition CMake : CMake Modules for Ignition Projects
 
-**Maintainer:** grey AT openrobotics.org
+**Maintainer:** scpeters AT openrobotics.org
 
 [![GitHub open issues](https://img.shields.io/github/issues-raw/ignitionrobotics/ign-cmake.svg)](https://github.com/ignitionrobotics/ign-cmake/issues)
 [![GitHub open pull requests](https://img.shields.io/github/issues-pr-raw/ignitionrobotics/ign-cmake.svg)](https://github.com/ignitionrobotics/ign-cmake/pulls)
