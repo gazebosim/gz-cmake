@@ -2,10 +2,10 @@
 <?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="2">
   <name>gz-cmake3</name>
-  <version>3.4.1</version>
+  <version>3.5.0</version>
   <description>Gazebo CMake : CMake Modules for Gazebo Projects</description>
 
-  <maintainer email="grey@openrobotics.org">Michael X Grey</maintainer>
+  <maintainer email="scpeters@openrobotics.org">Steve Peters</maintainer>
 
   <license>Apache License 2.0</license>
 
