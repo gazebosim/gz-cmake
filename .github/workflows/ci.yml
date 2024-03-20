@@ -40,7 +40,12 @@ jobs:
         uses: actions/checkout@v4
       - name: Verify version consistency
         run: |
+          echo ===== CMakeLists.txt version =====
           grep 'project(gz-cmake[0-9]* VERSION' CMakeLists.txt | sed -e 's@.*VERSION @@' -e 's@) *@@' > /tmp/cmake_version
           cat /tmp/cmake_version
+          echo ===== package.xml version =====
           grep '<version>' package.xml | sed -e 's@ *<version>@@' -e 's@</version>@@' > /tmp/package_xml_version
           cat /tmp/package_xml_version
+          set -e
+          diff /tmp/cmake_version /tmp/package_xml_version
+
