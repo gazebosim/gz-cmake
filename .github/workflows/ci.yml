@@ -7,6 +7,7 @@ on:
       - 'ign-cmake[0-9]'
       - 'gz-cmake[0-9]'
       - 'main'
+      - 'package_xml_ci_test'
 
 jobs:
   focal-ci:
