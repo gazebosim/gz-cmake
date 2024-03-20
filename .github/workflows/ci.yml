@@ -43,9 +43,3 @@ jobs:
           cat /tmp/cmake_version
           grep '<version>' package.xml | sed -e 's@ *<version>@@' -e 's@</version>@@' > /tmp/package_xml_version
           cat /tmp/package_xml_version
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.10'
-      - name: Install catkin-pkg
-        run: pip3 install catkin-pkg
-      - name: Verify version consistency
