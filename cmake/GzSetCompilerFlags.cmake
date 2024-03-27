@@ -134,13 +134,8 @@ macro(_gz_setup_gcc_or_clang)
   # We use the default flags for Release
   set(CUSTOM_RELEASE_FLAGS "")
 
-  # -UNDEBUG: Undefine the NDEBUG symbol so that assertions get triggered in
-  #           RelWithDebInfo mode
-  # NOTE: Always make -UNDEBUG the first flag in this list so that it appears
-  #       immiediately after cmake's automatically provided -DNDEBUG flag.
-  #       Keeping them next to each other should make it more clear that the
-  #       -DNDEBUG flag is being canceled out.
-  set(CUSTOM_RELWITHDEBINFO_FLAGS "-UNDEBUG")
+  # We use the default flags for RelWithDebInfo
+  set(CUSTOM_RELWITHDEBINFO_FLAGS "")
 
   # We use the default flags for MinSizeRel
   set(CUSTOM_MINSIZEREL_FLAGS "")
@@ -304,8 +299,8 @@ macro(_gz_setup_msvc)
     # GL: Enable Whole Program Optimization
     set(MSVC_RELEASE_FLAGS "${MSVC_DEBUG_FLAGS} /GL")
 
-    # UNDEBUG: Undefine NDEBUG so that assertions can be triggered
-    set(MSVC_RELWITHDEBINFO_FLAGS "${MSVC_RELEASE_FLAGS} /UNDEBUG")
+    # Use Release flags for RelWithDebInfo
+    set(MSVC_RELWITHDEBINFO_FLAGS "${MSVC_RELEASE_FLAGS}")
 
     # INCREMENTAL:NO fix LNK4075 warning
     # LTCG: need when using /GL above
