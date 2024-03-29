@@ -185,7 +185,7 @@ foreach(cmake_file ${tick_tocked_cmake_files})
 
   if (WIN32)  # Windows requires copy instead of symlink
     install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E copy \
-        ${CMAKE_INSTALL_PREFIX}\/${gz_modules_install_dir}\/${cmake_file} \
+        ${PROJECT_SOURCE_DIR}\/cmake/${cmake_file} \
         ${PROJECT_BINARY_DIR}\/cmake/${ign_cmake_file})")
   else()
     install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink \
