@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.10.2 FATAL_ERROR)
 #============================================================================
 # Initialize the project
 #============================================================================
-project(gz-cmake3 VERSION 3.5.0)
+project(gz-cmake3 VERSION 3.5.2)
 
 #--------------------------------------
 # Initialize the GZ_CMAKE_DIR variable with the location of the cmake
@@ -185,7 +185,7 @@ foreach(cmake_file ${tick_tocked_cmake_files})
 
   if (WIN32)  # Windows requires copy instead of symlink
     install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E copy \
-        ${CMAKE_INSTALL_PREFIX}\/${gz_modules_install_dir}\/${cmake_file} \
+        ${PROJECT_SOURCE_DIR}\/cmake/${cmake_file} \
         ${PROJECT_BINARY_DIR}\/cmake/${ign_cmake_file})")
   else()
     install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink \

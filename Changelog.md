@@ -1,5 +1,15 @@
 ## Gazebo CMake 3.x
 
+### Gazebo CMake 3.5.2 (2024-04-05)
+
+1. Use relative install paths for extra cmake files
+    * [Pull request #422](https://github.com/gazebosim/gz-cmake/pull/422)
+
+### Gazebo CMake 3.5.1 (2024-03-29)
+
+1. Fix how `ign` compatibility files are copied in windows
+    * [Pull request #419](https://github.com/gazebosim/gz-cmake/pull/419)
+
 ### Gazebo CMake 3.5.0 (2024-03-14)
 
 1. Remove @mxgrey as codeowner and assign maintainership to @scpeters
