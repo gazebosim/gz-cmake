@@ -182,19 +182,23 @@ set(tick_tocked_cmake_files
 foreach(cmake_file ${tick_tocked_cmake_files})
   string(REGEX REPLACE "^Gz" "Ign" ign_cmake_file ${cmake_file})
   file(MAKE_DIRECTORY "${PROJECT_BINARY_DIR}/cmake")
+  set(ign_cmake_file_path "${PROJECT_BINARY_DIR}/cmake/${ign_cmake_file}")
 
   if (WIN32)  # Windows requires copy instead of symlink
-    install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E copy \
-        ${PROJECT_SOURCE_DIR}\/cmake/${cmake_file} \
-        ${PROJECT_BINARY_DIR}\/cmake/${ign_cmake_file})")
+    add_custom_command(OUTPUT ${ign_cmake_file_path}
+      COMMAND ${CMAKE_COMMAND} -E copy
+        ${PROJECT_SOURCE_DIR}/cmake/${cmake_file}  ${ign_cmake_file_path}
+    )
   else()
-    install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink \
-        ${cmake_file} \
-        ${PROJECT_BINARY_DIR}\/cmake/${ign_cmake_file})")
+    add_custom_command(OUTPUT ${ign_cmake_file_path}
+      COMMAND ${CMAKE_COMMAND} -E create_symlink
+      ${cmake_file}  ${ign_cmake_file_path}
+    )
   endif()
 
+  add_custom_target(target_${ign_cmake_file} ALL DEPENDS ${ign_cmake_file_path})
   install(
-    FILES ${PROJECT_BINARY_DIR}/cmake/${ign_cmake_file}
+    FILES ${ign_cmake_file_path}
     DESTINATION ${gz_modules_install_dir}
     COMPONENT modules)
 endforeach()
