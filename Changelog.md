@@ -1,5 +1,16 @@
 ## Gazebo CMake 3.x
 
+### Gazebo CMake 3.5.3 (2024-05-02)
+
+1. Fix installation of Ign*.cmake modules on newer versions of CMake
+    * [Pull request #425](https://github.com/gazebosim/gz-cmake/pull/425)
+
+1. Add package.xml
+    * [Pull request #413](https://github.com/gazebosim/gz-cmake/pull/413)
+
+1. Remove example_INSTALL_DIR from PREFIX_PATH on examples
+    * [Pull request #421](https://github.com/gazebosim/gz-cmake/pull/421)
+
 ### Gazebo CMake 3.5.2 (2024-04-05)
 
 1. Use relative install paths for extra cmake files
