@@ -30,6 +30,7 @@
 #   GZ_DESIGNATION_LOWER
 #   GZ_DESIGNATION_UPPER
 #   PKG_NAME
+#   PROJECT_CMAKE_EXTRAS_RELATIVE_INSTALL_DIR
 #   PROJECT_CMAKE_EXTRAS_INSTALL_DIR
 #   PROJECT_CMAKE_EXTRAS_PATH_TO_PREFIX
 #   PROJECT_INCLUDE_DIR
@@ -161,6 +162,7 @@ macro(gz_configure_project)
   #============================================================================
   # Configure and install cmake extras files
   # Do this after _gz_setup_packages() to ensure GNUInstallDirs has been called
+  set(PROJECT_CMAKE_EXTRAS_RELATIVE_INSTALL_DIR ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
   set(PROJECT_CMAKE_EXTRAS_INSTALL_DIR ${CMAKE_INSTALL_FULL_LIBDIR}/cmake/${PROJECT_NAME})
   file(RELATIVE_PATH
     PROJECT_CMAKE_EXTRAS_PATH_TO_PREFIX
@@ -195,7 +197,7 @@ macro(gz_configure_project)
     if(is_cmake)
       install(FILES
         ${extra}
-        DESTINATION ${PROJECT_CMAKE_EXTRAS_INSTALL_DIR}
+        DESTINATION ${PROJECT_CMAKE_EXTRAS_RELATIVE_INSTALL_DIR}
       )
       get_filename_component(extra_filename "${extra}" NAME)
       list(APPEND PACKAGE_CONFIG_EXTRA_FILES "${extra_filename}")
