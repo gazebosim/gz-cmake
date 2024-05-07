@@ -1,6 +1,6 @@
 ## Gazebo CMake 2.x
 
-### Gazebo CMake 2.17.2 (2024-04-07)
+### Gazebo CMake 2.17.2 (2024-05-07)
 
 1. Backport #402: Replace `exec_program` with `execute_process`
     * [Pull request #402: Replace `exec_program` with `execute_process` (#427](https://github.com/gazebosim/gz-cmake/pull/402: Replace `exec_program` with `execute_process` (#427)
