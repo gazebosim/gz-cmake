@@ -1,5 +1,16 @@
 ## Gazebo CMake 2.x
 
+### Gazebo CMake 2.17.2 (2024-05-07)
+
+1. Backport #402: Replace `exec_program` with `execute_process`
+    * [Pull request #402](https://github.com/gazebosim/gz-cmake/pull/402)
+
+1. Remove @mxgrey as codeowner and assign maintainership to @scpeters
+    * [Pull request #414](https://github.com/gazebosim/gz-cmake/pull/414)
+
+1. Update github action workflows
+    * [Pull request #395](https://github.com/gazebosim/gz-cmake/pull/395)
+
 ### Gazebo CMake 2.17.1 (2023-08-31)
 
 1. FindIgnOgre*: fix LIBRARY_DIRS and PLUGINDIR resolution when using pkgconfig
