@@ -1,7 +1,9 @@
 # Setup the codecheck target, which will run cppcheck and cppplint.
 # This function is private to gz-cmake.
 function(_gz_setup_target_for_codecheck)
-  include(GzPython)
+  if(NOT Python3_Interpreter_FOUND)
+    find_package(Python3 COMPONENTS Interpreter)
+  endif()
 
   find_program(CPPCHECK_PATH cppcheck)
   find_program(FIND_PATH find)

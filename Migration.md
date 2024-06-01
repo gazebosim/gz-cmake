@@ -19,6 +19,9 @@ release will remove the deprecated code.
    The change deprecates the HIDDEN_SYMBOLS_BY_DEFAULT flag that can be
    removed.
 
+1. **Deprecated**: `GzPython.cmake`
+    **Replacement**: Use `find_package(Python3)` to find Python3 and the
+              `Python3_EXECUTABLE` variable instead of `PYTHON_EXECUTABLE`.
 
 ## Gazebo CMake 2.X to 3.X
 
