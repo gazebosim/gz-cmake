@@ -77,17 +77,7 @@ endmacro()
 # Configure settings for Unix
 # Internal to gz-cmake.
 macro(_gz_setup_unix)
-
-  find_program(CMAKE_UNAME uname /bin /usr/bin /usr/local/bin )
-  if(CMAKE_UNAME)
-    exec_program(${CMAKE_UNAME} ARGS -m OUTPUT_VARIABLE CMAKE_SYSTEM_PROCESSOR)
-    set(CMAKE_SYSTEM_PROCESSOR ${CMAKE_SYSTEM_PROCESSOR} CACHE INTERNAL
-        "processor type (i386 and x86_64)")
-    if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
-      set(GZ_ADD_fPIC_TO_LIBRARIES true)
-    endif(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
-  endif(CMAKE_UNAME)
-
+  # No custom setup for Unix systems
 endmacro()
 
 #################################################
@@ -123,12 +113,12 @@ endmacro()
 # Internal to gz-cmake.
 macro(_gz_setup_gcc_or_clang)
 
-  if(gz_configure_build_HIDE_SYMBOLS_BY_DEFAULT)
-    set(CMAKE_C_VISIBILITY_PRESET "hidden")
-    set(CMAKE_CXX_VISIBILITY_PRESET "hidden")
-  else()
+  if(gz_configure_build_EXPOSE_SYMBOLS_BY_DEFAULT)
     set(CMAKE_C_VISIBILITY_PRESET "default")
     set(CMAKE_CXX_VISIBILITY_PRESET "default")
+  else()
+    set(CMAKE_C_VISIBILITY_PRESET "hidden")
+    set(CMAKE_CXX_VISIBILITY_PRESET "hidden")
   endif()
 
 
@@ -144,13 +134,8 @@ macro(_gz_setup_gcc_or_clang)
   # We use the default flags for Release
   set(CUSTOM_RELEASE_FLAGS "")
 
-  # -UNDEBUG: Undefine the NDEBUG symbol so that assertions get triggered in
-  #           RelWithDebInfo mode
-  # NOTE: Always make -UNDEBUG the first flag in this list so that it appears
-  #       immiediately after cmake's automatically provided -DNDEBUG flag.
-  #       Keeping them next to each other should make it more clear that the
-  #       -DNDEBUG flag is being canceled out.
-  set(CUSTOM_RELWITHDEBINFO_FLAGS "-UNDEBUG")
+  # We use the default flags for RelWithDebInfo
+  set(CUSTOM_RELWITHDEBINFO_FLAGS "")
 
   # We use the default flags for MinSizeRel
   set(CUSTOM_MINSIZEREL_FLAGS "")
@@ -314,8 +299,8 @@ macro(_gz_setup_msvc)
     # GL: Enable Whole Program Optimization
     set(MSVC_RELEASE_FLAGS "${MSVC_DEBUG_FLAGS} /GL")
 
-    # UNDEBUG: Undefine NDEBUG so that assertions can be triggered
-    set(MSVC_RELWITHDEBINFO_FLAGS "${MSVC_RELEASE_FLAGS} /UNDEBUG")
+    # Use Release flags for RelWithDebInfo
+    set(MSVC_RELWITHDEBINFO_FLAGS "${MSVC_RELEASE_FLAGS}")
 
     # INCREMENTAL:NO fix LNK4075 warning
     # LTCG: need when using /GL above

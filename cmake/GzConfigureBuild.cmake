@@ -24,15 +24,21 @@
 #################################################
 # Configure the build of the Gazebo project
 # Pass the argument HIDE_SYMBOLS_BY_DEFAULT to configure symbol visibility so
-# that symbols are hidden unless explicitly marked as visible.
+# that symbols are hidden unless explicitly marked as visible. (DEPRECATED)
+# Pass the argument EXPOSE_SYMBOLS_BY_DEFAULT to configure symbol visibility
+# so symbols are exposed unless explicitly marked as hidden.
 # Pass the argument QUIT_IF_BUILD_ERRORS to have this macro quit cmake when the
 # build_errors
 macro(gz_configure_build)
   # Parse the arguments that are passed in
-  set(options HIDE_SYMBOLS_BY_DEFAULT QUIT_IF_BUILD_ERRORS)
+  set(options HIDE_SYMBOLS_BY_DEFAULT EXPOSE_SYMBOLS_BY_DEFAULT QUIT_IF_BUILD_ERRORS)
   set(oneValueArgs)
   set(multiValueArgs COMPONENTS)
   cmake_parse_arguments(gz_configure_build "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+  if(gz_configure_build_HIDE_SYMBOLS_BY_DEFAULT)
+    message(DEPRECATION "HIDE_SYMBOLS_BY_DEFAULT is now the default. You can safely remove the option.")
+  endif()
 
   #============================================================================
   # Examine the build type. If we do not recognize the type, we will generate

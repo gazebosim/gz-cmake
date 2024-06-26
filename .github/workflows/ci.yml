@@ -1,6 +1,12 @@
 name: Ubuntu CI
 
-on: [push, pull_request]
+on:
+  pull_request:
+  push:
+    branches:
+      - 'ign-cmake[0-9]'
+      - 'gz-cmake[0-9]'
+      - 'main'
 
 jobs:
   jammy-ci:
@@ -8,10 +14,21 @@ jobs:
     name: Ubuntu Jammy CI
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Compile and test
         id: ci
         uses: gazebo-tooling/action-gz-ci@jammy
+        with:
+          cmake-args: '-DBUILDSYSTEM_TESTING=True -DGZ_ENABLE_RELOCATABLE_INSTALL=True'
+  noble-ci:
+    runs-on: ubuntu-latest
+    name: Ubuntu Noble CI
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Compile and test
+        id: ci
+        uses: gazebo-tooling/action-gz-ci@noble
         with:
           cmake-args: '-DBUILDSYSTEM_TESTING=True -DGZ_ENABLE_RELOCATABLE_INSTALL=True'
 

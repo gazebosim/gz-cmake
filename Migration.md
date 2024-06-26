@@ -9,6 +9,20 @@ release will remove the deprecated code.
 
 1. The minimum required cmake version is now 3.22.1.
 
+1. **Breaking**: C/C++ projects enable the `visibility=hidden` compiler flag by default.
+   gz-cmake4 changes gz-cmake projects to use C/C++ visibility hidden
+   by default. This is a potential breaking changed for projects using
+   gz-cmake but the benefits in terms of creating portable code and
+   time spend by the loader could be relevant.
+   To avoid this change, the EXPOSE_SYMBOLS_BY_DEFAULT flag can be used in
+   the gz_configure_project call.
+   The change deprecates the HIDDEN_SYMBOLS_BY_DEFAULT flag that can be
+   removed.
+
+1. **Deprecated**: `GzPython.cmake`
+    **Replacement**: Use `find_package(Python3)` to find Python3 and the
+              `Python3_EXECUTABLE` variable instead of `PYTHON_EXECUTABLE`.
+
 ## Gazebo CMake 2.X to 3.X
 
 1. **Breaking**: Examples are now built using native cmake.
