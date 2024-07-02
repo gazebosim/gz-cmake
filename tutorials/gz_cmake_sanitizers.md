@@ -1,4 +1,4 @@
-# Sanitizer Builds
+\page sanitizersbuilds Sanitizer Builds
 
 ## Original source and Copyright
 
