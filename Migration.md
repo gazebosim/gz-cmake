@@ -19,6 +19,11 @@ release will remove the deprecated code.
    The change deprecates the HIDDEN_SYMBOLS_BY_DEFAULT flag that can be
    removed.
 
+1. **Breaking**: the documentation generation and the "doc" target generation are
+   now disabled by default. To enable the generation of the doc target (it is added
+   to the ALL target so running by default when calling the Gazebo build)
+   use `-DBUILD_DOCS=ON` at configuring time.
+
 1. **Deprecated**: `GzPython.cmake`
     **Replacement**: Use `find_package(Python3)` to find Python3 and the
               `Python3_EXECUTABLE` variable instead of `PYTHON_EXECUTABLE`.

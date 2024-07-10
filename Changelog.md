@@ -1,6 +1,7 @@
 ## Gazebo CMake 4.x
 
-
+1. Disable documentation generation by default
+    * [Pull request #](https://github.com/gazebosim/gz-cmake/pull/)
 
 ## Gazebo CMake 3.x
 
