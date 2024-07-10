@@ -42,12 +42,6 @@
 #           "${GZ-<DESIGNATION>_DOXYGEN_TAGFILE} = ${GZ-<DESIGNATION>_API_URL}"
 function(gz_create_docs)
 
-  option(BUILD_DOCS "Build docs" ON)
-  if (NOT ${BUILD_DOCS})
-    message(STATUS "Building Documentation disabled via BUILD_DOCS=OFF")
-    return()
-  endif()
-
   #------------------------------------
   # Define the expected arguments
   set(options)
@@ -175,17 +169,27 @@ function(gz_create_docs)
     configure_file(${GZ_CMAKE_DOXYGEN_DIR}/api.in
                    ${CMAKE_BINARY_DIR}/api_tagfile.dox @ONLY)
 
-    add_custom_target(doc ALL
+    add_custom_target(doc
       # Generate the API tagfile
       ${DOXYGEN_EXECUTABLE} ${CMAKE_BINARY_DIR}/api_tagfile.dox
       # Generate the API documentation
       COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_BINARY_DIR}/api.dox
       WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-
       COMMENT "Generating API documentation with Doxygen" VERBATIM)
 
-    install(FILES ${CMAKE_BINARY_DIR}/${PROJECT_NAME_LOWER}.tag.xml
-      DESTINATION ${GZ_DATA_INSTALL_DIR})
+    add_custom_command(TARGET doc
+      POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/${PROJECT_NAME_LOWER}.tag.xml ${GZ_DATA_INSTALL_DIR}
+      COMMENT "Install doxygen tag on doc target call")
+
+    if (DEFINED BUILD_DOCS)
+      message(DEPRECATION "The BUILD_DOCS option is now deprecated. For generating the"
+        "docs the 'doc' target can be called explicitly since its generated"
+        "unconditionally not including in the default build target.")
+      if (${BUILD_DOCS})
+        set_target_properties(doc PROPERTIES ALL ON)
+      endif()
+    endif()
   endif()
 
   #--------------------------------------
