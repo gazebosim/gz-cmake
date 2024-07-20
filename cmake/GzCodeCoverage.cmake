@@ -139,11 +139,13 @@ FUNCTION(gz_setup_target_for_coverage)
     # Capturing lcov counters and generating report
     COMMAND ${LCOV_PATH} ${_branch_flags} -q --no-checksum
       --directory ${PROJECT_BINARY_DIR} --capture
+      --rc geninfo_unexecuted_blocks=1
+      --ignore-errors mismatch,mismatch
       --output-file ${_outputname}.info 2>/dev/null
     # Remove negative counts
     COMMAND sed -i '/,-/d' ${_outputname}.info
     COMMAND ${LCOV_PATH} ${_branch_flags} -q
-      --remove ${_outputname}.info '*/test/*' '/usr/*' '*_TEST*' '*.cxx' 'moc_*.cpp' 'qrc_*.cpp' '*.pb.*' '*/build/*' '*/install/*' ${IGNORE_LIST} --output-file ${_outputname}.info.cleaned
+      --remove ${_outputname}.info --ignore-errors unused,unused '*/test/*' '/usr/*' '*_TEST*' '*.cxx' 'moc_*.cpp' 'qrc_*.cpp' '*.pb.*' '*/build/*' '*/install/*' ${IGNORE_LIST} --output-file ${_outputname}.info.cleaned
     COMMAND ${GENHTML_PATH} ${_branch_flags} -q --prefix ${PROJECT_SOURCE_DIR}
     --legend -o ${_outputname} ${_outputname}.info.cleaned
     COMMAND ${LCOV_PATH} --summary ${_outputname}.info.cleaned 2>&1 | grep "lines" | cut -d ' ' -f 4 | cut -d '%' -f 1 > ${_outputname}/lines.txt
