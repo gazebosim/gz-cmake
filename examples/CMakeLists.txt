@@ -5,7 +5,7 @@ include(GNUInstallDirs)
 set(build_types Release RelWithDebInfo Debug)
 find_program(EXAMPLE_LCOV_PATH lcov)
 if (NOT WIN32 AND EXAMPLE_LCOV_PATH)
-  list(APPEND build_types Coverage)
+  list(APPEND build_types coverage)
 endif()
 
 set(example_directories
