@@ -190,6 +190,10 @@ function(gz_create_docs)
         set_target_properties(doc PROPERTIES ALL ON)
       endif()
     endif()
+  else()
+    add_custom_target(doc
+    COMMAND ${CMAKE_COMMAND} -E echo "Need doxygen installation and api.in to generate documentation."
+    VERBATIM)
   endif()
 
   #--------------------------------------
