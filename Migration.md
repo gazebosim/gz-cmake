@@ -19,6 +19,14 @@ release will remove the deprecated code.
    The change deprecates the HIDDEN_SYMBOLS_BY_DEFAULT flag that can be
    removed.
 
+1. **Breaking**: Now the code generates always a `doc` target that can be
+   called to generate the documentation. The `doc` target is excluded from
+   the ALL target so it needs to be explicitly triggered.
+
+1. **Deprecated**: `BUILD_DOCS` CMake arguments is deprecated.
+    **Replacement**: building docs is excluded from the default build and needs
+    to be explicitly triggered by calling the `doc` target.
+
 1. **Deprecated**: `GzPython.cmake`
     **Replacement**: Use `find_package(Python3)` to find Python3 and the
               `Python3_EXECUTABLE` variable instead of `PYTHON_EXECUTABLE`.
