@@ -63,7 +63,8 @@ set(gz_version_output "${PROJECT_NAME_LOWER}-config-version.cmake")
 set(gz_config_install_dir "${CMAKE_INSTALL_DATAROOTDIR}/cmake/${PROJECT_NAME_LOWER}")
 set(gz_pkgconfig_input "${CMAKE_CURRENT_SOURCE_DIR}/config/gz-cmake.pc.in")
 set(gz_pkgconfig_output "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.pc")
-set(gz_pkgconfig_install_dir "${CMAKE_INSTALL_FULL_LIBDIR}/pkgconfig")
+set(gz_pkgconfig_install_dir "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
+set(gz_pkgconfig_abs_install_dir "${CMAKE_INSTALL_FULL_LIBDIR}/pkgconfig")
 set(gz_utilities_target ${PROJECT_EXPORT_NAME}-utilities)
 set(gz_utilities_import_target_name ${PROJECT_EXPORT_NAME}::${gz_utilities_target})
 set(gz_utilities_target_output_filename "${gz_utilities_target}-targets.cmake")
@@ -96,7 +97,7 @@ install(
 # Configure and install the pkgconfig file (needed for utilities headers)
 file(RELATIVE_PATH
   GZ_PC_CONFIG_RELATIVE_PATH_TO_PREFIX
-  "${gz_pkgconfig_install_dir}"
+  "${gz_pkgconfig_abs_install_dir}"
   "${CMAKE_INSTALL_PREFIX}"
 )
 
