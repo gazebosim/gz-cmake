@@ -1,6 +1,49 @@
 ## Gazebo CMake 4.x
 
+### Gazebo CMake 4.0.0 (2024-09-24)
 
+1. Use relative paths for pkg-config install directory
+    * [Pull request #443](https://github.com/gazebosim/gz-cmake/pull/443)
+
+1. Deprecate `BUILD_DOCS`: generate always the doc target but exclude from default make
+    * [Pull request #434](https://github.com/gazebosim/gz-cmake/pull/434)
+
+1. Accept arbitrary capitalization for coverage build type
+    * [Pull request #435](https://github.com/gazebosim/gz-cmake/pull/435)
+
+1. Deprecate GzPython.cmake in favor of `find_package(Python3)`
+    * [Pull request #431](https://github.com/gazebosim/gz-cmake/pull/431)
+
+1. Use default flags for RelWithDebInfo
+    * [Pull request #418](https://github.com/gazebosim/gz-cmake/pull/418)
+
+1. Use visibility hidden by default
+    * [Pull request #392](https://github.com/gazebosim/gz-cmake/pull/392)
+
+1. Replace `exec_program` with `execute_process`
+    * [Pull request #402](https://github.com/gazebosim/gz-cmake/pull/402)
+
+1. Doxygen: exclude C++ `__attribute__`
+    * [Pull request #397](https://github.com/gazebosim/gz-cmake/pull/397)
+
+1. Require cmake version 3.22.1
+    * [Pull request #396](https://github.com/gazebosim/gz-cmake/pull/396)
+
+1. CI: disable 20.04, enable 24.04
+    * [Pull request #389](https://github.com/gazebosim/gz-cmake/pull/389)
+    * [Pull request #424](https://github.com/gazebosim/gz-cmake/pull/424)
+
+1. Deprecate SuppressWarning.hh with `#warning`
+    * [Pull request #367](https://github.com/gazebosim/gz-cmake/pull/367)
+
+1. Remove ignition
+    * [Pull request #326](https://github.com/gazebosim/gz-cmake/pull/326)
+    * [Pull request #369](https://github.com/gazebosim/gz-cmake/pull/369)
+
+1. Bump major version to 4
+    * [Pull request #296](https://github.com/gazebosim/gz-cmake/pull/296)
+    * [Pull request #298](https://github.com/gazebosim/gz-cmake/pull/298)
+    * [Pull request #390](https://github.com/gazebosim/gz-cmake/pull/390)
 
 ## Gazebo CMake 3.x
 
