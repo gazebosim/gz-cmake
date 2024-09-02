@@ -17,7 +17,7 @@ set(example_directories
   core_child
   core_child_private
   core_static_child
-  comp_deps
+  component_deps
   use_config_ifp
   )
 if (NOT CMAKE_GENERATOR MATCHES "Visual Studio")
@@ -51,7 +51,7 @@ foreach(example ${example_directories})
   elseif (${example} STREQUAL "core_static_child")
     set(example_tarball_name gz-core_static_child-0.1.0.tar.bz2)
     set(run_codecheck true)
-  elseif (${example} STREQUAL "comp_deps")
+  elseif (${example} STREQUAL "component_deps")
     set(example_tarball_name gz-component_deps-0.1.0.tar.bz2)
   elseif (${example} STREQUAL "use_component_depsA")
     set(example_tarball_name gz-use_component_depsa-0.1.0.tar.bz2)
@@ -167,13 +167,13 @@ foreach (build_type ${build_types})
   add_dependencies(core_child_private_${build_type} core_nodep_${build_type})
   add_dependencies(core_static_child_${build_type} core_nodep_static_${build_type})
   if (TARGET use_component_depsA_${build_type})
-    add_dependencies(use_component_depsA_${build_type} comp_deps_${build_type})
+    add_dependencies(use_component_depsA_${build_type} component_deps_${build_type})
   endif()
   if (TARGET use_component_depsB_${build_type})
-    add_dependencies(use_component_depsB_${build_type} comp_deps_${build_type})
+    add_dependencies(use_component_depsB_${build_type} component_deps_${build_type})
   endif()
   if (TARGET use_component_depsC_${build_type})
-    add_dependencies(use_component_depsC_${build_type} comp_deps_${build_type})
+    add_dependencies(use_component_depsC_${build_type} component_deps_${build_type})
   endif()
 endforeach()
 
