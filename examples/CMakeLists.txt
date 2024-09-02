@@ -26,6 +26,7 @@ if (NOT CMAKE_GENERATOR MATCHES "Visual Studio")
     use_component_deps_b
     use_component_deps_c
     export_component_deps_cmake
+    export_component_deps_pkgconfig
   )
 endif()
 
@@ -56,6 +57,8 @@ foreach(example ${example_directories})
     set(example_tarball_name gz-component_deps-0.1.0.tar.bz2)
   elseif (${example} STREQUAL "export_component_deps_cmake")
     set(example_tarball_name gz-export_component_deps_cmake-0.1.0.tar.bz2)
+  elseif (${example} STREQUAL "export_component_deps_pkgconfig")
+    set(example_tarball_name gz-export_component_deps_pkgconfig-0.1.0.tar.bz2)
   elseif (${example} STREQUAL "use_component_deps_a")
     set(example_tarball_name gz-use_component_deps_a-0.1.0.tar.bz2)
   elseif (${example} STREQUAL "use_component_deps_b")
@@ -180,6 +183,9 @@ foreach (build_type ${build_types})
   endif()
   if (TARGET export_component_deps_cmake_${build_type})
     add_dependencies(export_component_deps_cmake_${build_type} use_component_deps_c_${build_type})
+  endif()
+  if (TARGET export_component_deps_pkgconfig_${build_type})
+    add_dependencies(export_component_deps_pkgconfig_${build_type} use_component_deps_c_${build_type})
   endif()
 endforeach()
 
