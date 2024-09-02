@@ -22,9 +22,9 @@ set(example_directories
   )
 if (NOT CMAKE_GENERATOR MATCHES "Visual Studio")
   list(APPEND example_directories
-    use_component_depsA
-    use_component_depsB
-    use_component_depsC
+    use_component_deps_a
+    use_component_deps_b
+    use_component_deps_c
   )
 endif()
 
@@ -53,12 +53,12 @@ foreach(example ${example_directories})
     set(run_codecheck true)
   elseif (${example} STREQUAL "component_deps")
     set(example_tarball_name gz-component_deps-0.1.0.tar.bz2)
-  elseif (${example} STREQUAL "use_component_depsA")
-    set(example_tarball_name gz-use_component_depsa-0.1.0.tar.bz2)
-  elseif (${example} STREQUAL "use_component_depsB")
-    set(example_tarball_name gz-use_component_depsb-0.1.0.tar.bz2)
-  elseif (${example} STREQUAL "use_component_depsC")
-    set(example_tarball_name gz-use_component_depsc-0.1.0.tar.bz2)
+  elseif (${example} STREQUAL "use_component_deps_a")
+    set(example_tarball_name gz-use_component_deps_a-0.1.0.tar.bz2)
+  elseif (${example} STREQUAL "use_component_deps_b")
+    set(example_tarball_name gz-use_component_deps_b-0.1.0.tar.bz2)
+  elseif (${example} STREQUAL "use_component_deps_c")
+    set(example_tarball_name gz-use_component_deps_c-0.1.0.tar.bz2)
   elseif (${example} STREQUAL "use_config_ifp")
     set(example_tarball_name  gz-find_config-0.1.0.tar.bz2)
 
@@ -166,14 +166,14 @@ foreach (build_type ${build_types})
   add_dependencies(core_child_${build_type} core_nodep_${build_type})
   add_dependencies(core_child_private_${build_type} core_nodep_${build_type})
   add_dependencies(core_static_child_${build_type} core_nodep_static_${build_type})
-  if (TARGET use_component_depsA_${build_type})
-    add_dependencies(use_component_depsA_${build_type} component_deps_${build_type})
+  if (TARGET use_component_deps_a_${build_type})
+    add_dependencies(use_component_deps_a_${build_type} component_deps_${build_type})
   endif()
-  if (TARGET use_component_depsB_${build_type})
-    add_dependencies(use_component_depsB_${build_type} component_deps_${build_type})
+  if (TARGET use_component_deps_b_${build_type})
+    add_dependencies(use_component_deps_b_${build_type} component_deps_${build_type})
   endif()
-  if (TARGET use_component_depsC_${build_type})
-    add_dependencies(use_component_depsC_${build_type} component_deps_${build_type})
+  if (TARGET use_component_deps_c_${build_type})
+    add_dependencies(use_component_deps_c_${build_type} component_deps_${build_type})
   endif()
 endforeach()
 
