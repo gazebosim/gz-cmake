@@ -35,9 +35,9 @@ Windows       | [![Build Status](https://build.osrfoundation.org/buildStatus/ico
 
 [Folder Structure](#folder-structure)
 
-[Code of Conduct](#code-of-conduct)
+[Contributing](#contributing)
 
-[Contributing](#code-of-contributing)
+[Code of Conduct](#code-of-conduct)
 
 [Versioning](#versioning)
 
@@ -45,7 +45,7 @@ Windows       | [![Build Status](https://build.osrfoundation.org/buildStatus/ico
 
 # Features
 
-gz-cmake provides a set of cmake modules that are used by the C++-based Gazebo projects. These modules help to control the quality and consistency of the Gazebo projects' build systems.
+gz-cmake provides a set of cmake modules that are used by the C++ based Gazebo projects. These modules help to control the quality and consistency of the Gazebo projects build systems.
 
 These modules are tailored to the Gazebo projects, so their use for non-Gazebo projects might be limited, but they may serve as a useful reference for setting up a modern cmake build system using good practices.
 
@@ -94,12 +94,14 @@ Replace `/path/to/install/dir` to whatever directory you want to install this pa
 # Usage
 
 Documentation can be accessed at https://gazebosim.org/libs/cmake
-[Examples](examples/) are available in this repository.
-[Tutorials](tutorials/) are also available in this repository.
+
+[Examples](https://github.com/gazebosim/gz-cmake/tree/gz-cmake4/examples) are available in this repository.
+
+[Tutorials](https://github.com/gazebosim/gz-cmake/tree/gz-cmake4/tutorials) are also available in this repository.
 
 # Documentation
 
-Documentation for `gz-cmake` can be found within the source code, and also in the [MIGRATION.md guide](https://github.com/gazebosim/gz-cmake/blob/master/MIGRATION.md).
+Documentation for `gz-cmake` can be found within the source code, and also in the [MIGRATION.md guide](https://github.com/gazebosim/gz-cmake/blob/gz-cmake4/Migration.md).
 
 # Testing
 
@@ -124,8 +126,8 @@ $ make test
 
 # Contributing
 
-Please see
-[CONTRIBUTING.md](https://gazebosim.org/docs/all/contributing).
+Please see the
+[contribution guide](https://gazebosim.org/docs/all/contributing).
 
 # Code of Conduct
 
