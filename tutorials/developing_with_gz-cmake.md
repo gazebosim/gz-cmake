@@ -99,7 +99,7 @@ To change the build system type, set the CMake flag:
 ### Build sanitizers
 
 `GZ_SANITIZER` CMake parameter can be used with different compilers to support the detection of different problems in the code.
-[Check the documentation for `GZ_SANITIZER` flag](gz_cmake_sanitizers.md)
+[Check the documentation for `GZ_SANITIZER` flag](https://gazebosim.org/api/cmake/4/sanitizersbuilds.html)
 
 ### Using CCache
 
@@ -134,7 +134,7 @@ To disable building documentation, set the CMake flag:
 
 ### Enabling/Disabling Tests
 
-If your intent is to only produce libraries and executables, it is possible to disables tests.
+If your intent is to only produce libraries and executables, it is possible to disable tests.
 
 By default, building tests is *enabled*.
 
