@@ -148,9 +148,8 @@ endif()
 set(@LEGACY_PROJECT_PREFIX@_LIBRARIES ${@PKG_NAME@_LIBRARIES})
 set(@LEGACY_PROJECT_PREFIX@_INCLUDE_DIRS ${@PKG_NAME@_INCLUDE_DIRS})
 
-# This macro is used by gz-cmake to automatically configure the pkgconfig
-# files for Gazebo projects.
-gz_pkg_config_entry(@PKG_NAME@ "@PKG_NAME@")
+# required pkg-config components
+set(@PKG_NAME@_required_components)
 
 # Find each of the components requested by find_package(~)
 foreach(component ${@PKG_NAME@_FIND_COMPONENTS})
@@ -166,6 +165,8 @@ foreach(component ${@PKG_NAME@_FIND_COMPONENTS})
     # find_dependency(~)
     find_dependency(@PKG_NAME@-${component} @PROJECT_VERSION_FULL_NO_SUFFIX@ EXACT)
 
+    set(@PKG_NAME@_required_components "${@PKG_NAME@_required_components} @PKG_NAME@-${component}")
+
   else()
 
     # If this is an optional component, use find_package(~) instead of
@@ -176,6 +177,11 @@ foreach(component ${@PKG_NAME@_FIND_COMPONENTS})
   endif()
 
 endforeach()
+
+# This macro is used by gz-cmake to automatically configure the pkgconfig
+# files for Gazebo projects.
+gz_pkg_config_entry(@PKG_NAME@ "@PKG_NAME@ ${@PKG_NAME@_required_components}")
+unset(@PKG_NAME@_required_components)
 
 # Specify the doxygen tag file
 set(@PROJECT_NAME_NO_VERSION_UPPER@_DOXYGEN_TAGFILE "${PACKAGE_PREFIX_DIR}/@GZ_DATA_INSTALL_DIR@/@PROJECT_NAME_LOWER@.tag.xml")
