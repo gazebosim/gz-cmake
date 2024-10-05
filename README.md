@@ -9,7 +9,7 @@
 
 Build | Status
 -- | --
-Ubuntu Jammy  | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=gz_cmake-ci-main-jammy-amd64)](https://build.osrfoundation.org/job/gz_cmake-ci-main-jammy-amd64)
+Ubuntu Noble  | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=gz_cmake-ci-main-noble-amd64)](https://build.osrfoundation.org/job/gz_cmake-ci-main-noble-amd64)
 Homebrew      | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=gz_cmake-ci-main-homebrew-amd64)](https://build.osrfoundation.org/job/gz_cmake-ci-main-homebrew-amd64)
 Windows       | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=gz_cmake-main-win)](https://build.osrfoundation.org/job/gz_cmake-main-win)
 
