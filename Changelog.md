@@ -1,6 +1,11 @@
 ## Gazebo CMake 4.x
 
-### Gazebo CMake 4.0.0 (2024-09-24)
+### Gazebo CMake 4.0.0 (2024-09-25)
+
+1. Miscellaneous documentation fixes
+    * [Pull request #433](https://github.com/gazebosim/gz-cmake/pull/433)
+    * [Pull request #449](https://github.com/gazebosim/gz-cmake/pull/449)
+    * [Pull request #452](https://github.com/gazebosim/gz-cmake/pull/452)
 
 1. Use relative paths for pkg-config install directory
     * [Pull request #443](https://github.com/gazebosim/gz-cmake/pull/443)
