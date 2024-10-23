@@ -19,6 +19,7 @@ set(example_directories
   core_static_child
   comp_deps
   use_config_ifp
+  version_from_package_xml
   )
 if (NOT CMAKE_GENERATOR MATCHES "Visual Studio")
   list(APPEND example_directories
@@ -61,6 +62,8 @@ foreach(example ${example_directories})
     set(example_tarball_name gz-use_component_depsc-0.1.0.tar.bz2)
   elseif (${example} STREQUAL "use_config_ifp")
     set(example_tarball_name  gz-find_config-0.1.0.tar.bz2)
+  elseif (${example} STREQUAL "version_from_package_xml")
+    set(example_tarball_name  gz-version_from_package_xml-8.21.65.tar.bz2)
 
   else()
     set(example_tarball_name)
