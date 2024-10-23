@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.22.1 FATAL_ERROR)
 
 find_package(gz-cmake4 REQUIRED)
-include(GzGetPackageXmlVersion)
 gz_get_package_xml_version(${CMAKE_SOURCE_DIR}/package.xml PACKAGE_XML)
 
 message(STATUS "PACKAGE_XML_VERSION ${PACKAGE_XML_VERSION}")
