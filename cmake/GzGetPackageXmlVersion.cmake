@@ -40,12 +40,12 @@ function(gz_get_package_xml_version package_xml_path version_var_prefix)
   # split version number into list of three numbers
   string(REPLACE "." ";" PACKAGE_XML_version_list ${PACKAGE_XML_version})
 
-  # Return version variables
+  # Create variables for major, minor, and patch version numbers
   list(GET PACKAGE_XML_version_list 0 PACKAGE_XML_version_major)
   list(GET PACKAGE_XML_version_list 1 PACKAGE_XML_version_minor)
   list(GET PACKAGE_XML_version_list 2 PACKAGE_XML_version_patch)
 
-  # Return the list that has been created
+  # Return variables for the full version number as well as major, minor, and patch version numbers
   set(${version_var_prefix}_VERSION ${PACKAGE_XML_version} PARENT_SCOPE)
   set(${version_var_prefix}_VERSION_MAJOR ${PACKAGE_XML_version_major} PARENT_SCOPE)
   set(${version_var_prefix}_VERSION_MINOR ${PACKAGE_XML_version_minor} PARENT_SCOPE)
