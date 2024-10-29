@@ -33,6 +33,6 @@ version_str = root.find('version').text
 # https://github.com/ros-infrastructure/catkin_pkg/blob/1.0.0/src/catkin_pkg/package_version.py#L55-L58
 match = re.match(r'^(\d+)\.(\d+)\.(\d+)$', version_str)
 if match is None:
-    raise ValueError('Invalid version string, must be int.int.int: "%s"' % version)
+    raise ValueError('Invalid version string, must be int.int.int: "%s"' % version_str)
 
 print(version_str, end='')
