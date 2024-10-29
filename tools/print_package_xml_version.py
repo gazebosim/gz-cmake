@@ -27,6 +27,9 @@ root = doc.getroot()
 if root.tag != 'package':
     raise RuntimeError('Invalid package.xml file, root tag <%s> should be <package>' % root.tag)
 
+if root.find('version') is None:
+    raise RuntimeError('Invalid package.xml file, no <version> tag found.')
+
 version_str = root.find('version').text
 
 # validate version string using regex from catkin_pkg
