@@ -1,5 +1,13 @@
 ## Gazebo CMake 4.x
 
+### Gazebo CMake 4.1.0 (2024-11-01)
+
+1. Update lib into  triage.yml
+    * [Pull request #448](https://github.com/gazebosim/gz-cmake/pull/448)
+
+1. Helper to get version number from package.xml
+    * [Pull request #456](https://github.com/gazebosim/gz-cmake/pull/456)
+
 ### Gazebo CMake 4.0.0 (2024-09-25)
 
 1. Miscellaneous documentation fixes
