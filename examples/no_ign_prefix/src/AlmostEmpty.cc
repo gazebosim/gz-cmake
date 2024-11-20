@@ -15,13 +15,13 @@
  *
 */
 
-#include <no_ignition_prefix.hh>
+#include <no_ign_prefix.hh>
 #include <no_ign/config.hh>
 #include <no_ign/Export.hh>
 
 namespace no_ignition_prefix
 {
-  class IGNITION_NO_IGNITION_PREFIX_VISIBLE AlmostEmpty
+  class IGNITION_NO_IGN_PREFIX_VISIBLE AlmostEmpty
   {
   };
 }

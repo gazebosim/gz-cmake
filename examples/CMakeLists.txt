@@ -3,6 +3,21 @@ include(GNUInstallDirs)
 
 # test multiple build types
 set(build_types Release RelWithDebInfo Debug)
+function(short_build_type build_type output_var)
+  if (${build_type} STREQUAL "Release")
+      set(bt_str "R")
+    elseif (${build_type} STREQUAL "RelWithDebInfo")
+      set(bt_str "RWD")
+    elseif (${build_type} STREQUAL "Debug")
+      set(bt_str "D")
+    elseif (${build_type} STREQUAL "Coverage")
+      set(bt_str "C")
+    else()
+      message(FATAL_ERROR "Unknown build_type ${build_type}")
+    endif()
+    set (${output_var} ${bt_str} PARENT_SCOPE)
+endfunction()
+
 find_program(EXAMPLE_LCOV_PATH lcov)
 if (NOT WIN32 AND EXAMPLE_LCOV_PATH)
   list(APPEND build_types Coverage)
@@ -10,21 +25,21 @@ endif()
 
 set(example_directories
   ign_conf
-  no_ignition_prefix
+  no_ign_prefix
   prerelease
-  core_nodep
-  core_nodep_static
-  core_child
-  core_child_private
-  core_static_child
+  c_nodep
+  c_nodep_static
+  c_child
+  c_child_private
+  c_static_child
   comp_deps
-  use_config_ifp
+  config_ifp
   )
 if (NOT CMAKE_GENERATOR MATCHES "Visual Studio")
   list(APPEND example_directories
-    use_component_depsA
-    use_component_depsB
-    use_component_depsC
+    comp_depsA
+    comp_depsB
+    comp_depsC
   )
 endif()
 
@@ -32,34 +47,34 @@ foreach(example ${example_directories})
   set(run_codecheck false)
   if (${example} STREQUAL "ign_conf")
     set(example_tarball_name ignition-minimal-0.1.0.tar.bz2)
-  elseif (${example} STREQUAL "no_ignition_prefix")
-    set(example_tarball_name no_ignition_prefix-0.1.0.tar.bz2)
+  elseif (${example} STREQUAL "no_ign_prefix")
+    set(example_tarball_name no_ign_prefix-0.1.0.tar.bz2)
   elseif (${example} STREQUAL "prerelease")
     set(example_tarball_name ignition-minimal-1.0.0~pre1.tar.bz2)
-  elseif (${example} STREQUAL "core_nodep")
-    set(example_tarball_name ignition-core_no_deps-0.1.0.tar.bz2)
+  elseif (${example} STREQUAL "c_nodep")
+    set(example_tarball_name ignition-c_no_deps-0.1.0.tar.bz2)
     set(run_codecheck true)
-  elseif (${example} STREQUAL "core_nodep_static")
-    set(example_tarball_name ignition-core_no_deps_static-0.1.0.tar.bz2)
+  elseif (${example} STREQUAL "c_nodep_static")
+    set(example_tarball_name ignition-c_no_deps_static-0.1.0.tar.bz2)
     set(run_codecheck true)
-  elseif (${example} STREQUAL "core_child")
-    set(example_tarball_name ignition-core_child-0.1.0.tar.bz2)
+  elseif (${example} STREQUAL "c_child")
+    set(example_tarball_name ignition-c_child-0.1.0.tar.bz2)
     set(run_codecheck true)
-  elseif (${example} STREQUAL "core_child_private")
-    set(example_tarball_name ignition-core_child_private-0.1.0.tar.bz2)
+  elseif (${example} STREQUAL "c_child_private")
+    set(example_tarball_name ignition-c_child_private-0.1.0.tar.bz2)
     set(run_codecheck true)
-  elseif (${example} STREQUAL "core_static_child")
-    set(example_tarball_name ignition-core_static_child-0.1.0.tar.bz2)
+  elseif (${example} STREQUAL "c_static_child")
+    set(example_tarball_name ignition-c_static_child-0.1.0.tar.bz2)
     set(run_codecheck true)
   elseif (${example} STREQUAL "comp_deps")
-    set(example_tarball_name ignition-component_deps-0.1.0.tar.bz2)
-  elseif (${example} STREQUAL "use_component_depsA")
-    set(example_tarball_name ignition-use_component_depsa-0.1.0.tar.bz2)
-  elseif (${example} STREQUAL "use_component_depsB")
-    set(example_tarball_name ignition-use_component_depsb-0.1.0.tar.bz2)
-  elseif (${example} STREQUAL "use_component_depsC")
-    set(example_tarball_name ignition-use_component_depsc-0.1.0.tar.bz2)
-  elseif (${example} STREQUAL "use_config_ifp")
+    set(example_tarball_name ignition-comp_deps-0.1.0.tar.bz2)
+  elseif (${example} STREQUAL "comp_depsA")
+    set(example_tarball_name ignition-comp_depsa-0.1.0.tar.bz2)
+  elseif (${example} STREQUAL "comp_depsB")
+    set(example_tarball_name ignition-comp_depsb-0.1.0.tar.bz2)
+  elseif (${example} STREQUAL "comp_depsC")
+    set(example_tarball_name ignition-comp_depsc-0.1.0.tar.bz2)
+  elseif (${example} STREQUAL "config_ifp")
     set(example_tarball_name  ignition-find_config-0.1.0.tar.bz2)
 
   else()
@@ -67,7 +82,8 @@ foreach(example ${example_directories})
   endif()
 
   foreach (build_type ${build_types})
-    set(TEST_NAME ${example}_${build_type})
+    short_build_type("${build_type}" bt_str)
+    set(TEST_NAME ${example}_${bt_str})
     string(TIMESTAMP TEST_TIME)
     configure_file(
       "${CMAKE_CURRENT_SOURCE_DIR}/junit_pass.xml.in"
@@ -77,7 +93,7 @@ foreach(example ${example_directories})
       "${CMAKE_CURRENT_SOURCE_DIR}/junit_fail.xml.in"
       "${CMAKE_CURRENT_BINARY_DIR}/test_results/${TEST_NAME}.xml"
       @ONLY)
-    set(example_INSTALL_DIR ${CMAKE_BINARY_DIR}/install/${build_type})
+    set(example_INSTALL_DIR ${CMAKE_BINARY_DIR}/install/${b_str})
     ExternalProject_Add(
       ${TEST_NAME}
 
@@ -163,24 +179,25 @@ endforeach()
 # hard to use DEPENDS in ExternalProject_Add because targets
 # need to exist before they can be used there
 foreach (build_type ${build_types})
-  add_dependencies(core_child_${build_type} core_nodep_${build_type})
-  add_dependencies(core_child_private_${build_type} core_nodep_${build_type})
-  add_dependencies(core_static_child_${build_type} core_nodep_static_${build_type})
-  if (TARGET use_component_depsA_${build_type})
-    add_dependencies(use_component_depsA_${build_type} comp_deps_${build_type})
+  short_build_type(${build_type} bt_str)
+  add_dependencies(c_child_${bt_str} c_nodep_${bt_str})
+  add_dependencies(c_child_private_${bt_str} c_nodep_${bt_str})
+  add_dependencies(c_static_child_${bt_str} c_nodep_static_${bt_str})
+  if (TARGET comp_depsA_${bt_str})
+    add_dependencies(comp_depsA_${bt_str} comp_deps_${bt_str})
   endif()
-  if (TARGET use_component_depsB_${build_type})
-    add_dependencies(use_component_depsB_${build_type} comp_deps_${build_type})
+  if (TARGET comp_depsB_${bt_str})
+    add_dependencies(comp_depsB_${bt_str} comp_deps_${bt_str})
   endif()
-  if (TARGET use_component_depsC_${build_type})
-    add_dependencies(use_component_depsC_${build_type} comp_deps_${build_type})
+  if (TARGET comp_depsC_${bt_str})
+    add_dependencies(comp_depsC_${bt_str} comp_deps_${bt_str})
   endif()
 endforeach()
 
-# test that core_child pkg-config file requires core_nodep
-# and that core_child_private pkg-config file requires core_nodep privately
+# test that c_child pkg-config file requires c_nodep
+# and that c_child_private pkg-config file requires c_nodep privately
 if (UNIX)
-  set(TEST_NAME core_child_requires_core_nodep)
+  set(TEST_NAME c_child_requires_c_nodep)
   string(TIMESTAMP TEST_TIME)
   configure_file(
     "${CMAKE_CURRENT_SOURCE_DIR}/junit_pass.xml.in"
@@ -202,7 +219,7 @@ if (UNIX)
 
   list(APPEND _env_vars "PKG_CONFIG_PATH=${example_INSTALL_DIR}/${example_PKGCONFIG_INSTALL_LIBDIR}:${FAKE_INSTALL_PREFIX}/${example_PKGCONFIG_INSTALL_LIBDIR}:$PKG_CONFIG_PATH")
   add_test(${TEST_NAME}
-    ${CMAKE_CURRENT_SOURCE_DIR}/test_core_child_requires_core_no_deps.bash
+    ${CMAKE_CURRENT_SOURCE_DIR}/test_c_child_requires_c_no_deps.bash
   )
   set_tests_properties(${TEST_NAME} PROPERTIES
     ENVIRONMENT "${_env_vars}")

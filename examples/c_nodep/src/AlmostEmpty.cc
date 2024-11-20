@@ -15,13 +15,13 @@
  *
 */
 
-#include <ignition/core_no_deps/Export.hh>
+#include <ignition/c_no_deps/Export.hh>
 
 namespace gz
 {
   namespace core_no_deps
   {
-    class IGNITION_CORE_NO_DEPS_VISIBLE AlmostEmpty
+    class IGNITION_C_NO_DEPS_VISIBLE AlmostEmpty
     {
     };
   }

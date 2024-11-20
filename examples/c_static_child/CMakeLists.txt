@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10.2 FATAL_ERROR)
-project(ignition-core_static_child VERSION 0.1.0)
+project(ignition-c_static_child VERSION 0.1.0)
 find_package(ignition-cmake2 REQUIRED)
 ign_configure_project()
 ign_find_package(ignition-core_no_deps_static REQUIRED)
