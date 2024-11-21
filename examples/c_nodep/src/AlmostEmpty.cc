@@ -19,7 +19,7 @@
 
 namespace gz
 {
-  namespace core_no_deps
+  namespace c_no_deps
   {
     class IGNITION_C_NO_DEPS_VISIBLE AlmostEmpty
     {
