@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Open Source Robotics Foundation
+ * Copyright (C) 2021 Open Source Robotics Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,14 +15,13 @@
  *
 */
 
-#include <ignition/comp_deps/Export.hh>
+#include <no_ign_prefix.hh>
+#include <no_ign/config.hh>
+#include <no_ign/Export.hh>
 
-namespace gz
+namespace no_ignition_prefix
 {
-  namespace comp_deps
+  class IGNITION_NO_IGN_PREFIX_VISIBLE AlmostEmpty
   {
-    class IGNITION_COMP_DEPS_VISIBLE AlmostEmpty
-    {
-    };
-  }
+  };
 }
