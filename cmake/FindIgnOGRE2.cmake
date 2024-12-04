@@ -391,14 +391,21 @@ else() #WIN32
       list(APPEND OGRE2_INC_PATHS "${_rootPath}/include/${OGRE2_SEARCH_VER}")
   endforeach()
 
+  # if(DEFINED ENV{CONDA_PREFIX})
+
   find_library(OGRE2_LIBRARY
-    NAMES "OgreMain"
-    HINTS ${OGRE2_PATHS}
-    NO_DEFAULT_PATH)
+    NAMES "OgreNextMain"
+    HINTS ${CONDA_PREFIX}
+    )
+
+   message(STATUS "OGRE2_LIBRARY: ${OGRE2_LIBRARY}")
 
   find_path(OGRE2_INCLUDE
     NAMES "Ogre.h"
-    HINTS ${OGRE2_INC_PATHS})
+    PATHS ${CONDA_PREFIX}
+    PATH_SUFFIXES Library/include/OGRE-Next)
+   
+   message(STATUS "OGRE2_INCLUDE: ${OGRE2_INCLUDE}")
 
   if("${OGRE2_LIBRARY}" STREQUAL "OGRE2_LIBRARY-NOTFOUND")
     set(OGRE2_FOUND false)
@@ -431,12 +438,14 @@ else() #WIN32
               ${PATH_HINTS} ${COMPONENT} ${OGRE2_SEARCH_VER}/${COMPONENT})
 
       find_library(${PREFIX}_LIBRARY
-          NAMES
+	  NAMES
+	      "OgreNext${COMPONENT}" 
               "Ogre${COMPONENT}"
               "Ogre${COMPONENT}_d"
           HINTS
-              ${OGRE2_LIBRARY_DIRS}
-          NO_DEFAULT_PATH)
+	     ${CONDA_PREFIX})
+   
+  	message(STATUS "OGRE2_${COMPONENT}: ${${PREFIX}_LIBRARY}")
 
       if (NOT ${PREFIX}_FOUND)
         if (${PREFIX}_INCLUDE_DIR AND ${PREFIX}_LIBRARY)
@@ -503,7 +512,9 @@ else() #WIN32
       if(${HLMS_POS} GREATER -1)
         foreach (dir ${OGRE2_INCLUDE_DIRS})
           get_filename_component(dir_name "${dir}" NAME)
-          if ("${dir_name}" STREQUAL "OGRE-${OGRE2_VERSION_MAJOR}.${OGRE2_VERSION_MINOR}")
+	  message(STATUS "dir_name ${dir_name}")
+	  if (("${dir_name}" STREQUAL "OGRE-${OGRE2_VERSION_MAJOR}.${OGRE2_VERSION_MINOR}") OR
+              ("${dir_name}" STREQUAL "OGRE-Next"))
             set(dir_include "${dir}/Hlms/Common")
             if (EXISTS ${dir_include})
               list(APPEND component_INCLUDE_DIRS ${dir_include})
