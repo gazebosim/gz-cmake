@@ -481,10 +481,15 @@ else() #WIN32
         ${OGRE2_INCLUDE_DIRS} ${OGRE_PREFIX_SOURCE}
       PATH_SUFFIXES
         ${OGRE2_PLUGIN_PATH_SUFFIXES})
+    
+    message(STATUS "${PLUGIN_NAME} include :  ${${PREFIX}_INCLUDE_DIR}")
+
     find_library(${PREFIX}_LIBRARY
       NAMES ${PLUGIN}
       HINTS  ${OGRE2_LIBRARY_DIRS}
       PATH_SUFFIXES "" opt "${OGRE2_SEARCH_VER}" "${OGRE2_SEARCH_VER}/opt")
+    
+    message(STATUS "${PLUGIN_NAME} lib :  ${${PREFIX}_LIBRARY}")
 
     if (NOT ${PREFIX}_FOUND)
       if (${PREFIX}_INCLUDE_DIR AND ${PREFIX}_LIBRARY)
