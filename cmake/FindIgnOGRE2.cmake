@@ -487,9 +487,10 @@ else() #WIN32
     find_library(${PREFIX}_LIBRARY
       NAMES ${PLUGIN}
       HINTS  ${OGRE2_LIBRARY_DIRS}
-      PATH_SUFFIXES "" opt "${OGRE2_SEARCH_VER}" "${OGRE2_SEARCH_VER}/opt")
+      PATH_SUFFIXES "" opt "${OGRE2_SEARCH_VER}" "${OGRE2_SEARCH_VER}/opt" "OGRE-Next")
     
-    message(STATUS "${PLUGIN_NAME} lib :  ${${PREFIX}_LIBRARY}")
+    #./.pixi/envs/default/Library/lib/OGRE-Next/RenderSystem_GL3Plus.lib
+    message(STATUS "name ${PLUGIN} in ${OGRE2_LIBRARY_DIRS} :  ${${PREFIX}_LIBRARY}")
 
     if (NOT ${PREFIX}_FOUND)
       if (${PREFIX}_INCLUDE_DIR AND ${PREFIX}_LIBRARY)
