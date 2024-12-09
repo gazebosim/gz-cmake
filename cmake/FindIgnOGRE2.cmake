@@ -394,22 +394,23 @@ else() #WIN32
   message(STATUS "CONDA_PREIX $ENV{CONDA_PREFIX}")
 
   if(DEFINED ENV{CONDA_PREFIX})
-    list(APPEND OGRE2_PATH $ENV{CONDA_PREFIX})
+    list(APPEND OGRE2_PATHS $ENV{CONDA_PREFIX})
     set(OGREMAIN_LIB_NAME "OgreNextMain")
+    set(OGRENEXT_PATH_SUFFIXES "Library/include/OGRE-Next")
   else()
     set(OGREMAIN_LIB_NAME "OgreMain")
   endif()
 
   find_library(OGRE2_LIBRARY
     NAMES ${OGREMAIN_LIB_NAME}
-    HINTS ${OGRE2_PATHS}
-    NO_DEFAULT_PATH)
+    HINTS ${OGRE2_PATHS})
 
   message(STATUS "OGRE2_LIBRARY ${OGREMAIN_LIB_NAME} in ${OGRE2_PATHS}: ${OGRE2_LIBRARY}")
 
   find_path(OGRE2_INCLUDE
     NAMES "Ogre.h"
-    HINTS ${OGRE2_INC_PATHS})
+    HINTS ${OGRE2_INC_PATHS}
+    PATH_SUFFIXES ${OGRENEXT_PATH_SUFFIXES})
 
   if("${OGRE2_LIBRARY}" STREQUAL "OGRE2_LIBRARY-NOTFOUND")
     set(OGRE2_FOUND false)
@@ -443,11 +444,12 @@ else() #WIN32
       find_library(${PREFIX}_LIBRARY
           NAMES
               "OgreNext${COMPONENT}"   # conda-forge filename name
+              "OgreNext${COMPONENT}_d"   # conda-forge filename name
               "Ogre${COMPONENT}"
               "Ogre${COMPONENT}_d"
           HINTS
               ${OGRE2_LIBRARY_DIRS}
-          NO_DEFAULT_PATH)
+	      ${OGRE2_PATHS})
 
       message(STATUS "OGRE2_${COMPONENT}: ${${PREFIX}_LIBRARY}")
 
