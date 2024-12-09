@@ -391,8 +391,10 @@ else() #WIN32
       list(APPEND OGRE2_INC_PATHS "${_rootPath}/include/${OGRE2_SEARCH_VER}")
   endforeach()
 
+  message(STATUS "CONDA_PREIX $ENV{CONDA_PREFIX}")
+
   if(DEFINED ENV{CONDA_PREFIX})
-    list(APPEND OGRE2_PATH "${CONDA_PREFIX}")
+    list(APPEND OGRE2_PATH $ENV{CONDA_PREFIX})
     set(OGREMAIN_LIB_NAME "OgreNextMain")
   else()
     set(OGREMAIN_LIB_NAME "OgreMain")
@@ -403,7 +405,7 @@ else() #WIN32
     HINTS ${OGRE2_PATHS}
     NO_DEFAULT_PATH)
 
-  message(STATUS "OGRE2_LIBRARY: ${OGRE2_LIBRARY}")
+  message(STATUS "OGRE2_LIBRARY ${OGREMAIN_LIB_NAME} in ${OGRE2_PATHS}: ${OGRE2_LIBRARY}")
 
   find_path(OGRE2_INCLUDE
     NAMES "Ogre.h"
