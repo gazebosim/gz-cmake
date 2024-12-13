@@ -391,16 +391,25 @@ else() #WIN32
       list(APPEND OGRE2_INC_PATHS "${_rootPath}/include/${OGRE2_SEARCH_VER}")
   endforeach()
 
+  if(DEFINED ENV{CONDA_PREFIX})
+    list(APPEND OGRE2_PATHS $ENV{CONDA_PREFIX})
+    set(OGREMAIN_LIB_NAME "OgreNextMain")
+    set(OGRENEXT_PATH_SUFFIXES "Library/include/OGRE-Next")
+  else()
+    set(OGREMAIN_LIB_NAME "OgreMain")
+  endif()
+
   find_library(OGRE2_LIBRARY
-    NAMES "OgreMain"
-    HINTS ${OGRE2_PATHS}
-    NO_DEFAULT_PATH)
+    NAMES ${OGREMAIN_LIB_NAME}
+    HINTS ${OGRE2_PATHS})
 
   find_path(OGRE2_INCLUDE
     NAMES "Ogre.h"
-    HINTS ${OGRE2_INC_PATHS})
+    HINTS ${OGRE2_INC_PATHS}
+    PATH_SUFFIXES ${OGRENEXT_PATH_SUFFIXES})
 
   if("${OGRE2_LIBRARY}" STREQUAL "OGRE2_LIBRARY-NOTFOUND")
+    message(STATUS " ! OGRE2 Library not found using: ${OGREMAIN_LIB_NAME} in ${OGRE2_PATHS}: ${OGRE2_LIBRARY}")
     set(OGRE2_FOUND false)
   else()
     set(OGRE2_LIBRARIES ${OGRE2_LIBRARY})
@@ -429,21 +438,21 @@ else() #WIN32
           HINTS ${OGRE2_INCLUDE_DIRS}
           PATH_SUFFIXES
               ${PATH_HINTS} ${COMPONENT} ${OGRE2_SEARCH_VER}/${COMPONENT})
-
       find_library(${PREFIX}_LIBRARY
           NAMES
+              "OgreNext${COMPONENT}"   # conda-forge filename name
+              "OgreNext${COMPONENT}_d"   # conda-forge filename name
               "Ogre${COMPONENT}"
               "Ogre${COMPONENT}_d"
           HINTS
               ${OGRE2_LIBRARY_DIRS}
-          NO_DEFAULT_PATH)
+	      ${OGRE2_PATHS})
 
       if (NOT ${PREFIX}_FOUND)
         if (${PREFIX}_INCLUDE_DIR AND ${PREFIX}_LIBRARY)
           set(${PREFIX}_FOUND TRUE)
           set(${PREFIX}_INCLUDE_DIRS ${${PREFIX}_INCLUDE_DIR})
           set(${PREFIX}_LIBRARIES ${${PREFIX}_LIBRARY})
-          message(STATUS "Found ${PREFIX}: ${${PREFIX}_LIBRARIES}")
         endif()
       endif()
   endmacro()
@@ -470,10 +479,13 @@ else() #WIN32
         ${OGRE2_INCLUDE_DIRS} ${OGRE_PREFIX_SOURCE}
       PATH_SUFFIXES
         ${OGRE2_PLUGIN_PATH_SUFFIXES})
+    
+
     find_library(${PREFIX}_LIBRARY
       NAMES ${PLUGIN}
       HINTS  ${OGRE2_LIBRARY_DIRS}
-      PATH_SUFFIXES "" opt "${OGRE2_SEARCH_VER}" "${OGRE2_SEARCH_VER}/opt")
+      PATH_SUFFIXES "" opt "${OGRE2_SEARCH_VER}" "${OGRE2_SEARCH_VER}/opt" "OGRE-Next")
+    
 
     if (NOT ${PREFIX}_FOUND)
       if (${PREFIX}_INCLUDE_DIR AND ${PREFIX}_LIBRARY)
@@ -503,7 +515,8 @@ else() #WIN32
       if(${HLMS_POS} GREATER -1)
         foreach (dir ${OGRE2_INCLUDE_DIRS})
           get_filename_component(dir_name "${dir}" NAME)
-          if ("${dir_name}" STREQUAL "OGRE-${OGRE2_VERSION_MAJOR}.${OGRE2_VERSION_MINOR}")
+          if (("${dir_name}" STREQUAL "OGRE-${OGRE2_VERSION_MAJOR}.${OGRE2_VERSION_MINOR}") OR
+              ("${dir_name}" STREQUAL "OGRE-Next"))  # conda-forge directory name
             set(dir_include "${dir}/Hlms/Common")
             if (EXISTS ${dir_include})
               list(APPEND component_INCLUDE_DIRS ${dir_include})
