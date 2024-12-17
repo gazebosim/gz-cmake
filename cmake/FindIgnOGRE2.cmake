@@ -392,9 +392,7 @@ else() #WIN32
   endforeach()
 
   if(DEFINED ENV{CONDA_PREFIX})
-    list(APPEND OGRE2_PATHS $ENV{CONDA_PREFIX})
     set(OGREMAIN_LIB_NAME "OgreNextMain")
-    set(OGRENEXT_PATH_SUFFIXES "Library/include/OGRE-Next")
   else()
     set(OGREMAIN_LIB_NAME "OgreMain")
   endif()
@@ -406,7 +404,7 @@ else() #WIN32
   find_path(OGRE2_INCLUDE
     NAMES "Ogre.h"
     HINTS ${OGRE2_INC_PATHS}
-    PATH_SUFFIXES ${OGRENEXT_PATH_SUFFIXES})
+    PATH_SUFFIXES "OGRE-Next")
 
   if("${OGRE2_LIBRARY}" STREQUAL "OGRE2_LIBRARY-NOTFOUND")
     message(STATUS " ! OGRE2 Library not found using: ${OGREMAIN_LIB_NAME} in ${OGRE2_PATHS}: ${OGRE2_LIBRARY}")
