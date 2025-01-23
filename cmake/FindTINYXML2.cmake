@@ -63,3 +63,14 @@ if(NOT TINYXML2_FOUND)
     REQUIRED_VARS TINYXML2_FOUND)
 
 endif()
+
+# On case-insensitive filesystem, it is possible that FindTINYXML2.cmake is used if the caller
+# invoked find_package(TinyXML2), that is the signature used by tinyxml2_vendor, see
+# https://github.com/ros2/tinyxml2_vendor/blob/0.10.0/cmake/Modules/FindTinyXML2.cmake
+# If that is the case (and we detect it by checking the value of CMAKE_FIND_PACKAGE_NAME)
+# we also define a tinyxml2::tinyxml2 target for tinyxml2_vendor compatibility
+if(TARGET TINYXML2::TINYXML2 AND CMAKE_FIND_PACKAGE_NAME STREQUAL "TinyXML2" AND NOT TARGET tinyxml2::tinyxml2)
+  add_library(tinyxml2::tinyxml2 INTERFACE IMPORTED)
+  set_property(TARGET tinyxml2::tinyxml2 PROPERTY INTERFACE_LINK_LIBRARIES TINYXML2::TINYXML2)
+endif()
+
