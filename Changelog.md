@@ -1,5 +1,13 @@
 ## Gazebo CMake 3.x
 
+### Gazebo CMake 3.5.4 (2025-01-30)
+
+1. Accept arbitrary capitalization for coverage build type
+    * [Pull request #435](https://github.com/gazebosim/gz-cmake/pull/435)
+
+1. Fix link for Sanitizer Builds tutorial
+    * [Pull request #433](https://github.com/gazebosim/gz-cmake/pull/433)
+
 ### Gazebo CMake 3.5.3 (2024-05-02)
 
 1. Fix installation of Ign*.cmake modules on newer versions of CMake
