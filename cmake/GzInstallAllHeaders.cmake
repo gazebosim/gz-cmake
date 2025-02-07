@@ -157,30 +157,30 @@ function(gz_install_all_headers)
 
     set(component_name ${gz_install_all_headers_COMPONENT})
 
-    # Define the install directory for the component meta header
+    # Define the install directory for the component "meta" header
     set(meta_header_install_dir ${GZ_INCLUDE_INSTALL_DIR_FULL}/${PROJECT_INCLUDE_DIR}/${component_name})
 
-    # Define the input/output of the configuration for the component "master" header
-    set(master_header_in ${GZ_CMAKE_DIR}/gz_auto_headers.hh.in)
-    set(master_header_out ${CMAKE_CURRENT_BINARY_DIR}/${component_name}.hh)
+    # Define the input/output of the configuration for the component "meta" header
+    set(meta_header_in ${GZ_CMAKE_DIR}/gz_auto_headers.hh.in)
+    set(meta_header_out ${CMAKE_CURRENT_BINARY_DIR}/${component_name}.hh)
 
   else()
 
-    # Define the install directory for the core master meta header
+    # Define the install directory for the core "meta" header
     set(meta_header_install_dir ${GZ_INCLUDE_INSTALL_DIR_FULL}/${PROJECT_INCLUDE_DIR})
 
-    # Define the input/output of the configuration for the core "master" header
-    set(master_header_in ${GZ_CMAKE_DIR}/gz_auto_headers.hh.in)
-    set(master_header_out ${CMAKE_CURRENT_BINARY_DIR}/../${GZ_DESIGNATION}.hh)
+    # Define the input/output of the configuration for the core "meta" header
+    set(meta_header_in ${GZ_CMAKE_DIR}/gz_auto_headers.hh.in)
+    set(meta_header_out ${CMAKE_CURRENT_BINARY_DIR}/../${GZ_DESIGNATION}.hh)
 
   endif()
 
-  # Generate the "master" header that includes all of the headers
-  configure_file(${master_header_in} ${master_header_out})
+  # Generate the "meta" header that includes all of the headers
+  configure_file(${meta_header_in} ${meta_header_out})
 
-  # Install the "master" header
+  # Install the "meta" header
   install(
-    FILES ${master_header_out}
+    FILES ${meta_header_out}
     DESTINATION ${meta_header_install_dir}/..
     COMPONENT headers)
 
