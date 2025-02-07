@@ -159,7 +159,7 @@ function(gz_install_all_headers)
 
     # Define the install directory for the "config" header
     # The "meta" header will be installed one folder above this
-    set(config_header_install_dir ${GZ_INCLUDE_INSTALL_DIR_FULL}/${PROJECT_INCLUDE_DIR})
+    set(config_header_install_dir ${GZ_INCLUDE_INSTALL_DIR_FULL}/${PROJECT_INCLUDE_DIR}/${component_name})
 
     # Define the input/output of the configuration for the component "meta" header
     set(meta_header_in ${GZ_CMAKE_DIR}/gz_auto_headers.hh.in)
