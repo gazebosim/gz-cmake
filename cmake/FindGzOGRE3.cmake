@@ -49,7 +49,7 @@
 #
 #     gz_find_package(GzOGRE3
 #                     VERSION 3.0.0
-#                     COMPONENTS HlmsPbs HlmsUnlit Overlay, Atmosphere)
+#                     COMPONENTS HlmsPbs HlmsUnlit Overlay Atmosphere)
 
 
 if(NOT (GzOGRE3_FIND_VERSION_MAJOR))
