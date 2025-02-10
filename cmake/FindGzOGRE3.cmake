@@ -132,8 +132,6 @@ if (PkgConfig_FOUND)
       set(OGRE3LIBNAME "OgreNext")
     endif()
 
-    # Note: OGRE3 installed from debs is named OGRE-3.0 while the version
-    # installed from source does not have the 3.0 suffix
     # look for OGRE3 installed from debs
     gz_pkg_check_modules_quiet(${GZ_OGRE3_PROJECT_NAME} ${OGRE3_INSTALL_PATH} NO_CMAKE_ENVIRONMENT_PATH QUIET)
 
