@@ -2,10 +2,10 @@ A quick demonstration of searching for Ogre 3.0 via gz-cmake.
 
 To test with the pkg-config and the specified version of Ogre installed:
 
-## Ogre 3.0
+## Ogre 3
 
-```
-cd ogre-3.0
+```bash
+cd ogre-3
 mkdir build
 cd build
 PKG_CONFIG_PATH=/usr/local/lib/pkgconfig/ cmake ..
@@ -13,8 +13,8 @@ PKG_CONFIG_PATH=/usr/local/lib/pkgconfig/ cmake ..
 
 ### Expected output
 
-```
--- Finding OGRE 3.0
+```bash
+-- Finding OGRE 3
 -- Looking for OGRE3 using the name: OGRE
 --   + component HlmsPbs: found
 --   + component HlmsUnlit: found
