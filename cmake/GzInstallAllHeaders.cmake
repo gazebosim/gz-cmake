@@ -206,7 +206,13 @@ function(gz_install_all_headers)
   endif()
 
   # Generate the install directory for the "meta" header one folder above the "config" header
-  cmake_path(SET meta_header_install_dir NORMALIZE ${config_header_install_dir}/..)
+  if(${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.20")
+    cmake_path(SET meta_header_install_dir NORMALIZE ${config_header_install_dir}/..)
+  else()
+    # cmake_path was added in cmake 3.20, so continue using a relative path with older versions
+    # Do not merge this forward to gz-cmake4
+    set(meta_header_install_dir ${config_header_install_dir}/..)
+  endif()
 
   # Generate the "meta" header that includes all of the headers
   configure_file(${meta_header_in} ${meta_header_out})
