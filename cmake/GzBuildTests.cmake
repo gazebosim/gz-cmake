@@ -123,7 +123,9 @@ macro(gz_build_tests)
 
     # Find the Python interpreter for running the
     # check_test_ran.py script
-    include(GzPython)
+    if(NOT Python3_Interpreter_FOUND)
+      include(GzPython)
+    endif()
 
     # Build all the tests
     foreach(target_name ${test_list})
