@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.10.2 FATAL_ERROR)
 #============================================================================
 # Initialize the project
 #============================================================================
-project(gz-cmake3 VERSION 3.5.4)
+project(gz-cmake3 VERSION 3.5.5)
 
 #--------------------------------------
 # Initialize the GZ_CMAKE_DIR variable with the location of the cmake
@@ -20,7 +20,7 @@ include(GzCMake)
 
 #--------------------------------------
 # Set up the project
-gz_configure_project(VERSION_SUFFIX)
+gz_configure_project(VERSION_SUFFIX pre1)
 
 #--------------------------------------
 # Set project-specific options
