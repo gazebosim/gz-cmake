@@ -1,5 +1,14 @@
 ## Gazebo CMake 3.x
 
+### Gazebo CMake 3.5.5 (prerelease)
+
+1. Normalize header install path
+    * [Pull request #467](https://github.com/gazebosim/gz-cmake/pull/467)
+    * [Pull request #474](https://github.com/gazebosim/gz-cmake/pull/474)
+
+1. Only find python if needed
+    * [Pull request #473](https://github.com/gazebosim/gz-cmake/pull/473)
+
 ### Gazebo CMake 3.5.4 (2025-01-30)
 
 1. Accept arbitrary capitalization for coverage build type
