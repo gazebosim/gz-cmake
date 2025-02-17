@@ -96,7 +96,7 @@ foreach(example ${example_directories})
       "${CMAKE_CURRENT_SOURCE_DIR}/junit_fail.xml.in"
       "${CMAKE_CURRENT_BINARY_DIR}/test_results/${TEST_NAME}.xml"
       @ONLY)
-    set(example_INSTALL_DIR ${CMAKE_BINARY_DIR}/install/${b_str})
+    set(example_INSTALL_DIR ${CMAKE_BINARY_DIR}/install/${bt_str})
     ExternalProject_Add(
       ${TEST_NAME}
 
