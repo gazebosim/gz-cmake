@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Open Source Robotics Foundation
+ * Copyright (C) 2021 Open Source Robotics Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,14 +15,13 @@
  *
 */
 
-#include <gz/comp_deps/Export.hh>
+#include <no_gz_prefix.hh>
+#include <no_gz/config.hh>
+#include <no_gz/Export.hh>
 
-namespace gz
+namespace no_gz_prefix
 {
-  namespace c_deps
+  class GZ_NO_GZ_PREFIX_VISIBLE AlmostEmpty
   {
-    class GZ_COMP_DEPS_VISIBLE AlmostEmpty
-    {
-    };
-  }
+  };
 }

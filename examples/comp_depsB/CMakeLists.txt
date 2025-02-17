@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.22.1 FATAL_ERROR)
-project(comp_depsA VERSION 0.1.0)
+project(comp_depsB VERSION 0.1.0)
 find_package(gz-cmake4 REQUIRED)
 gz_configure_project()
 gz_find_package(gz-comp_deps REQUIRED COMPONENTS parent child)
