@@ -52,13 +52,48 @@
 #                     COMPONENTS HlmsPbs HlmsUnlit Overlay)
 
 
+# check possible ogre2 was not requested to be found or was not found using
+# VERSION_MAJOR parameter and show an error from MESSAGE_STRING parameter and
+# set OGRE2_TRIGGERED parameter to true if VERSION_MAJOR==2
+# for additional details see
+# https://github.com/gazebosim/gz-cmake/pull/468#issuecomment-2662882691
+macro(check_possible_ogre2 VERSION_MAJOR MESSAGE_STRING OGRE2_TRIGGERED)
+  # set the default value of OGRE2_TRIGGERED parameter
+  set(OGRE2_TRIGGERED false)
+  if (DEFINED ${VERSION_MAJOR})
+    if (${${VERSION_MAJOR}} VERSION_EQUAL "2")
+      set(OGRE_NEXT_FOUND false)
+      # unset variables so that we don't leak incorrect versions
+      set(OGRE_NEXT_VERSION "")
+      set(OGRE_NEXT_VERSION_MAJOR "")
+      set(OGRE_NEXT_VERSION_MINOR "")
+      set(OGRE_NEXT_VERSION_PATCH "")
+      set(OGRE_NEXT_LIBRARIES "")
+      set(OGRE_NEXT_INCLUDE_DIRS "")
+      message(SEND_ERROR ${MESSAGE_STRING})
+      message(WARNING
+          "Keep in mind FindGzOGRE2.cmake will be removed and FindGzOGRENext.cmake will support OGRE-Next 2.x.x versions in the next major release")
+      set(OGRE2_TRIGGERED true)
+    endif()
+  endif()
+endmacro()
+# check if ogre-next 2.x.x was requested to be found
+check_possible_ogre2(
+  GzOGRENext_FIND_VERSION_MAJOR
+  "OGRE-Next with major version ${GzOGRENext_FIND_VERSION_MAJOR} was requested to be found but OGRE-Next 2.x.x versions are not supported yet by GzOGRENext. Please, use instead GzOGRE2."
+  OGRE2_TRIGGERED
+)
+if (${OGRE2_TRIGGERED})
+  return()
+endif()
+
 # Sanity check: exclude OGRE1 project releasing versions in two ways:
 #  - Legacy: from 1.x.y until 1.12.y series
 #  - Modern: starting with 13.y.z
-if (${GzOGRENext_FIND_VERSION_MAJOR})
+if (DEFINED GzOGRENext_FIND_VERSION_MAJOR)
   if (${GzOGRENext_FIND_VERSION_MAJOR} VERSION_LESS "2" OR
       ${GzOGRENext_FIND_VERSION_MAJOR} VERSION_GREATER_EQUAL "13")
-    set (OGRE_NEXT_FOUND false)
+    set(OGRE_NEXT_FOUND false)
     message(STATUS
         "The specified major version is not supported. Probably, OGRE-Next of that version does not exist and you are looking for OGRE.")
     return()
@@ -80,9 +115,9 @@ macro(get_preprocessor_entry CONTENTS KEYWORD VARIABLE)
   endif ()
 endmacro()
 
-# Check that PkgConfig is present because finding OGRE-Next via only PkgConfig
-# is supported (in this package) (yet).
-# Later in the code, gz_pkg_check_modules_quiet will try to find OGRE-Next
+# check that PkgConfig is present because finding OGRE-Next is supported
+# (in this package) only via PkgConfig yet.
+# later in the code, gz_pkg_check_modules_quiet will try to find OGRE-Next
 # using PkgConfig.
 find_package(PkgConfig REQUIRED)
 
@@ -169,6 +204,16 @@ foreach (GZ_OGRE_NEXT_PROJECT_NAME "OGRE-Next" "OGRE")
       OGRE_TEMP_VERSION_CONTENT OGRE_VERSION_NAME OGRE_NEXT_VERSION_NAME)
   set(OGRE_NEXT_VERSION
       "${OGRE_NEXT_VERSION_MAJOR}.${OGRE_NEXT_VERSION_MINOR}.${OGRE_NEXT_VERSION_PATCH}")
+
+  # check if ogre-next 2.x.x was found
+  check_possible_ogre2(
+    OGRE_NEXT_VERSION_MAJOR
+    "OGRE-Next with major version ${OGRE_NEXT_VERSION_MAJOR} was found but OGRE-Next 2.x.x versions are not supported yet by GzOGRENext. Please, use instead GzOGRE2 or specify a path to OGRE-Next>=3.0.0 via an environment varialbe: PKG_CONFIG_PATH=<path-to-a-directory-containing-a-pkgconfig-file-for-OGRE-Next>."
+    OGRE2_TRIGGERED
+  )
+  if (${OGRE2_TRIGGERED})
+    continue()
+  endif()
 
   # Sanity check: exclude OGRE1 project releasing versions in two ways:
   #  - Legacy: from 1.x.y until 1.12.y series
