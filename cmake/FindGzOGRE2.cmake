@@ -56,7 +56,7 @@
 # https://github.com/gazebosim/gz-cmake/pull/468#issuecomment-2662882691
 message(WARNING
     "Keep in mind FindGzOGRE2.cmake is planned to be removed and FindGzOGRENext.cmake is planned to support OGRE-Next>=2.0.0 soon")
-# check ogre-net>=3.0.0 was not requested to be found or was not found using VERSION_MAJOR parameter and show an error from
+# check ogre-next>=3.0.0 was not requested to be found or was not found using VERSION_MAJOR parameter and show an error from
 # MESSAGE_STRING parameter
 # for additional details see
 # https://github.com/gazebosim/gz-cmake/pull/468#issuecomment-2662882691
