@@ -51,7 +51,11 @@
 #                     VERSION 2.2.0
 #                     COMPONENTS HlmsPbs HlmsUnlit Overlay)
 
-
+# warn about deprecation
+# for additional details see
+# https://github.com/gazebosim/gz-cmake/pull/468#issuecomment-2662882691
+message(WARNING
+    "Keep in mind FindGzOGRE2.cmake is planned to be removed and FindGzOGRENext.cmake is planned to support OGRE-Next>=2.0.0 soon")
 # check ogre-net>=3.0.0 was not requested to be found or was not found using VERSION_MAJOR parameter and show an error from
 # MESSAGE_STRING parameter
 # for additional details see
@@ -59,16 +63,14 @@
 macro(check_possible_ogre_next_3_or_later VERSION_MAJOR MESSAGE_STRING)
   if (${VERSION_MAJOR})
     if (${VERSION_MAJOR} VERSION_GREATER "2")
-      message(WARNING ${MESSAGE_STRING})
-      message(WARNING
-          "Keep in mind FindGzOGRE2.cmake will be removed and FindGzOGRENext.cmake will support OGRE-Next 2.x.x versions in the next major release")
+      message(WARNING "OGRE-Next with major version ${${VERSION_MAJOR}} ${MESSAGE_STRING} but OGRE-Next>=3.0.0 is not supported by GzOGRE2. Please, use instead GzOGRENext.")
     endif()
   endif()
 endmacro()
 # check if ogre-next>=3.0.0 was requested to be found
 check_possible_ogre_next_3_or_later(
   GzOGRE2_FIND_VERSION_MAJOR
-  "OGRE-Next with major version ${GzOGRE2_FIND_VERSION_MAJOR} was requested to be found but OGRE-Next>=3.0.0 versions are not supported by GzOGRE2. Please, use instead GzOGRENext."
+  "was requested to be found"
 )
 
 if (NOT (DEFINED GzOGRE2_FIND_VERSION_MAJOR AND DEFINED
@@ -303,7 +305,7 @@ if (PkgConfig_FOUND)
     # check if ogre-next>=3.0.0 was found
     check_possible_ogre_next_3_or_later(
       OGRE2_VERSION_MAJOR
-      "OGRE-Next with major version ${OGRE2_VERSION_MAJOR} was found but OGRE-Next>=3.0.0 is not supported by GzOGRE2. Please, use instead GzOGRENext or specify a path to OGRE-Next<3.0.0 via an environment varialbe: PKG_CONFIG_PATH=<path-to-a-directory-containing-a-pkgconfig-file-for-OGRE-Next>."
+      "was found"
     )
 
     if (NOT ("${OGRE2_VERSION_MAJOR}" EQUAL "${GzOGRE2_FIND_VERSION_MAJOR}"))

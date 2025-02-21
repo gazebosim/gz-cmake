@@ -61,7 +61,10 @@ macro(check_possible_ogre2 VERSION_MAJOR MESSAGE_STRING OGRE2_TRIGGERED)
   # set the default value of OGRE2_TRIGGERED parameter
   set(OGRE2_TRIGGERED false)
   if (DEFINED ${VERSION_MAJOR})
-    if (${${VERSION_MAJOR}} VERSION_EQUAL "2")
+    if (${VERSION_MAJOR} VERSION_EQUAL "2")
+      message(SEND_ERROR "OGRE-Next with major version ${${VERSION_MAJOR}} ${MESSAGE_STRING} but OGRE-Next<3.0.0 is not supported yet by GzOGRENext. Please, use instead GzOGRE2.")
+      message(WARNING
+          "Keep in mind FindGzOGRE2.cmake is planned to be removed and FindGzOGRENext.cmake is planned to support OGRE-Next>=2.0.0 soon")
       set(OGRE_NEXT_FOUND false)
       # unset variables so that we don't leak incorrect versions
       set(OGRE_NEXT_VERSION "")
@@ -70,9 +73,6 @@ macro(check_possible_ogre2 VERSION_MAJOR MESSAGE_STRING OGRE2_TRIGGERED)
       set(OGRE_NEXT_VERSION_PATCH "")
       set(OGRE_NEXT_LIBRARIES "")
       set(OGRE_NEXT_INCLUDE_DIRS "")
-      message(SEND_ERROR ${MESSAGE_STRING})
-      message(WARNING
-          "Keep in mind FindGzOGRE2.cmake will be removed and FindGzOGRENext.cmake will support OGRE-Next 2.x.x versions in the next major release")
       set(OGRE2_TRIGGERED true)
     endif()
   endif()
@@ -80,7 +80,7 @@ endmacro()
 # check if ogre-next 2.x.x was requested to be found
 check_possible_ogre2(
   GzOGRENext_FIND_VERSION_MAJOR
-  "OGRE-Next with major version ${GzOGRENext_FIND_VERSION_MAJOR} was requested to be found but OGRE-Next 2.x.x versions are not supported yet by GzOGRENext. Please, use instead GzOGRE2."
+  "was requested to be found"
   OGRE2_TRIGGERED
 )
 if (${OGRE2_TRIGGERED})
@@ -208,7 +208,7 @@ foreach (GZ_OGRE_NEXT_PROJECT_NAME "OGRE-Next" "OGRE")
   # check if ogre-next 2.x.x was found
   check_possible_ogre2(
     OGRE_NEXT_VERSION_MAJOR
-    "OGRE-Next with major version ${OGRE_NEXT_VERSION_MAJOR} was found but OGRE-Next 2.x.x versions are not supported yet by GzOGRENext. Please, use instead GzOGRE2 or specify a path to OGRE-Next>=3.0.0 via an environment varialbe: PKG_CONFIG_PATH=<path-to-a-directory-containing-a-pkgconfig-file-for-OGRE-Next>."
+    "was found"
     OGRE2_TRIGGERED
   )
   if (${OGRE2_TRIGGERED})
