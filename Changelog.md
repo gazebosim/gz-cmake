@@ -1,6 +1,6 @@
 ## Gazebo CMake 4.x
 
-### Gazebo CMake 4.1.1 (2025-02-10)
+### Gazebo CMake 4.1.1 (2025-02-24)
 
 1. Normalize header install path
     * [Pull request #467](https://github.com/gazebosim/gz-cmake/pull/467)

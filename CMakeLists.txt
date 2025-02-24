@@ -20,7 +20,7 @@ include(GzCMake)
 
 #--------------------------------------
 # Set up the project
-gz_configure_project(VERSION_SUFFIX pre1)
+gz_configure_project(VERSION_SUFFIX)
 
 #--------------------------------------
 # Set project-specific options
