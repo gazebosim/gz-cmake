@@ -51,13 +51,8 @@
 #                     VERSION 2.2.0
 #                     COMPONENTS HlmsPbs HlmsUnlit Overlay)
 
-# warn about deprecation
-# for additional details see
-# https://github.com/gazebosim/gz-cmake/pull/468#issuecomment-2662882691
-message(WARNING
-    "Keep in mind FindGzOGRE2.cmake is planned to be removed and FindGzOGRENext.cmake is planned to support OGRE-Next>=2.0.0 soon")
-# check ogre-next>=3.0.0 was not requested to be found or was not found using VERSION_MAJOR parameter and show an error from
-# MESSAGE_STRING parameter
+# check ogre-next>=3.0.0 was not requested to be found or was not found using
+# VERSION_MAJOR parameter and show a warning from MESSAGE_STRING parameter
 # for additional details see
 # https://github.com/gazebosim/gz-cmake/pull/468#issuecomment-2662882691
 macro(check_possible_ogre_next_3_or_later VERSION_MAJOR MESSAGE_STRING)
