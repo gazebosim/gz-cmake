@@ -3,19 +3,19 @@ include(GNUInstallDirs)
 
 # test multiple build types
 set(build_types Release RelWithDebInfo Debug)
-function(short_build_type build_type output_var)
+function(shorten_build_type build_type output_var)
   if (${build_type} STREQUAL "Release")
-      set(bt_str "R")
+      set(short_bt "R")
     elseif (${build_type} STREQUAL "RelWithDebInfo")
-      set(bt_str "RWD")
+      set(short_bt "RWD")
     elseif (${build_type} STREQUAL "Debug")
-      set(bt_str "D")
+      set(short_bt "D")
     elseif (${build_type} STREQUAL "Coverage")
-      set(bt_str "C")
+      set(short_bt "C")
     else()
       message(FATAL_ERROR "Unknown build_type ${build_type}")
     endif()
-    set (${output_var} ${bt_str} PARENT_SCOPE)
+    set (${output_var} ${short_bt} PARENT_SCOPE)
 endfunction()
 
 find_program(EXAMPLE_LCOV_PATH lcov)
@@ -85,8 +85,8 @@ foreach(example ${example_directories})
   endif()
 
   foreach (build_type ${build_types})
-    short_build_type("${build_type}" bt_str)
-    set(TEST_NAME ${example}_${bt_str})
+    shorten_build_type("${build_type}" short_bt)
+    set(TEST_NAME ${example}_${short_bt})
     string(TIMESTAMP TEST_TIME)
     configure_file(
       "${CMAKE_CURRENT_SOURCE_DIR}/junit_pass.xml.in"
@@ -96,7 +96,7 @@ foreach(example ${example_directories})
       "${CMAKE_CURRENT_SOURCE_DIR}/junit_fail.xml.in"
       "${CMAKE_CURRENT_BINARY_DIR}/test_results/${TEST_NAME}.xml"
       @ONLY)
-    set(example_INSTALL_DIR ${CMAKE_BINARY_DIR}/install/${bt_str})
+    set(example_INSTALL_DIR ${CMAKE_BINARY_DIR}/install/${short_bt})
     ExternalProject_Add(
       ${TEST_NAME}
 
@@ -182,19 +182,18 @@ endforeach()
 # hard to use DEPENDS in ExternalProject_Add because targets
 # need to exist before they can be used there
 foreach (build_type ${build_types})
-  short_build_type(${build_type} bt_str)
-  add_dependencies(c_child_${bt_str} c_nodep_${bt_str})
-  add_dependencies(c_child_private_${bt_str} c_nodep_${bt_str})
-  add_dependencies(c_static_child_${bt_str} c_nodep_static_${bt_str})
-  if (TARGET comp_depsA_${bt_str})
-    add_dependencies(comp_depsA_${bt_str} comp_deps_${bt_str})
+  shorten_build_type("${build_type}" short_bt)
+  add_dependencies(core_child_${short_bt} core_nodep_${short_bt})
+  add_dependencies(core_child_private_${short_bt} core_nodep_${short_bt})
+  add_dependencies(core_static_child_${short_bt} core_nodep_static_${short_bt})
+  if (TARGET use_component_depsA_${short_bt})
+    add_dependencies(use_component_depsA_${short_bt} comp_deps_${short_bt})
   endif()
-  if (TARGET comp_depsB_${bt_str})
-    add_dependencies(comp_depsB_${bt_str} comp_deps_${bt_str})
+  if (TARGET use_component_depsB_${short_bt})
+    add_dependencies(use_component_depsB_${short_bt} comp_deps_${short_bt})
   endif()
-  if (TARGET comp_depsC_${bt_str})
-    add_dependencies(comp_depsC_${bt_str} comp_deps_${bt_str})
-  endif()
+  if (TARGET use_component_depsC_${short_bt})
+    add_dependencies(use_component_depsC_${short_bt} comp_deps_${short_bt})
 endforeach()
 
 # test that c_child pkg-config file requires c_nodep
