@@ -27,20 +27,20 @@ set(example_directories
   gz_conf
   no_gz_prefix
   prerelease
-  core_nodep
-  core_nodep_static
-  core_child
-  core_child_private
-  core_static_child
+  c_nodep
+  c_nodep_static
+  c_child
+  c_child_private
+  c_static_child
   comp_deps
-  use_config_ifp
+  config_ifp
   version_from_package_xml
   )
 if (NOT CMAKE_GENERATOR MATCHES "Visual Studio")
   list(APPEND example_directories
-    use_component_depsA
-    use_component_depsB
-    use_component_depsC
+    comp_depsA
+    comp_depsB
+    comp_depsC
   )
 endif()
 
@@ -52,30 +52,30 @@ foreach(example ${example_directories})
     set(example_tarball_name no_gz_prefix-0.1.0.tar.bz2)
   elseif (${example} STREQUAL "prerelease")
     set(example_tarball_name gz-minimal-1.0.0~pre1.tar.bz2)
-  elseif (${example} STREQUAL "core_nodep")
-    set(example_tarball_name gz-core_no_deps-0.1.0.tar.bz2)
+  elseif (${example} STREQUAL "c_nodep")
+    set(example_tarball_name gz-c_no_deps-0.1.0.tar.bz2)
     set(run_codecheck true)
-  elseif (${example} STREQUAL "core_nodep_static")
-    set(example_tarball_name gz-core_no_deps_static-0.1.0.tar.bz2)
+  elseif (${example} STREQUAL "c_nodep_static")
+    set(example_tarball_name gz-c_no_deps_static-0.1.0.tar.bz2)
     set(run_codecheck true)
-  elseif (${example} STREQUAL "core_child")
-    set(example_tarball_name gz-core_child-0.1.0.tar.bz2)
+  elseif (${example} STREQUAL "c_child")
+    set(example_tarball_name gz-c_child-0.1.0.tar.bz2)
     set(run_codecheck true)
-  elseif (${example} STREQUAL "core_child_private")
-    set(example_tarball_name gz-core_child_private-0.1.0.tar.bz2)
+  elseif (${example} STREQUAL "c_child_private")
+    set(example_tarball_name gz-c_child_private-0.1.0.tar.bz2)
     set(run_codecheck true)
-  elseif (${example} STREQUAL "core_static_child")
-    set(example_tarball_name gz-core_static_child-0.1.0.tar.bz2)
+  elseif (${example} STREQUAL "c_static_child")
+    set(example_tarball_name gz-c_static_child-0.1.0.tar.bz2)
     set(run_codecheck true)
   elseif (${example} STREQUAL "comp_deps")
-    set(example_tarball_name gz-component_deps-0.1.0.tar.bz2)
-  elseif (${example} STREQUAL "use_component_depsA")
-    set(example_tarball_name gz-use_component_depsa-0.1.0.tar.bz2)
-  elseif (${example} STREQUAL "use_component_depsB")
-    set(example_tarball_name gz-use_component_depsb-0.1.0.tar.bz2)
-  elseif (${example} STREQUAL "use_component_depsC")
-    set(example_tarball_name gz-use_component_depsc-0.1.0.tar.bz2)
-  elseif (${example} STREQUAL "use_config_ifp")
+    set(example_tarball_name gz-comp_deps-0.1.0.tar.bz2)
+  elseif (${example} STREQUAL "comp_depsA")
+    set(example_tarball_name gz-comp_depsa-0.1.0.tar.bz2)
+  elseif (${example} STREQUAL "comp_depsB")
+    set(example_tarball_name gz-comp_depsb-0.1.0.tar.bz2)
+  elseif (${example} STREQUAL "comp_depsC")
+    set(example_tarball_name gz-comp_depsc-0.1.0.tar.bz2)
+  elseif (${example} STREQUAL "config_ifp")
     set(example_tarball_name  gz-find_config-0.1.0.tar.bz2)
   elseif (${example} STREQUAL "version_from_package_xml")
     set(example_tarball_name  gz-version_from_package_xml-8.21.65.tar.bz2)
@@ -183,24 +183,24 @@ endforeach()
 # need to exist before they can be used there
 foreach (build_type ${build_types})
   shorten_build_type("${build_type}" short_bt)
-  add_dependencies(core_child_${short_bt} core_nodep_${short_bt})
-  add_dependencies(core_child_private_${short_bt} core_nodep_${short_bt})
-  add_dependencies(core_static_child_${short_bt} core_nodep_static_${short_bt})
-  if (TARGET use_component_depsA_${short_bt})
-    add_dependencies(use_component_depsA_${short_bt} comp_deps_${short_bt})
+  add_dependencies(c_child_${short_bt} c_nodep_${short_bt})
+  add_dependencies(c_child_private_${short_bt} c_nodep_${short_bt})
+  add_dependencies(c_static_child_${short_bt} c_nodep_static_${short_bt})
+  if (TARGET comp_depsA_${short_bt})
+    add_dependencies(comp_depsA_${short_bt} comp_deps_${short_bt})
   endif()
-  if (TARGET use_component_depsB_${short_bt})
-    add_dependencies(use_component_depsB_${short_bt} comp_deps_${short_bt})
+  if (TARGET comp_depsB_${short_bt})
+    add_dependencies(comp_depsB_${short_bt} comp_deps_${short_bt})
   endif()
-  if (TARGET use_component_depsC_${short_bt})
-    add_dependencies(use_component_depsC_${short_bt} comp_deps_${short_bt})
+  if (TARGET comp_depsC_${short_bt})
+    add_dependencies(comp_depsC_${short_bt} comp_deps_${short_bt})
   endif()
 endforeach()
 
-# test that core_child pkg-config file requires core_nodep
-# and that core_child_private pkg-config file requires core_nodep privately
+# test that c_child pkg-config file requires c_nodep
+# and that c_child_private pkg-config file requires c_nodep privately
 if (UNIX)
-  set(TEST_NAME core_child_requires_core_nodep)
+  set(TEST_NAME c_child_requires_c_nodep)
   string(TIMESTAMP TEST_TIME)
   configure_file(
     "${CMAKE_CURRENT_SOURCE_DIR}/junit_pass.xml.in"
@@ -222,7 +222,7 @@ if (UNIX)
 
   list(APPEND _env_vars "PKG_CONFIG_PATH=${example_INSTALL_DIR}/${example_PKGCONFIG_INSTALL_LIBDIR}:${FAKE_INSTALL_PREFIX}/${example_PKGCONFIG_INSTALL_LIBDIR}:$PKG_CONFIG_PATH")
   add_test(${TEST_NAME}
-    ${CMAKE_CURRENT_SOURCE_DIR}/test_core_child_requires_core_no_deps.bash
+    ${CMAKE_CURRENT_SOURCE_DIR}/test_c_child_requires_c_no_deps.bash
   )
   set_tests_properties(${TEST_NAME} PROPERTIES
     ENVIRONMENT "${_env_vars}")
