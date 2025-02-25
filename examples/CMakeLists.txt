@@ -3,6 +3,21 @@ include(GNUInstallDirs)
 
 # test multiple build types
 set(build_types Release RelWithDebInfo Debug)
+function(shorten_build_type build_type output_var)
+  if (${build_type} STREQUAL "Release")
+      set(short_bt "R")
+    elseif (${build_type} STREQUAL "RelWithDebInfo")
+      set(short_bt "RWD")
+    elseif (${build_type} STREQUAL "Debug")
+      set(short_bt "D")
+    elseif (${build_type} STREQUAL "Coverage")
+      set(short_bt "C")
+    else()
+      message(FATAL_ERROR "Unknown build_type ${build_type}")
+    endif()
+    set (${output_var} ${short_bt} PARENT_SCOPE)
+endfunction()
+
 find_program(EXAMPLE_LCOV_PATH lcov)
 if (NOT WIN32 AND EXAMPLE_LCOV_PATH)
   list(APPEND build_types Coverage)
@@ -67,7 +82,8 @@ foreach(example ${example_directories})
   endif()
 
   foreach (build_type ${build_types})
-    set(TEST_NAME ${example}_${build_type})
+    shorten_build_type("${build_type}" short_bt)
+    set(TEST_NAME ${example}_${short_bt})
     string(TIMESTAMP TEST_TIME)
     configure_file(
       "${CMAKE_CURRENT_SOURCE_DIR}/junit_pass.xml.in"
@@ -77,7 +93,7 @@ foreach(example ${example_directories})
       "${CMAKE_CURRENT_SOURCE_DIR}/junit_fail.xml.in"
       "${CMAKE_CURRENT_BINARY_DIR}/test_results/${TEST_NAME}.xml"
       @ONLY)
-    set(example_INSTALL_DIR ${CMAKE_BINARY_DIR}/install/${build_type})
+    set(example_INSTALL_DIR ${CMAKE_BINARY_DIR}/install/${short_bt})
     ExternalProject_Add(
       ${TEST_NAME}
 
@@ -163,17 +179,18 @@ endforeach()
 # hard to use DEPENDS in ExternalProject_Add because targets
 # need to exist before they can be used there
 foreach (build_type ${build_types})
-  add_dependencies(core_child_${build_type} core_nodep_${build_type})
-  add_dependencies(core_child_private_${build_type} core_nodep_${build_type})
-  add_dependencies(core_static_child_${build_type} core_nodep_static_${build_type})
-  if (TARGET use_component_depsA_${build_type})
-    add_dependencies(use_component_depsA_${build_type} comp_deps_${build_type})
+  shorten_build_type("${build_type}" short_bt)
+  add_dependencies(core_child_${short_bt} core_nodep_${short_bt})
+  add_dependencies(core_child_private_${short_bt} core_nodep_${short_bt})
+  add_dependencies(core_static_child_${short_bt} core_nodep_static_${short_bt})
+  if (TARGET use_component_depsA_${short_bt})
+    add_dependencies(use_component_depsA_${short_bt} comp_deps_${short_bt})
   endif()
-  if (TARGET use_component_depsB_${build_type})
-    add_dependencies(use_component_depsB_${build_type} comp_deps_${build_type})
+  if (TARGET use_component_depsB_${short_bt})
+    add_dependencies(use_component_depsB_${short_bt} comp_deps_${short_bt})
   endif()
-  if (TARGET use_component_depsC_${build_type})
-    add_dependencies(use_component_depsC_${build_type} comp_deps_${build_type})
+  if (TARGET use_component_depsC_${short_bt})
+    add_dependencies(use_component_depsC_${short_bt} comp_deps_${short_bt})
   endif()
 endforeach()
 
