@@ -194,6 +194,7 @@ foreach (build_type ${build_types})
   endif()
   if (TARGET use_component_depsC_${short_bt})
     add_dependencies(use_component_depsC_${short_bt} comp_deps_${short_bt})
+  endif()
 endforeach()
 
 # test that c_child pkg-config file requires c_nodep
