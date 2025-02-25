@@ -1,4 +1,4 @@
-# core\_static\_child example
+# c\_static\_child example
 
 This package links against that static library provided by
 the `c_no_deps_static` package.

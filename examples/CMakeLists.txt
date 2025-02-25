@@ -212,7 +212,7 @@ if (UNIX)
     @ONLY)
   set(_env_vars)
   # On Debian and if the install prefix is /usr, the default CMAKE_INSTALL_LIBDIR of this project
-  # as set by GNUInstallDirs will be different from the one of the example project, 
+  # as set by GNUInstallDirs will be different from the one of the example project,
   # so let's hardcode it in that case
   if(EXISTS "/etc/debian_version" AND "${CMAKE_INSTALL_PREFIX}" MATCHES "^/usr/?$")
     set(example_PKGCONFIG_INSTALL_LIBDIR "lib/pkgconfig")
