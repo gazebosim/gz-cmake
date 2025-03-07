@@ -720,31 +720,42 @@ function(ign_install_all_headers)
 
     set(component_name ${ign_install_all_headers_COMPONENT})
 
-    # Define the install directory for the component meta header
-    set(meta_header_install_dir ${IGN_INCLUDE_INSTALL_DIR_FULL}/${PROJECT_INCLUDE_DIR}/${component_name})
+    # Define the install directory for the "config" header
+    # The "meta" header will be installed one folder above this
+    set(config_header_install_dir ${IGN_INCLUDE_INSTALL_DIR_FULL}/${PROJECT_INCLUDE_DIR}/${component_name})
 
-    # Define the input/output of the configuration for the component "master" header
-    set(master_header_in ${IGNITION_CMAKE_DIR}/ign_auto_headers.hh.in)
-    set(master_header_out ${CMAKE_CURRENT_BINARY_DIR}/${component_name}.hh)
+    # Define the input/output of the configuration for the component "meta" header
+    set(meta_header_in ${IGNITION_CMAKE_DIR}/ign_auto_headers.hh.in)
+    set(meta_header_out ${CMAKE_CURRENT_BINARY_DIR}/${component_name}.hh)
 
   else()
 
-    # Define the install directory for the core master meta header
-    set(meta_header_install_dir ${IGN_INCLUDE_INSTALL_DIR_FULL}/${PROJECT_INCLUDE_DIR})
+    # Define the install directory for the "config" header
+    # The core "meta" header will be installed one folder above this
+    set(config_header_install_dir ${IGN_INCLUDE_INSTALL_DIR_FULL}/${PROJECT_INCLUDE_DIR})
 
-    # Define the input/output of the configuration for the core "master" header
-    set(master_header_in ${IGNITION_CMAKE_DIR}/ign_auto_headers.hh.in)
-    set(master_header_out ${CMAKE_CURRENT_BINARY_DIR}/../${GZ_DESIGNATION}.hh)
+    # Define the input/output of the configuration for the core "meta" header
+    set(meta_header_in ${IGNITION_CMAKE_DIR}/ign_auto_headers.hh.in)
+    set(meta_header_out ${CMAKE_CURRENT_BINARY_DIR}/../${GZ_DESIGNATION}.hh)
 
   endif()
 
-  # Generate the "master" header that includes all of the headers
-  configure_file(${master_header_in} ${master_header_out})
+  # Generate the install directory for the "meta" header one folder above the "config" header
+  if(${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.20")
+    cmake_path(SET meta_header_install_dir NORMALIZE ${config_header_install_dir}/..)
+  else()
+    # cmake_path was added in cmake 3.20, so continue using a relative path with older versions
+    # Do not merge this forward to gz-cmake4
+    set(meta_header_install_dir ${config_header_install_dir}/..)
+  endif()
 
-  # Install the "master" header
+  # Generate the "meta" header that includes all of the headers
+  configure_file(${meta_header_in} ${meta_header_out})
+
+  # Install the "meta" header
   install(
-    FILES ${master_header_out}
-    DESTINATION ${meta_header_install_dir}/..
+    FILES ${meta_header_out}
+    DESTINATION ${meta_header_install_dir}
     COMPONENT headers)
 
   # Define the input/output of the configuration for the "config" header
@@ -770,7 +781,7 @@ function(ign_install_all_headers)
     # Install the "config" header
     install(
       FILES ${config_header_out}
-      DESTINATION ${meta_header_install_dir}
+      DESTINATION ${config_header_install_dir}
       COMPONENT headers)
 
   endif()
