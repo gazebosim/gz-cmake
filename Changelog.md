@@ -1,5 +1,19 @@
 ## Gazebo CMake 2.x
 
+### Gazebo CMake 2.17.3 (2025-XX-XX)
+
+1. Normalize header install path (backport)
+    * [Pull request #481](https://github.com/gazebosim/gz-cmake/pull/481)
+
+1. Support for Windows conda-forge ogre-next recipe (gz-cmake2)
+    * [Pull request #464](https://github.com/gazebosim/gz-cmake/pull/464)
+
+1. Reduce example names to be able to run Conda CI on Windows (gz-cmake2)
+    * [Pull request #463](https://github.com/gazebosim/gz-cmake/pull/463)
+
+1. Accept arbitrary capitalization for coverage build type
+    * [Pull request #435](https://github.com/gazebosim/gz-cmake/pull/435)
+
 ### Gazebo CMake 2.17.2 (2024-05-07)
 
 1. Backport #402: Replace `exec_program` with `execute_process`
