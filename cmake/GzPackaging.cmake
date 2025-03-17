@@ -199,10 +199,11 @@ function(_gz_create_pkgconfig)
   endif()
 
   set(pkgconfig_output "${CMAKE_BINARY_DIR}/cmake/pkgconfig/${target_name}.pc")
-  set(pkgconfig_install_dir "${CMAKE_INSTALL_FULL_LIBDIR}/pkgconfig")
+  set(pkgconfig_install_dir "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
+  set(pkgconfig_abs_install_dir "${CMAKE_INSTALL_FULL_LIBDIR}/pkgconfig")
   file(RELATIVE_PATH
     PC_CONFIG_RELATIVE_PATH_TO_PREFIX
-    "${pkgconfig_install_dir}"
+    "${pkgconfig_abs_install_dir}"
     "${CMAKE_INSTALL_PREFIX}"
   )
 
