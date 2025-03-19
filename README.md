@@ -11,7 +11,7 @@ Build | Status
 -- | --
 Ubuntu Jammy  | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=gz_cmake-ci-gz-cmake3-jammy-amd64)](https://build.osrfoundation.org/job/gz_cmake-ci-gz-cmake3-jammy-amd64)
 Homebrew      | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=gz_cmake-ci-gz-cmake3-homebrew-amd64)](https://build.osrfoundation.org/job/gz_cmake-ci-gz-cmake3-homebrew-amd64)
-Windows       | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=gz_cmake-3-win)](https://build.osrfoundation.org/job/gz_cmake-3-win)
+Windows       | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=gz_cmake-3-clowin)](https://build.osrfoundation.org/job/gz_cmake-3-clowin)
 
 # Table of Contents
 
