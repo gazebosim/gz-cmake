@@ -60,7 +60,7 @@ install(DIRECTORY tools/
 set(gz_config_input  "${CMAKE_CURRENT_SOURCE_DIR}/config/gz-cmake-config.cmake.in")
 set(gz_config_output "${PROJECT_NAME_LOWER}-config.cmake")
 set(gz_version_output "${PROJECT_NAME_LOWER}-config-version.cmake")
-set(gz_config_install_dir "${CMAKE_INSTALL_DATAROOTDIR}/cmake/${PROJECT_NAME_LOWER}")
+set(gz_config_install_dir "${GZ_LIB_INSTALL_DIR}/cmake/${PROJECT_NAME_LOWER}")
 set(gz_pkgconfig_input "${CMAKE_CURRENT_SOURCE_DIR}/config/gz-cmake.pc.in")
 set(gz_pkgconfig_output "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.pc")
 set(gz_pkgconfig_install_dir "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
