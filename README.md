@@ -95,13 +95,13 @@ Replace `/path/to/install/dir` to whatever directory you want to install this pa
 
 Documentation can be accessed at https://gazebosim.org/libs/cmake
 
-[Examples](https://github.com/gazebosim/gz-cmake/tree/gz-cmake4/examples) are available in this repository.
+[Examples](https://github.com/gazebosim/gz-cmake/tree/gz-cmake5/examples) are available in this repository.
 
-[Tutorials](https://github.com/gazebosim/gz-cmake/tree/gz-cmake4/tutorials) are also available in this repository.
+[Tutorials](https://github.com/gazebosim/gz-cmake/tree/gz-cmake5/tutorials) are also available in this repository.
 
 # Documentation
 
-Documentation for `gz-cmake` can be found within the source code, and also in the [MIGRATION.md guide](https://github.com/gazebosim/gz-cmake/blob/gz-cmake4/Migration.md).
+Documentation for `gz-cmake` can be found within the source code, and also in the [MIGRATION.md guide](https://github.com/gazebosim/gz-cmake/blob/gz-cmake5/Migration.md).
 
 # Testing
 

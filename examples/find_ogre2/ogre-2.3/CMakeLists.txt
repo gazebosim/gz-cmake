@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.22.1 FATAL_ERROR)
 project(gz-ogre-2.3 VERSION 0.1.0)
 
-find_package(gz-cmake5 REQUIRED)
+find_package(gz-cmake REQUIRED)
 
 message(STATUS "Finding OGRE 2.3.0")
 gz_find_package(GzOGRE2 VERSION 2.3.0
