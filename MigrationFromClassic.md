@@ -30,7 +30,7 @@ That's right, just throw it all out.
 We're migrating to 3.22 because it provides many valuable features that we are
 now taking advantage of.
 
-### Then call `find_package(gz-cmake5 REQUIRED)`
+### Then call `find_package(gz-cmake REQUIRED)`
 
 This will find `gz-cmake` and load up all its useful features for you.
 

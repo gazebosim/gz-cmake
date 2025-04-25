@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.22.1 FATAL_ERROR)
 project(gz-find_config VERSION 0.1.0)
-find_package(gz-cmake5 REQUIRED)
+find_package(gz-cmake REQUIRED)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/")
 set(gz-find_config_DIR "${CMAKE_SOURCE_DIR}/")
 #gz_find_package(gz-find_config) will search for Findgz-find_config.cmake before gz-find_configConfig.cmake

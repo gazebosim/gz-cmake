@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="2">
-  <name>gz-cmake5</name>
+  <name>gz-cmake</name>
   <version>5.0.0</version>
   <description>Gazebo CMake : CMake Modules for Gazebo Projects</description>
 
