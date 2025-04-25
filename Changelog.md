@@ -4,6 +4,23 @@
 
 ## Gazebo CMake 4.x
 
+### Gazebo CMake 4.1.1 (2025-02-24)
+
+1. Normalize header install path
+    * [Pull request #467](https://github.com/gazebosim/gz-cmake/pull/467)
+
+1. Ensure that find_package(TinyXML2) defines tinyxml2::tinyxml2 even on case insensitive filesystems
+    * [Pull request #465](https://github.com/gazebosim/gz-cmake/pull/465)
+
+### Gazebo CMake 4.1.0 (2024-11-01)
+
+1. Update add-to-project version in triage.yml
+    * [Pull request #448](https://github.com/gazebosim/gz-cmake/pull/448)
+    * [Pull request #459](https://github.com/gazebosim/gz-cmake/pull/459)
+
+1. Helper to get version number from package.xml
+    * [Pull request #456](https://github.com/gazebosim/gz-cmake/pull/456)
+
 ### Gazebo CMake 4.0.0 (2024-09-25)
 
 1. Miscellaneous documentation fixes
@@ -55,6 +72,23 @@
     * [Pull request #390](https://github.com/gazebosim/gz-cmake/pull/390)
 
 ## Gazebo CMake 3.x
+
+### Gazebo CMake 3.5.5 (2025-02-27)
+
+1. Normalize header install path
+    * [Pull request #467](https://github.com/gazebosim/gz-cmake/pull/467)
+    * [Pull request #474](https://github.com/gazebosim/gz-cmake/pull/474)
+
+1. Only find python if needed
+    * [Pull request #473](https://github.com/gazebosim/gz-cmake/pull/473)
+
+### Gazebo CMake 3.5.4 (2025-01-30)
+
+1. Accept arbitrary capitalization for coverage build type
+    * [Pull request #435](https://github.com/gazebosim/gz-cmake/pull/435)
+
+1. Fix link for Sanitizer Builds tutorial
+    * [Pull request #433](https://github.com/gazebosim/gz-cmake/pull/433)
 
 ### Gazebo CMake 3.5.3 (2024-05-02)
 

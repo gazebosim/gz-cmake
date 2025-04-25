@@ -51,8 +51,25 @@
 #                     VERSION 2.2.0
 #                     COMPONENTS HlmsPbs HlmsUnlit Overlay)
 
+# check ogre-next>=3.0.0 was not requested to be found or was not found using
+# VERSION_MAJOR parameter and show a warning from MESSAGE_STRING parameter
+# for additional details see
+# https://github.com/gazebosim/gz-cmake/pull/468#issuecomment-2662882691
+macro(check_possible_ogre_next_3_or_later VERSION_MAJOR MESSAGE_STRING)
+  if (${VERSION_MAJOR})
+    if (${VERSION_MAJOR} VERSION_GREATER "2")
+      message(WARNING "OGRE-Next with major version ${${VERSION_MAJOR}} ${MESSAGE_STRING} but OGRE-Next>=3.0.0 is not supported by GzOGRE2. Please, use instead GzOGRENext.")
+    endif()
+  endif()
+endmacro()
+# check if ogre-next>=3.0.0 was requested to be found
+check_possible_ogre_next_3_or_later(
+  GzOGRE2_FIND_VERSION_MAJOR
+  "was requested to be found"
+)
 
-if(NOT (GzOGRE2_FIND_VERSION_MAJOR AND GzOGRE2_FIND_VERSION_MINOR))
+if (NOT (DEFINED GzOGRE2_FIND_VERSION_MAJOR AND DEFINED
+    GzOGRE2_FIND_VERSION_MINOR))
   message(WARNING
     "find_package(GzOGRE2) must be called with a VERSION argument with a minimum of major and minor version")
   set(OGRE2_FOUND false)
@@ -279,6 +296,12 @@ if (PkgConfig_FOUND)
 
     set(GzOGRE2_VERSION_EXACT FALSE)
     set(GzOGRE2_VERSION_COMPATIBLE FALSE)
+
+    # check if ogre-next>=3.0.0 was found
+    check_possible_ogre_next_3_or_later(
+      OGRE2_VERSION_MAJOR
+      "was found"
+    )
 
     if (NOT ("${OGRE2_VERSION_MAJOR}" EQUAL "${GzOGRE2_FIND_VERSION_MAJOR}"))
       set(OGRE2_FOUND FALSE)
