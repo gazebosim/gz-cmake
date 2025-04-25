@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.22.1 FATAL_ERROR)
-project(gz-ogre-2.2 VERSION 0.1.0)
+project(gz-ogre-2.2)
 
 find_package(gz-cmake REQUIRED)
 

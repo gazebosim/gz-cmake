@@ -4,7 +4,7 @@ To test with both versions installed:
 
 ## Ogre 2.1
 
-```
+```bash
 cd ogre-2.1
 mkdir build
 cd build
@@ -13,7 +13,7 @@ cmake ..
 
 ### Expected output
 
-```
+```bash
 -- Looking for GzOGRE2 - found
 
 -- OGRE2_FOUND: TRUE
@@ -28,7 +28,7 @@ cmake ..
 
 ## Ogre 2.2
 
-```
+```bash
 cd ogre-2.2
 mkdir build
 cd build
@@ -38,7 +38,7 @@ cmake ..
 ### Expected output
 
 
-```
+```bash
 -- Looking for GzOGRE2 - found
 
 -- OGRE2_FOUND: TRUE
