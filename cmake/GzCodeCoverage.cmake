@@ -146,6 +146,7 @@ FUNCTION(gz_setup_target_for_coverage)
     # Remove negative counts
     COMMAND sed -i '/,-/d' ${_outputname}.info
     COMMAND ${LCOV_PATH} ${_branch_flags} -q
+      --ignore-errors unused
       --remove ${_outputname}.info '*/test/*' '/usr/*' '*_TEST*' '*.cxx' 'moc_*.cpp' 'qrc_*.cpp' '*.pb.*' '*/build/*' '*/install/*' ${IGNORE_LIST} --output-file ${_outputname}.info.cleaned
     COMMAND ${GENHTML_PATH} ${_branch_flags} -q --prefix ${PROJECT_SOURCE_DIR}
     --legend -o ${_outputname} ${_outputname}.info.cleaned
