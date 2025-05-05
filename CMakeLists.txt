@@ -101,12 +101,13 @@ file(RELATIVE_PATH
   "${CMAKE_INSTALL_PREFIX}"
 )
 
-# TODO(jrivero): CMake 3.20 provides cmake_path(APPEND) which implements the
-# same functionality as join_paths(). Remove JoinPaths in the next major version
-# if all the supported platforms are in 3.20 version.
-include(JoinPaths)
-join_paths(GZ_PC_LIBDIR "\${prefix}" "${CMAKE_INSTALL_LIBDIR}")
-join_paths(GZ_PC_INCLUDEDIR "\${prefix}" "${CMAKE_INSTALL_INCLUDEDIR}" "${GZ_INCLUDE_INSTALL_DIR_POSTFIX}")
+# Use cmake_path(APPEND) to construct path variables used in pkg-config file.
+# Since the first argument to this function must be a cmake variable (not a
+# string constant, initialize the variable to the first path component.
+set(GZ_PC_LIBDIR "\${prefix}")
+cmake_path(APPEND GZ_PC_LIBDIR "${CMAKE_INSTALL_LIBDIR}")
+set(GZ_PC_INCLUDEDIR "\${prefix}")
+cmake_path(APPEND GZ_PC_INCLUDEDIR "${CMAKE_INSTALL_INCLUDEDIR}" "${GZ_INCLUDE_INSTALL_DIR_POSTFIX}")
 
 configure_file(${gz_pkgconfig_input} ${gz_pkgconfig_output} @ONLY)
 
