@@ -5,6 +5,18 @@ Deprecated code produces compile-time warnings. These warning serve as
 notification to users that their code should be upgraded. The next major
 release will remove the deprecated code.
 
+## Gazebo CMake 4.X to 5.X
+
+1. The major version has been removed from the cmake project name and the
+   package.xml package name. Use `find_package(gz-cmake)` instead of
+   `find_package(gz-cmakeX)` going forward.
+
+1. **Removed**: gz-cmake-utilities target
+
+1. **Removed**: `gz/utilities/ExtraTestMacros.hh`
+
+1. **Removed**: `gz/utilities/SuppressWarning.hh`
+
 ## Gazebo CMake 3.X to 4.X
 
 1. The minimum required cmake version is now 3.22.1.
@@ -30,6 +42,12 @@ release will remove the deprecated code.
 1. **Deprecated**: `GzPython.cmake`
     **Replacement**: Use `find_package(Python3)` to find Python3 and the
               `Python3_EXECUTABLE` variable instead of `PYTHON_EXECUTABLE`.
+
+1. **Deprecated**: `gz/utilities/ExtraTestMacros.hh`
+   **Replacement**: `gz/utils/ExtraTestMacros.hh` from gz-utils
+
+1. **Deprecated**: `gz/utilities/SuppressWarning.hh`
+   **Replacement**: `gz/utils/SuppressWarning.hh` from gz-utils
 
 ## Gazebo CMake 2.X to 3.X
 
