@@ -69,10 +69,10 @@ Be sure to replace `<#>` with a number value, such as `1` or `2`, depending on w
 
 ### Prerequisites
 
-The prerequisites of `gz-cmake` are `cmake` and `doxygen`. Ubuntu users can install these packages with:
+The only prerequisite of `gz-cmake` is `cmake`. Ubuntu users can install cmake with the package manager:
 
 ```bash
-sudo apt install cmake doxygen
+sudo apt install cmake
 ```
 
 ### Building from source
