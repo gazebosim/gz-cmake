@@ -1,6 +1,31 @@
 ## Gazebo CMake 5.x
 
-### Gazebo CMake 5.0.0 (202X-XX-XX)
+### Gazebo CMake 5.0.0 (2025-09-30)
+
+1. **Baseline:** this includes all changes from 4.2.0 and earlier.
+
+1. Update code snippet formatting in README
+    * [Pull request #502](https://github.com/gazebosim/gz-cmake/pull/502)
+    * [Pull request #503](https://github.com/gazebosim/gz-cmake/pull/503)
+
+1. Remove utilities headers and cmake target
+    * [Pull request #501](https://github.com/gazebosim/gz-cmake/pull/501)
+
+1. Replace `join_paths` with `cmake_path(APPEND)`
+    * [Pull request #498](https://github.com/gazebosim/gz-cmake/pull/498)
+
+1. Infrastructure
+    * [Pull request #496](https://github.com/gazebosim/gz-cmake/pull/496)
+
+1. Bump gz-cmake and others in jetty
+    * [Pull request #493](https://github.com/gazebosim/gz-cmake/pull/493)
+    * [Tracking issue](https://github.com/gazebo-tooling/release-tools/issues/1309)
+
+1. Avoid warnings on unused `CMAKE_BUILD_TYPE` on Windows (#487)
+    * [Pull request #487](https://github.com/gazebosim/gz-cmake/pull/487)
+
+1. Bump main to gz-cmake 5.0.0~pre1
+    * [Pull request #462](https://github.com/gazebosim/gz-cmake/pull/462)
 
 ## Gazebo CMake 4.x
 
