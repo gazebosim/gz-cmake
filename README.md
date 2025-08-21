@@ -9,9 +9,9 @@
 
 Build | Status
 -- | --
-Ubuntu Noble  | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=gz_cmake-ci-main-noble-amd64)](https://build.osrfoundation.org/job/gz_cmake-ci-main-noble-amd64)
-Homebrew      | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=gz_cmake-ci-main-homebrew-amd64)](https://build.osrfoundation.org/job/gz_cmake-ci-main-homebrew-amd64)
-Windows       | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=gz_cmake-main-clowin)](https://build.osrfoundation.org/job/gz_cmake-main-clowin)
+Ubuntu Noble  | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=gz_cmake-ci-gz-cmake5-noble-amd64)](https://build.osrfoundation.org/job/gz_cmake-ci-gz-cmake5-noble-amd64)
+Homebrew      | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=gz_cmake-ci-gz-cmake5-homebrew-amd64)](https://build.osrfoundation.org/job/gz_cmake-ci-gz-cmake5-homebrew-amd64)
+Windows       | [![Build Status](https://build.osrfoundation.org/buildStatus/icon?job=gz_cmake-5-cnlwin)](https://build.osrfoundation.org/job/gz_cmake-5-cnlwin)
 
 # Table of Contents
 

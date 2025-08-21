@@ -26,7 +26,7 @@ The available options are:
 * `Coverage`: Build with additional information required for the [`gcov` analysis tool](https://en.wikipedia.org/wiki/Gcov)
 * `Profile`: Use flags that are helpful with the [`gprof` profiling tool](https://en.wikipedia.org/wiki/Gprof)
 
-More information about flags applied can be found in [GzSetCompilerFlags.cmake](https://github.com/gazebosim/gz-cmake/blob/main/cmake/GzSetCompilerFlags.cmake)
+More information about flags applied can be found in [GzSetCompilerFlags.cmake](https://github.com/gazebosim/gz-cmake/blob/gz-cmake5/cmake/GzSetCompilerFlags.cmake)
 
 If left unspecified, `CMAKE_BUILD_TYPE` is set to `RelWithDebInfo`
 
