@@ -218,7 +218,7 @@ You can also generate the documentation from a clone of this repository by follo
   firefox doxygen/html/index.html
   ```
 
-**Note** Alternatively, documentation for `gz-cmake` can be found within the source code, and also in the [MIGRATION.md guide](https://github.com/gazebosim/gz-cmake/blob/main/MIGRATION.md).
+**Note** Alternatively, documentation for `gz-cmake` can be found within the source code, and also in the [MIGRATION.md guide](https://github.com/gazebosim/gz-cmake/blob/gz-cmake5/Migration.md).
 
 # Testing
 
