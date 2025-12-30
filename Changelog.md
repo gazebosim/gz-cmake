@@ -1,3 +1,7 @@
+## Gazebo CMake 6.x
+
+### Gazebo CMake 6.0.0 (202X-XX-XX)
+
 ## Gazebo CMake 5.x
 
 ### Gazebo CMake 5.0.0 (2025-09-30)
