@@ -9,29 +9,6 @@ on:
       - 'main'
 
 jobs:
-  bionic-ci:
-    runs-on: ubuntu-latest
-    name: Ubuntu Bionic CI
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Compile and test
-        id: ci
-        uses: ignition-tooling/action-ignition-ci@bionic
-        with:
-          cmake-args: '-DBUILDSYSTEM_TESTING=True'
-          codecov-enabled: false
-  focal-ci:
-    runs-on: ubuntu-latest
-    name: Ubuntu Focal CI
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Compile and test
-        id: ci
-        uses: ignition-tooling/action-ignition-ci@focal
-        with:
-          cmake-args: '-DBUILDSYSTEM_TESTING=True'
   jammy-ci:
     runs-on: ubuntu-latest
     name: Ubuntu Jammy CI
@@ -40,7 +17,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Compile and test
         id: ci
-        uses: ignition-tooling/action-ignition-ci@jammy
+        uses: gazebo-tooling/action-gz-ci@jammy
         with:
           cmake-args: '-DBUILDSYSTEM_TESTING=True'
 
