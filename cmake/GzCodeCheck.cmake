@@ -17,7 +17,7 @@ function(_gz_setup_target_for_codecheck)
   endif()
 
   # Base set of cppcheck option
-  set (CPPCHECK_BASE -q --inline-suppr -j 4 --language=c++ --std=c++17 --force)
+  set (CPPCHECK_BASE -q --inline-suppr -j 4 --language=c++ --std=c++17 --force --error-exitcode=1)
   if (EXISTS "${PROJECT_BINARY_DIR}/cppcheck.suppress")
     set (CPPCHECK_BASE ${CPPCHECK_BASE} --suppressions-list=${PROJECT_BINARY_DIR}/cppcheck.suppress)
   endif()
