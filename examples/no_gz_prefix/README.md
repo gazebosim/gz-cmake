@@ -22,9 +22,9 @@ make package_source
 ## Configuring include directory names
 
 This package uses the `REPLACE_INCLUDE_PATH` option in `gz_configure_project`
-to allow a custom include path of `no_gz`, which doesn't start with `ignition/`.
-To confirm, build the package and observe that `AlmostEmpty.cc`
-compiles successfully while including `no_gz/Export.hh`:
+to allow a custom include path of `no_gz`, which doesn't start with `gz/`. To confirm, build the package 
+and observe that `AlmostEmpty.cc` compiles successfully while 
+including `no_gz/Export.hh`:
 
 ~~~
 mkdir build

@@ -113,12 +113,12 @@ endmacro()
 # Internal to gz-cmake.
 macro(_gz_setup_gcc_or_clang)
 
-  if(gz_configure_build_HIDE_SYMBOLS_BY_DEFAULT)
-    set(CMAKE_C_VISIBILITY_PRESET "hidden")
-    set(CMAKE_CXX_VISIBILITY_PRESET "hidden")
-  else()
+  if(gz_configure_build_EXPOSE_SYMBOLS_BY_DEFAULT)
     set(CMAKE_C_VISIBILITY_PRESET "default")
     set(CMAKE_CXX_VISIBILITY_PRESET "default")
+  else()
+    set(CMAKE_C_VISIBILITY_PRESET "hidden")
+    set(CMAKE_CXX_VISIBILITY_PRESET "hidden")
   endif()
 
 
@@ -134,13 +134,8 @@ macro(_gz_setup_gcc_or_clang)
   # We use the default flags for Release
   set(CUSTOM_RELEASE_FLAGS "")
 
-  # -UNDEBUG: Undefine the NDEBUG symbol so that assertions get triggered in
-  #           RelWithDebInfo mode
-  # NOTE: Always make -UNDEBUG the first flag in this list so that it appears
-  #       immiediately after cmake's automatically provided -DNDEBUG flag.
-  #       Keeping them next to each other should make it more clear that the
-  #       -DNDEBUG flag is being canceled out.
-  set(CUSTOM_RELWITHDEBINFO_FLAGS "-UNDEBUG")
+  # We use the default flags for RelWithDebInfo
+  set(CUSTOM_RELWITHDEBINFO_FLAGS "")
 
   # We use the default flags for MinSizeRel
   set(CUSTOM_MINSIZEREL_FLAGS "")
@@ -304,8 +299,8 @@ macro(_gz_setup_msvc)
     # GL: Enable Whole Program Optimization
     set(MSVC_RELEASE_FLAGS "${MSVC_DEBUG_FLAGS} /GL")
 
-    # UNDEBUG: Undefine NDEBUG so that assertions can be triggered
-    set(MSVC_RELWITHDEBINFO_FLAGS "${MSVC_RELEASE_FLAGS} /UNDEBUG")
+    # Use Release flags for RelWithDebInfo
+    set(MSVC_RELWITHDEBINFO_FLAGS "${MSVC_RELEASE_FLAGS}")
 
     # INCREMENTAL:NO fix LNK4075 warning
     # LTCG: need when using /GL above
@@ -345,13 +340,7 @@ macro(_gz_setup_msvc)
   # In some cases, a user might want to compile with the static runtime. This
   # should ONLY be done if they do not intend to use the Gazebo library as
   # part of a plugin-based framework.
-
-  if(IGN_USE_STATIC_RUNTIME)  # TODO(CH3): Deprecated. Remove on tock.
-    message(WARNING "Deprecated. Use [GZ_USE_STATIC_RUNTIME] instead! Use the static runtime (strongly discouraged)")
-    set(GZ_USE_STATIC_RUNTIME ${IGN_USE_STATIC_RUNTIME})
-  else()
-    option(GZ_USE_STATIC_RUNTIME "Use the static runtime (strongly discouraged)" OFF)
-  endif()
+  option(GZ_USE_STATIC_RUNTIME "Use the static runtime (strongly discouraged)" OFF)
 
   if(BUILD_SHARED_LIBS)
     # Users should not choose the static runtime unless they are compiling a

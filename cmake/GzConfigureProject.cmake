@@ -61,31 +61,15 @@
 
 #################################################
 # Initialize the Gazebo project
-macro(ign_configure_project)
-  message(WARNING "ign_configure_project is deprecated, use gz_configure_project instead.")
-
-  set(options NO_PROJECT_PREFIX NO_IGNITION_PREFIX)  # TODO(CH3): NO_IGNITION_PREFIX IS DEPRECATED.
-  set(oneValueArgs REPLACE_INCLUDE_PATH REPLACE_IGNITION_INCLUDE_PATH VERSION_SUFFIX)  # TODO(CH3): REPLACE_IGNITION_INCLUDE_PATH IS DEPRECATED.
-  set(multiValueArgs CONFIG_EXTRAS)
-  _gz_cmake_parse_arguments(gz_configure_project "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-
-  set(gz_configure_project_skip_parsing true)
-  gz_configure_project()
-endmacro()
 macro(gz_configure_project)
+  # Define the expected arguments
+  set(options NO_PROJECT_PREFIX)
+  set(oneValueArgs REPLACE_INCLUDE_PATH VERSION_SUFFIX)
+  set(multiValueArgs CONFIG_EXTRAS)
 
-  # Deprecated, remove skip parsing logic in version 4
-  if (NOT gz_configure_project_skip_parsing)
-    #------------------------------------
-    # Define the expected arguments
-    set(options NO_PROJECT_PREFIX NO_IGNITION_PREFIX)  # TODO(CH3): NO_IGNITION_PREFIX IS DEPRECATED.
-    set(oneValueArgs REPLACE_INCLUDE_PATH REPLACE_IGNITION_INCLUDE_PATH VERSION_SUFFIX)  # TODO(CH3): REPLACE_IGNITION_INCLUDE_PATH IS DEPRECATED.
-    set(multiValueArgs CONFIG_EXTRAS)
-
-    #------------------------------------
-    # Parse the arguments
-    _gz_cmake_parse_arguments(gz_configure_project "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-  endif()
+  #------------------------------------
+  # Parse the arguments
+  _gz_cmake_parse_arguments(gz_configure_project "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   # Note: The following are automatically defined by project(~) in cmake v3:
   # PROJECT_NAME
@@ -103,11 +87,6 @@ macro(gz_configure_project)
   set(GZ_DESIGNATION ${PROJECT_NAME})
   # Remove the leading project prefix ("gz-" by default)
   set(PROJECT_PREFIX "gz")
-  # Also support "ignition-"
-  # TODO: remove this `if` block once all package names start with gz
-  if(${GZ_DESIGNATION} MATCHES "^ignition-")
-    set(PROJECT_PREFIX "ignition")
-  endif()
   string(REGEX REPLACE "${PROJECT_PREFIX}-" "" GZ_DESIGNATION ${GZ_DESIGNATION})
 
   # Remove the trailing version number
@@ -118,9 +97,6 @@ macro(gz_configure_project)
   #============================================================================
 
   if(gz_configure_project_NO_PROJECT_PREFIX)
-    set(PROJECT_NAME_NO_VERSION ${GZ_DESIGNATION})
-  elseif(gz_configure_project_NO_IGNITION_PREFIX)  # TODO(CH3): NO_IGNITION_PREFIX IS DEPRECATED.
-    message(DEPRECATION "[NO_IGNITION_PREFIX] is deprecated. Please use [NO_PROJECT_PREFIX] instead!")
     set(PROJECT_NAME_NO_VERSION ${GZ_DESIGNATION})
   else()
     set(PROJECT_NAME_NO_VERSION "${PROJECT_PREFIX}-${GZ_DESIGNATION}")
@@ -137,20 +113,11 @@ macro(gz_configure_project)
   string(REGEX REPLACE "^.(.*)" "${GZ_DESIGNATION_FIRST_LETTER}\\1"
          GZ_DESIGNATION_CAP "${GZ_DESIGNATION}")
 
-  set(IGN_DESIGNATION ${GZ_DESIGNATION})  # TODO(CH3): Deprecated. Remove on tock.
-  set(IGN_DESIGNATION_LOWER ${GZ_DESIGNATION_LOWER})  # TODO(CH3): Deprecated. Remove on tock.
-  set(IGN_DESIGNATION_UPPER ${GZ_DESIGNATION_UPPER})  # TODO(CH3): Deprecated. Remove on tock.
-  set(IGN_DESIGNATION_FIRST_LETTER ${GZ_DESIGNATION_FIRST_LETTER})  # TODO(CH3): Deprecated. Remove on tock.
-  set(IGN_DESIGNATION_CAP ${GZ_DESIGNATION_CAP})  # TODO(CH3): Deprecated. Remove on tock.
-
   set(PROJECT_EXPORT_NAME ${PROJECT_NAME_LOWER})
   set(PROJECT_LIBRARY_TARGET_NAME ${PROJECT_NAME_LOWER})
 
   if(gz_configure_project_REPLACE_INCLUDE_PATH)
     set(PROJECT_INCLUDE_DIR ${gz_configure_project_REPLACE_INCLUDE_PATH})
-  elseif(gz_configure_project_REPLACE_IGNITION_INCLUDE_PATH)  # TODO(CH3): REPLACE_IGNITION_INCLUDE_PATH IS DEPRECATED.
-    message(DEPRECATION "[REPLACE_IGNITION_INCLUDE_PATH] is deprecated. Please use [REPLACE_INCLUDE_PATH] instead!")
-    set(PROJECT_INCLUDE_DIR ${gz_configure_project_REPLACE_IGNITION_INCLUDE_PATH})
   else()
     set(PROJECT_INCLUDE_DIR gz/${GZ_DESIGNATION})
   endif()
@@ -295,10 +262,6 @@ endmacro()
 
 #################################################
 # Check the OS type.
-macro(ign_check_os)
-  message(WARNING "ign_check_os is deprecated, use gz_check_os instead.")
-  gz_check_os()
-endmacro()
 macro(gz_check_os)
 
   # CMake does not distinguish Linux from other Unices.

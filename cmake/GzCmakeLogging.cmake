@@ -13,14 +13,6 @@
 
 #################################################
 # gz_build_error macro
-macro(ign_build_error)
-  message(WARNING "ign_build_error is deprecated, use gz_build_error instead.")
-
-  foreach(str ${ARGN})
-    set(msg "\t${str}")
-    list(APPEND build_errors ${msg})
-  endforeach()
-endmacro(ign_build_error)
 macro(gz_build_error)
   foreach(str ${ARGN})
     set(msg "\t${str}")
@@ -30,13 +22,6 @@ endmacro(gz_build_error)
 
 #################################################
 # gz_build_warning macro
-macro(ign_build_warning)
-  message(WARNING "ign_build_warning is deprecated, use gz_build_warning instead.")
-
-  foreach(str ${ARGN})
-    list(APPEND build_warnings "${str}")
-  endforeach(str ${ARGN})
-endmacro(ign_build_warning)
 macro(gz_build_warning)
   foreach(str ${ARGN})
     list(APPEND build_warnings "${str}")

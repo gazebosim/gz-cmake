@@ -55,35 +55,14 @@
 # conflict. However, both of those arguments conflict with CXX_STANDARD, so you
 # are not allowed to use either of them if you use the CXX_STANDARD argument.
 #
-function(ign_create_core_library)
-  message(WARNING "ign_create_core_library is deprecated, use gz_create_core_library instead.")
-
+function(gz_create_core_library)
+  # Define the expected arguments
   set(options INTERFACE)
   set(oneValueArgs INCLUDE_SUBDIR LEGACY_PROJECT_PREFIX CXX_STANDARD PRIVATE_CXX_STANDARD INTERFACE_CXX_STANDARD GET_TARGET_NAME)
   set(multiValueArgs SOURCES)
+  #------------------------------------
+  # Parse the arguments
   cmake_parse_arguments(gz_create_core_library "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-
-  set(gz_create_core_library_skip_parsing true)
-  gz_create_core_library()
-
-  if(gz_create_core_library_GET_TARGET_NAME)
-    set(${gz_create_core_library_GET_TARGET_NAME} ${${gz_create_core_library_GET_TARGET_NAME}} PARENT_SCOPE)
-  endif()
-endfunction()
-function(gz_create_core_library)
-
-  # Deprecated, remove skip parsing logic in version 4
-  if (NOT gz_create_core_library_skip_parsing)
-    #------------------------------------
-    # Define the expected arguments
-    set(options INTERFACE)
-    set(oneValueArgs INCLUDE_SUBDIR LEGACY_PROJECT_PREFIX CXX_STANDARD PRIVATE_CXX_STANDARD INTERFACE_CXX_STANDARD GET_TARGET_NAME)
-    set(multiValueArgs SOURCES)
-
-    #------------------------------------
-    # Parse the arguments
-    cmake_parse_arguments(gz_create_core_library "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-  endif()
 
   if(gz_create_core_library_SOURCES)
     set(sources ${gz_create_core_library_SOURCES})

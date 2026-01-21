@@ -22,38 +22,17 @@
 #          space
 #
 # Macro to append a value to a string
-macro(ign_string_append output_var val)
-  message(WARNING "ign_string_append is deprecated, use gz_string_append instead.")
-
+macro(gz_string_append output_var val)
+  # Define the expected arguments
+  # NOTE: options cannot be set to PARENT_SCOPE alone, so we put it explicitly
+  # into cmake_parse_arguments(~). We use a semicolon to concatenate it with
+  # this options variable, so all other options should be specified here.
   set(options)
   set(oneValueArgs DELIM)
   set(multiValueArgs)
+  #------------------------------------
+  # Parse the arguments
   _gz_cmake_parse_arguments(gz_string_append "PARENT_SCOPE;${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-
-  set(gz_string_append_skip_parsing true)
-  gz_string_append(${output_var} ${val})
-
-  if(gz_string_append_PARENT_SCOPE)
-    set(${output_var} ${${output_var}} PARENT_SCOPE)
-  endif()
-endmacro()
-macro(gz_string_append output_var val)
-
-  # Deprecated, remove skip parsing logic in version 4
-  if (NOT gz_string_append_skip_parsing)
-    #------------------------------------
-    # Define the expected arguments
-    # NOTE: options cannot be set to PARENT_SCOPE alone, so we put it explicitly
-    # into cmake_parse_arguments(~). We use a semicolon to concatenate it with
-    # this options variable, so all other options should be specified here.
-    set(options)
-    set(oneValueArgs DELIM)
-    set(multiValueArgs)
-
-    #------------------------------------
-    # Parse the arguments
-    _gz_cmake_parse_arguments(gz_string_append "PARENT_SCOPE;${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-  endif()
 
   if(gz_string_append_DELIM)
     set(delim "${gz_string_append_DELIM}")

@@ -116,7 +116,7 @@ function(_gz_export_target_all)
   # find_all_pkg_components is used as a variable in gz-all-config.cmake.in
   set(find_all_pkg_components "")
   get_property(all_known_components TARGET ${PROJECT_LIBRARY_TARGET_NAME}-all
-    PROPERTY INTERFACE_IGN_ALL_KNOWN_COMPONENTS)
+    PROPERTY INTERFACE_GZ_ALL_KNOWN_COMPONENTS)
 
   if(all_known_components)
     foreach(component ${all_known_components})
@@ -249,12 +249,6 @@ macro(_gz_add_library_or_component)
     # Configure the public-facing header for exporting and deprecating. This
     # header provides commentary for the macros so that developers can know their
     # purpose.
-
-    # TODO(CH3): Remove this on ticktock
-    # This is to allow IGNITION_ prefixed export macros to generate in Export.hh
-    # _using_gz_export_base is used in Export.hh.in's configuration!
-    string(REGEX REPLACE "^GZ_" "IGNITION_" _gz_export_base ${export_base})
-
     configure_file(
       "${GZ_CMAKE_DIR}/Export.hh.in"
       "${binary_include_dir}/Export.hh")
@@ -308,7 +302,7 @@ macro(_gz_cmake_parse_arguments prefix options oneValueArgs multiValueArgs)
       "\nThe build script has specified some unrecognized arguments for ${prefix}(~):\n"
       "${${prefix}_UNPARSED_ARGUMENTS}\n"
       "Either the script has a typo, or it is using an unexpected version of gz-cmake. "
-      "The version of gz-cmake currently being used is ${gz-cmake${GZ_CMAKE_VERSION_MAJOR}_VERSION}\n")
+      "The version of gz-cmake currently being used is ${gz-cmake_VERSION}\n")
 
   endif()
 

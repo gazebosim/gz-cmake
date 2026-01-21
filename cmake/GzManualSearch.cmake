@@ -41,31 +41,14 @@
 #
 # PATH_SUFFIXES: Optional. Parameter forwarded to the find_path and find_library calls.
 #
-macro(ign_manual_search package)
-  message(WARNING "ign_manual_search is deprecated, use gz_manual_search instead.")
-
+macro(gz_manual_search package)
+  # Define the expected arguments
   set(options INTERFACE)
   set(oneValueArgs "TARGET_NAME")
   set(multiValueArgs "HEADER_NAMES" "LIBRARY_NAMES" "PATH_SUFFIXES")
+  #------------------------------------
+  # Parse the arguments
   _gz_cmake_parse_arguments(gz_manual_search "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-
-  set(gz_manual_search_skip_parsing true)
-  gz_manual_search(${package})
-endmacro()
-macro(gz_manual_search package)
-
-  # Deprecated, remove skip parsing logic in version 4
-  if (NOT gz_manual_search_skip_parsing)
-    #------------------------------------
-    # Define the expected arguments
-    set(options INTERFACE)
-    set(oneValueArgs "TARGET_NAME")
-    set(multiValueArgs "HEADER_NAMES" "LIBRARY_NAMES" "PATH_SUFFIXES")
-
-    #------------------------------------
-    # Parse the arguments
-    _gz_cmake_parse_arguments(gz_manual_search "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-  endif()
 
   if(gz_manual_search_INTERFACE)
     set(_gz_manual_search_interface_option INTERFACE)

@@ -1,4 +1,136 @@
+## Gazebo CMake 5.x
+
+### Gazebo CMake 5.0.0 (2025-09-30)
+
+1. **Baseline:** this includes all changes from 4.2.0 and earlier.
+
+1. Update code snippet formatting in README
+    * [Pull request #502](https://github.com/gazebosim/gz-cmake/pull/502)
+    * [Pull request #503](https://github.com/gazebosim/gz-cmake/pull/503)
+
+1. Remove utilities headers and cmake target
+    * [Pull request #501](https://github.com/gazebosim/gz-cmake/pull/501)
+
+1. Replace `join_paths` with `cmake_path(APPEND)`
+    * [Pull request #498](https://github.com/gazebosim/gz-cmake/pull/498)
+
+1. Infrastructure
+    * [Pull request #496](https://github.com/gazebosim/gz-cmake/pull/496)
+
+1. Bump gz-cmake and others in jetty
+    * [Pull request #493](https://github.com/gazebosim/gz-cmake/pull/493)
+    * [Tracking issue](https://github.com/gazebo-tooling/release-tools/issues/1309)
+
+1. Avoid warnings on unused `CMAKE_BUILD_TYPE` on Windows (#487)
+    * [Pull request #487](https://github.com/gazebosim/gz-cmake/pull/487)
+
+1. Bump main to gz-cmake 5.0.0~pre1
+    * [Pull request #462](https://github.com/gazebosim/gz-cmake/pull/462)
+
+## Gazebo CMake 4.x
+
+### Gazebo CMake 4.2.0 (2025-04-25)
+
+1. **Baseline:** this includes all changes from 4.1.1 and earlier.
+
+1. Doxygen: use `MARKDOWN_ID_STYLE` = GITHUB
+    * [Pull request #491](https://github.com/gazebosim/gz-cmake/pull/491)
+
+1. Avoid warnings on unused `CMAKE_BUILD_TYPE` on Windows
+    * [Pull request #487](https://github.com/gazebosim/gz-cmake/pull/487)
+
+1. Integrate Ogre-Next 3.x.x built from source
+    * [Pull request #468](https://github.com/gazebosim/gz-cmake/pull/468)
+
+1. Reduce example names to be able to run Conda CI on Windows (gz-cmake4)
+    * [Pull request #476](https://github.com/gazebosim/gz-cmake/pull/476)
+    * [Pull request #478](https://github.com/gazebosim/gz-cmake/pull/478)
+
+### Gazebo CMake 4.1.1 (2025-02-24)
+
+1. Normalize header install path
+    * [Pull request #467](https://github.com/gazebosim/gz-cmake/pull/467)
+
+1. Ensure that find_package(TinyXML2) defines tinyxml2::tinyxml2 even on case insensitive filesystems
+    * [Pull request #465](https://github.com/gazebosim/gz-cmake/pull/465)
+
+### Gazebo CMake 4.1.0 (2024-11-01)
+
+1. Update add-to-project version in triage.yml
+    * [Pull request #448](https://github.com/gazebosim/gz-cmake/pull/448)
+    * [Pull request #459](https://github.com/gazebosim/gz-cmake/pull/459)
+
+1. Helper to get version number from package.xml
+    * [Pull request #456](https://github.com/gazebosim/gz-cmake/pull/456)
+
+### Gazebo CMake 4.0.0 (2024-09-25)
+
+1. Miscellaneous documentation fixes
+    * [Pull request #433](https://github.com/gazebosim/gz-cmake/pull/433)
+    * [Pull request #449](https://github.com/gazebosim/gz-cmake/pull/449)
+    * [Pull request #452](https://github.com/gazebosim/gz-cmake/pull/452)
+
+1. Use relative paths for pkg-config install directory
+    * [Pull request #443](https://github.com/gazebosim/gz-cmake/pull/443)
+
+1. Deprecate `BUILD_DOCS`: generate always the doc target but exclude from default make
+    * [Pull request #434](https://github.com/gazebosim/gz-cmake/pull/434)
+
+1. Accept arbitrary capitalization for coverage build type
+    * [Pull request #435](https://github.com/gazebosim/gz-cmake/pull/435)
+
+1. Deprecate GzPython.cmake in favor of `find_package(Python3)`
+    * [Pull request #431](https://github.com/gazebosim/gz-cmake/pull/431)
+
+1. Use default flags for RelWithDebInfo
+    * [Pull request #418](https://github.com/gazebosim/gz-cmake/pull/418)
+
+1. Use visibility hidden by default
+    * [Pull request #392](https://github.com/gazebosim/gz-cmake/pull/392)
+
+1. Replace `exec_program` with `execute_process`
+    * [Pull request #402](https://github.com/gazebosim/gz-cmake/pull/402)
+
+1. Doxygen: exclude C++ `__attribute__`
+    * [Pull request #397](https://github.com/gazebosim/gz-cmake/pull/397)
+
+1. Require cmake version 3.22.1
+    * [Pull request #396](https://github.com/gazebosim/gz-cmake/pull/396)
+
+1. CI: disable 20.04, enable 24.04
+    * [Pull request #389](https://github.com/gazebosim/gz-cmake/pull/389)
+    * [Pull request #424](https://github.com/gazebosim/gz-cmake/pull/424)
+
+1. Deprecate SuppressWarning.hh with `#warning`
+    * [Pull request #367](https://github.com/gazebosim/gz-cmake/pull/367)
+
+1. Remove ignition
+    * [Pull request #326](https://github.com/gazebosim/gz-cmake/pull/326)
+    * [Pull request #369](https://github.com/gazebosim/gz-cmake/pull/369)
+
+1. Bump major version to 4
+    * [Pull request #296](https://github.com/gazebosim/gz-cmake/pull/296)
+    * [Pull request #298](https://github.com/gazebosim/gz-cmake/pull/298)
+    * [Pull request #390](https://github.com/gazebosim/gz-cmake/pull/390)
+
 ## Gazebo CMake 3.x
+
+### Gazebo CMake 3.5.5 (2025-02-27)
+
+1. Normalize header install path
+    * [Pull request #467](https://github.com/gazebosim/gz-cmake/pull/467)
+    * [Pull request #474](https://github.com/gazebosim/gz-cmake/pull/474)
+
+1. Only find python if needed
+    * [Pull request #473](https://github.com/gazebosim/gz-cmake/pull/473)
+
+### Gazebo CMake 3.5.4 (2025-01-30)
+
+1. Accept arbitrary capitalization for coverage build type
+    * [Pull request #435](https://github.com/gazebosim/gz-cmake/pull/435)
+
+1. Fix link for Sanitizer Builds tutorial
+    * [Pull request #433](https://github.com/gazebosim/gz-cmake/pull/433)
 
 ### Gazebo CMake 3.5.3 (2024-05-02)
 
@@ -231,6 +363,31 @@
     * [Pull request #75](https://github.com/gazebosim/gz-cmake/pull/75)
 
 ## Gazebo CMake 2.x
+
+### Gazebo CMake 2.17.3 (2025-XX-XX)
+
+1. Normalize header install path (backport)
+    * [Pull request #481](https://github.com/gazebosim/gz-cmake/pull/481)
+
+1. Support for Windows conda-forge ogre-next recipe (gz-cmake2)
+    * [Pull request #464](https://github.com/gazebosim/gz-cmake/pull/464)
+
+1. Reduce example names to be able to run Conda CI on Windows (gz-cmake2)
+    * [Pull request #463](https://github.com/gazebosim/gz-cmake/pull/463)
+
+1. Accept arbitrary capitalization for coverage build type
+    * [Pull request #435](https://github.com/gazebosim/gz-cmake/pull/435)
+
+### Gazebo CMake 2.17.2 (2024-05-07)
+
+1. Backport #402: Replace `exec_program` with `execute_process`
+    * [Pull request #402](https://github.com/gazebosim/gz-cmake/pull/402)
+
+1. Remove @mxgrey as codeowner and assign maintainership to @scpeters
+    * [Pull request #414](https://github.com/gazebosim/gz-cmake/pull/414)
+
+1. Update github action workflows
+    * [Pull request #395](https://github.com/gazebosim/gz-cmake/pull/395)
 
 ### Gazebo CMake 2.17.1 (2023-08-31)
 

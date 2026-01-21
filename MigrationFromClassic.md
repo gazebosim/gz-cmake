@@ -25,12 +25,12 @@ your project is migrated properly.
 ### Clear out your top-level `CMakeLists.txt` entirely
 That's right, just throw it all out.
 
-### Begin your top-level `CMakeLists.txt` with `cmake_minimum_required(VERSION 3.10.2 FATAL_ERROR)`
+### Begin your top-level `CMakeLists.txt` with `cmake_minimum_required(VERSION 3.22.1 FATAL_ERROR)`
 
-We're migrating to 3.10 because it provides many valuable features that we are
+We're migrating to 3.22 because it provides many valuable features that we are
 now taking advantage of.
 
-### Then call `find_package(gz-cmake3 REQUIRED)`
+### Then call `find_package(gz-cmake REQUIRED)`
 
 This will find `gz-cmake` and load up all its useful features for you.
 

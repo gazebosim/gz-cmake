@@ -44,31 +44,15 @@
 #
 # ENVIRONMENT: Optional. Used to set the ENVIRONMENT property of the tests.
 #
-macro(ign_build_tests)
-  message(WARNING "ign_build_tests is deprecated, use gz_build_tests instead.")
-
+macro(gz_build_tests)
+  # Define the expected arguments
   set(options SOURCE EXCLUDE_PROJECT_LIB) # NOTE: DO NOT USE "SOURCE", we're adding it here to catch typos
   set(oneValueArgs TYPE TEST_LIST)
-  set(multiValueArgs SOURCES LIB_DEPS INCLUDE_DIRS)
+  set(multiValueArgs SOURCES LIB_DEPS INCLUDE_DIRS ENVIRONMENT)
+
+  #------------------------------------
+  # Parse the arguments
   _gz_cmake_parse_arguments(gz_build_tests "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-
-  set(gz_build_tests_skip_parsing true)
-  gz_build_tests(${PACKAGE_NAME})
-endmacro()
-macro(gz_build_tests)
-
-  # Deprecated, remove skip parsing logic in version 4
-  if (NOT gz_build_tests_skip_parsing)
-    #------------------------------------
-    # Define the expected arguments
-    set(options SOURCE EXCLUDE_PROJECT_LIB) # NOTE: DO NOT USE "SOURCE", we're adding it here to catch typos
-    set(oneValueArgs TYPE TEST_LIST)
-    set(multiValueArgs SOURCES LIB_DEPS INCLUDE_DIRS ENVIRONMENT)
-
-    #------------------------------------
-    # Parse the arguments
-    _gz_cmake_parse_arguments(gz_build_tests "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-  endif()
 
   if(NOT gz_build_tests_TYPE)
     # If you have encountered this error, you are probably migrating to the
@@ -123,7 +107,9 @@ macro(gz_build_tests)
 
     # Find the Python interpreter for running the
     # check_test_ran.py script
-    include(GzPython)
+    if(NOT Python3_Interpreter_FOUND)
+      find_package(Python3 COMPONENTS Interpreter)
+    endif()
 
     # Build all the tests
     foreach(target_name ${test_list})

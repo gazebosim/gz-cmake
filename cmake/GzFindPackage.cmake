@@ -151,32 +151,17 @@
 #                             is provided using VERSION, then this will be left
 #                             out, whether or not it is provided.
 #
-macro(ign_find_package PACKAGE_NAME)
-  message(WARNING "ign_find_package is deprecated, use gz_find_package instead.")
-
-  set(options REQUIRED PRIVATE EXACT QUIET CONFIG BUILD_ONLY PKGCONFIG_IGNORE)
-  set(VERSION PRETTY PURPOSE PKGCONFIG PKGCONFIG_LIB PKGCONFIG_VER_COMPARISON)
-  set(multiValueArgs REQUIRED_BY PRIVATE_FOR COMPONENTS OPTIONAL_COMPONENTS EXTRA_ARGS)
-  _gz_cmake_parse_arguments(gz_find_package "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-
-  set(gz_find_package_skip_parsing true)
-  gz_find_package(${PACKAGE_NAME})
-endmacro()
 macro(gz_find_package PACKAGE_NAME_)
   set(PACKAGE_NAME ${PACKAGE_NAME_})  # Allow for variable rebinds
 
-  # Deprecated, remove skip parsing logic in version 4
-  if (NOT gz_find_package_skip_parsing)
-    #------------------------------------
-    # Define the expected arguments
-    set(options REQUIRED PRIVATE EXACT QUIET CONFIG BUILD_ONLY PKGCONFIG_IGNORE)
+  # Define the expected arguments
+  set(options REQUIRED PRIVATE EXACT QUIET CONFIG BUILD_ONLY PKGCONFIG_IGNORE)
     set(oneValueArgs VERSION PRETTY PURPOSE PKGCONFIG PKGCONFIG_LIB PKGCONFIG_VER_COMPARISON)
     set(multiValueArgs REQUIRED_BY PRIVATE_FOR COMPONENTS OPTIONAL_COMPONENTS EXTRA_ARGS)
 
-    #------------------------------------
-    # Parse the arguments
-    _gz_cmake_parse_arguments(gz_find_package "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-  endif()
+  #------------------------------------
+  # Parse the arguments
+  _gz_cmake_parse_arguments(gz_find_package "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   #------------------------------------
   # Construct the arguments to pass to find_package
@@ -213,36 +198,7 @@ macro(gz_find_package PACKAGE_NAME_)
 
   #------------------------------------
   # Call find_package with the provided arguments
-
-  # TODO(CH3): Deprecated. Remove on tock.
-  if(${PACKAGE_NAME} MATCHES "^Ign")
-
-    # NOTE(CH3): Deliberately use QUIET since we expect Ign to fail
-    find_package(${${PACKAGE_NAME}_find_package_args} QUIET)
-
-    if(NOT ${PACKAGE_NAME}_FOUND)
-      # Try Gz prepended version instead!
-      string(REGEX REPLACE "^Ign(ition)?" "Gz" PACKAGE_NAME_GZ ${PACKAGE_NAME})
-
-      set(${PACKAGE_NAME_GZ}_find_package_args ${${PACKAGE_NAME}_find_package_args})
-      list(POP_FRONT ${PACKAGE_NAME_GZ}_find_package_args)
-      list(PREPEND ${PACKAGE_NAME_GZ}_find_package_args ${PACKAGE_NAME_GZ})
-
-      find_package(${${PACKAGE_NAME_GZ}_find_package_args})
-      if(${PACKAGE_NAME_GZ}_FOUND)
-
-        message(DEPRECATION "Ign prefixed package name [${PACKAGE_NAME}] is deprecated! Automatically using the Gz prefix instead: [${PACKAGE_NAME_GZ}]")
-        set(PACKAGE_NAME ${PACKAGE_NAME_GZ})
-
-      endif()
-
-    endif()
-  else()
-
-    # TODO(CH3): On removal on tock, unindent this and just have this line!!
-    find_package(${${PACKAGE_NAME}_find_package_args})
-
-  endif()
+  find_package(${${PACKAGE_NAME}_find_package_args})
 
 
   #------------------------------------

@@ -15,13 +15,13 @@
  *
 */
 
-#include <gz/component_deps/Export.hh>
+#include <gz/comp_deps/Export.hh>
 
 namespace gz
 {
-  namespace component_deps
+  namespace c_deps
   {
-    class GZ_COMPONENT_DEPS_VISIBLE AlmostEmpty
+    class GZ_COMP_DEPS_VISIBLE AlmostEmpty
     {
     };
   }

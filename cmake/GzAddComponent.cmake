@@ -42,8 +42,8 @@
 #                          inter-component dependencies in an Gazebo package.
 #
 # [INCLUDE_SUBDIR]: Optional. If specified, the public include headers for this
-#                   component will go into "ignition/<project>/<subdirectory_name>/".
-#                   If not specified, they will go into "ignition/<project>/<component>/"
+#                   component will go into "gz/<project>/<subdirectory_name>/".
+#                   If not specified, they will go into "gz/<project>/<component>/"
 #
 # [GET_TARGET_NAME]: Optional. The variable that follows this argument will be
 #                    set to the library target name that gets produced by this
@@ -71,36 +71,14 @@
 # specifying the C++ standard. If your component publicly depends on the core
 # library, then you probably do not need to specify the standard, because it
 # will get inherited from the core library.
-function(ign_add_component component_name)
-  message(WARNING "ign_add_component is deprecated, use gz_add_component instead.")
-
+function(gz_add_component component_name)
+  # Define the expected arguments
   set(options INTERFACE INDEPENDENT_FROM_PROJECT_LIB PRIVATELY_DEPENDS_ON_PROJECT_LIB INTERFACE_DEPENDS_ON_PROJECT_LIB)
   set(oneValueArgs INCLUDE_SUBDIR GET_TARGET_NAME)
   set(multiValueArgs SOURCES DEPENDS_ON_COMPONENTS)
+  #------------------------------------
+  # Parse the arguments
   cmake_parse_arguments(gz_add_component "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-
-  set(gz_add_component_skip_parsing true)
-  gz_add_component(${component_name})
-
-  # Pass the component's target name back to the caller if requested
-  if(gz_add_component_GET_TARGET_NAME)
-    set(${gz_add_component_GET_TARGET_NAME} ${${gz_add_component_GET_TARGET_NAME}} PARENT_SCOPE)
-  endif()
-endfunction()
-function(gz_add_component component_name)
-
-  # Deprecated, remove skip parsing logic in version 4
-  if (NOT gz_add_component_skip_parsing)
-    #------------------------------------
-    # Define the expected arguments
-    set(options INTERFACE INDEPENDENT_FROM_PROJECT_LIB PRIVATELY_DEPENDS_ON_PROJECT_LIB INTERFACE_DEPENDS_ON_PROJECT_LIB)
-    set(oneValueArgs INCLUDE_SUBDIR GET_TARGET_NAME)
-    set(multiValueArgs SOURCES DEPENDS_ON_COMPONENTS)
-
-    #------------------------------------
-    # Parse the arguments
-    cmake_parse_arguments(gz_add_component "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-  endif()
 
   if(POLICY CMP0079)
     cmake_policy(SET CMP0079 NEW)
@@ -276,12 +254,12 @@ function(gz_add_component component_name)
   # Add this component to the "all" target
   target_link_libraries(${PROJECT_LIBRARY_TARGET_NAME}-all INTERFACE ${lib_name})
   get_property(all_known_components TARGET ${PROJECT_LIBRARY_TARGET_NAME}-all
-    PROPERTY INTERFACE_IGN_ALL_KNOWN_COMPONENTS)
+    PROPERTY INTERFACE_GZ_ALL_KNOWN_COMPONENTS)
   if(NOT all_known_components)
     set_property(TARGET ${PROJECT_LIBRARY_TARGET_NAME}-all
-      PROPERTY INTERFACE_IGN_ALL_KNOWN_COMPONENTS "${component_target_name}")
+      PROPERTY INTERFACE_GZ_ALL_KNOWN_COMPONENTS "${component_target_name}")
   else()
     set_property(TARGET ${PROJECT_LIBRARY_TARGET_NAME}-all
-      PROPERTY INTERFACE_IGN_ALL_KNOWN_COMPONENTS "${all_known_components};${component_target_name}")
+      PROPERTY INTERFACE_GZ_ALL_KNOWN_COMPONENTS "${all_known_components};${component_target_name}")
   endif()
 endfunction()

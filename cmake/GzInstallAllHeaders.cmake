@@ -20,11 +20,6 @@
 #
 # You MUST pass in targets to include, not directory names. We must not use
 # explicit directory names here if we want our package to be relocatable.
-function(ign_target_interface_include_directories name)
-  message(WARNING "ign_target_interface_include_directories is deprecated, use gz_target_interface_include_directories instead.")
-
-  gz_target_interface_include_directories(name)
-endfunction()
 function(gz_target_interface_include_directories name)
 
   foreach(include_target ${ARGN})
@@ -36,10 +31,6 @@ function(gz_target_interface_include_directories name)
 endfunction()
 
 #################################################
-macro(ign_install_includes _subdir)
-  message(WARNING "ign_install_includes is deprecated, use gz_install_includes instead.")
-  gz_install_includes(${_subdir} ${ARGN})
-endmacro()
 macro(gz_install_includes _subdir)
   install(FILES ${ARGN}
     DESTINATION ${GZ_INCLUDE_INSTALL_DIR}/${_subdir} COMPONENT headers)
@@ -73,31 +64,14 @@ endmacro()
 # If the COMPONENT option is specified, this will skip over configuring a
 # config.hh file since it would be redundant with the core library.
 #
-function(ign_install_all_headers)
-  message(WARNING "ign_install_all_headers is deprecated, use gz_install_all_headers instead.")
-
+function(gz_install_all_headers)
+  # Define the expected arguments
   set(options)
   set(oneValueArgs COMPONENT)
   set(multiValueArgs EXCLUDE_FILES EXCLUDE_DIRS GENERATED_HEADERS)
+  #------------------------------------
+  # Parse the arguments
   _gz_cmake_parse_arguments(gz_install_all_headers "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-
-  set(gz_install_all_headers_skip_parsing true)
-  gz_install_all_headers()
-endfunction()
-function(gz_install_all_headers)
-
-  # Deprecated, remove skip parsing logic in version 4
-  if (NOT gz_install_all_headers_skip_parsing)
-    #------------------------------------
-    # Define the expected arguments
-    set(options)
-    set(oneValueArgs COMPONENT)
-    set(multiValueArgs EXCLUDE_FILES EXCLUDE_DIRS GENERATED_HEADERS)
-
-    #------------------------------------
-    # Parse the arguments
-    _gz_cmake_parse_arguments(gz_install_all_headers "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-  endif()
 
   #------------------------------------
   # Build the list of directories
@@ -179,37 +153,40 @@ function(gz_install_all_headers)
       set(gz_headers "${gz_headers}#include <${PROJECT_INCLUDE_DIR}/${header}>\n")
   endforeach()
 
-  set(ign_headers ${gz_headers})  # TODO(CH3): Deprecated. Remove on tock.
-
   if(gz_install_all_headers_COMPONENT)
 
     set(component_name ${gz_install_all_headers_COMPONENT})
 
-    # Define the install directory for the component meta header
-    set(meta_header_install_dir ${GZ_INCLUDE_INSTALL_DIR_FULL}/${PROJECT_INCLUDE_DIR}/${component_name})
+    # Define the install directory for the "config" header
+    # The "meta" header will be installed one folder above this
+    set(config_header_install_dir ${GZ_INCLUDE_INSTALL_DIR_FULL}/${PROJECT_INCLUDE_DIR}/${component_name})
 
-    # Define the input/output of the configuration for the component "master" header
-    set(master_header_in ${GZ_CMAKE_DIR}/gz_auto_headers.hh.in)
-    set(master_header_out ${CMAKE_CURRENT_BINARY_DIR}/${component_name}.hh)
+    # Define the input/output of the configuration for the component "meta" header
+    set(meta_header_in ${GZ_CMAKE_DIR}/gz_auto_headers.hh.in)
+    set(meta_header_out ${CMAKE_CURRENT_BINARY_DIR}/${component_name}.hh)
 
   else()
 
-    # Define the install directory for the core master meta header
-    set(meta_header_install_dir ${GZ_INCLUDE_INSTALL_DIR_FULL}/${PROJECT_INCLUDE_DIR})
+    # Define the install directory for the "config" header
+    # The core "meta" header will be installed one folder above this
+    set(config_header_install_dir ${GZ_INCLUDE_INSTALL_DIR_FULL}/${PROJECT_INCLUDE_DIR})
 
-    # Define the input/output of the configuration for the core "master" header
-    set(master_header_in ${GZ_CMAKE_DIR}/gz_auto_headers.hh.in)
-    set(master_header_out ${CMAKE_CURRENT_BINARY_DIR}/../${GZ_DESIGNATION}.hh)
+    # Define the input/output of the configuration for the core "meta" header
+    set(meta_header_in ${GZ_CMAKE_DIR}/gz_auto_headers.hh.in)
+    set(meta_header_out ${CMAKE_CURRENT_BINARY_DIR}/../${GZ_DESIGNATION}.hh)
 
   endif()
 
-  # Generate the "master" header that includes all of the headers
-  configure_file(${master_header_in} ${master_header_out})
+  # Generate the install directory for the "meta" header one folder above the "config" header
+  cmake_path(SET meta_header_install_dir NORMALIZE ${config_header_install_dir}/..)
 
-  # Install the "master" header
+  # Generate the "meta" header that includes all of the headers
+  configure_file(${meta_header_in} ${meta_header_out})
+
+  # Install the "meta" header
   install(
-    FILES ${master_header_out}
-    DESTINATION ${meta_header_install_dir}/..
+    FILES ${meta_header_out}
+    DESTINATION ${meta_header_install_dir}
     COMPONENT headers)
 
   # Define the input/output of the configuration for the "config" header
@@ -235,7 +212,7 @@ function(gz_install_all_headers)
     # Install the "config" header
     install(
       FILES ${config_header_out}
-      DESTINATION ${meta_header_install_dir}
+      DESTINATION ${config_header_install_dir}
       COMPONENT headers)
 
   endif()

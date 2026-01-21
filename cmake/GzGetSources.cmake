@@ -17,13 +17,6 @@
 # From the current directory, grab all the source files and place them into
 # <sources>. Remove their paths to make them suitable for passing into
 # gz_add_[library/tests].
-function(ign_get_sources sources_var)
-  message(WARNING "ign_get_sources is deprecated, use gz_get_sources instead.")
-
-  gz_get_sources(${sources_var})
-
-  set(${sources_var} ${${sources_var}} PARENT_SCOPE)
-endfunction()
 function(gz_get_sources sources_var)
 
   # GLOB all the source files

@@ -12,10 +12,6 @@
 # limitations under the License.
 
 #################################################
-macro(ign_install_executable _name )
-  message(WARNING "ign_install_executable is deprecated, use gz_install_executable instead.")
-  gz_install_executable(${_name} ${ARGN})
-endmacro()
 macro(gz_install_executable _name)
   set_target_properties(${_name} PROPERTIES VERSION ${PROJECT_VERSION_FULL})
   install (TARGETS ${_name} DESTINATION ${GZ_BIN_INSTALL_DIR})
@@ -23,10 +19,6 @@ macro(gz_install_executable _name)
 endmacro()
 
 #################################################
-macro(ign_add_executable _name)
-  message(WARNING "ign_add_executable is deprecated, use gz_add_executable instead.")
-  gz_add_executable(${_name} ${ARGN})
-endmacro()
 macro(gz_add_executable _name)
   add_executable(${_name} ${ARGN})
   target_link_libraries(${_name} ${general_libraries})
@@ -64,38 +56,18 @@ endmacro()
 #                      will also skip the step of copying the runtime library
 #                      into your executable's directory.
 #
-macro(ign_build_executables)
-  message(WARNING "ign_build_executables is deprecated, use gz_build_executables instead.")
-
+macro(gz_build_executables)
+  # Define the expected arguments
   set(options EXCLUDE_PROJECT_LIB)
   set(oneValueArgs PREFIX EXEC_LIST)
   set(multiValueArgs SOURCES LIB_DEPS INCLUDE_DIRS)
+
   if(gz_build_executables_EXEC_LIST)
     set(${gz_build_executables_EXEC_LIST} "")
   endif()
+  #------------------------------------
+  # Parse the arguments
   _gz_cmake_parse_arguments(gz_build_executables "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-
-  set(gz_build_executables_skip_parsing true)
-  gz_build_executables(${PACKAGE_NAME})
-endmacro()
-macro(gz_build_executables)
-
-  # Deprecated, remove skip parsing logic in version 4
-  if (NOT gz_build_executables_skip_parsing)
-    #------------------------------------
-    # Define the expected arguments
-    set(options EXCLUDE_PROJECT_LIB)
-    set(oneValueArgs PREFIX EXEC_LIST)
-    set(multiValueArgs SOURCES LIB_DEPS INCLUDE_DIRS)
-
-    if(gz_build_executables_EXEC_LIST)
-      set(${gz_build_executables_EXEC_LIST} "")
-    endif()
-
-    #------------------------------------
-    # Parse the arguments
-    _gz_cmake_parse_arguments(gz_build_executables "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-  endif()
 
   foreach(exec_file ${gz_build_executables_SOURCES})
 
