@@ -14,12 +14,6 @@
 1. Replace join_paths with cmake_path(APPEND)
     * [Pull request #498](https://github.com/gazebosim/gz-cmake/pull/498)
 
-1. Avoid warnings on unused CMAKE_BUILD_TYPE on Windows (#487)
-    * [Pull request #490](https://github.com/gazebosim/gz-cmake/pull/490)
-
-1. Avoid warnings on unused CMAKE_BUILD_TYPE on Windows (#487)
-    * [Pull request #488](https://github.com/gazebosim/gz-cmake/pull/488)
-
 1. Normalize header install path (backport)
     * [Pull request #481](https://github.com/gazebosim/gz-cmake/pull/481)
 
