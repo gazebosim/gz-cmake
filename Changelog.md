@@ -1,5 +1,32 @@
 ## Gazebo CMake 3.x
 
+### Gazebo CMake 3.5.6 (2026-01-26)
+
+1. Fix dead material-design-lite links
+    * [Pull request #514](https://github.com/gazebosim/gz-cmake/pull/514)
+
+1. Avoid warnings on unused CMAKE_BUILD_TYPE on Windows
+    * [Pull request #487](https://github.com/gazebosim/gz-cmake/pull/487)
+
+1. Reduce example names to be able to run Conda CI on Windows
+    * [Pull request #476](https://github.com/gazebosim/gz-cmake/pull/476)
+    * [Pull request #463](https://github.com/gazebosim/gz-cmake/pull/463)
+
+1. Shorten build type string in example builds
+    * [Pull request #478](https://github.com/gazebosim/gz-cmake/pull/478)
+
+1. Normalize header install path
+    * [Pull request #481](https://github.com/gazebosim/gz-cmake/pull/481)
+
+1. Support for Windows conda-forge ogre-next recipe
+    * [Pull request #464](https://github.com/gazebosim/gz-cmake/pull/464)
+
+1. Accept arbitrary capitalization for coverage build type
+    * [Pull request #435](https://github.com/gazebosim/gz-cmake/pull/435)
+
+1.  Replace `exec_program` with `execute_process`
+    * [Pull request #402](https://github.com/gazebosim/gz-cmake/pull/402)
+
 ### Gazebo CMake 3.5.5 (2025-02-27)
 
 1. Normalize header install path
