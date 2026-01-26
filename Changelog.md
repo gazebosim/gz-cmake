@@ -15,9 +15,6 @@
 1. Shorten build type string in example builds
     * [Pull request #478](https://github.com/gazebosim/gz-cmake/pull/478)
 
-1. Normalize header install path
-    * [Pull request #481](https://github.com/gazebosim/gz-cmake/pull/481)
-
 1. Support for Windows conda-forge ogre-next recipe
     * [Pull request #464](https://github.com/gazebosim/gz-cmake/pull/464)
 
