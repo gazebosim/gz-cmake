@@ -1,5 +1,10 @@
 ## Gazebo CMake 5.x
 
+### Gazebo CMake 5.0.1 (2026-01-26)
+
+1. Fix dead material-design-lite links
+    * [Pull request #514](https://github.com/gazebosim/gz-cmake/pull/514)
+
 ### Gazebo CMake 5.0.0 (2025-09-30)
 
 1. **Baseline:** this includes all changes from 4.2.0 and earlier.
