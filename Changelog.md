@@ -1,14 +1,23 @@
 ## Gazebo CMake 2.x
 
-### Gazebo CMake 2.17.3 (2025-XX-XX)
+### Gazebo CMake 2.17.3 (2026-01-26)
 
-1. Normalize header install path (backport)
+1. Fix dead material-design-lite links
+    * [Pull request #514](https://github.com/gazebosim/gz-cmake/pull/514)
+
+1. Fortress: disable Ubuntu Focal CI
+    * [Pull request #512](https://github.com/gazebosim/gz-cmake/pull/512)
+
+1. Avoid warnings on unused CMAKE_BUILD_TYPE on Windows
+    * [Pull request #487](https://github.com/gazebosim/gz-cmake/pull/487)
+
+1. Normalize header install path
     * [Pull request #481](https://github.com/gazebosim/gz-cmake/pull/481)
 
-1. Support for Windows conda-forge ogre-next recipe (gz-cmake2)
+1. Support for Windows conda-forge ogre-next recipe
     * [Pull request #464](https://github.com/gazebosim/gz-cmake/pull/464)
 
-1. Reduce example names to be able to run Conda CI on Windows (gz-cmake2)
+1. Reduce example names to be able to run Conda CI on Windows
     * [Pull request #463](https://github.com/gazebosim/gz-cmake/pull/463)
 
 1. Accept arbitrary capitalization for coverage build type

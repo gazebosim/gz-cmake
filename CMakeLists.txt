@@ -22,7 +22,7 @@ include(IgnCMake)
 # Set up the project
 ign_configure_project(
   REPLACE_IGNITION_INCLUDE_PATH gz/cmake
-  VERSION_SUFFIX pre1
+  VERSION_SUFFIX
 )
 
 #--------------------------------------
