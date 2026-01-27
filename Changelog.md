@@ -1,5 +1,34 @@
 ## Gazebo CMake 4.x
 
+### Gazebo CMake 4.2.1 (2026-01-26)
+
+1. Fix dead material-design-lite links
+    * [Pull request #514](https://github.com/gazebosim/gz-cmake/pull/514)
+
+1. Package doxygen is not required to build from source.
+    * [Pull request #503](https://github.com/gazebosim/gz-cmake/pull/503)
+
+1. Added doxygen in documentation for requirements and code snippet formatting changes
+    * [Pull request #502](https://github.com/gazebosim/gz-cmake/pull/502)
+
+1. Replace join_paths with cmake_path(APPEND)
+    * [Pull request #498](https://github.com/gazebosim/gz-cmake/pull/498)
+
+1. Normalize header install path (backport)
+    * [Pull request #481](https://github.com/gazebosim/gz-cmake/pull/481)
+
+1. Support for Windows conda-forge ogre-next recipe
+    * [Pull request #464](https://github.com/gazebosim/gz-cmake/pull/464)
+
+1. Reduce example names to be able to run Conda CI on Windows
+    * [Pull request #463](https://github.com/gazebosim/gz-cmake/pull/463)
+
+1. Accept arbitrary capitalization for coverage build type
+    * [Pull request #435](https://github.com/gazebosim/gz-cmake/pull/435)
+
+1. Replace `exec_program` with `execute_process`
+    * [Pull request #402](https://github.com/gazebosim/gz-cmake/pull/402)
+
 ### Gazebo CMake 4.2.0 (2025-04-25)
 
 1. **Baseline:** this includes all changes from 4.1.1 and earlier.
