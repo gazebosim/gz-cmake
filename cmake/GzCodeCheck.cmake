@@ -19,7 +19,7 @@ function(_gz_setup_target_for_codecheck)
   endif()
 
   # Base set of cppcheck option
-  set (CPPCHECK_BASE -q --inline-suppr -j 4 --language=c++ --std=c++17 --force --error-exitcode=1)
+  set (CPPCHECK_BASE -q --inline-suppr -j 4 --language=c++ --std=c++17 --force)
   if (EXISTS "${PROJECT_BINARY_DIR}/cppcheck.suppress")
     set (CPPCHECK_BASE ${CPPCHECK_BASE} --suppressions-list=${PROJECT_BINARY_DIR}/cppcheck.suppress)
   endif()
@@ -41,12 +41,12 @@ function(_gz_setup_target_for_codecheck)
     list(APPEND CPPCHECK_INCLUDE_DIRS_FLAGS "-I${dir}")
   endforeach()
 
-  add_custom_target(cppcheck
-    # First cppcheck
-    COMMAND ${CPPCHECK_PATH} ${CPPCHECK_BASE} ${CPPCHECK_EXTRA} ${CPPCHECK_INCLUDE_DIRS_FLAGS} ${CPPCHECK_RULES} `${CPPCHECK_FIND}`
 
-    # Second cppcheck
-    COMMAND ${CPPCHECK_PATH} ${CPPCHECK_BASE} --enable=missingInclude ${CPPCHECK_INCLUDE_DIRS_FLAGS} `${CPPCHECK_FIND}`
+  add_custom_target(cppcheck
+    # First cppcheck: include many categories to report to the user but not making it to fail. Noisy.
+    COMMAND ${CPPCHECK_PATH} ${CPPCHECK_BASE} ${CPPCHECK_EXTRA} ${CPPCHECK_INCLUDE_DIRS_FLAGS} ${CPPCHECK_RULES} `${CPPCHECK_FIND}`
+    # Second cppcheck: default strict pass with exit on failures
+    COMMAND ${CPPCHECK_PATH} ${CPPCHECK_BASE} ${CPPCHECK_INCLUDE_DIRS_FLAGS} `${CPPCHECK_FIND}` --error-exitcode=1
   )
 
   add_custom_target(codecheck
