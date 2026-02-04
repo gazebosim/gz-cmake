@@ -46,7 +46,7 @@ function(_gz_setup_target_for_codecheck)
     COMMAND ${CPPCHECK_PATH} ${CPPCHECK_BASE} ${CPPCHECK_EXTRA} ${CPPCHECK_INCLUDE_DIRS_FLAGS} ${CPPCHECK_RULES} `${CPPCHECK_FIND}`
 
     # Second cppcheck
-    COMMAND ${CPPCHECK_PATH} ${CPPCHECK_BASE} --enable=missingInclude `${CPPCHECK_FIND}`
+    COMMAND ${CPPCHECK_PATH} ${CPPCHECK_BASE} --enable=missingInclude ${CPPCHECK_INCLUDE_DIRS_FLAGS} `${CPPCHECK_FIND}`
   )
 
   add_custom_target(codecheck
