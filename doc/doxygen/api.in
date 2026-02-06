@@ -956,7 +956,12 @@ INPUT_FILTER           =
 # need to set EXTENSION_MAPPING for the extension otherwise the files are not
 # properly processed by doxygen.
 
+<<<<<<< HEAD
 FILTER_PATTERNS        = *.hh="sed -e 's/inline\snamespace\s.*\s{$\|gz::@GZ_DESIGNATION@::\|IGN_DEPRECATED([0-9\.]\+)\|IGNITION_@GZ_DESIGNATION_UPPER@_VISIBLE//g'"
+=======
+FILTER_PATTERNS        = *.hh="sed -e 's/inline\snamespace\s.*\s{$\|gz::@GZ_DESIGNATION@::\|GZ_DEPRECATED([0-9\.]\+)\|GZ_@GZ_DESIGNATION_UPPER@_VISIBLE//g'" \
+                         *.h="sed -e 's/GZ_DEPRECATED([0-9\.]\+)\|GZ_@GZ_DESIGNATION_UPPER@_VISIBLE//g'"
+>>>>>>> 8e87733 (Add a Doxygen filter for .h files (#523))
 
 # If the FILTER_SOURCE_FILES tag is set to YES, the input filter (if set using
 # INPUT_FILTER) will also be used to filter the input files that are used for
