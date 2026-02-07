@@ -83,12 +83,12 @@ endif()
 # gz-cmake modification: added "gz_" prefix to macro name
 macro(gz_OPTIX_find_api_library name version)
   find_library(${name}_LIBRARY
-    NAMES ${name}.${version} ${name}
+    NAMES nv${name}.${version} nv${name}
     PATHS "${OptiX_INSTALL_DIR}/lib${bit_dest}"
     NO_DEFAULT_PATH
     )
   find_library(${name}_LIBRARY
-    NAMES ${name}.${version} ${name}
+    NAMES nv${name}.${version} nv${name}
     )
   if(WIN32)
     find_file(${name}_DLL
@@ -109,7 +109,7 @@ gz_OPTIX_find_api_library(optix_prime 1)
 # Include
 find_path(OptiX_INCLUDE
   NAMES optix.h
-  PATHS "${OptiX_INSTALL_DIR}/include"
+  PATHS "$ENV{OPTIX_INSTALL_DIR}/include"
   NO_DEFAULT_PATH
   )
 find_path(OptiX_INCLUDE
