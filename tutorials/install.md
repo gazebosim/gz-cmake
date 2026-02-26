@@ -20,7 +20,7 @@ On Ubuntu, it's possible to install Gazebo CMake as follows:
 Add OSRF packages:
   ```
   echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list
-  sudo apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys D2486D2DD83DB69272AFE98867170598AF249743
+  wget http://packages.osrfoundation.org/gazebo.key -O - | sudo apt-key add -
   sudo apt update
   ```
 
