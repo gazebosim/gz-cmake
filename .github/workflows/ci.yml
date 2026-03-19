@@ -19,5 +19,6 @@ jobs:
         id: ci
         uses: gazebo-tooling/action-gz-ci@noble
         with:
+          gzdev-project-name: rotary
           cmake-args: '-DBUILDSYSTEM_TESTING=True -DGZ_ENABLE_RELOCATABLE_INSTALL=True'
 
