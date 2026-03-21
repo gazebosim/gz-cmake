@@ -296,16 +296,26 @@ macro(_gz_setup_msvc)
     # performance and can be helpful for debugging.
     set(MSVC_DEBUG_FLAGS "${MSVC_MINIMAL_FLAGS} /Zi")
 
-    # GL: Enable Whole Program Optimization
-    set(MSVC_RELEASE_FLAGS "${MSVC_DEBUG_FLAGS} /GL")
+    option(GZ_MSVC_WPO "Enable Whole Program Optimization on MSVC" ON)
+    if(GZ_MSVC_WPO)
+      # GL: Enable Whole Program Optimization
+      set(MSVC_RELEASE_FLAGS "${MSVC_DEBUG_FLAGS} /GL")
 
-    # Use Release flags for RelWithDebInfo
-    set(MSVC_RELWITHDEBINFO_FLAGS "${MSVC_RELEASE_FLAGS}")
+      # Use Release flags for RelWithDebInfo
+      set(MSVC_RELWITHDEBINFO_FLAGS "${MSVC_RELEASE_FLAGS}")
 
-    # INCREMENTAL:NO fix LNK4075 warning
-    # LTCG: need when using /GL above
-    #  see https://docs.microsoft.com/en-us/cpp/build/reference/gl-whole-program-optimization
-    set(MSVC_RELWITHDEBINFO_LINKER_FLAGS "/INCREMENTAL:NO /LTCG")
+      # LTCG: need when using /GL above
+      set(MSVC_RELEASE_LINKER_FLAGS "/LTCG")
+
+      # INCREMENTAL:NO fix LNK4075 warning
+      #  see https://docs.microsoft.com/en-us/cpp/build/reference/gl-whole-program-optimization
+      set(MSVC_RELWITHDEBINFO_LINKER_FLAGS "/INCREMENTAL:NO /LTCG")
+    else()
+      set(MSVC_RELEASE_FLAGS "${MSVC_DEBUG_FLAGS}")
+      set(MSVC_RELWITHDEBINFO_FLAGS "${MSVC_RELEASE_FLAGS}")
+      set(MSVC_RELEASE_LINKER_FLAGS "")
+      set(MSVC_RELWITHDEBINFO_LINKER_FLAGS "/INCREMENTAL:NO")
+    endif()
 
     # cmake automatically provides /Zi /Ob0 /Od /RTC1
     set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} ${MSVC_DEBUG_FLAGS}")
@@ -314,11 +324,16 @@ macro(_gz_setup_msvc)
     # cmake automatically provides /O2 /Ob2 /DNDEBUG
     set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} ${MSVC_RELEASE_FLAGS}")
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${MSVC_RELEASE_FLAGS}")
+    set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "${CMAKE_SHARED_LINKER_FLAGS_RELEASE} ${MSVC_RELEASE_LINKER_FLAGS}")
+    set(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} ${MSVC_RELEASE_LINKER_FLAGS}")
+    set(CMAKE_STATIC_LINKER_FLAGS_RELEASE "${CMAKE_STATIC_LINKER_FLAGS_RELEASE} ${MSVC_RELEASE_LINKER_FLAGS}")
 
     # cmake automatically provides /Zi /O2 /Ob1 /DNDEBUG
     set(CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO} ${MSVC_RELWITHDEBINFO_FLAGS}")
     set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} ${MSVC_RELWITHDEBINFO_FLAGS}")
     set(CMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO "${CMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO} ${MSVC_RELWITHDEBINFO_LINKER_FLAGS}")
+    set(CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO "${CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO} ${MSVC_RELWITHDEBINFO_LINKER_FLAGS}")
+    set(CMAKE_STATIC_LINKER_FLAGS_RELWITHDEBINFO "${CMAKE_STATIC_LINKER_FLAGS_RELWITHDEBINFO} ${MSVC_RELWITHDEBINFO_LINKER_FLAGS}")
 
     # cmake automatically provides /O1 /Ob1 /DNDEBUG
     set(CMAKE_C_FLAGS_MINSIZEREL "${CMAKE_C_FLAGS_MINSIZEREL} ${MSVC_MINIMAL_FLAGS}")
