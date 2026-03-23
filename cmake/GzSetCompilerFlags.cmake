@@ -289,7 +289,9 @@ macro(_gz_setup_msvc)
     # W2: Warning level 2: significant warnings.
     #     TODO: Recommend Wall in the future.
     #     Note: MSVC /Wall generates tons of warnings on gtest code.
-    set(MSVC_MINIMAL_FLAGS "/Gy /W2")
+    # bigobj: Increase the number of sections in an object file, which is often needed
+    #         for complex templated code or when using Whole Program Optimization (/GL).
+    set(MSVC_MINIMAL_FLAGS "/Gy /W2 /bigobj")
 
     # Zi: Produce complete debug information
     # Note: We provide Zi to ordinary release mode because it does not impact
