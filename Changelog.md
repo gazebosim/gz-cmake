@@ -1,5 +1,13 @@
 ## Gazebo CMake 5.x
 
+### Gazebo CMake 5.1.0 (2026-04-07)
+
+1. Make Whole Program Optimization (WPO) optional on MSVC
+    * [Pull request #532](https://github.com/gazebosim/gz-cmake/pull/532)
+
+1. Fix broken kerserver url by replacing with wget
+    * [Pull request #529](https://github.com/gazebosim/gz-cmake/pull/529)
+
 ### Gazebo CMake 5.0.2 (2026-02-11)
 
 1. Add a Doxygen filter for .h files
