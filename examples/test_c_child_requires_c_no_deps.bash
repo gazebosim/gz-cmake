@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 TEST_STATUS=0
 
 echo

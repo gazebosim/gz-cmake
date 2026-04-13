@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Verify that cmake_minimum_required statements have matching version numbers
 
 export CMAKE_FILES_TO_CHECK="
