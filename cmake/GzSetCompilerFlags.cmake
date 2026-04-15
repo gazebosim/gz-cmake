@@ -128,6 +128,15 @@ macro(_gz_setup_gcc_or_clang)
         -Wshadow -Winit-self -Wswitch-default -Wmissing-include-dirs -pedantic
         )
 
+  if(CLANG)
+    # Suppress warning about variadic macro arguments in gtest.
+    # This is needed for tests in gz-physics on macOS.
+    _gz_filter_valid_compiler_options(
+      CUSTOM_ALL_FLAGS
+          -Wno-variadic-macro-arguments-omitted
+          )
+  endif()
+
   # -ggdb3: Produce comprehensive debug information that can be utilized by gdb
   set(CUSTOM_DEBUG_FLAGS "-ggdb3")
 
