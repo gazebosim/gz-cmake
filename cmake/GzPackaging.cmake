@@ -54,7 +54,9 @@ macro(_gz_setup_packages)
 
   list(APPEND CPACK_SOURCE_GENERATOR "TBZ2")
   list(APPEND CPACK_SOURCE_GENERATOR "ZIP")
-  list(APPEND CPACK_SOURCE_IGNORE_FILES "TODO;\.hg/;\.sw.$;/build/;\.hgtags;\.hgignore;appveyor\.yml;\.travis\.yml;codecov\.yml")
+  list(APPEND CPACK_SOURCE_IGNORE_FILES
+    /\\\\.git/
+    "TODO;\.hg/;\.sw.$;/build/;\.hgtags;\.hgignore;appveyor\.yml;\.travis\.yml;codecov\.yml")
 
   include(InstallRequiredSystemLibraries)
 
