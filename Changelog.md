@@ -1,5 +1,14 @@
 ## Gazebo CMake 5.x
 
+### Gazebo CMake 5.1.1 (2026-05-13)
+
+1. cpack should exclude .git/ from tarballs
+    * [Pull request #552](https://github.com/gazebosim/gz-cmake/pull/552)
+
+1. Use portable shebang (#!/usr/bin/env bash) for bash scripts
+    * [Pull request #542](https://github.com/gazebosim/gz-cmake/pull/542)
+    * [Pull request #543](https://github.com/gazebosim/gz-cmake/pull/543)
+
 ### Gazebo CMake 5.1.0 (2026-04-07)
 
 1. Guard GL3Plus include path in FindGzOGRE2
