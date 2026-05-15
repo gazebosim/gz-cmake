@@ -1,5 +1,23 @@
 ## Gazebo CMake 2.x
 
+### Gazebo CMake 2.18.0 (2026-05-14)
+
+1. cpack should exclude .git/ from tarballs
+    * [Pull request #552](https://github.com/gazebosim/gz-cmake/pull/552)
+    * [Pull request #556](https://github.com/gazebosim/gz-cmake/pull/556)
+
+1. Use portable shebang (#!/usr/bin/env bash) for bash scripts
+    * [Pull request #542](https://github.com/gazebosim/gz-cmake/pull/542)
+    * [Pull request #546](https://github.com/gazebosim/gz-cmake/pull/546)
+
+1. Make Whole Program Optimization (WPO) optional on MSVC
+    * [Pull request #532](https://github.com/gazebosim/gz-cmake/pull/532)
+    * [Pull request #536](https://github.com/gazebosim/gz-cmake/pull/536)
+
+1. Add a Doxygen filter for .h files (backport #523)
+    * [Pull request #523](https://github.com/gazebosim/gz-cmake/pull/523)
+    * [Pull request #527](https://github.com/gazebosim/gz-cmake/pull/527)
+
 ### Gazebo CMake 2.17.3 (2026-01-26)
 
 1. Fix dead material-design-lite links
