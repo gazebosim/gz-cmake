@@ -7,7 +7,6 @@
     * [Pull request #556](https://github.com/gazebosim/gz-cmake/pull/556)
 
 1. Use portable shebang (#!/usr/bin/env bash) for bash scripts
-    * [Pull request #!/usr/bin/env bash) for bash scripts (#542](https://github.com/gazebosim/gz-cmake/pull/!/usr/bin/env bash) for bash scripts (#542)
     * [Pull request #542](https://github.com/gazebosim/gz-cmake/pull/542)
     * [Pull request #546](https://github.com/gazebosim/gz-cmake/pull/546)
 
