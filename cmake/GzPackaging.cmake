@@ -52,6 +52,11 @@ macro(_gz_setup_packages)
     find_program(RPMBUILD_PROGRAM rpmbuild)
   endif()
 
+  # For reproducibility, use new behavior of CMP0206 to default UID, GID to zero in archives
+  if(POLICY CMP0206)
+    cmake_policy(SET CMP0206 NEW)
+  endif()
+
   list(APPEND CPACK_SOURCE_GENERATOR "TBZ2")
   list(APPEND CPACK_SOURCE_GENERATOR "ZIP")
   list(APPEND CPACK_SOURCE_IGNORE_FILES
