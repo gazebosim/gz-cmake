@@ -24,7 +24,16 @@
 # support shared library versions of Protobuf.
 
 include(IgnPkgConfig)
-ign_pkg_config_entry(IgnProtobuf "protobuf >= ${IgnProtobuf_FIND_VERSION}")
+# Only add a version constraint to the pkg-config entry when a version was
+# actually requested. Otherwise the entry would be "protobuf >= " with a
+# dangling operator and no version, which makes pkg-config consume the next
+# token in the Requires line as protobuf's version, silently dropping that
+# dependency. See https://github.com/gazebosim/gz-msgs/issues/594
+if(IgnProtobuf_FIND_VERSION)
+  ign_pkg_config_entry(IgnProtobuf "protobuf >= ${IgnProtobuf_FIND_VERSION}")
+else()
+  ign_pkg_config_entry(IgnProtobuf "protobuf")
+endif()
 
 find_package(Protobuf ${IgnProtobuf_FIND_VERSION} QUIET CONFIG)
 
