@@ -1,5 +1,10 @@
 ## Gazebo CMake 2.x
 
+### Gazebo CMake 2.19.0 (2026-06-12)
+
+1. Avoid dangling pkg-config version when IgnProtobuf has no version
+    * [Pull request #567](http://github.com/gazebosim/gz-cmake/pull/567)
+
 ### Gazebo CMake 2.18.0 (2026-05-14)
 
 1. cpack should exclude .git/ from tarballs
