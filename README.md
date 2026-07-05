@@ -51,6 +51,9 @@ These modules are tailored to the Gazebo projects, so their use for non-Gazebo p
 
 # Install
 
+For complete platform-specific installation instructions, see the
+[Gazebo CMake installation guide](https://gazebosim.org/api/cmake/4/install.html).
+
 We recommend following the [Binary Install](#binary-install) instructions to get up and running as quickly and painlessly as possible.
 
 The [Source Install](#source-install) instructions should be used if you need the very latest software improvements, you need to modify the code, or you plan to make a contribution.
