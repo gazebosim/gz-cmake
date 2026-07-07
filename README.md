@@ -52,7 +52,7 @@ These modules are tailored to the Gazebo projects, so their use for non-Gazebo p
 # Install
 
 For complete platform-specific installation instructions, see the
-[Gazebo CMake installation guide](https://gazebosim.org/api/cmake/4/install.html).
+[Gazebo CMake installation guide](https://github.com/gazebosim/gz-cmake/blob/main/tutorials/install.md).
 
 We recommend following the [Binary Install](#binary-install) instructions to get up and running as quickly and painlessly as possible.
 
