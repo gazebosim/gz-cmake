@@ -41,6 +41,13 @@
 # TAGFILES: Optional. Specify tagfiles for doxygen to use. It should be a list of strings like:
 #           "${IGNITION-<DESIGNATION>_DOXYGEN_TAGFILE} = ${IGNITION-<DESIGNATION>_API_URL}"
 function(ign_create_docs)
+  # Control CMP0219 policy (Macro invocations preserve backslashes in arguments)
+  # Needed for: gz_string_append
+  # See https://github.com/gazebosim/gz-cmake/issues/570
+  cmake_policy(PUSH)
+  if(POLICY CMP0219)
+    cmake_policy(SET CMP0219 OLD)
+  endif()
 
   #------------------------------------
   # Define the expected arguments
@@ -194,7 +201,9 @@ function(ign_create_docs)
   if (DOC_ONLY)
     message(WARNING "Configuration was done in DOC_ONLY mode."
     " You can build documentation (make doc), but nothing else.")
+    cmake_policy(POP)
     return()
   endif()
 
+  cmake_policy(POP)
 endfunction()

@@ -139,6 +139,13 @@
 #                             out, whether or not it is provided.
 #
 macro(ign_find_package PACKAGE_NAME)
+  # Control CMP0219 policy (Macro invocations preserve backslashes in arguments)
+  # Needed for: gz_string_append
+  # See https://github.com/gazebosim/gz-cmake/issues/570
+  if(POLICY CMP0219)
+    cmake_policy(PUSH)
+    cmake_policy(SET CMP0219 OLD)
+  endif()
 
   #------------------------------------
   # Define the expected arguments
@@ -452,6 +459,9 @@ macro(ign_find_package PACKAGE_NAME)
 
   endif()
 
+  if(POLICY CMP0219)
+    cmake_policy(POP)
+  endif()
 endmacro()
 
 #################################################
@@ -466,6 +476,13 @@ endmacro()
 #
 # Macro to append a value to a string
 macro(ign_string_append output_var val)
+  # Control CMP0219 policy (Macro invocations preserve backslashes in arguments)
+  # Needed for: _gz_cmake_parse_arguments
+  # See https://github.com/gazebosim/gz-cmake/issues/570
+  if(POLICY CMP0219)
+    cmake_policy(PUSH)
+    cmake_policy(SET CMP0219 OLD)
+  endif()
 
   #------------------------------------
   # Define the expected arguments
@@ -499,6 +516,9 @@ macro(ign_string_append output_var val)
     set(${output_var} "${${output_var}}" PARENT_SCOPE)
   endif()
 
+  if(POLICY CMP0219)
+    cmake_policy(POP)
+  endif()
 endmacro()
 
 #################################################
@@ -1096,6 +1116,13 @@ endfunction()
 # library, then you probably do not need to specify the standard, because it
 # will get inherited from the core library.
 function(ign_add_component component_name)
+  # Control CMP0219 policy (Macro invocations preserve backslashes in arguments)
+  # Needed for: gz_string_append
+  # See https://github.com/gazebosim/gz-cmake/issues/570
+  cmake_policy(PUSH)
+  if(POLICY CMP0219)
+    cmake_policy(SET CMP0219 OLD)
+  endif()
 
   #------------------------------------
   # Define the expected arguments
@@ -1289,6 +1316,7 @@ function(ign_add_component component_name)
     set_property(TARGET ${PROJECT_LIBRARY_TARGET_NAME}-all
       PROPERTY INTERFACE_IGN_ALL_KNOWN_COMPONENTS "${all_known_components};${component_target_name}")
   endif()
+  cmake_policy(POP)
 endfunction()
 
 #################################################
@@ -1798,6 +1826,13 @@ endmacro()
 # Other ignition projects should not use this macro.
 #
 macro(_ign_cmake_parse_arguments prefix options oneValueArgs multiValueArgs)
+  # Control CMP0219 policy (Macro invocations preserve backslashes in arguments)
+  # Needed for: cmake_parse_arguments
+  # See https://github.com/gazebosim/gz-cmake/issues/570
+  if(POLICY CMP0219)
+    cmake_policy(PUSH)
+    cmake_policy(SET CMP0219 OLD)
+  endif()
 
   cmake_parse_arguments(${prefix} "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
@@ -1814,4 +1849,7 @@ macro(_ign_cmake_parse_arguments prefix options oneValueArgs multiValueArgs)
 
   endif()
 
+  if(POLICY CMP0219)
+    cmake_policy(POP)
+  endif()
 endmacro()
