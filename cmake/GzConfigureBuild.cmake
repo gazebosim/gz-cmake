@@ -30,6 +30,13 @@
 # Pass the argument QUIT_IF_BUILD_ERRORS to have this macro quit cmake when the
 # build_errors
 macro(gz_configure_build)
+  # Control CMP0219 policy (Macro invocations preserve backslashes in arguments)
+  # Needed for: gz_string_append
+  # See https://github.com/gazebosim/gz-cmake/issues/570
+  if(POLICY CMP0219)
+    cmake_policy(PUSH)
+    cmake_policy(SET CMP0219 OLD)
+  endif()
   # Parse the arguments that are passed in
   set(options HIDE_SYMBOLS_BY_DEFAULT EXPOSE_SYMBOLS_BY_DEFAULT QUIT_IF_BUILD_ERRORS)
   set(oneValueArgs)
@@ -288,6 +295,9 @@ macro(gz_configure_build)
 
   endif()
 
+  if(POLICY CMP0219)
+    cmake_policy(POP)
+  endif()
 endmacro()
 
 macro(_gz_set_cxx_feature_flags)

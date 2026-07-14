@@ -23,6 +23,13 @@
 #
 # Macro to append a value to a string
 macro(gz_string_append output_var val)
+  # Control CMP0219 policy (Macro invocations preserve backslashes in arguments)
+  # Needed for: _gz_cmake_parse_arguments
+  # See https://github.com/gazebosim/gz-cmake/issues/570
+  if(POLICY CMP0219)
+    cmake_policy(PUSH)
+    cmake_policy(SET CMP0219 OLD)
+  endif()
   # Define the expected arguments
   # NOTE: options cannot be set to PARENT_SCOPE alone, so we put it explicitly
   # into cmake_parse_arguments(~). We use a semicolon to concatenate it with
@@ -53,4 +60,7 @@ macro(gz_string_append output_var val)
     set(${output_var} "${${output_var}}" PARENT_SCOPE)
   endif()
 
+  if(POLICY CMP0219)
+    cmake_policy(POP)
+  endif()
 endmacro()
