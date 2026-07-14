@@ -152,6 +152,13 @@
 #                             out, whether or not it is provided.
 #
 macro(gz_find_package PACKAGE_NAME_)
+  # Control CMP0219 policy (Macro invocations preserve backslashes in arguments)
+  # Needed for: gz_string_append
+  # See https://github.com/gazebosim/gz-cmake/issues/570
+  if(POLICY CMP0219)
+    cmake_policy(PUSH)
+    cmake_policy(SET CMP0219 OLD)
+  endif()
   set(PACKAGE_NAME ${PACKAGE_NAME_})  # Allow for variable rebinds
 
   # Define the expected arguments
@@ -466,4 +473,7 @@ macro(gz_find_package PACKAGE_NAME_)
 
   endif()
 
+  if(POLICY CMP0219)
+    cmake_policy(POP)
+  endif()
 endmacro()
