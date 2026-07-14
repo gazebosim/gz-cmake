@@ -72,6 +72,13 @@
 # library, then you probably do not need to specify the standard, because it
 # will get inherited from the core library.
 function(gz_add_component component_name)
+  # Control CMP0219 policy (Macro invocations preserve backslashes in arguments)
+  # Needed for: gz_string_append
+  # See https://github.com/gazebosim/gz-cmake/issues/570
+  cmake_policy(PUSH)
+  if(POLICY CMP0219)
+    cmake_policy(SET CMP0219 OLD)
+  endif()
   # Define the expected arguments
   set(options INTERFACE INDEPENDENT_FROM_PROJECT_LIB PRIVATELY_DEPENDS_ON_PROJECT_LIB INTERFACE_DEPENDS_ON_PROJECT_LIB)
   set(oneValueArgs INCLUDE_SUBDIR GET_TARGET_NAME)
@@ -262,4 +269,5 @@ function(gz_add_component component_name)
     set_property(TARGET ${PROJECT_LIBRARY_TARGET_NAME}-all
       PROPERTY INTERFACE_GZ_ALL_KNOWN_COMPONENTS "${all_known_components};${component_target_name}")
   endif()
+  cmake_policy(POP)
 endfunction()
