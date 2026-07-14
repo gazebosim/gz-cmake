@@ -88,6 +88,13 @@ function(ign_add_component component_name)
   endif()
 endfunction()
 function(gz_add_component component_name)
+  # Control CMP0219 policy (Macro invocations preserve backslashes in arguments)
+  # Needed for: gz_string_append
+  # See https://github.com/gazebosim/gz-cmake/issues/570
+  cmake_policy(PUSH)
+  if(POLICY CMP0219)
+    cmake_policy(SET CMP0219 OLD)
+  endif()
 
   # Deprecated, remove skip parsing logic in version 4
   if (NOT gz_add_component_skip_parsing)
@@ -284,4 +291,5 @@ function(gz_add_component component_name)
     set_property(TARGET ${PROJECT_LIBRARY_TARGET_NAME}-all
       PROPERTY INTERFACE_IGN_ALL_KNOWN_COMPONENTS "${all_known_components};${component_target_name}")
   endif()
+  cmake_policy(POP)
 endfunction()

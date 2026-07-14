@@ -52,6 +52,13 @@ function(ign_create_docs)
   gz_create_docs()
 endfunction()
 function(gz_create_docs)
+  # Control CMP0219 policy (Macro invocations preserve backslashes in arguments)
+  # Needed for: gz_string_append
+  # See https://github.com/gazebosim/gz-cmake/issues/570
+  cmake_policy(PUSH)
+  if(POLICY CMP0219)
+    cmake_policy(SET CMP0219 OLD)
+  endif()
 
   option(BUILD_DOCS "Build docs" ON)
   if (NOT ${BUILD_DOCS})
@@ -208,7 +215,9 @@ function(gz_create_docs)
   if (DOC_ONLY)
     message(WARNING "Configuration was done in DOC_ONLY mode."
     " You can build documentation (make doc), but nothing else.")
+    cmake_policy(POP)
     return()
   endif()
 
+  cmake_policy(POP)
 endfunction()

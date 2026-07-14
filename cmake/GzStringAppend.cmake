@@ -38,6 +38,13 @@ macro(ign_string_append output_var val)
   endif()
 endmacro()
 macro(gz_string_append output_var val)
+  # Control CMP0219 policy (Macro invocations preserve backslashes in arguments)
+  # Needed for: _gz_cmake_parse_arguments
+  # See https://github.com/gazebosim/gz-cmake/issues/570
+  if(POLICY CMP0219)
+    cmake_policy(PUSH)
+    cmake_policy(SET CMP0219 OLD)
+  endif()
 
   # Deprecated, remove skip parsing logic in version 4
   if (NOT gz_string_append_skip_parsing)
@@ -74,4 +81,7 @@ macro(gz_string_append output_var val)
     set(${output_var} "${${output_var}}" PARENT_SCOPE)
   endif()
 
+  if(POLICY CMP0219)
+    cmake_policy(POP)
+  endif()
 endmacro()

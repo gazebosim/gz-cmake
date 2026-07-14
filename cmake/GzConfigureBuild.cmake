@@ -38,6 +38,13 @@ macro(ign_configure_build)
   gz_configure_build()
 endmacro()
 macro(gz_configure_build)
+  # Control CMP0219 policy (Macro invocations preserve backslashes in arguments)
+  # Needed for: gz_string_append
+  # See https://github.com/gazebosim/gz-cmake/issues/570
+  if(POLICY CMP0219)
+    cmake_policy(PUSH)
+    cmake_policy(SET CMP0219 OLD)
+  endif()
 
   # Deprecated, remove skip parsing logic in version 4
   if (NOT gz_configure_build_skip_parsing)
@@ -297,6 +304,9 @@ macro(gz_configure_build)
 
   endif()
 
+  if(POLICY CMP0219)
+    cmake_policy(POP)
+  endif()
 endmacro()
 
 macro(_gz_set_cxx_feature_flags)
