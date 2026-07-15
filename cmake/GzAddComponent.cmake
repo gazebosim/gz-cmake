@@ -72,13 +72,6 @@
 # library, then you probably do not need to specify the standard, because it
 # will get inherited from the core library.
 function(gz_add_component component_name)
-  # Control CMP0219 policy (Macro invocations preserve backslashes in arguments)
-  # Needed for: gz_string_append
-  # See https://github.com/gazebosim/gz-cmake/issues/570
-  cmake_policy(PUSH)
-  if(POLICY CMP0219)
-    cmake_policy(SET CMP0219 OLD)
-  endif()
   # Define the expected arguments
   set(options INTERFACE INDEPENDENT_FROM_PROJECT_LIB PRIVATELY_DEPENDS_ON_PROJECT_LIB INTERFACE_DEPENDS_ON_PROJECT_LIB)
   set(oneValueArgs INCLUDE_SUBDIR GET_TARGET_NAME)
@@ -206,13 +199,20 @@ function(gz_add_component component_name)
 
   endif()
 
+  # initialize for use as empty list of strings
+  set(${component_name}_CMAKE_DEPENDENCIES)
+
   if(NOT gz_add_component_INDEPENDENT_FROM_PROJECT_LIB)
 
     # Add the core library as a cmake dependency for this component
-    # NOTE: It seems we need to triple-escape "${gz_package_required}" and
-    #       "${gz_package_quiet}" here.
-    gz_string_append(${component_name}_CMAKE_DEPENDENCIES
-      "if(NOT ${PKG_NAME}_CONFIG_INCLUDED)\n  find_package(${PKG_NAME} ${PROJECT_VERSION_FULL_NO_SUFFIX} EXACT \\\${gz_package_quiet} \\\${gz_package_required})\nendif()" DELIM "\n")
+    list(APPEND ${component_name}_CMAKE_DEPENDENCIES
+      "if(NOT ${PKG_NAME}_CONFIG_INCLUDED)\n  find_package(${PKG_NAME} ${PROJECT_VERSION_FULL_NO_SUFFIX} EXACT")
+    # We want "${gz_package_required}" and "${gz_package_quiet}" in the output file
+    # so use a bracket argument to avoid escaping complexity.
+    list(APPEND ${component_name}_CMAKE_DEPENDENCIES
+      [[ ${gz_package_quiet} ${gz_package_required})]])
+    list(APPEND ${component_name}_CMAKE_DEPENDENCIES
+      "\nendif()\n")
 
     # Choose what type of pkgconfig entry the core library belongs to
     set(lib_pkgconfig_type ${component_name}_PKGCONFIG_REQUIRES)
@@ -226,8 +226,14 @@ function(gz_add_component component_name)
   endif()
 
   if(gz_add_component_DEPENDS_ON_COMPONENTS)
-    gz_string_append(${component_name}_CMAKE_DEPENDENCIES
-      "find_package(${PKG_NAME} ${PROJECT_VERSION_FULL_NO_SUFFIX} EXACT \\\${gz_package_quiet} \\\${gz_package_required} COMPONENTS ${gz_add_component_DEPENDS_ON_COMPONENTS})" DELIM "\n")
+    list(APPEND ${component_name}_CMAKE_DEPENDENCIES
+      "find_package(${PKG_NAME} ${PROJECT_VERSION_FULL_NO_SUFFIX} EXACT")
+    # We want "${gz_package_required}" and "${gz_package_quiet}" in the output file
+    # so use a bracket argument to avoid escaping complexity.
+    list(APPEND ${component_name}_CMAKE_DEPENDENCIES
+      [[ ${gz_package_quiet} ${gz_package_required}]])
+    list(APPEND ${component_name}_CMAKE_DEPENDENCIES
+      " COMPONENTS ${gz_add_component_DEPENDS_ON_COMPONENTS})\n")
   endif()
 
   #------------------------------------
@@ -238,7 +244,8 @@ function(gz_add_component component_name)
   else()
     set(component_pkgconfig_lib "-l${component_pkg_name}")
   endif()
-  set(component_cmake_dependencies ${${component_name}_CMAKE_DEPENDENCIES})
+  # set component_cmake_dependencies by joining the list of strings
+  list(JOIN ${component_name}_CMAKE_DEPENDENCIES "" component_cmake_dependencies)
   # This next set is redundant, but it serves as a reminder that this input
   # variable is used in config files
   set(component_name ${component_name})
@@ -269,5 +276,4 @@ function(gz_add_component component_name)
     set_property(TARGET ${PROJECT_LIBRARY_TARGET_NAME}-all
       PROPERTY INTERFACE_GZ_ALL_KNOWN_COMPONENTS "${all_known_components};${component_target_name}")
   endif()
-  cmake_policy(POP)
 endfunction()
