@@ -220,6 +220,7 @@ if (UNIX)
     set(example_PKGCONFIG_INSTALL_LIBDIR "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
   endif()
 
+  list(APPEND _env_vars "EXAMPLE_INSTALL_DIR=${example_INSTALL_DIR}")
   list(APPEND _env_vars "PKG_CONFIG_PATH=${example_INSTALL_DIR}/${example_PKGCONFIG_INSTALL_LIBDIR}:${FAKE_INSTALL_PREFIX}/${example_PKGCONFIG_INSTALL_LIBDIR}:$PKG_CONFIG_PATH")
   add_test(${TEST_NAME}
     ${CMAKE_CURRENT_SOURCE_DIR}/test_c_child_requires_c_no_deps.bash

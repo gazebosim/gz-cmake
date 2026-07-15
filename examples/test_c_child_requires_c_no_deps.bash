@@ -2,6 +2,18 @@
 TEST_STATUS=0
 
 echo
+echo Expect correct escaping in cmake config find_package call
+EXPECTED_LINE='find_package(gz-c_no_deps ${gz_package_quiet} ${gz_package_required})'
+CONFIG_FILE=${EXAMPLE_INSTALL_DIR}/lib/cmake/gz-c_child_private/gz-c_child_private-config.cmake
+echo ${EXPECTED_LINE}
+grep 'find_package(gz-c_no_deps' ${CONFIG_FILE}
+if ! grep -q "${EXPECTED_LINE}" ${CONFIG_FILE}
+then
+  echo oops
+  TEST_STATUS=1
+fi
+
+echo
 echo Expect gz-c_child to require gz-c_no_deps
 pkg-config gz-c_child --print-requires
 if ! pkg-config gz-c_child --print-requires \
