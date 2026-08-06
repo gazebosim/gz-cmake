@@ -302,10 +302,11 @@ endmacro()
 
 macro(_gz_set_cxx_feature_flags)
 
-  set(GZ_KNOWN_CXX_STANDARDS 11 14 17)
+  set(GZ_KNOWN_CXX_STANDARDS 11 14 17 20)
   set(GZ_CXX_11_FEATURES cxx_std_11)
   set(GZ_CXX_14_FEATURES cxx_std_14)
   set(GZ_CXX_17_FEATURES cxx_std_17)
+  set(GZ_CXX_20_FEATURES cxx_std_20)
 
 endmacro()
 

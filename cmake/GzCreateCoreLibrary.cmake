@@ -13,9 +13,9 @@
 
 #################################################
 # gz_create_core_library(SOURCES <sources>
-#                         [CXX_STANDARD <11|14|17>]
-#                         [PRIVATE_CXX_STANDARD <11|14|17>]
-#                         [INTERFACE_CXX_STANDARD <11|14|17>]
+#                         [CXX_STANDARD <11|14|17|20>]
+#                         [PRIVATE_CXX_STANDARD <11|14|17|20>]
+#                         [INTERFACE_CXX_STANDARD <11|14|17|20>]
 #                         [GET_TARGET_NAME <output_var>]
 #                         [LEGACY_PROJECT_PREFIX <prefix>])
 #
