@@ -20,9 +20,9 @@
 #                   [INDEPENDENT_FROM_PROJECT_LIB]
 #                   [PRIVATELY_DEPENDS_ON_PROJECT_LIB]
 #                   [INTERFACE_DEPENDS_ON_PROJECT_LIB]
-#                   [CXX_STANDARD <11|14|17|20>]
-#                   [PRIVATE_CXX_STANDARD <11|14|17|20>]
-#                   [INTERFACE_CXX_STANDARD <11|14|17|20>])
+#                   [CXX_STANDARD <11|14|17|20|23>]
+#                   [PRIVATE_CXX_STANDARD <11|14|17|20|23>]
+#                   [INTERFACE_CXX_STANDARD <11|14|17|20|23>])
 #
 # This function will produce a "component" library for your project. This is the
 # recommended way to produce plugins or library modules.
