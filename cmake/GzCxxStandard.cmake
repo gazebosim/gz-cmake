@@ -36,7 +36,7 @@ macro(_gz_filter_valid_compiler_options var)
 endmacro()
 
 #################################################
-# _gz_check_known_cxx_standards(<11|14|17>)
+# _gz_check_known_cxx_standards(<11|14|17|20|23>)
 #
 # Creates a fatal error if the variable passed in does not represent a supported
 # version of the C++ standard.
