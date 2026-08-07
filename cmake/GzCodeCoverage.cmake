@@ -141,10 +141,14 @@ FUNCTION(gz_setup_target_for_coverage)
     # Capturing lcov counters and generating report
     COMMAND ${LCOV_PATH} ${_branch_flags} -q --no-checksum
       --directory ${PROJECT_BINARY_DIR} --capture
-      --output-file ${_outputname}.info 2>/dev/null
+      --ignore-errors gcov,gcov
+      --ignore-errors mismatch,mismatch
+      --ignore-errors unused,unused
+      --output-file ${_outputname}.info
     # Remove negative counts
     COMMAND sed -i '/,-/d' ${_outputname}.info
     COMMAND ${LCOV_PATH} ${_branch_flags} -q
+      --ignore-errors unused,unused
       --remove ${_outputname}.info '*/test/*' '/usr/*' '*_TEST*' '*.cxx' 'moc_*.cpp' 'qrc_*.cpp' '*.pb.*' '*/build/*' '*/install/*' ${IGNORE_LIST} --output-file ${_outputname}.info.cleaned
     COMMAND ${GENHTML_PATH} ${_branch_flags} -q --prefix ${PROJECT_SOURCE_DIR}
     --legend -o ${_outputname} ${_outputname}.info.cleaned
