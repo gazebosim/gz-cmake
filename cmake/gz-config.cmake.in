@@ -70,14 +70,6 @@ else()
   set(gz_package_required "")
 endif()
 
-# Set the QUIET flag for the find_package(~) calls on this project's
-# dependencies.
-if(@PKG_NAME@_FIND_QUIETLY)
-  set(gz_package_quiet QUIET)
-else()
-  set(gz_package_quiet "")
-endif()
-
 # --------------------------------
 # Find each required dependency of this project (if nothing is below, then the
 # project has no external dependencies). We use find_package(~) instead of
