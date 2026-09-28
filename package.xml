@@ -7,7 +7,7 @@
 
   <maintainer email="scpeters@openrobotics.org">Steve Peters</maintainer>
 
-  <license>Apache License 2.0</license>
+  <license>Apache-2.0</license>
 
   <url type="website">https://github.com/gazebosim/gz-cmake</url>
 
