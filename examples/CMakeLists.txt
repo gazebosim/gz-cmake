@@ -198,9 +198,13 @@ foreach (build_type ${build_types})
 endforeach()
 
 # Test the handling of optional components that cannot be built by configuring
-# the comp_required example with different combinations of flags.
+# an example (comp_required unless EXAMPLE is given) with different
+# combinations of flags.
 function(add_comp_required_test name expect)
-  cmake_parse_arguments(arg "" "REGEX;NOT_REGEX" "ARGS" ${ARGN})
+  cmake_parse_arguments(arg "" "EXAMPLE;REGEX;NOT_REGEX" "ARGS" ${ARGN})
+  if(NOT DEFINED arg_EXAMPLE)
+    set(arg_EXAMPLE comp_required)
+  endif()
   set(test_name comp_required_${name})
   set(expectations)
   if(DEFINED arg_REGEX)
@@ -212,7 +216,7 @@ function(add_comp_required_test name expect)
   add_test(NAME ${test_name}
     COMMAND ${CMAKE_COMMAND}
       "-DTEST_NAME=${test_name}"
-      "-DSOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}/comp_required"
+      "-DSOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}/${arg_EXAMPLE}"
       "-DBINARY_DIR=${CMAKE_CURRENT_BINARY_DIR}/${test_name}"
       "-DPREFIX_PATH=${FAKE_INSTALL_PREFIX}"
       "-DGENERATOR=${CMAKE_GENERATOR}"
@@ -245,6 +249,18 @@ add_comp_required_test(require_unknown PASS
 add_comp_required_test(require_and_skip FAIL
   REGEX "Required component \\[present\\].*SKIP_present"
   ARGS -DREQUIRE_present=ON -DSKIP_present=ON)
+add_comp_required_test(require_all FAIL
+  REGEX "Required component \\[manual_skip\\].*Required component \\[missing_dep\\]"
+  NOT_REGEX "Skipping component \\[missing_dep\\]"
+  ARGS -DREQUIRE_ALL_COMPONENTS=ON)
+add_comp_required_test(require_all_with_skips PASS
+  NOT_REGEX "Required component"
+  ARGS -DREQUIRE_ALL_COMPONENTS=ON -DSKIP_missing_dep=ON -DSKIP_manual_skip=ON)
+# c_nodep has no components at all
+add_comp_required_test(require_all_no_components PASS
+  EXAMPLE c_nodep
+  NOT_REGEX "not used by the project"
+  ARGS -DREQUIRE_ALL_COMPONENTS=ON)
 
 # test that c_child pkg-config file requires c_nodep
 # and that c_child_private pkg-config file requires c_nodep privately

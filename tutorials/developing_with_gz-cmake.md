@@ -76,6 +76,17 @@ built, set the cmake flag:
 -DREQUIRE_component_name=ON
 ```
 
+To require every optional component of the package, set:
+
+```
+-DREQUIRE_ALL_COMPONENTS=ON
+```
+
+With `REQUIRE_ALL_COMPONENTS`, the components skipped with
+`-DSKIP_component_name=ON` are the only ones allowed to be missing, so the
+list of `SKIP_` flags documents every component that is intentionally left
+out.
+
 Setting both `REQUIRE_component_name` and `SKIP_component_name` for the same
 component is an error.
 
