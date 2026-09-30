@@ -197,6 +197,35 @@ foreach (build_type ${build_types})
   endif()
 endforeach()
 
+# Test the handling of optional components that cannot be built by configuring
+# the comp_required example with different combinations of flags.
+function(add_comp_required_test name expect)
+  cmake_parse_arguments(arg "" "REGEX;NOT_REGEX" "ARGS" ${ARGN})
+  set(test_name comp_required_${name})
+  set(expectations)
+  if(DEFINED arg_REGEX)
+    list(APPEND expectations "-DEXPECT_REGEX=${arg_REGEX}")
+  endif()
+  if(DEFINED arg_NOT_REGEX)
+    list(APPEND expectations "-DEXPECT_NOT_REGEX=${arg_NOT_REGEX}")
+  endif()
+  add_test(NAME ${test_name}
+    COMMAND ${CMAKE_COMMAND}
+      "-DTEST_NAME=${test_name}"
+      "-DSOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}/comp_required"
+      "-DBINARY_DIR=${CMAKE_CURRENT_BINARY_DIR}/${test_name}"
+      "-DPREFIX_PATH=${FAKE_INSTALL_PREFIX}"
+      "-DGENERATOR=${CMAKE_GENERATOR}"
+      "-DRESULTS_DIR=${CMAKE_BINARY_DIR}/test_results"
+      "-DEXPECT=${expect}"
+      ${expectations}
+      -P "${CMAKE_CURRENT_SOURCE_DIR}/test_comp_required.cmake"
+      -- ${arg_ARGS})
+endfunction()
+
+add_comp_required_test(default PASS
+  REGEX "Skipping component \\[missing_dep\\]")
+
 # test that c_child pkg-config file requires c_nodep
 # and that c_child_private pkg-config file requires c_nodep privately
 if (UNIX)
