@@ -225,6 +225,26 @@ endfunction()
 
 add_comp_required_test(default PASS
   REGEX "Skipping component \\[missing_dep\\]")
+add_comp_required_test(require_built PASS
+  NOT_REGEX "Required component|not used by the project"
+  ARGS -DREQUIRE_present=ON -DREQUIRE_from_src=ON)
+add_comp_required_test(require_off PASS
+  ARGS -DREQUIRE_missing_dep=OFF)
+add_comp_required_test(require_missing_dep FAIL
+  REGEX "Required component \\[missing_dep\\].*GzCMakeTestMissingPackage"
+  NOT_REGEX "Skipping component \\[missing_dep\\]"
+  ARGS -DREQUIRE_missing_dep=ON)
+add_comp_required_test(require_manual_skip FAIL
+  REGEX "Required component \\[manual_skip\\]"
+  ARGS -DREQUIRE_manual_skip=ON)
+# A component of another package, e.g. a flag that colcon passes to every
+# package, is only reported by cmake as unused
+add_comp_required_test(require_unknown PASS
+  REGEX "not used by the project: REQUIRE_not_a_component"
+  ARGS -DREQUIRE_not_a_component=ON)
+add_comp_required_test(require_and_skip FAIL
+  REGEX "Required component \\[present\\].*SKIP_present"
+  ARGS -DREQUIRE_present=ON -DSKIP_present=ON)
 
 # test that c_child pkg-config file requires c_nodep
 # and that c_child_private pkg-config file requires c_nodep privately

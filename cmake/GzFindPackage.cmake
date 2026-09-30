@@ -95,7 +95,8 @@
 #                because their dependence on this package will effectively be
 #                inherited from the core library. This will trigger a build
 #                warning to tell the user which component requires this
-#                dependency.
+#                dependency, or a build error if the user required the
+#                component with REQUIRE_<component> (see gz_configure_build).
 #
 # [PRIVATE_FOR]: Optional. If provided, the list that follows it must indicate
 #                which library components depend on this package privately (i.e.
@@ -252,8 +253,11 @@ macro(gz_find_package PACKAGE_NAME_)
         if(NOT SKIP_${component})
           # Otherwise, if it was only required by some of the components, create
           # a warning about which components will not be available, unless the
-          # user explicitly requested that it be skipped
-          gz_build_warning("Skipping component [${component}]: ${${PACKAGE_NAME}_msg}.\n    ^~~~~ Set SKIP_${component}=true in cmake to suppress this warning.\n ")
+          # user explicitly requested that it be skipped. Components required
+          # by the user get a build error from gz_configure_build instead.
+          if(NOT REQUIRE_${component})
+            gz_build_warning("Skipping component [${component}]: ${${PACKAGE_NAME}_msg}.\n    ^~~~~ Set SKIP_${component}=true in cmake to suppress this warning.\n ")
+          endif()
 
           # Create a variable to indicate that we need to skip the component
           set(INTERNAL_SKIP_${component} true)
