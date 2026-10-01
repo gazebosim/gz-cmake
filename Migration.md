@@ -11,6 +11,10 @@ release will remove the deprecated code.
     **Replacement**: Use `find_package(Python3)` to find Python3 and the
               `Python3_EXECUTABLE` variable instead of `PYTHON_EXECUTABLE`.
 
+1. **Deprecated**: `FindGzURDFDOM.cmake`
+    **Replacement**: Use `find_package(urdfdom)` and `find_package(urdfdom_headers)`
+              and the associated cmake targets instead.
+
 ## Gazebo CMake 4.X to 5.X
 
 1. The major version has been removed from the cmake project name and the

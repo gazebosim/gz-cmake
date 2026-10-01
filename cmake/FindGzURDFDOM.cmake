@@ -14,6 +14,8 @@
 # limitations under the License.
 #
 
+message(WARNING "FindGzURDFDOM is deprecated, use find_package(urdfdom) and find_package(urdfdom_headers) instead.")
+
 # Prefer pkg-config over cmake if possible since version checking is not working
 # on urdfdom series from 1.x to 3.0.0 (at least)
 include(GzPkgConfig)
