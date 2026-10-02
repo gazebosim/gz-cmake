@@ -65,6 +65,36 @@ the warning about the missing dependencies, you can set the cmake flag:
 where you should replace `component_name` with the actual name of the component
 as specified inside the angle brackets `[]` of the warning.
 
+### Requiring optional components
+
+Skipping a component with a warning is convenient when building from source,
+but a package or CI build can end up missing a component without anyone
+noticing. To make the configuration fail when a component is not going to be
+built, set the cmake flag:
+
+```
+-DREQUIRE_component_name=ON
+```
+
+To require every optional component of the package, set:
+
+```
+-DREQUIRE_ALL_COMPONENTS=ON
+```
+
+With `REQUIRE_ALL_COMPONENTS`, the components skipped with
+`-DSKIP_component_name=ON` are the only ones allowed to be missing, so the
+list of `SKIP_` flags documents every component that is intentionally left
+out.
+
+Setting both `REQUIRE_component_name` and `SKIP_component_name` for the same
+component is an error.
+
+A package ignores `REQUIRE_component_name` for a component it does not have,
+so the flags can be passed to every package of a colcon workspace. CMake
+reports the ignored flags, including misspelled component names, in its
+"Manually-specified variables were not used by the project" warning.
+
 ### Creating a compilation database
 
 `CMake` can optionally generate a compilation data base that may be used with a variety of code completion tools.
