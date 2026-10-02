@@ -7,6 +7,10 @@ release will remove the deprecated code.
 
 ## Gazebo CMake 5.X to 6.X
 
+1. **Removed**: `GzPython.cmake`
+    **Replacement**: Use `find_package(Python3)` to find Python3 and the
+              `Python3_EXECUTABLE` variable instead of `PYTHON_EXECUTABLE`.
+
 ## Gazebo CMake 4.X to 5.X
 
 1. The major version has been removed from the cmake project name and the
