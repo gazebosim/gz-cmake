@@ -293,15 +293,10 @@ macro(_gz_setup_msvc)
     #         for complex templated code or when using Whole Program Optimization (/GL).
     set(MSVC_MINIMAL_FLAGS "/Gy /W2 /bigobj")
 
-    # Zi: Produce complete debug information
-    # Note: We provide Zi to ordinary release mode because it does not impact
-    # performance and can be helpful for debugging.
-    set(MSVC_DEBUG_FLAGS "${MSVC_MINIMAL_FLAGS} /Zi")
-
     option(GZ_MSVC_WPO "Enable Whole Program Optimization on MSVC" ON)
     if(GZ_MSVC_WPO)
       # GL: Enable Whole Program Optimization
-      set(MSVC_RELEASE_FLAGS "${MSVC_DEBUG_FLAGS} /GL")
+      set(MSVC_RELEASE_FLAGS "${MSVC_MINIMAL_FLAGS} /GL")
 
       # Use Release flags for RelWithDebInfo
       set(MSVC_RELWITHDEBINFO_FLAGS "${MSVC_RELEASE_FLAGS}")
@@ -313,15 +308,15 @@ macro(_gz_setup_msvc)
       #  see https://docs.microsoft.com/en-us/cpp/build/reference/gl-whole-program-optimization
       set(MSVC_RELWITHDEBINFO_LINKER_FLAGS "/INCREMENTAL:NO /LTCG")
     else()
-      set(MSVC_RELEASE_FLAGS "${MSVC_DEBUG_FLAGS}")
+      set(MSVC_RELEASE_FLAGS "${MSVC_MINIMAL_FLAGS}")
       set(MSVC_RELWITHDEBINFO_FLAGS "${MSVC_RELEASE_FLAGS}")
       set(MSVC_RELEASE_LINKER_FLAGS "")
       set(MSVC_RELWITHDEBINFO_LINKER_FLAGS "/INCREMENTAL:NO")
     endif()
 
     # cmake automatically provides /Zi /Ob0 /Od /RTC1
-    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} ${MSVC_DEBUG_FLAGS}")
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${MSVC_DEBUG_FLAGS}")
+    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} ${MSVC_MINIMAL_FLAGS}")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${MSVC_MINIMAL_FLAGS}")
 
     # cmake automatically provides /O2 /Ob2 /DNDEBUG
     set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} ${MSVC_RELEASE_FLAGS}")
