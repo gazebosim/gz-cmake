@@ -107,6 +107,14 @@ function(gz_add_component component_name)
     set(property_type PUBLIC)
   endif()
 
+  # A component that gets here is going to be built, which meets any
+  # REQUIRE_<component> flag (see gz_configure_build). Reading the flag also
+  # keeps cmake from reporting it as unused for components that are created
+  # without being listed in the COMPONENTS of gz_configure_build.
+  if(REQUIRE_${component_name})
+    message(VERBOSE "Required component [${component_name}] is going to be built")
+  endif()
+
   # Set the name of the component's target
   set(component_target_name ${PROJECT_LIBRARY_TARGET_NAME}-${component_name})
 
