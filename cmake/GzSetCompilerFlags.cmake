@@ -39,7 +39,7 @@ macro(_gz_set_compiler_flags)
   endif()
 
   # Check if we are compiling with Clang with GNU-like flags and cache it
-  if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+  if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
     if(CMAKE_CXX_COMPILER_FRONTEND_VARIANT STREQUAL "MSVC")
       set(CLANG false)
     else()
@@ -127,6 +127,15 @@ macro(_gz_setup_gcc_or_clang)
         -Wall -Wextra -Wno-long-long -Wno-unused-value -Wfloat-equal
         -Wshadow -Winit-self -Wswitch-default -Wmissing-include-dirs -pedantic
         )
+
+  if(CLANG)
+    # Suppress warning about variadic macro arguments in gtest.
+    # This is needed for tests in gz-physics on macOS.
+    _gz_filter_valid_compiler_options(
+      CUSTOM_ALL_FLAGS
+          -Wno-variadic-macro-arguments-omitted
+          )
+  endif()
 
   # -ggdb3: Produce comprehensive debug information that can be utilized by gdb
   set(CUSTOM_DEBUG_FLAGS "-ggdb3")
