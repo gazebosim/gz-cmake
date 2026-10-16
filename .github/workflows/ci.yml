@@ -31,4 +31,9 @@ jobs:
         uses: gazebo-tooling/action-gz-ci@jammy
         with:
           cmake-args: '-DBUILDSYSTEM_TESTING=True -DGZ_ENABLE_RELOCATABLE_INSTALL=True'
+      - name: Compile and test with BUILD_DOCS=OFF
+        id: ci
+        uses: gazebo-tooling/action-gz-ci@jammy
+        with:
+          cmake-args: '-DBUILDSYSTEM_TESTING=True -DGZ_ENABLE_RELOCATABLE_INSTALL=True -DBUILD_DOCS=OFF'
 
