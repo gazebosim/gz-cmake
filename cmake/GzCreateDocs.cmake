@@ -52,18 +52,18 @@ function(ign_create_docs)
   gz_create_docs()
 endfunction()
 function(gz_create_docs)
+  option(BUILD_DOCS "Build docs" ON)
+  if (NOT ${BUILD_DOCS})
+    message(STATUS "Building Documentation disabled via BUILD_DOCS=OFF")
+    return()
+  endif()
+
   # Control CMP0219 policy (Macro invocations preserve backslashes in arguments)
   # Needed for: gz_string_append
   # See https://github.com/gazebosim/gz-cmake/issues/570
   cmake_policy(PUSH)
   if(POLICY CMP0219)
     cmake_policy(SET CMP0219 OLD)
-  endif()
-
-  option(BUILD_DOCS "Build docs" ON)
-  if (NOT ${BUILD_DOCS})
-    message(STATUS "Building Documentation disabled via BUILD_DOCS=OFF")
-    return()
   endif()
 
   # Deprecated, remove skip parsing logic in version 4
