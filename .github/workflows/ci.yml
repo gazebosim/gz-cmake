@@ -19,5 +19,9 @@ jobs:
         id: ci
         uses: gazebo-tooling/action-gz-ci@jammy
         with:
+<<<<<<< HEAD
           cmake-args: '-DBUILDSYSTEM_TESTING=True'
+=======
+          cmake-args: '-DBUILDSYSTEM_TESTING=True -DGZ_ENABLE_RELOCATABLE_INSTALL=True -DBUILD_DOCS=OFF'
+>>>>>>> a11766e (Fix build when BUILD_DOCS=OFF (#600))
 
