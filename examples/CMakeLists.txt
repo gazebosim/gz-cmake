@@ -197,6 +197,71 @@ foreach (build_type ${build_types})
   endif()
 endforeach()
 
+# Test the handling of optional components that cannot be built by configuring
+# an example (comp_required unless EXAMPLE is given) with different
+# combinations of flags.
+function(add_comp_required_test name expect)
+  cmake_parse_arguments(arg "" "EXAMPLE;REGEX;NOT_REGEX" "ARGS" ${ARGN})
+  if(NOT DEFINED arg_EXAMPLE)
+    set(arg_EXAMPLE comp_required)
+  endif()
+  set(test_name comp_required_${name})
+  set(expectations)
+  if(DEFINED arg_REGEX)
+    list(APPEND expectations "-DEXPECT_REGEX=${arg_REGEX}")
+  endif()
+  if(DEFINED arg_NOT_REGEX)
+    list(APPEND expectations "-DEXPECT_NOT_REGEX=${arg_NOT_REGEX}")
+  endif()
+  add_test(NAME ${test_name}
+    COMMAND ${CMAKE_COMMAND}
+      "-DTEST_NAME=${test_name}"
+      "-DSOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}/${arg_EXAMPLE}"
+      "-DBINARY_DIR=${CMAKE_CURRENT_BINARY_DIR}/${test_name}"
+      "-DPREFIX_PATH=${FAKE_INSTALL_PREFIX}"
+      "-DGENERATOR=${CMAKE_GENERATOR}"
+      "-DRESULTS_DIR=${CMAKE_BINARY_DIR}/test_results"
+      "-DEXPECT=${expect}"
+      ${expectations}
+      -P "${CMAKE_CURRENT_SOURCE_DIR}/test_comp_required.cmake"
+      -- ${arg_ARGS})
+endfunction()
+
+add_comp_required_test(default PASS
+  REGEX "Skipping component \\[missing_dep\\]")
+add_comp_required_test(require_built PASS
+  NOT_REGEX "Required component|not used by the project"
+  ARGS -DREQUIRE_present=ON -DREQUIRE_from_src=ON)
+add_comp_required_test(require_off PASS
+  ARGS -DREQUIRE_missing_dep=OFF)
+add_comp_required_test(require_missing_dep FAIL
+  REGEX "Required component \\[missing_dep\\].*GzCMakeTestMissingPackage"
+  NOT_REGEX "Skipping component \\[missing_dep\\]"
+  ARGS -DREQUIRE_missing_dep=ON)
+add_comp_required_test(require_manual_skip FAIL
+  REGEX "Required component \\[manual_skip\\]"
+  ARGS -DREQUIRE_manual_skip=ON)
+# A component of another package, e.g. a flag that colcon passes to every
+# package, is only reported by cmake as unused
+add_comp_required_test(require_unknown PASS
+  REGEX "not used by the project: REQUIRE_not_a_component"
+  ARGS -DREQUIRE_not_a_component=ON)
+add_comp_required_test(require_and_skip FAIL
+  REGEX "Required component \\[present\\].*SKIP_present"
+  ARGS -DREQUIRE_present=ON -DSKIP_present=ON)
+add_comp_required_test(require_all FAIL
+  REGEX "Required component \\[manual_skip\\].*Required component \\[missing_dep\\]"
+  NOT_REGEX "Skipping component \\[missing_dep\\]"
+  ARGS -DREQUIRE_ALL_COMPONENTS=ON)
+add_comp_required_test(require_all_with_skips PASS
+  NOT_REGEX "Required component"
+  ARGS -DREQUIRE_ALL_COMPONENTS=ON -DSKIP_missing_dep=ON -DSKIP_manual_skip=ON)
+# c_nodep has no components at all
+add_comp_required_test(require_all_no_components PASS
+  EXAMPLE c_nodep
+  NOT_REGEX "not used by the project"
+  ARGS -DREQUIRE_ALL_COMPONENTS=ON)
+
 # test that c_child pkg-config file requires c_nodep
 # and that c_child_private pkg-config file requires c_nodep privately
 if (UNIX)

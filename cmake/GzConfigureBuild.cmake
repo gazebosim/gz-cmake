@@ -29,6 +29,19 @@
 # so symbols are exposed unless explicitly marked as hidden.
 # Pass the argument QUIT_IF_BUILD_ERRORS to have this macro quit cmake when the
 # build_errors
+#
+# Optional components are skipped with a warning when they cannot be built.
+# Users can turn that into a build error with the cmake flags:
+#   REQUIRE_<component>=ON     Fail if <component> is not going to be built.
+#   REQUIRE_ALL_COMPONENTS=ON  Fail if any optional component is not going to
+#                              be built, except the ones skipped with
+#                              SKIP_<component>=ON.
+# ALL_COMPONENTS is reserved and cannot be used as a component name.
+# REQUIRE_<component> for a component the project does not have is ignored,
+# and cmake warns about it as a manually-specified variable that was not used.
+# Projects that skip a component on their own, instead of through
+# gz_find_package(... REQUIRED_BY <component>), must set
+# INTERNAL_SKIP_<component> to true so the REQUIRE_ flags can detect it.
 macro(gz_configure_build)
   # Control CMP0219 policy (Macro invocations preserve backslashes in arguments)
   # Needed for: gz_string_append
@@ -55,6 +68,13 @@ macro(gz_configure_build)
   #============================================================================
   # Ask whether we should make a shared or static library.
   option(BUILD_SHARED_LIBS "Set this to true to generate shared libraries (recommended), or false for static libraries" ON)
+
+  #============================================================================
+  # Fail if a component required with REQUIRE_<component> or
+  # REQUIRE_ALL_COMPONENTS is not going to be built
+  _gz_check_required_components(_gz_required_component_errors
+    ${gz_configure_build_COMPONENTS})
+  gz_build_error(${_gz_required_component_errors})
 
   #============================================================================
   # Print warnings and errors
@@ -299,6 +319,49 @@ macro(gz_configure_build)
     cmake_policy(POP)
   endif()
 endmacro()
+
+#################################################
+# _gz_check_required_components(<output_var> [<configured_components>...])
+#
+# Sets <output_var> to the list of error messages for the components that the
+# user requires, through REQUIRE_<component> or REQUIRE_ALL_COMPONENTS, but
+# that are not going to be built. Only the components that can be skipped are
+# checked: <configured_components>, the components passed to
+# gz_configure_build, and the ones marked with INTERNAL_SKIP_<component>.
+function(_gz_check_required_components output_var)
+  get_cmake_property(skipped_components VARIABLES)
+  list(FILTER skipped_components INCLUDE REGEX "^INTERNAL_SKIP_")
+  list(TRANSFORM skipped_components REPLACE "^INTERNAL_SKIP_" "")
+  set(components ${ARGN} ${skipped_components})
+  list(REMOVE_DUPLICATES components)
+  list(SORT components)
+
+  # Read even when there are no components to check, otherwise cmake reports
+  # -DREQUIRE_ALL_COMPONENTS as unused, e.g. when every component is created in
+  # src/ like in gz-sensors.
+  set(require_all ${REQUIRE_ALL_COMPONENTS})
+
+  set(errors)
+  foreach(component ${components})
+    if(REQUIRE_${component})
+      set(drop_hint "unset REQUIRE_${component}")
+    elseif(require_all AND NOT SKIP_${component})
+      set(drop_hint "set SKIP_${component}=ON")
+    else()
+      continue()
+    endif()
+
+    if(SKIP_${component})
+      list(APPEND errors "Required component [${component}] is also skipped by SKIP_${component}. Set only one of REQUIRE_${component} and SKIP_${component}.")
+    elseif(${component}_MISSING_DEPS)
+      list(APPEND errors "Required component [${component}] cannot be built because the following packages are missing: ${${component}_MISSING_DEPS}. Install them, or ${drop_hint} to build without it.")
+    elseif(INTERNAL_SKIP_${component})
+      list(APPEND errors "Required component [${component}] was skipped by the project configuration, see the configuration warnings. Fix the cause, or ${drop_hint} to build without it.")
+    endif()
+  endforeach()
+
+  set(${output_var} ${errors} PARENT_SCOPE)
+endfunction()
 
 macro(_gz_set_cxx_feature_flags)
 
