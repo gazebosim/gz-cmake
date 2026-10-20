@@ -8,6 +8,14 @@ if (UNIX)
   )
 endif()
 
+add_test(
+  NAME configure_build_errors
+  COMMAND
+    "${CMAKE_COMMAND}"
+    "-DGZ_CMAKE_MODULE_DIR=${CMAKE_SOURCE_DIR}/cmake"
+    -P "${CMAKE_CURRENT_SOURCE_DIR}/configure_build_errors.cmake"
+)
+
 # This test requires the use of std::filesystem, so it is only compiled on non-GCC
 # compilers of with GCC >= 11
 if(NOT CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 11.0)
