@@ -19,5 +19,5 @@ jobs:
         id: ci
         uses: gazebo-tooling/action-gz-ci@jammy
         with:
-          cmake-args: '-DBUILDSYSTEM_TESTING=True'
+          cmake-args: '-DBUILDSYSTEM_TESTING=True -DBUILD_DOCS=OFF'
 
