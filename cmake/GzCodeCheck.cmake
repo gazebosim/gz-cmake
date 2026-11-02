@@ -18,8 +18,14 @@ function(_gz_setup_target_for_codecheck)
     return()
   endif()
 
+  # Check the code with the same C++ standard used to build it
+  set (CPPCHECK_CXX_STANDARD 17)
+  if (CMAKE_CXX_STANDARD)
+    set (CPPCHECK_CXX_STANDARD ${CMAKE_CXX_STANDARD})
+  endif()
+
   # Base set of cppcheck option
-  set (CPPCHECK_BASE -q --inline-suppr -j 4 --language=c++ --std=c++17 --force)
+  set (CPPCHECK_BASE -q --inline-suppr -j 4 --language=c++ --std=c++${CPPCHECK_CXX_STANDARD} --force)
   if (EXISTS "${PROJECT_BINARY_DIR}/cppcheck.suppress")
     set (CPPCHECK_BASE ${CPPCHECK_BASE} --suppressions-list=${PROJECT_BINARY_DIR}/cppcheck.suppress)
   endif()
