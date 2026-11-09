@@ -118,6 +118,17 @@ function(_gz_export_target_all)
   get_property(all_known_components TARGET ${PROJECT_LIBRARY_TARGET_NAME}-all
     PROPERTY INTERFACE_GZ_ALL_KNOWN_COMPONENTS)
 
+  # Do not generate an -all meta-package for projects that have no core
+  # library and no components (e.g. gz-tools). The generated -all config
+  # would contain a find_dependency call on the project's core package,
+  # which is not installed for such projects, making the -all package
+  # unusable. See https://github.com/gazebosim/gz-tools/issues/166
+  if(NOT TARGET ${PROJECT_LIBRARY_TARGET_NAME} AND NOT all_known_components)
+    message(STATUS
+      "No core library or components, skipping the all meta-package")
+    return()
+  endif()
+
   if(all_known_components)
     foreach(component ${all_known_components})
       gz_string_append(find_all_pkg_components "find_dependency(${component} ${PROJECT_VERSION_FULL_NO_SUFFIX} EXACT)" DELIM "\n")
