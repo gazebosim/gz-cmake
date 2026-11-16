@@ -178,6 +178,18 @@ foreach(example ${example_directories})
 
 endforeach()
 
+# Test that gz_add_component generates the expected CMake dependencies
+if (UNIX)
+  set(TEST_NAME comp_deps_cmake_dependencies)
+  set(_env_vars "EXAMPLE_INSTALL_DIR=${CMAKE_BINARY_DIR}/install/D")
+  add_test(${TEST_NAME}
+    ${CMAKE_CURRENT_SOURCE_DIR}/test_comp_deps_cmake_dependencies.bash
+  )
+  set_tests_properties(${TEST_NAME} PROPERTIES
+    ENVIRONMENT "${_env_vars}"
+    DEPENDS comp_deps_D)
+endif()
+
 # dependencies between external projects
 # hard to use DEPENDS in ExternalProject_Add because targets
 # need to exist before they can be used there
