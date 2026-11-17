@@ -100,9 +100,12 @@ macro(gz_pkg_check_modules_quiet package signature)
       set(gz_pkg_check_modules_quiet_arg)
     endif()
 
-    # unset LIBRARIES variable in case it contains full paths already
-    # due to previous calls of this function searching for the same package.
+    # unset LIBRARIES, INCLUDE_DIRS, and LIBRARY_DIRS variables in case they
+    # contain values or empty strings already due to previous calls or local
+    # variables that would shadow the cache variables set by pkg_check_modules.
     unset(${package}_LIBRARIES)
+    unset(${package}_INCLUDE_DIRS)
+    unset(${package}_LIBRARY_DIRS)
 
     pkg_check_modules(${package}
                       ${gz_pkg_check_modules_quiet_arg}
