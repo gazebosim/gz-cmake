@@ -1,5 +1,10 @@
 ## Gazebo CMake 4.x
 
+### Gazebo CMake 4.4.1 (2026-11-17)
+
+1. Unset pkg-config variables before pkg\_check\_modules for CMake 4.5 compatibility
+    * [Pull request #613](https://github.com/gazebosim/gz-cmake/pull/613)
+
 ### Gazebo CMake 4.4.0 (2026-11-16)
 
 1. Remove example_INSTALL_DIR from PREFIX_PATH in Sanitizers example
