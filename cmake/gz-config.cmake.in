@@ -70,14 +70,6 @@ else()
   set(gz_package_required "")
 endif()
 
-# Set the QUIET flag for the find_package(~) calls on this project's
-# dependencies.
-if(@PKG_NAME@_FIND_QUIETLY)
-  set(gz_package_quiet QUIET)
-else()
-  set(gz_package_quiet "")
-endif()
-
 # --------------------------------
 # Find each required dependency of this project (if nothing is below, then the
 # project has no external dependencies). We use find_package(~) instead of
@@ -170,8 +162,9 @@ foreach(component ${@PKG_NAME@_FIND_COMPONENTS})
 
     # If this is an optional component, use find_package(~) instead of
     # find_dependency(~) so we can ensure that the use of REQUIRED does not get
-    # forwarded to it.
-    find_package(@PKG_NAME@-${component} @PROJECT_VERSION_FULL_NO_SUFFIX@ EXACT ${gz_package_quiet})
+    # forwarded to it. Specify QUIET to avoid cmake warnings if the optinal
+    # component is not found.
+    find_package(@PKG_NAME@-${component} @PROJECT_VERSION_FULL_NO_SUFFIX@ EXACT QUIET)
 
   endif()
 
