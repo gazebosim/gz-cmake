@@ -1,5 +1,25 @@
 ## Gazebo CMake 3.x
 
+### Gazebo CMake 3.7.0 (2026-11-18)
+
+1. Unset pkg-config variables before pkg\_check\_modules for CMake 4.5 compatibility
+    * [Pull request #613](https://github.com/gazebosim/gz-cmake/pull/613)
+
+1. Remove example\_INSTALL\_DIR from PREFIX\_PATH in Sanitizers example
+    * [Pull request #604](https://github.com/gazebosim/gz-cmake/pull/604)
+
+1. Fix build when BUILD\_DOCS=OFF
+    * [Pull request #600](https://github.com/gazebosim/gz-cmake/pull/600)
+
+1. Use the SPDX identifier Apache-2.0 in the license declaration
+    * [Pull request #590](https://github.com/gazebosim/gz-cmake/pull/590)
+
+1. Suppress CMP0219 warnings in newer CMake versions
+    * [Pull request #571](https://github.com/gazebosim/gz-cmake/pull/571)
+
+1. Set UID, GID to 0 in package archives
+    * [Pull request #563](https://github.com/gazebosim/gz-cmake/pull/563)
+
 ### Gazebo CMake 3.6.0 (2026-05-14)
 
 1. cpack should exclude .git/ from tarballs
